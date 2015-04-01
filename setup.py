@@ -7,7 +7,8 @@ setup(
     version='1.0.0',
     author='Richard Neumann',
     author_email='r.neumann@homeinfo.de',
-    packages=['terminallib'],
+    packages=['terminallib',
+              'terminallib.db'],
     requires=['peewee'],
     license=open('LICENSE.txt').read(),
     description=('Homeinfo Terminal Libary')
