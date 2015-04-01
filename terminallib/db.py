@@ -1,16 +1,18 @@
 """Terminal data storage"""
 
-from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
-    DoesNotExist
+from datetime import datetime
 from ipaddress import IPv4Address
+from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
+    DoesNotExist, DateTimeField, BlobField
 from homeinfolib.db import improved, create, connection
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from .abc import TermgrModel
+from .config import net
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
-__date__ = '18.09.2014'
-__all__ = ['Terminal']
+__date__ = '10.03.2015'
+__all__ = ['TermgrModel']
 
 
 @create
@@ -84,3 +86,78 @@ class Terminal(TermgrModel):
             except:
                 location = None
         return location
+
+
+@create
+@improved
+class TerminalHistory(TermgrModel):
+    """A virtual terminal's history"""
+
+    class Meta:
+        db_table = 'vt_history'
+
+    terminal = ForeignKeyField(Terminal, db_column='terminal',
+                               related_name='vt_log')
+    """The terminal this history belongs to"""
+    timestamp = DateTimeField(default=datetime.now())
+    """A time stamp when the command was executed"""
+    command = CharField(255)
+    """The command, that was issued"""
+    stdout = BlobField()
+    """The STDOUT result of the command"""
+    stderr = BlobField()
+    """The STDERR result of the command"""
+    exit_code = IntegerField()
+    """The exit code of the command"""
+
+
+class DBEntry():
+    """Manages terminal database records"""
+
+    @classmethod
+    def add(cls, cid, tid, domain=None):
+        """Adds a new terminal"""
+        if cls.exists(cid, tid):
+            return False
+        else:
+            terminal = Terminal()
+            terminal.customer = cid
+            terminal.tid = tid
+            if domain is None:
+                terminal.domain = net['DOMAIN']
+            else:
+                terminal.domain = domain
+            try:
+                terminal.isave()
+            except:
+                return False
+            else:
+                return terminal
+
+    @classmethod
+    def exists(cls, cid, tid):
+        """Determines whether a certain terminal exists"""
+        try:
+            cst = Customer.iget(Customer.id == cid)  # @UndefinedVariable
+        except DoesNotExist:
+            return False    # TODO: Improve error handling
+        else:
+            try:
+                terminal = Terminal.iget(   # @UndefinedVariable
+                    (Terminal.customer == cst) & (Terminal.tid == tid))
+            except DoesNotExist:
+                return False
+            else:
+                return terminal
+
+    def delete(self):
+        """Deletes the terminal"""
+        pass
+
+    def lockdown(self):
+        """Lockdown terminal"""
+        pass
+
+    def unlock(self):
+        """Unlock terminal"""
+        pass

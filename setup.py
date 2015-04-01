@@ -10,6 +10,7 @@ setup(
     packages=['terminallib',
               'terminallib.db'],
     requires=['peewee'],
+    data_files=[('/usr/local/etc', ['files/usr/local/etc/termgr.conf'])],
     license=open('LICENSE.txt').read(),
     description=('Homeinfo Terminal Libary')
     )
