@@ -9,7 +9,7 @@ setup(
     author_email='r.neumann@homeinfo.de',
     packages=['terminallib'],
     requires=['peewee'],
-    data_files=[('/usr/local/etc', ['files/usr/local/etc/termgr.conf'])],
+    data_files=[('/usr/local/etc', ['files/usr/local/etc/terminallib.conf'])],
     license=open('LICENSE.txt').read(),
     description=('Homeinfo Terminal Libary')
     )
