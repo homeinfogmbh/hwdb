@@ -12,7 +12,7 @@ from .config import net
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
-__all__ = ['TermgrModel']
+__all__ = ['Domain', 'Class', 'TermgrModel']
 
 
 @create
@@ -28,6 +28,32 @@ class Class(TermgrModel):
 
 @create
 @improved
+class Domain(TermgrModel):
+    """Terminal domains"""
+
+    _fqdn = CharField(32, db_column='fqdn')
+
+    @property
+    def fqdn(self):
+        """Returns the FQDN"""
+        return self._fqdn
+
+    @fqdn.setter
+    def fqdn(self, fqdn):
+        """Sets the FQDN"""
+        if fqdn.endswith('.'):
+            self.fqdn = fqdn
+        else:
+            raise ValueError(' '.join(['Not a FQDN:', fqdn]))
+
+    @property
+    def name(self):
+        """Returns the domain name without trailing '.'"""
+        return self._fqdn[:-1]
+
+
+@create
+@improved
 class Terminal(TermgrModel):
     """CRM's customer(s)"""
 
@@ -38,7 +64,8 @@ class Terminal(TermgrModel):
     """The terminal ID"""
     cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
     """The terminal's class"""
-    domain = CharField(64)
+    _domain = ForeignKeyField(Domain, db_column='domain',
+                              related_name='terminals')
     """The terminal's domain"""
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
     """The terminal's clear-text htpasswd-password"""
@@ -75,7 +102,7 @@ class Terminal(TermgrModel):
     @property
     def hostname(self):
         """Generates and returns the terminal's host name"""
-        return '.'.join([str(self.tid), str(self.cid), self.domain])
+        return '.'.join([str(self.tid), str(self.cid), self.domain.name])
 
     @property
     def ipv4addr(self):
@@ -88,26 +115,36 @@ class Terminal(TermgrModel):
         self._ipv4addr = int(ipv4addr)
 
     @property
+    def domain(self):
+        """Returns the domain"""
+        with connection(Domain):
+            return self._domain
+
+    @property
     def location(self):
         """Returns the location of the terminal"""
         with connection(Address):
+            location = self._location
+        try:
+            street_houseno = ' '.join([location.street, location.house_number])
+        except (TypeError, ValueError):
+            return None
+        else:
             try:
-                location = ', '.join([' '.join([self._location.street,
-                                                self._location.house_number]),
-                                      ' '.join([self._location.zip,
-                                                self._location.city])])
-            except:
-                location = None
-        return location
+                zip_city = ' '.join([location.zip, location.city])
+            except (TypeError, ValueError):
+                return None
+            else:
+                return ', '.join([street_houseno, zip_city])
 
 
 @create
 @improved
-class TerminalHistory(TermgrModel):
-    """A virtual terminal's history"""
+class ConsoleHistory(TermgrModel):
+    """A physical terminal's virtual console's history"""
 
     class Meta:
-        db_table = 'vt_history'
+        db_table = 'console_history'
 
     terminal = ForeignKeyField(Terminal, db_column='terminal',
                                related_name='vt_log')
