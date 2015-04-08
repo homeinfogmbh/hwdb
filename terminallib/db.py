@@ -62,7 +62,7 @@ class Terminal(TermgrModel):
     """The customer this terminal belongs to"""
     tid = IntegerField()
     """The terminal ID"""
-    cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
+    _cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
     """The terminal's class"""
     _domain = ForeignKeyField(Domain, db_column='domain',
                               related_name='terminals')
@@ -115,6 +115,12 @@ class Terminal(TermgrModel):
         self._ipv4addr = int(ipv4addr)
 
     @property
+    def cls(self):
+        """Returns the terminal's class"""
+        with connection(Domain):
+            return self._cls
+
+    @property
     def domain(self):
         """Returns the domain"""
         with connection(Domain):
@@ -125,6 +131,11 @@ class Terminal(TermgrModel):
         """Returns the location of the terminal"""
         with connection(Address):
             location = self._location
+        return location
+
+    @property
+    def address(self):
+        location = self.location
         try:
             street_houseno = ' '.join([location.street, location.house_number])
         except (TypeError, ValueError):
