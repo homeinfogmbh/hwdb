@@ -4,7 +4,7 @@ from datetime import datetime
 from ipaddress import IPv4Address
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
     DoesNotExist, DateTimeField, BlobField, BooleanField
-from homeinfolib.db import improved, create, connection
+from homeinfolib.db import create, connection
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from .abc import TermgrModel
@@ -16,7 +16,6 @@ __all__ = ['Domain', 'Class', 'TermgrModel']
 
 
 @create
-@improved
 class Class(TermgrModel):
     """Terminal classes"""
 
@@ -27,7 +26,6 @@ class Class(TermgrModel):
 
 
 @create
-@improved
 class Domain(TermgrModel):
     """Terminal domains"""
 
@@ -53,7 +51,6 @@ class Domain(TermgrModel):
 
 
 @create
-@improved
 class Terminal(TermgrModel):
     """CRM's customer(s)"""
 
@@ -150,7 +147,6 @@ class Terminal(TermgrModel):
 
 
 @create
-@improved
 class ConsoleHistory(TermgrModel):
     """A physical terminal's virtual console's history"""
 
