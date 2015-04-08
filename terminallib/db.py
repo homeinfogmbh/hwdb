@@ -3,7 +3,7 @@
 from datetime import datetime
 from ipaddress import IPv4Address
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
-    DoesNotExist, DateTimeField, BlobField
+    DoesNotExist, DateTimeField, BlobField, BooleanField
 from homeinfolib.db import improved, create, connection
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
@@ -17,6 +17,17 @@ __all__ = ['TermgrModel']
 
 @create
 @improved
+class Class(TermgrModel):
+    """Terminal classes"""
+
+    name = CharField(32)
+    """The class' name"""
+    touch = BooleanField()
+    """Flag, whether it is a touch-display class"""
+
+
+@create
+@improved
 class Terminal(TermgrModel):
     """CRM's customer(s)"""
 
@@ -25,6 +36,8 @@ class Terminal(TermgrModel):
     """The customer this terminal belongs to"""
     tid = IntegerField()
     """The terminal ID"""
+    cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
+    """The terminal's class"""
     domain = CharField(64)
     """The terminal's domain"""
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
