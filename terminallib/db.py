@@ -5,15 +5,14 @@ from ipaddress import IPv4Address
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
     DoesNotExist, DateTimeField, BlobField, BooleanField
 from homeinfolib.db import create, connection
+from homeinfolib.lib import classproperty
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from .abc import TermgrModel
-from .config import net
-from homeinfolib.lib import classproperty
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
-__all__ = ['Domain', 'Class', 'TermgrModel']
+__all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory']
 
 
 @create
@@ -53,7 +52,7 @@ class Domain(TermgrModel):
 
 @create
 class Terminal(TermgrModel):
-    """CRM's customer(s)"""
+    """A physical terminal out in the field"""
 
     customer = ForeignKeyField(Customer, db_column='customer',
                                related_name='terminals')
@@ -162,6 +161,21 @@ class Terminal(TermgrModel):
 
 
 @create
+class Screenshot(TermgrModel):
+    """Terminal screenshots"""
+
+    terminal = ForeignKeyField(Terminal, db_column='terminal',
+                               related_name='screenshots')
+    """The terminal, the screenshot has been taken from"""
+    screenshot = BlobField()
+    """The actual screenshot data"""
+    thumbnail = BlobField()
+    """A smaller preview of the screenshot"""
+    date = DateTimeField(default=datetime.now())
+    """The date and time when the screenshot has been taken"""
+
+
+@create
 class ConsoleHistory(TermgrModel):
     """A physical terminal's virtual console's history"""
 
@@ -169,7 +183,7 @@ class ConsoleHistory(TermgrModel):
         db_table = 'console_history'
 
     terminal = ForeignKeyField(Terminal, db_column='terminal',
-                               related_name='vt_log')
+                               related_name='console_log')
     """The terminal this history belongs to"""
     timestamp = DateTimeField(default=datetime.now())
     """A time stamp when the command was executed"""
@@ -181,55 +195,3 @@ class ConsoleHistory(TermgrModel):
     """The STDERR result of the command"""
     exit_code = IntegerField()
     """The exit code of the command"""
-
-
-class DBEntry():
-    """Manages terminal database records"""
-
-    @classmethod
-    def add(cls, cid, tid, domain=None):
-        """Adds a new terminal"""
-        if cls.exists(cid, tid):
-            return False
-        else:
-            terminal = Terminal()
-            terminal.customer = cid
-            terminal.tid = tid
-            if domain is None:
-                terminal.domain = net['DOMAIN']
-            else:
-                terminal.domain = domain
-            try:
-                terminal.isave()
-            except:
-                return False
-            else:
-                return terminal
-
-    @classmethod
-    def exists(cls, cid, tid):
-        """Determines whether a certain terminal exists"""
-        try:
-            cst = Customer.iget(Customer.id == cid)  # @UndefinedVariable
-        except DoesNotExist:
-            return False    # TODO: Improve error handling
-        else:
-            try:
-                terminal = Terminal.iget(   # @UndefinedVariable
-                    (Terminal.customer == cst) & (Terminal.tid == tid))
-            except DoesNotExist:
-                return False
-            else:
-                return terminal
-
-    def delete(self):
-        """Deletes the terminal"""
-        pass
-
-    def lockdown(self):
-        """Lockdown terminal"""
-        pass
-
-    def unlock(self):
-        """Unlock terminal"""
-        pass
