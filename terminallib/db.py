@@ -22,7 +22,7 @@ class Class(TermgrModel):
     name = CharField(32)
     """The class' name"""
     touch = BooleanField()
-    """Flag, whether it is a touch-display class"""
+    """Flag, whether it is a class with touch-display"""
 
 
 @create
@@ -39,7 +39,7 @@ class Domain(TermgrModel):
     @fqdn.setter
     def fqdn(self, fqdn):
         """Sets the FQDN"""
-        if fqdn.endswith('.'):
+        if fqdn.endswith('.') and not fqdn.startswith('.'):
             self.fqdn = fqdn
         else:
             raise ValueError(' '.join(['Not a FQDN:', fqdn]))
@@ -75,6 +75,20 @@ class Terminal(TermgrModel):
         """Converts the terminal to a unique string"""
         return '.'.join([str(ident) for ident in self.idents])
 
+    @classproperty
+    @classmethod
+    def used_ipv4addr(cls):
+        """Yields used IPv4 addresses"""
+        for terminal in cls.iselect(True):
+            yield terminal.ipv4addr
+
+    @classproperty
+    @classmethod
+    def hosts(cls):
+        """Yields entries for /etc/hosts"""
+        for terminal in cls.iselect(True):
+            yield '\t'.join([str(terminal.ipv4addr), terminal.hostname])
+
     @classmethod
     def by_ids(cls, cid, tid):
         """Get a terminal by customer id and terminal id"""
@@ -91,13 +105,6 @@ class Terminal(TermgrModel):
         with connection(Customer):
             for terminal in cls.iselect(cls.customer == cid):
                 yield terminal.tid
-
-    @classproperty
-    @classmethod
-    def used_ipv4addr(cls):
-        """Yields used IPv4 addresses"""
-        for terminal in cls.iselect(True):
-            yield terminal.ipv4addr
 
     @property
     def cid(self):
