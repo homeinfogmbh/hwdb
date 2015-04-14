@@ -90,7 +90,7 @@ class Terminal(TermgrModel):
     def used_tids(cls, cid):
         """Yields used terminal IDs for a certain customer"""
         with connection(Customer):
-            for terminal in cls.iselect(cls._customer == cid):
+            for terminal in cls.iselect(cls.customer == cid):
                 yield terminal.tid
 
     @classproperty
