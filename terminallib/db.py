@@ -139,7 +139,7 @@ class Terminal(TermgrModel):
             return None
         else:
             try:
-                zip_city = ' '.join([location.zip, location.city])
+                zip_city = ' '.join([location.zip_code, location.city])
             except (TypeError, ValueError):
                 return None
             else:
