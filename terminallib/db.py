@@ -9,6 +9,7 @@ from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from .abc import TermgrModel
 from .config import net
+from homeinfolib.lib import classproperty
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -84,6 +85,20 @@ class Terminal(TermgrModel):
             except DoesNotExist:
                 term = None
         return term
+
+    @classmethod
+    def used_tids(cls, cid):
+        """Yields used terminal IDs for a certain customer"""
+        with connection(Customer):
+            for terminal in cls.iselect(cls._customer == cid):
+                yield terminal.tid
+
+    @classproperty
+    @classmethod
+    def used_ipv4addr(cls):
+        """Yields used IPv4 addresses"""
+        for terminal in cls.iselect(True):
+            yield terminal.ipv4addr
 
     @property
     def cid(self):
