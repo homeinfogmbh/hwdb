@@ -32,8 +32,7 @@ class RemoteController(TerminalAware):
 
     def _remote(self, cmd):
         """Makes a command remote"""
-        ssh = [ssh['SSH_BIN'], self._identity_file, self._user_host]
-        return ssh + cmd
+        return [ssh['SSH_BIN'], self._identity_file, self._user_host] + cmd
 
     def _rsync(self, src, dst):
         """Returns a"""
