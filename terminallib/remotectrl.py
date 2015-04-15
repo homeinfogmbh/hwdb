@@ -31,13 +31,15 @@ class RemoteController(TerminalAware):
         """Returns the respective user@host string"""
         return '@'.join([user or ssh['USER'], str(self.terminal.ipv4addr)])
 
-    def _remote(self, cmd):
+    def _remote(self, cmd, user=None):
         """Makes a command remote"""
         return ' '.join([ssh['SSH_BIN'], self._identity_file,
-                         self._user_host(), ''.join(['"', cmd, '"'])])
+                         self._user_host(user=user),
+                         ''.join(['"', cmd, '"'])])
 
-    def _remote_file(self, src):
-        return ':'.join([self._user_host(screenshot['USER']), src])
+    def _remote_file(self, src, user=None):
+        """Returns a remote file path"""
+        return ':'.join([self._user_host(user=user), src])
 
     def _rsync(self, src, dst):
         """Returns a"""
@@ -59,7 +61,7 @@ class RemoteController(TerminalAware):
     def _mkscreenshot(self, fname):
         """Creates a screenshot on the remote terminal"""
         scrot_cmd = self._scrot_cmd(fname)
-        return self.execute(scrot_cmd)
+        return self.execute(scrot_cmd, user=screenshot['USER'])
 
     @property
     def screenshot(self):
@@ -88,9 +90,9 @@ class RemoteController(TerminalAware):
         else:
             return None
 
-    def execute(self, cmd):
+    def execute(self, cmd, user=None):
         """Executes a certain command on a remote terminal"""
-        return run(self._remote(cmd), shell=True)
+        return run(self._remote(cmd, user=user), shell=True)
 
     def getfile(self, file):
         """Gets a file from a remote terminal"""
