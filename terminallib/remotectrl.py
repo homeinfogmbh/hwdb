@@ -15,11 +15,6 @@ class RemoteController(TerminalAware):
     """Controls a terminal remotely"""
 
     @property
-    def _user_host(self):
-        """Returns the respective user@host string"""
-        return '@'.join([ssh['USER'], str(self.terminal.ipv4addr)])
-
-    @property
     def _identity_file(self):
         """Returns the SSH identity file argument
         with the respective identity file's path
@@ -29,17 +24,22 @@ class RemoteController(TerminalAware):
     @property
     def _remote_shell(self):
         """Returns the rsync remote shell"""
-        return ' '.join(['-e', '"', ssh['SSH_BIN'],
+        return ' '.join(['-e', ''.join(['"', ssh['SSH_BIN']]),
                          ''.join([self._identity_file, '"'])])
+
+    def _user_host(self, user=None):
+        """Returns the respective user@host string"""
+        user = user or ssh['USER']
+        return '@'.join([user, str(self.terminal.ipv4addr)])
 
     def _remote(self, cmd):
         """Makes a command remote"""
-        return [ssh['SSH_BIN'], self._identity_file, self._user_host] + cmd
+        return [ssh['SSH_BIN'], self._identity_file, self._user_host()] + cmd
 
     def _rsync(self, src, dst):
         """Returns a"""
         return [ssh['RSYNC_BIN'], self._remote_shell,
-                ':'.join([self._user_host, src]), dst]
+                ':'.join([self._user_host(screenshot['USER']), src]), dst]
 
     def _scrot_cmd(self, fname):
         """Creates the command line for a scrot execution"""
@@ -58,12 +58,12 @@ class RemoteController(TerminalAware):
     @property
     def screenshot(self):
         """Returns a screenshot"""
-        return self._get_screenshot(thumbnail=False)
+        return self.get_screenshot(thumbnail=False)
 
     @property
     def thumbnail(self):
         """Returns a thumbnail of a screenshot"""
-        return self._get_screenshot(thumbnail=True)
+        return self.get_screenshot(thumbnail=True)
 
     def get_screenshot(self, thumbnail=False):
         """Creates a screenshot on the terminal and
