@@ -19,41 +19,42 @@ class RemoteController(TerminalAware):
         """Returns the SSH identity file argument
         with the respective identity file's path
         """
-        return ['-i', ssh['PRIVATE_KEY_TERMGR']]
+        return ' '.join(['-i', ssh['PRIVATE_KEY_TERMGR']])
 
     @property
     def _remote_shell(self):
         """Returns the rsync remote shell"""
-        return ['-e', ''.join(['"', ssh['SSH_BIN']]),
-                ''.join([self._identity_file, '"'])]
+        return ' '.join(['-e', ''.join(['"', ssh['SSH_BIN']]),
+                         ''.join([self._identity_file, '"'])])
 
     def _user_host(self, user=None):
         """Returns the respective user@host string"""
-        return ['@'.join([user or ssh['USER'], str(self.terminal.ipv4addr)])]
+        return '@'.join([user or ssh['USER'], str(self.terminal.ipv4addr)])
 
     def _remote(self, cmd):
         """Makes a command remote"""
-        return ([ssh['SSH_BIN']] + self._identity_file
-                + self._user_host() + ['"'] + cmd + ['"'])
+        return ' '.join([ssh['SSH_BIN'], self._identity_file,
+                         self._user_host(), ''.join(['"', cmd, '"'])])
 
     def _remote_file(self, src):
-        return [':'.join([self._user_host(screenshot['USER']), src])]
+        return ':'.join([self._user_host(screenshot['USER']), src])
 
     def _rsync(self, src, dst):
         """Returns a"""
-        return ([ssh['RSYNC_BIN']] + self._remote_shell
-                + self._remote_file(src) + [dst])
+        return ' '.join([ssh['RSYNC_BIN'], self._remote_shell,
+                         self._remote_file(src), dst])
 
     def _scrot_cmd(self, fname):
         """Creates the command line for a scrot execution"""
-        scrot_cmd = [screenshot['SCROT_BIN']]
-        scrot_args = [screenshot['SCROT_ARGS'],
-                      screenshot['THUMBNAIL_PERCENT']]
+        scrot_cmd = screenshot['SCROT_BIN']
+        scrot_args = ' '.join([screenshot['SCROT_ARGS'],
+                               screenshot['THUMBNAIL_PERCENT']])
         display = screenshot['DISPLAY']
-        display_cmd = ['export',
-                       ''.join(['='.join(['DISPLAY', display]),
-                                ';'])]
-        return display_cmd + scrot_cmd + scrot_args + [fname]
+        display_cmd = ' '.join(['export',
+                                ''.join(['='.join(['DISPLAY',
+                                                   display]),
+                                         ';'])])
+        return ' '.join([display_cmd, scrot_cmd, scrot_args, fname])
 
     def _mkscreenshot(self, fname):
         """Creates a screenshot on the remote terminal"""
