@@ -49,7 +49,9 @@ class RemoteController(TerminalAware):
         scrot_args = [screenshot['SCROT_ARGS'],
                       screenshot['THUMBNAIL_PERCENT']]
         display = screenshot['DISPLAY']
-        display_cmd = [''.join(['='.join(['export DISPLAY', display]), ';'])]
+        display_cmd = ['export',
+                       ''.join(['='.join(['DISPLAY', display]),
+                                ';'])]
         return display_cmd + scrot_cmd + scrot_args + [fname]
 
     def _mkscreenshot(self, fname):
@@ -86,7 +88,7 @@ class RemoteController(TerminalAware):
 
     def execute(self, cmd):
         """Executes a certain command on a remote terminal"""
-        return run(self._remote(cmd))
+        return run(self._remote(cmd), shell=True)
 
     def getfile(self, file):
         """Gets a file from a remote terminal"""
