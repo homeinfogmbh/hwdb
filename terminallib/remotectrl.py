@@ -5,6 +5,7 @@ from .config import ssh, screenshot
 from .abc import TerminalAware
 from tempfile import NamedTemporaryFile
 from os.path import splitext
+from os import unlink
 
 __date__ = "25.03.2015"
 __author__ = "Richard Neumann <r.neumann@homeinfo.de>"
@@ -96,13 +97,15 @@ class RemoteController(TerminalAware):
 
     def getfile(self, file):
         """Gets a file from a remote terminal"""
-        with NamedTemporaryFile('rb') as tmp:
+        with NamedTemporaryFile('wb', delete=False) as tmp:
+            temp_name = tmp.name
+        try:
             rsync = self._rsync(file, tmp.name)
-            print(tmp.name)
             pr = run(rsync, shell=True)
             if pr:
-                print('all ok')
-                tmp.seek(0)
-                return tmp.read()
+                with open(temp_name, 'rb') as tmp:
+                    return tmp.read()
             else:
                 return pr
+        finally:
+            unlink(temp_name)
