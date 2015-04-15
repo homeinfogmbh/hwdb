@@ -19,27 +19,29 @@ class RemoteController(TerminalAware):
         """Returns the SSH identity file argument
         with the respective identity file's path
         """
-        return ' '.join(['-i', ssh['PRIVATE_KEY_TERMGR']])
+        return ['-i', ssh['PRIVATE_KEY_TERMGR']]
 
     @property
     def _remote_shell(self):
         """Returns the rsync remote shell"""
-        return ' '.join(['-e', ''.join(['"', ssh['SSH_BIN']]),
-                         ''.join([self._identity_file, '"'])])
+        return ['-e', ''.join(['"', ssh['SSH_BIN']]),
+                ''.join([self._identity_file, '"'])]
 
     def _user_host(self, user=None):
         """Returns the respective user@host string"""
-        user = user or ssh['USER']
-        return '@'.join([user, str(self.terminal.ipv4addr)])
+        return ['@'.join([user or ssh['USER'], str(self.terminal.ipv4addr)])]
 
     def _remote(self, cmd):
         """Makes a command remote"""
-        return [ssh['SSH_BIN'], self._identity_file, self._user_host()] + cmd
+        return [ssh['SSH_BIN']] + self._identity_file + self._user_host() + cmd
+
+    def _remote_file(self, src):
+        return [':'.join([self._user_host(screenshot['USER']), src])]
 
     def _rsync(self, src, dst):
         """Returns a"""
-        return [ssh['RSYNC_BIN'], self._remote_shell,
-                ':'.join([self._user_host(screenshot['USER']), src]), dst]
+        return ([ssh['RSYNC_BIN']] + self._remote_shell
+                + self._remote_file(src) + [dst])
 
     def _scrot_cmd(self, fname):
         """Creates the command line for a scrot execution"""
