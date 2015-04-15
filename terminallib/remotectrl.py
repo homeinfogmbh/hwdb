@@ -1,9 +1,10 @@
 """Library for terminal remote control"""
 
 from homeinfolib.system import run
-from .config import ssh
+from .config import ssh, screenshot
 from .abc import TerminalAware
 from tempfile import NamedTemporaryFile
+from os.path import splitext
 
 __date__ = "25.03.2015"
 __author__ = "Richard Neumann <r.neumann@homeinfo.de>"
@@ -39,6 +40,47 @@ class RemoteController(TerminalAware):
         """Returns a"""
         return [ssh['RSYNC_BIN'], self._remote_shell,
                 ':'.join([self._user_host, src]), dst]
+
+    def _scrot_cmd(self, fname):
+        """Creates the command line for a scrot execution"""
+        scrot = screenshot['SCROT_BIN']
+        scrot_args = screenshot['SCROT_ARGS']
+        display = screenshot['DISPLAY']
+        thumbs_percent = screenshot['THUMBNAIL_PERCENT']
+        return (['='.join(['export DISPLAY', display]), ';']
+                + [scrot] + [scrot_args, thumbs_percent] + [fname])
+
+    def _mkscreenshot(self, fname):
+        """Creates a screenshot on the remote terminal"""
+        scrot_cmd = self._scrot_cmd(fname)
+        return self.execute(scrot_cmd)
+
+    @property
+    def screenshot(self):
+        """Returns a screenshot"""
+        return self._get_screenshot(thumbnail=False)
+
+    @property
+    def thumbnail(self):
+        """Returns a thumbnail of a screenshot"""
+        return self._get_screenshot(thumbnail=True)
+
+    def get_screenshot(self, thumbnail=False):
+        """Creates a screenshot on the terminal and
+        fetches its content to the local machine
+        """
+        screenshot_file = screenshot['SCREENSHOT_FILE']
+        fname, ext = splitext(screenshot_file)
+        thumbnail_file = ''.join(['-'.join([fname, 'thumb']), ext])
+        screenshot_result = self._mkscreenshot(screenshot_file)
+        if screenshot_result:
+            if thumbnail:
+                result = self.getfile(thumbnail_file)
+            else:
+                result = self.getfile(screenshot_file)
+            return result
+        else:
+            return None
 
     def execute(self, cmd):
         """Executes a certain command on a remote terminal"""
