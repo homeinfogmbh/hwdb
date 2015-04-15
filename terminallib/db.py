@@ -1,14 +1,17 @@
 """Terminal data storage"""
 
+from os.path import isfile, join
 from datetime import datetime
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, AddressValueError
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
     DoesNotExist, DateTimeField, BlobField, BooleanField
 from homeinfolib.db import create, connection
 from homeinfolib.lib import classproperty
+from homeinfolib.system import run
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from .abc import TermgrModel
+from .config import net, openvpn
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -24,12 +27,38 @@ class Class(TermgrModel):
     touch = BooleanField()
     """Flag, whether it is a class with touch-display"""
 
+    @classmethod
+    def add(cls, class_id, class_name, touch=False):
+        """Adds a terminal class"""
+        try:
+            new_class = cls.iget(  # @UndefinedVariable
+                (cls.name == class_name) & (cls.touch == touch))
+        except DoesNotExist:
+            new_class = cls()
+            new_class.name = class_name
+            new_class.touch = True if touch else False
+            new_class.isave()
+        finally:
+            return new_class
+
 
 @create
 class Domain(TermgrModel):
     """Terminal domains"""
 
     _fqdn = CharField(32, db_column='fqdn')
+
+    @classmethod
+    def add(cls, fqdn):
+        """Adds a domain with a certain FQDN"""
+        try:
+            domain = cls.iget(cls._fqdn == fqdn)  # @UndefinedVariable
+        except DoesNotExist:
+            domain = cls()
+            domain.fqdn = fqdn
+            domain.isave()
+        finally:
+            return domain
 
     @property
     def fqdn(self):
@@ -106,6 +135,45 @@ class Terminal(TermgrModel):
             for terminal in cls.iselect(cls.customer == cid):
                 yield terminal.tid
 
+    @classmethod
+    def gen_ipv4addr(cls, desired=None):
+        """Generates a unique IPv4 address for the terminal"""
+        if desired is None:
+            net_base = net['IPV4NET']
+            ipv4addr_base = IPv4Address(net_base)
+            # Skip first 10 IP Addresses
+            ipv4addr = ipv4addr_base + 10
+            while ipv4addr in cls.used_ipv4addr:
+                ipv4addr += 1
+            # TODO: Catch IP address overflow and check
+            # whether IP address is within the network
+            return ipv4addr
+        else:
+            try:
+                ipv4addr = IPv4Address(desired)
+            except AddressValueError:
+                raise ValueError(' '.join(['Not and IPv4 address:',
+                                           str(desired)])) from None
+            else:
+                if ipv4addr not in cls.used_ipv4addr:
+                    return ipv4addr
+                else:
+                    return cls.gen_ip_addr(desired=None)
+
+    @classmethod
+    def gen_tid(cls, cid, desired=None):
+        """Gets a unique terminal ID for the customer"""
+        if desired is None:
+            tid = 1
+            while tid in cls.used_tids(cid):
+                tid += 1
+            return tid
+        else:
+            if tid in cls.used_tids(cid):
+                return cls.gen_tid(cid, desired=None)
+            else:
+                return tid
+
     @property
     def cid(self):
         """Returns the customer's ID"""
@@ -165,6 +233,18 @@ class Terminal(TermgrModel):
                 return None
             else:
                 return ', '.join([street_houseno, zip_city])
+
+    def gen_vpn_keys(self):
+        """Generates an OpenVPN key pair for the terminal"""
+        build_script = openvpn['BUILD_SCRIPT']
+        key_file_name = '.'.join([str(self.tid), str(self.cid)])
+        rsa_dir = openvpn['EASY_RSA_DIR']
+        keys_dir = join(rsa_dir, 'keys')
+        key_file = join(keys_dir, key_file_name)
+        if isfile(key_file):
+            return False
+        else:
+            return run([build_script, key_file_name])
 
 
 @create

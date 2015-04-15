@@ -28,24 +28,26 @@ class RemoteController(TerminalAware):
         return ' '.join(['-e', ''.join(['"', ssh['SSH_BIN']]),
                          ''.join([self._identity_file, '"'])])
 
-    def _user_host(self, user=None):
+    def _user_host(self, user):
         """Returns the respective user@host string"""
-        return '@'.join([user or ssh['USER'], str(self.terminal.ipv4addr)])
+        return '@'.join([user, str(self.terminal.ipv4addr)])
 
-    def _remote(self, cmd, user=None):
+    def _remote(self, cmd, user):
         """Makes a command remote"""
         return ' '.join([ssh['SSH_BIN'], self._identity_file,
-                         self._user_host(user=user),
+                         self._user_host(user),
                          ''.join(['"', cmd, '"'])])
 
-    def _remote_file(self, src, user=None):
+    def _remote_file(self, src, user):
         """Returns a remote file path"""
-        return ':'.join([self._user_host(user=user), src])
+        return ':'.join([self._user_host(user), src])
 
-    def _rsync(self, src, dst):
-        """Returns a"""
+    def _rsync(self, user, src, dst):
+        """Returns an rsync command line to retrieve
+        src file from terminal to local file dst
+        """
         return ' '.join([ssh['RSYNC_BIN'], self._remote_shell,
-                         self._remote_file(src), dst])
+                         self._remote_file(src, user), dst])
 
     def _scrot_cmd(self, fname):
         """Creates the command line for a scrot execution"""
@@ -61,8 +63,9 @@ class RemoteController(TerminalAware):
 
     def _mkscreenshot(self, fname):
         """Creates a screenshot on the remote terminal"""
+        user = screenshot['USER']  # Use X11 server hosts's user account
         scrot_cmd = self._scrot_cmd(fname)
-        return self.execute(scrot_cmd, user=screenshot['USER'])
+        return self.execute(scrot_cmd, user=user)
 
     @property
     def screenshot(self):
@@ -93,14 +96,15 @@ class RemoteController(TerminalAware):
 
     def execute(self, cmd, user=None):
         """Executes a certain command on a remote terminal"""
-        return run(self._remote(cmd, user=user), shell=True)
+        user = user or ssh['USER']
+        return run(self._remote(cmd, user), shell=True)
 
-    def getfile(self, file):
+    def getfile(self, file, user=None):
         """Gets a file from a remote terminal"""
         with NamedTemporaryFile('wb', delete=False) as tmp:
             temp_name = tmp.name
         try:
-            rsync = self._rsync(file, tmp.name)
+            rsync = self._rsync(user, file, tmp.name)
             pr = run(rsync, shell=True)
             if pr:
                 with open(temp_name, 'rb') as tmp:
