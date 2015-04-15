@@ -96,8 +96,9 @@ class RemoteController(TerminalAware):
 
     def getfile(self, file):
         """Gets a file from a remote terminal"""
-        with NamedTemporaryFile('wb+') as tmp:
+        with NamedTemporaryFile('wb+', delete=False) as tmp:
             rsync = self._rsync(file, tmp.name)
+            print(tmp.name)
             pr = run(rsync, shell=True)
             if pr:
                 tmp.seek(0)
