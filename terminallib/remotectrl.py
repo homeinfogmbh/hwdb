@@ -101,6 +101,7 @@ class RemoteController(TerminalAware):
 
     def getfile(self, file, user=None):
         """Gets a file from a remote terminal"""
+        user = user or ssh['USER']
         with NamedTemporaryFile('wb', delete=False) as tmp:
             temp_name = tmp.name
         try:
