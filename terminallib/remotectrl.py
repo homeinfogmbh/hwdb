@@ -45,12 +45,12 @@ class RemoteController(TerminalAware):
 
     def _scrot_cmd(self, fname):
         """Creates the command line for a scrot execution"""
-        scrot = screenshot['SCROT_BIN']
-        scrot_args = screenshot['SCROT_ARGS']
+        scrot_cmd = [screenshot['SCROT_BIN']]
+        scrot_args = [screenshot['SCROT_ARGS'],
+                      screenshot['THUMBNAIL_PERCENT']]
         display = screenshot['DISPLAY']
-        thumbs_percent = screenshot['THUMBNAIL_PERCENT']
-        return (['='.join(['export DISPLAY', display]), ';']
-                + [scrot] + [scrot_args, thumbs_percent] + [fname])
+        display_cmd = [''.join(['='.join(['export DISPLAY', display]), ';'])]
+        return display_cmd + scrot_cmd + scrot_args + [fname]
 
     def _mkscreenshot(self, fname):
         """Creates a screenshot on the remote terminal"""
