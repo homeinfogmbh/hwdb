@@ -33,7 +33,8 @@ class RemoteController(TerminalAware):
 
     def _remote(self, cmd):
         """Makes a command remote"""
-        return [ssh['SSH_BIN']] + self._identity_file + self._user_host() + cmd
+        return ([ssh['SSH_BIN']] + self._identity_file
+                + self._user_host() + ['"'] + cmd + ['"'])
 
     def _remote_file(self, src):
         return [':'.join([self._user_host(screenshot['USER']), src])]
