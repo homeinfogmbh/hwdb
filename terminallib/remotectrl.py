@@ -28,7 +28,8 @@ class RemoteController(TerminalAware):
     @property
     def _remote_shell(self):
         """Returns the rsync remote shell"""
-        return ' '.join(['-e', '"ssh', ''.join([self._identity_file, '"'])])
+        return ' '.join(['-e', '"', ssh['SSH_BIN'],
+                         ''.join([self._identity_file, '"'])])
 
     def _remote(self, cmd):
         """Makes a command remote"""
