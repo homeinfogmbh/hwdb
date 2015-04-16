@@ -12,6 +12,7 @@ from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from .abc import TermgrModel
 from .config import net, openvpn
+from homeinfo.crm.company import Company
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -234,6 +235,13 @@ class Terminal(TermgrModel):
             else:
                 return ', '.join([street_houseno, zip_city])
 
+    @property
+    def operators(self):
+        """Yields the operators, which are
+        allowed to setup the terminal
+        """
+        return SetupOperatorTerminals.operators(self)
+
     def gen_vpn_keys(self):
         """Generates an OpenVPN key pair for the terminal"""
         build_script = openvpn['BUILD_SCRIPT']
@@ -282,3 +290,75 @@ class ConsoleHistory(TermgrModel):
     """The STDERR result of the command"""
     exit_code = IntegerField()
     """The exit code of the command"""
+
+
+@create
+class SetupOperator(TermgrModel):
+    """A user that is allowed to setup systems by HOMEINFO"""
+
+    company = ForeignKeyField(Company, db_column='company',
+                              related_name='setup_operators')
+    """The respective company"""
+    name = CharField(64)
+    """The login name"""
+    passwd = CharField(64)
+    """The SHA-256 encoded password"""
+    enabled = BooleanField()
+    """Flags whether the account is enabled"""
+    annotation = CharField(255, null=True)
+    """An optional Annotation"""
+
+    @classmethod
+    def authenticate(cls, name, passwd):
+        """Authenticate with name and hashed password"""
+        if passwd:
+            try:
+                operator = cls.iget(cls.name == name)
+            except DoesNotExist:
+                return False
+            else:
+                if operator.passwd:
+                    if operator.passwd == passwd:
+                        if operator.enabled:
+                            return operator
+                        else:
+                            return False
+                    else:
+                        return False
+                else:
+                    return False
+        else:
+            return False
+
+    @property
+    def terminals(self):
+        """Yields the terminals, the operator is allowed to use"""
+        return SetupOperatorTerminals.terminals(self)
+
+    def authorize(self, terminal):
+        """Checks whether the setup operator is
+        allowed to setup a certain terminal
+        """
+        return terminal in self.terminals
+
+
+@create
+class SetupOperatorTerminals(TermgrModel):
+    """Many-to-many mapping in-between setup operators and terminals"""
+
+    operator = ForeignKeyField(SetupOperator, db_column='operator')
+    """The respective setup operator"""
+    terminal = ForeignKeyField(Terminal, db_column='terminal')
+    """The respective terminal"""
+
+    @classmethod
+    def terminals(cls, operator):
+        """Yields terminals of the specified operator"""
+        for mapping in cls.iselect(cls.operator == operator):
+            yield mapping.terminal
+
+    @classmethod
+    def operators(cls, terminal):
+        """Yields operators of the specified terminal"""
+        for mapping in cls.iselect(cls.terminal == terminal):
+            yield mapping.operator
