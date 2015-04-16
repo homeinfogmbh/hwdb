@@ -296,6 +296,9 @@ class ConsoleHistory(TermgrModel):
 class SetupOperator(TermgrModel):
     """A user that is allowed to setup systems by HOMEINFO"""
 
+    class Meta:
+        db_table = 'setup_operator'
+
     company = ForeignKeyField(Company, db_column='company',
                               related_name='setup_operators')
     """The respective company"""
@@ -345,6 +348,9 @@ class SetupOperator(TermgrModel):
 @create
 class SetupOperatorTerminals(TermgrModel):
     """Many-to-many mapping in-between setup operators and terminals"""
+
+    class Meta:
+        db_table = 'term_ops'
 
     operator = ForeignKeyField(SetupOperator, db_column='operator')
     """The respective setup operator"""
