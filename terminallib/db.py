@@ -13,6 +13,7 @@ from homeinfo.crm.address import Address
 from .abc import TermgrModel
 from .config import net, openvpn
 from homeinfo.crm.company import Company
+from itertools import chain
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -243,6 +244,14 @@ class Terminal(TermgrModel):
         """
         return SetupOperatorTerminals.operators(self)
 
+    @property
+    def administrators(self):
+        """Yields the administrators, which are
+        allowed to administer the terminal
+        """
+        return chain(AdministratorTerminals.operators(self),
+                     Administrator.root)
+
     def gen_vpn_keys(self):
         """Generates an OpenVPN key pair for the terminal"""
         build_script = openvpn['BUILD_SCRIPT']
@@ -297,9 +306,6 @@ class ConsoleHistory(TermgrModel):
 class _Operator(TermgrModel):
     """A generic operator"""
 
-    company = ForeignKeyField(Company, db_column='company',
-                              related_name='setup_operators')
-    """The respective company"""
     name = CharField(64)
     """The login name"""
     passwd = CharField(64)
@@ -342,12 +348,33 @@ class Administrator(_Operator):
     """A user that is allowed to create,
     modify and delete all terminals
     """
-    pass
+
+    allow_all = BooleanField(default=False, null=True)
+    """Flag whether to allow access to all terminals"""
+
+    @classproperty
+    @classmethod
+    def root(cls):
+        """Yields all administrators that
+        are allowed on all terminals
+        """
+        for administrator in cls.iselect(cls.allow_all == 1):
+            yield administrator
+
+    def authorize(self, terminal):
+        """Checks whether the setup operator is
+        allowed to setup a certain terminal
+        """
+        return self.allow_all or terminal in self.terminals
 
 
 @create
 class SetupOperator(_Operator):
     """A user that is allowed to setup systems by HOMEINFO"""
+
+    company = ForeignKeyField(Company, db_column='company',
+                              related_name='setup_operators')
+    """The respective company"""
 
     class Meta:
         db_table = 'setup_operator'
@@ -364,9 +391,34 @@ class SetupOperatorTerminals(TermgrModel):
     """Many-to-many mapping in-between setup operators and terminals"""
 
     class Meta:
-        db_table = 'term_ops'
+        db_table = 'terminal_operators'
 
     operator = ForeignKeyField(SetupOperator, db_column='operator')
+    """The respective setup operator"""
+    terminal = ForeignKeyField(Terminal, db_column='terminal')
+    """The respective terminal"""
+
+    @classmethod
+    def terminals(cls, operator):
+        """Yields terminals of the specified operator"""
+        for mapping in cls.iselect(cls.operator == operator):
+            yield mapping.terminal
+
+    @classmethod
+    def operators(cls, terminal):
+        """Yields operators of the specified terminal"""
+        for mapping in cls.iselect(cls.terminal == terminal):
+            yield mapping.operator
+
+
+@create
+class AdministratorTerminals(TermgrModel):
+    """Many-to-many mapping in-between setup operators and terminals"""
+
+    class Meta:
+        db_table = 'terminal_admins'
+
+    administrator = ForeignKeyField(Administrator, db_column='administrator')
     """The respective setup operator"""
     terminal = ForeignKeyField(Terminal, db_column='terminal')
     """The respective terminal"""
