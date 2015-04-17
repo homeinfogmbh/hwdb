@@ -16,7 +16,8 @@ from homeinfo.crm.company import Company
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
-__all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory']
+__all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
+           'Administrator', 'SetupOperator']
 
 
 @create
@@ -292,12 +293,9 @@ class ConsoleHistory(TermgrModel):
     """The exit code of the command"""
 
 
-@create
-class SetupOperator(TermgrModel):
-    """A user that is allowed to setup systems by HOMEINFO"""
-
-    class Meta:
-        db_table = 'setup_operator'
+# XXX: Abstract
+class _Operator(TermgrModel):
+    """A generic operator"""
 
     company = ForeignKeyField(Company, db_column='company',
                               related_name='setup_operators')
@@ -337,6 +335,22 @@ class SetupOperator(TermgrModel):
     def terminals(self):
         """Yields the terminals, the operator is allowed to use"""
         return SetupOperatorTerminals.terminals(self)
+
+
+@create
+class Administrator(_Operator):
+    """A user that is allowed to create,
+    modify and delete all terminals
+    """
+    pass
+
+
+@create
+class SetupOperator(_Operator):
+    """A user that is allowed to setup systems by HOMEINFO"""
+
+    class Meta:
+        db_table = 'setup_operator'
 
     def authorize(self, terminal):
         """Checks whether the setup operator is
