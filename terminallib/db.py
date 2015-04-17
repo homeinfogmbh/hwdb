@@ -303,8 +303,8 @@ class ConsoleHistory(TermgrModel):
 
 
 # XXX: Abstract
-class _Operator(TermgrModel):
-    """A generic operator"""
+class _User(TermgrModel):
+    """A generic user"""
 
     name = CharField(64)
     """The login name"""
@@ -320,14 +320,14 @@ class _Operator(TermgrModel):
         """Authenticate with name and hashed password"""
         if passwd:
             try:
-                operator = cls.iget(cls.name == name)
+                user = cls.iget(cls.name == name)
             except DoesNotExist:
                 return False
             else:
-                if operator.passwd:
-                    if operator.passwd == passwd:
-                        if operator.enabled:
-                            return operator
+                if user.passwd:
+                    if user.passwd == passwd:
+                        if user.enabled:
+                            return user
                         else:
                             return False
                     else:
@@ -339,7 +339,7 @@ class _Operator(TermgrModel):
 
 
 @create
-class Administrator(_Operator):
+class Administrator(_User):
     """A user that is allowed to create,
     modify and delete all terminals
     """
@@ -347,7 +347,7 @@ class Administrator(_Operator):
 
 
 @create
-class SetupOperator(_Operator):
+class SetupOperator(_User):
     """A user that is allowed to setup systems by HOMEINFO"""
 
     company = ForeignKeyField(Company, db_column='company',
