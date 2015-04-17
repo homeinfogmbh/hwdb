@@ -337,35 +337,13 @@ class _Operator(TermgrModel):
         else:
             return False
 
-    @property
-    def terminals(self):
-        """Yields the terminals, the operator is allowed to use"""
-        return SetupOperatorTerminals.terminals(self)
-
 
 @create
 class Administrator(_Operator):
     """A user that is allowed to create,
     modify and delete all terminals
     """
-
-    allow_all = BooleanField(default=False, null=True)
-    """Flag whether to allow access to all terminals"""
-
-    @classproperty
-    @classmethod
-    def root(cls):
-        """Yields all administrators that
-        are allowed on all terminals
-        """
-        for administrator in cls.iselect(cls.allow_all == 1):
-            yield administrator
-
-    def authorize(self, terminal):
-        """Checks whether the setup operator is
-        allowed to setup a certain terminal
-        """
-        return self.allow_all or terminal in self.terminals
+    pass
 
 
 @create
@@ -378,6 +356,11 @@ class SetupOperator(_Operator):
 
     class Meta:
         db_table = 'setup_operator'
+
+    @property
+    def terminals(self):
+        """Yields the terminals, the operator is allowed to use"""
+        return SetupOperatorTerminals.terminals(self)
 
     def authorize(self, terminal):
         """Checks whether the setup operator is
