@@ -6,6 +6,7 @@ from .abc import TerminalAware
 from tempfile import NamedTemporaryFile
 from os.path import splitext
 from os import unlink
+from datetime import datetime
 
 __date__ = "25.03.2015"
 __author__ = "Richard Neumann <r.neumann@homeinfo.de>"
@@ -65,7 +66,7 @@ class RemoteController(TerminalAware):
     def _mkscreenshot(self, fname):
         """Creates a screenshot on the remote terminal"""
         scrot_cmd = self._scrot_cmd(fname)
-        return self.execute(scrot_cmd)
+        return (self.execute(scrot_cmd), datetime.now())
 
     @property
     def screenshot(self):
@@ -84,13 +85,13 @@ class RemoteController(TerminalAware):
         screenshot_file = screenshot['SCREENSHOT_FILE']
         fname, ext = splitext(screenshot_file)
         thumbnail_file = ''.join(['-'.join([fname, 'thumb']), ext])
-        screenshot_result = self._mkscreenshot(screenshot_file)
+        screenshot_result, timestamp = self._mkscreenshot(screenshot_file)
         if screenshot_result:
             if thumbnail:
-                result = self.getfile(thumbnail_file)
+                data = self.getfile(thumbnail_file)
             else:
-                result = self.getfile(screenshot_file)
-            return result
+                data = self.getfile(screenshot_file)
+            return (data, timestamp)
         else:
             return None
 
