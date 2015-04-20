@@ -102,6 +102,8 @@ class Terminal(TermgrModel):
     """Virtual display, running on the physical terminal"""
     _location = ForeignKeyField(Address, null=True, db_column='location')
     """The address of the terminal"""
+    deleted = BooleanField(default=False)
+    """Flags whether the terminal is considered deleted"""
 
     def __repr__(self):
         """Converts the terminal to a unique string"""
@@ -122,13 +124,20 @@ class Terminal(TermgrModel):
             yield '\t'.join([str(terminal.ipv4addr), terminal.hostname])
 
     @classmethod
-    def by_ids(cls, cid, tid):
+    def by_ids(cls, cid, tid, deleted=False):
         """Get a terminal by customer id and terminal id"""
         with connection(Customer):
-            try:
-                term = cls.iget((cls.customer == cid) & (cls.tid == tid))
-            except DoesNotExist:
-                term = None
+            if deleted:
+                try:
+                    term = cls.iget((cls.customer == cid) & (cls.tid == tid))
+                except DoesNotExist:
+                    term = None
+            else:
+                try:
+                    term = cls.iget((cls.customer == cid) & (cls.tid == tid)
+                                    & (cls.deleted == 0))
+                except DoesNotExist:
+                    term = None
         return term
 
     @classmethod
