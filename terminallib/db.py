@@ -1,6 +1,7 @@
 """Terminal data storage"""
 
 from os.path import isfile, join
+from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
@@ -10,10 +11,12 @@ from homeinfolib.lib import classproperty
 from homeinfolib.system import run
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
+from homeinfo.crm.company import Company
 from .abc import TermgrModel
 from .config import net, openvpn
-from homeinfo.crm.company import Company
-from itertools import chain
+from .dom import Class as ClassDOM, Domain as DomainDOM,\
+    Screenshot as ScreenshotDOM
+from homeinfolib.mime import mimetype
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -43,6 +46,13 @@ class Class(TermgrModel):
             new_class.isave()
         finally:
             return new_class
+
+    def todom(self):
+        """Converts the database model into a DOM model"""
+        class_ = ClassDOM(self.name)
+        class_.id = self.id
+        class_.touch = self.touch
+        return class_
 
 
 @create
@@ -80,6 +90,12 @@ class Domain(TermgrModel):
     def name(self):
         """Returns the domain name without trailing '.'"""
         return self._fqdn[:-1]
+
+    def todom(self):
+        """Converts the database model into a DOM model"""
+        domain = DomainDOM(self.fqdn)
+        domain.id = self.id
+        return domain
 
 
 @create
@@ -287,6 +303,18 @@ class Screenshot(TermgrModel):
     """A smaller preview of the screenshot"""
     date = DateTimeField(default=datetime.now())
     """The date and time when the screenshot has been taken"""
+
+    def todom(self, thumbnail=False):
+        """Converts the database model into a DOM model"""
+        if thumbnail:
+            screenshot = ScreenshotDOM(self.thumbnail)
+            screenshot.mimetype = mimetype(self.thumbnail)
+        else:
+            screenshot = ScreenshotDOM(self.screenshot)
+            screenshot.mimetype = mimetype(self.screenshot)
+        screenshot.id = self.id
+        screenshot.timestamp = self.date
+        return screenshot
 
 
 @create
