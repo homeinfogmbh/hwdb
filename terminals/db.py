@@ -4,17 +4,16 @@ from os.path import isfile, join
 from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
-from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
-    DoesNotExist, DateTimeField, BlobField, BooleanField, create,\
-    PrimaryKeyField
+from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
+    CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
+    BooleanField, create, PrimaryKeyField
 from homeinfo.misc import classproperty
 from homeinfo.system import run
 from homeinfo.mime import mimetype
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from homeinfo.crm.company import Company
-from .abc import TermgrModel
-from .config import net, openvpn
+from .config import db, net, openvpn
 from .dom import Class as ClassDOM, Domain as DomainDOM,\
     Screenshot as ScreenshotDOM, Terminal as TerminalDOM, TerminalDetail
 
@@ -24,12 +23,47 @@ __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator']
 
 
+class TermgrModel(Model):
+    """Generic TermgrModel Model"""
+
+    class Meta:
+        database = MySQLDatabase(db.get('db'),
+                                 host=db.get('host'),
+                                 user=db.get('user'),
+                                 passwd=db.get('passwd'))
+        schema = database.database
+
+    id = PrimaryKeyField()
+    """The table's primary key"""
+
+
+class TerminalAware():
+    """Manages terminals"""
+
+    def __init__(self, terminal):
+        """Sets user name and password"""
+        self.terminal = terminal
+
+    @property
+    def cid(self):
+        """Returns the customer identifier"""
+        return self.terminal.cid
+
+    @property
+    def tid(self):
+        """Returns the terminal identifier"""
+        return self.terminal.tid
+
+    @property
+    def idstr(self):
+        """Returns a unique string identifier"""
+        return '.'.join([str(self.tid), str(self.cid)])
+
+
 @create
 class Class(TermgrModel):
     """Terminal classes"""
 
-    id = PrimaryKeyField()
-    """The table's primary key"""
     name = CharField(32)
     """The class' name"""
     touch = BooleanField()
@@ -61,8 +95,6 @@ class Class(TermgrModel):
 class Domain(TermgrModel):
     """Terminal domains"""
 
-    id = PrimaryKeyField()
-    """The table's primary key"""
     _fqdn = CharField(32, db_column='fqdn')
     """The domain's fully qulaifited domain name"""
 
@@ -107,8 +139,6 @@ class Domain(TermgrModel):
 class Terminal(TermgrModel):
     """A physical terminal out in the field"""
 
-    id = PrimaryKeyField()
-    """The table's primary key"""
     customer = ForeignKeyField(Customer, db_column='customer',
                                related_name='terminals')
     """The customer this terminal belongs to"""
