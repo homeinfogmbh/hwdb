@@ -1,7 +1,6 @@
 """Abstract base classes for terminal setup management"""
 
 from peewee import Model, MySQLDatabase
-from homeinfo.db import improved
 from .config import db
 
 __date__ = "23.03.2015"
@@ -9,7 +8,6 @@ __author__ = "Richard Neumann <r.neumann@homeinfo.de>"
 __all__ = ['TermgrModel', 'TerminalAware']
 
 
-@improved
 class TermgrModel(Model):
     """Generic TermgrModel Model"""
 
