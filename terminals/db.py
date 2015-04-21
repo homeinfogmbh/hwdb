@@ -8,6 +8,7 @@ from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
     DoesNotExist, DateTimeField, BlobField, BooleanField, create
 from homeinfo.misc import classproperty
 from homeinfo.system import run
+from homeinfo.mime import mimetype
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from homeinfo.crm.company import Company
@@ -15,7 +16,6 @@ from .abc import TermgrModel
 from .config import net, openvpn
 from .dom import Class as ClassDOM, Domain as DomainDOM,\
     Screenshot as ScreenshotDOM
-from homeinfolib.mime import mimetype
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
