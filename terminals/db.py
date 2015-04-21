@@ -16,7 +16,7 @@ from homeinfo.crm.company import Company
 from .abc import TermgrModel
 from .config import net, openvpn
 from .dom import Class as ClassDOM, Domain as DomainDOM,\
-    Screenshot as ScreenshotDOM
+    Screenshot as ScreenshotDOM, Terminal as TerminalDOM, TerminalDetail
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -274,6 +274,14 @@ class Terminal(TermgrModel):
             return False
         else:
             return run([build_script, key_file_name])
+
+    def todom(self, details=None):
+        """Converts the database model into a DOM model"""
+        if details is None:
+            terminal = TerminalDOM()
+        else:
+            terminal = TerminalDetail()
+        return terminal
 
 
 @create
