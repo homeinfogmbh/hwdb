@@ -109,7 +109,7 @@ class Terminal(TermgrModel):
     cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
     """The terminal's class"""
     domain = ForeignKeyField(Domain, db_column='domain',
-                              related_name='terminals')
+                             related_name='terminals')
     """The terminal's domain"""
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
     """The terminal's clear-text htpasswd-password"""
