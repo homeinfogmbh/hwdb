@@ -7,6 +7,7 @@ setup(
     version='1.0.0-1',
     author='Richard Neumann',
     author_email='r.neumann@homeinfo.de',
+    package_dir={'homeinfo': ''},
     packages=['homeinfo.terminals'],
     requires=['peewee'],
     data_files=[('/usr/local/etc', ['files/usr/local/etc/terminallib.conf'])],
