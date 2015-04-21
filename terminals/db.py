@@ -200,14 +200,19 @@ class Terminal(TermgrModel):
                 return tid
 
     @property
+    def cid(self):
+        """Returns the customer identifier"""
+        return self.customer.id
+
+    @property
     def idents(self):
         """Returns the terminals identifiers"""
-        return (self.tid, self.customer.id)
+        return (self.tid, self.cid)
 
     @property
     def hostname(self):
         """Generates and returns the terminal's host name"""
-        return '.'.join([str(self.tid), str(self.customer.id),
+        return '.'.join([str(self.tid), str(self.cid),
                          self.domain.name])
 
     @property
