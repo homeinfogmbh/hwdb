@@ -11,7 +11,7 @@ setup(
     packages=['homeinfo.terminals'],
     requires=['peewee'],
     data_files=[('/usr/local/etc', ['files/usr/local/etc/terminallib.conf']),
-                ('/usr/local/sbin', ['files/usr/local/sbin/build-key-auto']),
+                ('/usr/local/sbin', ['files/usr/local/sbin/build-key-terminal']),
                 ('/usr/local/share/terminals',
                  ['files/usr/local/share/terminals/pacman.conf.temp',
                   'files/usr/local/share/terminals/openvpn.conf.temp'])],
