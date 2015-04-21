@@ -5,7 +5,8 @@ from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
-    DoesNotExist, DateTimeField, BlobField, BooleanField, create
+    DoesNotExist, DateTimeField, BlobField, BooleanField, create,\
+    PrimaryKeyField
 from homeinfo.misc import classproperty
 from homeinfo.system import run
 from homeinfo.mime import mimetype
@@ -27,6 +28,8 @@ __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
 class Class(TermgrModel):
     """Terminal classes"""
 
+    id = PrimaryKeyField()
+    """The table's primary key"""
     name = CharField(32)
     """The class' name"""
     touch = BooleanField()
@@ -58,7 +61,10 @@ class Class(TermgrModel):
 class Domain(TermgrModel):
     """Terminal domains"""
 
+    id = PrimaryKeyField()
+    """The table's primary key"""
     _fqdn = CharField(32, db_column='fqdn')
+    """The domain's fully qulaifited domain name"""
 
     @classmethod
     def add(cls, fqdn):
@@ -101,6 +107,8 @@ class Domain(TermgrModel):
 class Terminal(TermgrModel):
     """A physical terminal out in the field"""
 
+    id = PrimaryKeyField()
+    """The table's primary key"""
     customer = ForeignKeyField(Customer, db_column='customer',
                                related_name='terminals')
     """The customer this terminal belongs to"""
