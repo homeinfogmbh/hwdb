@@ -5,9 +5,8 @@ from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
-    DoesNotExist, DateTimeField, BlobField, BooleanField
-from homeinfo.db import create, connection
-from homeinfo.lib import classproperty
+    DoesNotExist, DateTimeField, BlobField, BooleanField, create
+from homeinfo.misc import classproperty
 from homeinfo.system import run
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
@@ -37,13 +36,13 @@ class Class(TermgrModel):
     def add(cls, class_id, class_name, touch=False):
         """Adds a terminal class"""
         try:
-            new_class = cls.iget(  # @UndefinedVariable
-                (cls.name == class_name) & (cls.touch == touch))
+            new_class = cls.get((cls.name == class_name) &
+                                (cls.touch == touch))
         except DoesNotExist:
             new_class = cls()
             new_class.name = class_name
             new_class.touch = True if touch else False
-            new_class.isave()
+            new_class.save()
         finally:
             return new_class
 
@@ -65,11 +64,11 @@ class Domain(TermgrModel):
     def add(cls, fqdn):
         """Adds a domain with a certain FQDN"""
         try:
-            domain = cls.iget(cls._fqdn == fqdn)  # @UndefinedVariable
+            domain = cls.get(cls._fqdn == fqdn)
         except DoesNotExist:
             domain = cls()
             domain.fqdn = fqdn
-            domain.isave()
+            domain.save()
         finally:
             return domain
 
@@ -107,16 +106,16 @@ class Terminal(TermgrModel):
     """The customer this terminal belongs to"""
     tid = IntegerField()
     """The terminal ID"""
-    _cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
+    cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
     """The terminal's class"""
-    _domain = ForeignKeyField(Domain, db_column='domain',
+    domain = ForeignKeyField(Domain, db_column='domain',
                               related_name='terminals')
     """The terminal's domain"""
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
     """The terminal's clear-text htpasswd-password"""
     virtual_display = IntegerField(null=True)
     """Virtual display, running on the physical terminal"""
-    _location = ForeignKeyField(Address, null=True, db_column='location')
+    location = ForeignKeyField(Address, null=True, db_column='location')
     """The address of the terminal"""
     deleted = BooleanField(default=False)
     """Flags whether the terminal is considered deleted"""
@@ -129,39 +128,37 @@ class Terminal(TermgrModel):
     @classmethod
     def used_ipv4addr(cls):
         """Yields used IPv4 addresses"""
-        for terminal in cls.iselect(True):
+        for terminal in cls.select().where(True):
             yield terminal.ipv4addr
 
     @classproperty
     @classmethod
     def hosts(cls):
         """Yields entries for /etc/hosts"""
-        for terminal in cls.iselect(True):
+        for terminal in cls.select().where(True):
             yield '\t'.join([str(terminal.ipv4addr), terminal.hostname])
 
     @classmethod
     def by_ids(cls, cid, tid, deleted=False):
         """Get a terminal by customer id and terminal id"""
-        with connection(Customer):
-            if deleted:
-                try:
-                    term = cls.iget((cls.customer == cid) & (cls.tid == tid))
-                except DoesNotExist:
-                    term = None
-            else:
-                try:
-                    term = cls.iget((cls.customer == cid) & (cls.tid == tid)
-                                    & (cls.deleted == 0))
-                except DoesNotExist:
-                    term = None
+        if deleted:
+            try:
+                term = cls.get((cls.customer == cid) & (cls.tid == tid))
+            except DoesNotExist:
+                term = None
+        else:
+            try:
+                term = cls.get((cls.customer == cid) & (cls.tid == tid) &
+                               (cls.deleted == 0))
+            except DoesNotExist:
+                term = None
         return term
 
     @classmethod
     def used_tids(cls, cid):
         """Yields used terminal IDs for a certain customer"""
-        with connection(Customer):
-            for terminal in cls.iselect(cls.customer == cid):
-                yield terminal.tid
+        for terminal in cls.select().where(cls.customer == cid):
+            yield terminal.tid
 
     @classmethod
     def gen_ipv4addr(cls, desired=None):
@@ -203,20 +200,15 @@ class Terminal(TermgrModel):
                 return tid
 
     @property
-    def cid(self):
-        """Returns the customer's ID"""
-        with connection(Customer):
-            return self.customer.id
-
-    @property
     def idents(self):
         """Returns the terminals identifiers"""
-        return (self.tid, self.cid)
+        return (self.tid, self.customer.id)
 
     @property
     def hostname(self):
         """Generates and returns the terminal's host name"""
-        return '.'.join([str(self.tid), str(self.cid), self.domain.name])
+        return '.'.join([str(self.tid), str(self.customer.id),
+                         self.domain.name])
 
     @property
     def ipv4addr(self):
@@ -227,25 +219,6 @@ class Terminal(TermgrModel):
     def ipv4addr(self, ipv4addr):
         """Sets the IPv4 address"""
         self._ipv4addr = int(ipv4addr)
-
-    @property
-    def cls(self):
-        """Returns the terminal's class"""
-        with connection(Domain):
-            return self._cls
-
-    @property
-    def domain(self):
-        """Returns the domain"""
-        with connection(Domain):
-            return self._domain
-
-    @property
-    def location(self):
-        """Returns the location of the terminal"""
-        with connection(Address):
-            location = self._location
-        return location
 
     @property
     def address(self):
@@ -280,7 +253,7 @@ class Terminal(TermgrModel):
     def gen_vpn_keys(self):
         """Generates an OpenVPN key pair for the terminal"""
         build_script = openvpn['BUILD_SCRIPT']
-        key_file_name = '.'.join([str(self.tid), str(self.cid)])
+        key_file_name = '.'.join([str(self.tid), str(self.customer.id)])
         rsa_dir = openvpn['EASY_RSA_DIR']
         keys_dir = join(rsa_dir, 'keys')
         key_file = join(keys_dir, key_file_name)
@@ -357,7 +330,7 @@ class _User(TermgrModel):
         """Authenticate with name and hashed password"""
         if passwd:
             try:
-                user = cls.iget(cls.name == name)
+                user = cls.get(cls.name == name)
             except DoesNotExist:
                 return False
             else:
@@ -421,13 +394,13 @@ class SetupOperatorTerminals(TermgrModel):
     @classmethod
     def terminals(cls, operator):
         """Yields terminals of the specified operator"""
-        for mapping in cls.iselect(cls.operator == operator):
+        for mapping in cls.select().where(cls.operator == operator):
             yield mapping.terminal
 
     @classmethod
     def operators(cls, terminal):
         """Yields operators of the specified terminal"""
-        for mapping in cls.iselect(cls.terminal == terminal):
+        for mapping in cls.select().where(cls.terminal == terminal):
             yield mapping.operator
 
 
@@ -446,11 +419,11 @@ class AdministratorTerminals(TermgrModel):
     @classmethod
     def terminals(cls, operator):
         """Yields terminals of the specified operator"""
-        for mapping in cls.iselect(cls.operator == operator):
+        for mapping in cls.select().where(cls.operator == operator):
             yield mapping.terminal
 
     @classmethod
     def operators(cls, terminal):
         """Yields operators of the specified terminal"""
-        for mapping in cls.iselect(cls.terminal == terminal):
+        for mapping in cls.select().where(cls.terminal == terminal):
             yield mapping.operator
