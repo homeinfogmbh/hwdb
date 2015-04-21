@@ -1,12 +1,12 @@
 """Library for terminal remote control"""
 
-from homeinfolib.system import run
-from .config import ssh, screenshot
-from .abc import TerminalAware
-from tempfile import NamedTemporaryFile
 from os.path import splitext
 from os import unlink
 from datetime import datetime
+from tempfile import NamedTemporaryFile
+from homeinfo.system import run
+from .config import ssh, screenshot
+from .abc import TerminalAware
 
 __date__ = "25.03.2015"
 __author__ = "Richard Neumann <r.neumann@homeinfo.de>"

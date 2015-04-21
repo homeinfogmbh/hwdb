@@ -1,7 +1,7 @@
 """Abstract base classes for terminal setup management"""
 
 from peewee import Model, MySQLDatabase
-from homeinfolib.db import improved
+from homeinfo.db import improved
 from .config import db
 
 __date__ = "23.03.2015"

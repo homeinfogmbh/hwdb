@@ -6,9 +6,9 @@ from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField,\
     DoesNotExist, DateTimeField, BlobField, BooleanField
-from homeinfolib.db import create, connection
-from homeinfolib.lib import classproperty
-from homeinfolib.system import run
+from homeinfo.db import create, connection
+from homeinfo.lib import classproperty
+from homeinfo.system import run
 from homeinfo.crm.customer import Customer
 from homeinfo.crm.address import Address
 from homeinfo.crm.company import Company
