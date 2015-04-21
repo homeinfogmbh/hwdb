@@ -144,7 +144,8 @@ class Terminal(TermgrModel):
     """The customer this terminal belongs to"""
     tid = IntegerField()
     """The terminal ID"""
-    cls = ForeignKeyField(Class, db_column='cls', related_name='terminals')
+    class_ = ForeignKeyField(Class, db_column='class',
+                             related_name='terminals')
     """The terminal's class"""
     domain = ForeignKeyField(Domain, db_column='domain',
                              related_name='terminals')
