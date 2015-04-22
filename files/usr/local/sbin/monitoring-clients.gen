@@ -48,7 +48,7 @@ def mkgroups():
         """Renders host groups"""
         rendered = template.replace('%NAME%', name)
         rendered = rendered.replace('%FULL_NAME%', full_name)
-        rendered = rendered.replace('%MEMBERS%', ' '.join(memebers))
+        rendered = rendered.replace('%MEMBERS%', ','.join(memebers))
         return rendered
 
     conf_path = join(monitoring['CONF_DIR'], monitoring['GROUPS_FILE_NAME'])
