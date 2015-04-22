@@ -7,6 +7,7 @@ import tarfile
 from .config import openvpn
 from .abc import TerminalAware
 from .err import KeygenError, UnconfiguredError
+from os.path import dirname
 
 __date__ = "10.03.2015"
 __author__ = "Richard Neumann <r.neumann@homeinfo.de>"
@@ -24,7 +25,7 @@ class OpenVPNKeyMgr(TerminalAware):
     @property
     def key_dir(self):
         """Returns the VPN keys' directory"""
-        return join(openvpn['EASY_RSA_DIR'], 'keys')
+        return join(dirname(openvpn['EASY_RSA_DIR']), 'keys')
 
     @property
     def crt_file(self):
