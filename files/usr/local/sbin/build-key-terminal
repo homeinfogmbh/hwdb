@@ -11,6 +11,5 @@
 BASE="${1}"
 shift
 cd "${BASE}"
-export EASY_RSA="${EASY_RSA:-.}"
 source ./vars
-./pkitool $*
+./pkitool $@
