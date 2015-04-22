@@ -83,9 +83,9 @@ def mkgroups():
     # Fetch customers
     for terminal in Terminal.select().where(Terminal.deleted == 0):
         if terminal.customer.id in customers:
-            customers[terminal.customers.id][1].append(terminal)
+            customers[terminal.customer.id][1].append(terminal)
         else:
-            customers[terminal.customers.id] = [terminal.customer, [terminal]]
+            customers[terminal.customer.id] = [terminal.customer, [terminal]]
     # Fetch member terminals
     for cid in customers:
         customer = customers[cid][0]
