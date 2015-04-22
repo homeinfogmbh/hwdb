@@ -10,6 +10,8 @@ from homeinfo.terminals.config import monitoring
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '22.04.2015'
 
+conf_file_path = join(monitoring['CONF_DIR'], monitoring['CONF_FILE_NAME'])
+
 with open(monitoring['CONF_TEMPLATE']) as temp:
     template = temp.read()
 
@@ -29,7 +31,10 @@ for terminal in Terminal.select().where(Terminal.deleted == 0):
     alias = host_name
     address = str(terminal.ipv4addr)
     groups = [terminal.class_.name]
-    data = header + '\t'.join(['ifconfig-push', terminal.hostname, network])
-    file_path = join(openvpn['CLIENTS_DIR'], repr(terminal))
-    with open(file_path, 'w') as cfg:
-        cfg.write(data + '\n')
+    data += '\n# ' + host_name
+    data += '\n'
+    data += render(host_name, alias, address, groups)
+    data += '\n'
+
+with open(conf_file_path, 'w') as cfg:
+    cfg.write(data)
