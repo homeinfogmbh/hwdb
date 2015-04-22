@@ -89,7 +89,7 @@ def mkgroups():
     # Fetch member terminals
     for cid in customers:
         customer = customers[cid][0]
-        members = [str(terminal.hostname) for terminal in customers[customer][1]]
+        members = [str(terminal.hostname) for tuple in customers[cid][1]]
         name = str(customer.id)
         full_name = customer.name
         data += '\n# ' + full_name
