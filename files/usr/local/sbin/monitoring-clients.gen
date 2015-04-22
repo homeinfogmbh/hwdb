@@ -51,7 +51,7 @@ def mkgroups():
         rendered = rendered.replace('%MEMBERS%', name)
         return rendered
 
-    conf_path = join(monitoring['CONF_DIR'], monitoring['GROUP_FILE_NAME'])
+    conf_path = join(monitoring['CONF_DIR'], monitoring['GROUPS_FILE_NAME'])
 
     with open(monitoring['GROUP_TEMPLATE']) as temp:
         template = temp.read()
