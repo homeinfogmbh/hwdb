@@ -114,6 +114,13 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
+                <xs:attribute name="full_name" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            A verbose name
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="touch" type="xs:boolean" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">

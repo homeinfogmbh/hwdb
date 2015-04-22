@@ -43,18 +43,21 @@ class Class(TermgrModel):
 
     name = CharField(32)
     """The class' name"""
+    full_name = CharField(32)
+    """The class' verbose name"""
     touch = BooleanField()
     """Flag, whether it is a class with touch-display"""
 
     @classmethod
-    def add(cls, class_id, class_name, touch=False):
+    def add(cls, name, full_name=None, touch=False):
         """Adds a terminal class"""
         try:
-            new_class = cls.get((cls.name == class_name) &
+            new_class = cls.get((cls.name == name) &
                                 (cls.touch == touch))
         except DoesNotExist:
             new_class = cls()
-            new_class.name = class_name
+            new_class.name = name
+            new_class.full_name = full_name
             new_class.touch = True if touch else False
             new_class.save()
         finally:
@@ -65,6 +68,7 @@ class Class(TermgrModel):
         class_ = ClassDOM(self.name)
         class_.id = self.id
         class_.touch = self.touch
+        class_.full_name = self.full_name
         return class_
 
 

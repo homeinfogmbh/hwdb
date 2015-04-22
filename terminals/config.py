@@ -11,6 +11,7 @@ config = ConfigParser()
 config.read(CONFIG_FILE)
 
 db = config['db']
+monitoring = config['monitoring']
 net = config['net']
 openvpn = config['openvpn']
 pacman = config['pacman']
