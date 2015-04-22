@@ -63,7 +63,7 @@ def mkgroups():
         members = []
         for terminal in class_.terminals:
             if not terminal.deleted:
-                member = str(terminal.ipv4addr)
+                member = str(terminal.hostname)
                 members.append(member)
 
         name = class_.name
