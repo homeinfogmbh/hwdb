@@ -6,7 +6,7 @@ __date__ = '12.12.2014'
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __all__ = ['db', 'net', 'openvpn', 'pacman', 'screenshot', 'ssh']
 
-CONFIG_FILE = '/usr/local/etc/terminallib.conf'
+CONFIG_FILE = '/usr/local/etc/terminals.conf'
 config = ConfigParser()
 config.read(CONFIG_FILE)
 

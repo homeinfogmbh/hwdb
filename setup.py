@@ -10,7 +10,7 @@ setup(
     package_dir={'homeinfo': ''},
     packages=['homeinfo.terminals'],
     requires=['peewee'],
-    data_files=[('/usr/local/etc', ['files/usr/local/etc/terminallib.conf']),
+    data_files=[('/usr/local/etc', ['files/usr/local/etc/terminals.conf']),
                 ('/usr/local/sbin',
                  ['files/usr/local/sbin/build-key-terminal',
                   'files/usr/local/sbin/hosts.gen',
