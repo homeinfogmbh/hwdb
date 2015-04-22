@@ -20,3 +20,6 @@ for terminal in Terminal.select().where(Terminal.deleted == 0):
     file_path = join(openvpn['CLIENTS_DIR'], repr(terminal))
     with open(file_path, 'w') as cfg:
         cfg.write(data + '\n')
+
+print('Restarting OpenVPN', end='                                            ')
+evaluate(run('/usr/bin/systemctl restart openvpn@terminals.service'))

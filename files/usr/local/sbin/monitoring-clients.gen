@@ -5,6 +5,7 @@ from HOMEINFO terminal records
 
 from os.path import join
 from homeinfo.crm.customer import Customer
+from homeinfo.system import run
 from homeinfo.terminals.db import Terminal, Class
 from homeinfo.terminals.config import monitoring
 
@@ -98,3 +99,5 @@ def mkgroups():
 
 mkhosts()
 mkgroups()
+print('Restarting nagios3 service', end='                                    ')
+evaluate(run('systemctl restart nagios3.service'))
