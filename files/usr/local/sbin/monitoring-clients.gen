@@ -5,7 +5,7 @@ from HOMEINFO terminal records
 
 from os.path import join
 from homeinfo.crm.customer import Customer
-from homeinfo.system import run
+from homeinfo.system import run, evaluate
 from homeinfo.terminals.db import Terminal, Class
 from homeinfo.terminals.config import monitoring
 
