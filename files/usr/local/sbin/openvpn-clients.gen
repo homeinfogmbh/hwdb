@@ -4,7 +4,7 @@ pushs from HOMEINFO terminal records
 """
 
 from os.path import join
-from homeinfo.system import evaluate
+from homeinfo.system import run, evaluate
 from homeinfo.terminals.db import Terminal
 from homeinfo.terminals.config import net, openvpn
 
