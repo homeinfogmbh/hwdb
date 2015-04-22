@@ -73,10 +73,12 @@ def mkgroups():
 
         name = class_.name
         full_name = class_.full_name
-        data += '\n# ' + full_name
-        data += '\n'
-        data += render(template, name, full_name, members)
-        data += '\n'
+        rendered = render(template, name, full_name, members)
+        if rendered:
+            data += '\n# ' + full_name
+            data += '\n'
+            data += rendered
+            data += '\n'
 
     # Customer groups
     customers = {}
