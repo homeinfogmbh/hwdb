@@ -92,10 +92,12 @@ def mkgroups():
         members = [str(terminal.hostname) for terminal in customers[cid][1]]
         name = str(customer.id)
         full_name = customer.name
-        data += '\n# ' + full_name
-        data += '\n'
-        data += render(template, name, full_name, members)
-        data += '\n'
+        rendered = render(template, name, full_name, members)
+        if rendered:
+            data += '\n# ' + full_name
+            data += '\n'
+            data += rendered
+            data += '\n'
 
     with open(conf_path, 'w') as cfg:
         cfg.write(data)
