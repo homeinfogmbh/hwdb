@@ -23,4 +23,4 @@ for terminal in Terminal.select().where(Terminal.deleted == 0):
         cfg.write(data + '\n')
 
 print('Restarting OpenVPN', end='                      ')
-evaluate(run('/usr/bin/systemctl restart openvpn@terminals.service'))
+evaluate(run('/usr/bin/systemctl restart openvpn@terminals.service', shell=True))
