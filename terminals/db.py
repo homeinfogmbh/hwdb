@@ -278,8 +278,6 @@ class Terminal(TermgrModel):
         rsa_dir = openvpn['EASY_RSA_DIR']
         keys_dir = join(dirname(rsa_dir), 'keys')
         key_file_path = join(keys_dir, key_file_name)
-        print('Key file path:', key_file_path)
-        print('Exec:', [build_script, rsa_dir, key_file_name])
         if isfile(key_file_path):
             return False
         else:
