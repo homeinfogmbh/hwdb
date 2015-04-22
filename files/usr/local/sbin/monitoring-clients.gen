@@ -80,13 +80,16 @@ def mkgroups():
         data += '\n'
 
     # Customer groups
-    for customer in Customer.select().where(True):
-        members = []
-        for terminal in customer.terminals:
-            if not terminal.deleted:
-                member = str(terminal.hostname)
-                members.append(member)
-
+    customers = {}
+    # Fetch customers
+    for terminal in Terminal.select().where(Terminal.deleted == 0):
+        if terminal.customer in customers:
+            customers[terminal.customers].append(terminal)
+        else:
+            customers[terminal.customers] = [terminal]
+    # Fetch member terminals
+    for customer in customers:
+        members = [str(terminal.hostname) for terminal in customers[customer]]
         name = str(customer.id)
         full_name = customer.name
         data += '\n# ' + full_name
