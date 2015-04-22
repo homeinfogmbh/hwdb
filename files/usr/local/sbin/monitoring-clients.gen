@@ -4,7 +4,6 @@ from HOMEINFO terminal records
 """
 
 from os.path import join
-from homeinfo.crm.customer import Customer
 from homeinfo.system import run, evaluate
 from homeinfo.terminals.db import Terminal, Class
 from homeinfo.terminals.config import monitoring
@@ -83,13 +82,14 @@ def mkgroups():
     customers = {}
     # Fetch customers
     for terminal in Terminal.select().where(Terminal.deleted == 0):
-        if terminal.customer in customers:
-            customers[terminal.customers].append(terminal)
+        if terminal.customer.id in customers:
+            customers[terminal.customers.id][1].append(terminal)
         else:
-            customers[terminal.customers] = [terminal]
+            customers[terminal.customers.id] = [customer, [terminal]]
     # Fetch member terminals
-    for customer in customers:
-        members = [str(terminal.hostname) for terminal in customers[customer]]
+    for cid in customers:
+        customer = customers[cid][0]
+        members = [str(terminal.hostname) for terminal in customers[customer][1]]
         name = str(customer.id)
         full_name = customer.name
         data += '\n# ' + full_name
