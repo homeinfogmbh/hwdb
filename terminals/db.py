@@ -1,6 +1,6 @@
 """Terminal data storage"""
 
-from os.path import isfile, join, dirname
+from os.path import isfile, join
 from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
@@ -276,7 +276,7 @@ class Terminal(TermgrModel):
         build_script = openvpn['BUILD_SCRIPT']
         key_file_name = '.'.join([str(self.tid), str(self.customer.id)])
         rsa_dir = openvpn['EASY_RSA_DIR']
-        keys_dir = join(dirname(rsa_dir), 'keys')
+        keys_dir = openvpn['KEYS_DIR']
         key_file_path = join(keys_dir, key_file_name)
         if isfile(key_file_path):
             return False
