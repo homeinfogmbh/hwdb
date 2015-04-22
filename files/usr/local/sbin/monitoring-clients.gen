@@ -46,7 +46,7 @@ def mkgroups():
 
     def render(template, name, full_name, memebers):
         """Renders host groups"""
-        rendered = group_template.replace('%NAME%', name)
+        rendered = template.replace('%NAME%', name)
         rendered = rendered.replace('%FULL_NAME%', name)
         rendered = rendered.replace('%MEMBERS%', name)
         return rendered
