@@ -29,11 +29,11 @@ class Rotation():
             double = 2 * pi
             if int(double) == double:
                 self._pi = self._chkval(2 * pi, [2 * val for val in
-                                                 self._VALID_DEGREES]) / 2
+                                                 self._VALID_PI_MULTIS]) / 2
                 self._degrees = None
             else:
                 raise ValueError(' '.join(['Value must be a multiple of:',
-                                           str(self._VALID_DEGREES)]))
+                                           str(self._VALID_PI_MULTIS)]))
 
     def __repr__(self):
         """Converts the rotation to a string"""
