@@ -80,7 +80,8 @@ class Rotation():
         if value == 0:
             return 0
         else:
-            for valid_value in [val for val in valid_values if val != 0]:
+            for valid_value in [val for val in reversed(valid_values)
+                                if val != 0]:
                 if value % valid_value == 0:
                     valid = True
                     break
