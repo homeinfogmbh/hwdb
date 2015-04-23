@@ -23,15 +23,18 @@ class Rotation():
         elif degrees is not None and pi is not None:
             raise ValueError('Must specify either degrees or pi')
         elif degrees:
-            self._degrees = self._chkval(degrees, self._VALID_DEGREES)
-            self._pi = None
+            if degrees in self._VALID_DEGREES:
+                self._degrees = degrees
+                self._pi = None
+            else:
+                raise ValueError(' '.join(['Degrees must be one of:',
+                                           str(self._VALID_DEGREES)]))
         elif pi:
-            double = 2 * pi
-            if int(double) == double:
-                self._pi = self._chkval(pi, self._VALID_PI_MULTIS)
+            if pi in self._VALID_PI_MULTIS:
+                self._pi = pi
                 self._degrees = None
             else:
-                raise ValueError(' '.join(['Value must be a multiple of:',
+                raise ValueError(' '.join(['Pi multiplier must be one of:',
                                            str(self._VALID_PI_MULTIS)]))
 
     def __repr__(self):
@@ -71,22 +74,3 @@ class Rotation():
             return self._pi
         else:
             return self._degrees / 180
-
-    def _chkval(self, value, valid_values):
-        """Check whether a value
-        is a multiple of valid integers
-        """
-        valid = False
-        if value == 0:
-            return 0
-        else:
-            for valid_value in [val for val in reversed(valid_values)
-                                if val != 0]:
-                if value % valid_value == 0:
-                    valid = True
-                    break
-            if valid:
-                return valid_value
-            else:
-                raise ValueError(' '.join(['Value must be a multiple of:',
-                                           str(valid_values)]))
