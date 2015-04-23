@@ -22,14 +22,14 @@ class Rotation():
             raise ValueError('Must specify either degrees or pi')
         elif degrees is not None and pi is not None:
             raise ValueError('Must specify either degrees or pi')
-        elif degrees:
+        elif degrees is not None:
             if degrees in self._VALID_DEGREES:
                 self._degrees = degrees
                 self._pi = None
             else:
                 raise ValueError(' '.join(['Degrees must be one of:',
                                            str(self._VALID_DEGREES)]))
-        elif pi:
+        else:
             if pi in self._VALID_PI_MULTIS:
                 self._pi = pi
                 self._degrees = None
@@ -41,14 +41,14 @@ class Rotation():
         """Converts the rotation to a string"""
         if self._degrees is not None:
             return str(self._degrees)
-        elif self._pi is not None:
+        else:
             return str(self._pi)
 
     def __str__(self):
         """Converts the rotation to a string"""
         if self._degrees is not None:
             return str(self._degrees) + '°'
-        elif self._pi is not None:
+        else:
             return str(self._pi) + ' π'
 
     def __int__(self):
