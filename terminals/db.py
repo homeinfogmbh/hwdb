@@ -184,7 +184,7 @@ class Terminal(TermgrModel):
         else:
             try:
                 term = cls.get((cls.customer == cid) & (cls.tid == tid) &
-                               (cls.deleted == 0))
+                               (cls.deleted >> None))
             except DoesNotExist:
                 term = None
         return term
