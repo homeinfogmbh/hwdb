@@ -78,12 +78,15 @@ class Rotation():
         is a multiple of valid integers
         """
         valid = False
-        for valid_value in valid_values:
-            if valid_value % value == 0:
-                valid = True
-                break
-        if valid:
-            return valid_value
+        if value == 0:
+            return 0
         else:
-            raise ValueError(' '.join(['Value must be a multiple of:',
-                                       str(valid_values)]))
+            for valid_value in (val for val in valid_values if val != 0):
+                if valid_value % value == 0:
+                    valid = True
+                    break
+            if valid:
+                return valid_value
+            else:
+                raise ValueError(' '.join(['Value must be a multiple of:',
+                                           str(valid_values)]))
