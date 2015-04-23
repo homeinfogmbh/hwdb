@@ -28,8 +28,7 @@ class Rotation():
         elif pi:
             double = 2 * pi
             if int(double) == double:
-                self._pi = self._chkval(2 * pi, [2 * val for val in
-                                                 self._VALID_PI_MULTIS]) / 2
+                self._pi = self._chkval(pi, self._VALID_PI_MULTIS)
                 self._degrees = None
             else:
                 raise ValueError(' '.join(['Value must be a multiple of:',
