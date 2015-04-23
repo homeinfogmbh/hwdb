@@ -298,7 +298,10 @@ class Terminal(TermgrModel):
         if rotation is None:
             self._rotation = None
         else:
-            self._rotation = rotation.degrees
+            try:
+                self._rotation = rotation.degrees
+            except AttributeError:
+                self._rotation = int(Rotation(degrees=rotation))
 
     @property
     def operators(self):
