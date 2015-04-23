@@ -79,8 +79,7 @@ class Rotation():
         """
         valid = False
         for valid_value in valid_values:
-            chk_val = valid_value % value
-            if chk_val == 0 and isinstance(chk_val, int):
+            if valid_value % value == 0:
                 valid = True
                 break
         if valid:
