@@ -1,4 +1,4 @@
-"""Terminal data storage"""
+"""Terminal library database models"""
 
 from os.path import isfile, join
 from itertools import chain
@@ -24,7 +24,7 @@ __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
 
 
 class TermgrModel(Model):
-    """Generic TermgrModel Model"""
+    """Terminal manager base Model"""
 
     class Meta:
         database = MySQLDatabase(db.get('db'),
@@ -218,6 +218,14 @@ class Terminal(TermgrModel):
                 return cls.gen_tid(cid, desired=None)
             else:
                 return tid
+
+    @classmethod
+    def by_virt(cls, cid, vid):
+        """Yields terminals of a customer that
+        run the specified virtual terminal
+        """
+        return cls.select().where((cls.customer == cid) &
+                                  (cls.virtual_display == vid))
 
     @property
     def cid(self):
