@@ -23,19 +23,9 @@ class Rotation():
         elif degrees is not None and pi is not None:
             raise ValueError('Must specify either degrees or pi')
         elif degrees is not None:
-            if degrees in self._VALID_DEGREES:
-                self._degrees = degrees
-                self._pi = None
-            else:
-                raise ValueError(' '.join(['Degrees must be one of:',
-                                           str(self._VALID_DEGREES)]))
+            self.degrees = degrees
         else:
-            if pi in self._VALID_PI_MULTIS:
-                self._pi = pi
-                self._degrees = None
-            else:
-                raise ValueError(' '.join(['Pi multiplier must be one of:',
-                                           str(self._VALID_PI_MULTIS)]))
+            self.pi = pi
 
     def __repr__(self):
         """Converts the rotation to a string"""
@@ -59,6 +49,10 @@ class Rotation():
         """Converts the rotation into a float value"""
         return self.pi * pi
 
+    def __bool__(self):
+        """Converts the rotation into a boolean value"""
+        return False if int(self) == 0 else True
+
     @property
     def degrees(self):
         """Returns the rotation in degrees"""
@@ -67,6 +61,16 @@ class Rotation():
         else:
             return int(self._pi * 180)
 
+    @degrees.setter
+    def degrees(self, degrees):
+        """Sets the amount of degrees"""
+        if degrees in self._VALID_DEGREES:
+            self._degrees = degrees
+            self._pi = None
+        else:
+            raise ValueError(' '.join(['Degrees must be one of:',
+                                       str(self._VALID_DEGREES)]))
+
     @property
     def pi(self):
         """Returns the rotation in multiples of pi"""
@@ -74,3 +78,13 @@ class Rotation():
             return self._pi
         else:
             return self._degrees / 180
+
+    @pi.setter
+    def pi(self, pi):
+        """Sets the pi multiplier"""
+        if pi in self._VALID_PI_MULTIS:
+            self._pi = pi
+            self._degrees = None
+        else:
+            raise ValueError(' '.join(['Pi multiplier must be one of:',
+                                       str(self._VALID_PI_MULTIS)]))

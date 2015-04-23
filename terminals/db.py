@@ -16,6 +16,7 @@ from homeinfo.crm.company import Company
 from .config import db, net, openvpn
 from .dom import Class as ClassDOM, Domain as DomainDOM,\
     Screenshot as ScreenshotDOM, Terminal as TerminalDOM, TerminalDetail
+from .lib import Rotation
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __date__ = '10.03.2015'
@@ -152,7 +153,7 @@ class Terminal(TermgrModel):
     weather = ForeignKeyField(Weather, null=True, db_column='weather',
                               related_name='terminals')
     """The weather configured for the respective terminal"""
-    rotation = IntegerField()
+    _rotation = IntegerField(db_column='rotation')
     """The clockwise display rotation in degrees"""
 
     def __repr__(self):
@@ -282,6 +283,16 @@ class Terminal(TermgrModel):
                 return None
             else:
                 return ', '.join([street_houseno, zip_city])
+
+    @property
+    def rotation(self):
+        """Returns the rotation"""
+        return Rotation(degrees=self._rotation)
+
+    @rotation.setter
+    def rotation(self, rotation):
+        """Sets the rotation"""
+        self._rotation = rotation.degrees
 
     @property
     def operators(self):
