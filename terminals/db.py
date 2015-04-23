@@ -287,12 +287,18 @@ class Terminal(TermgrModel):
     @property
     def rotation(self):
         """Returns the rotation"""
-        return Rotation(degrees=self._rotation)
+        if self._rotation is None:
+            return None
+        else:
+            return Rotation(degrees=self._rotation)
 
     @rotation.setter
     def rotation(self, rotation):
         """Sets the rotation"""
-        self._rotation = rotation.degrees
+        if rotation is None:
+            self._rotation = None
+        else:
+            self._rotation = rotation.degrees
 
     @property
     def operators(self):
