@@ -117,6 +117,16 @@ class Domain(TermgrModel):
 
 
 @create
+class Weather(TermgrModel):
+    """Weather data records"""
+
+    name = CharField(16)
+    """The location name"""
+    xml_file = CharField(128)
+    """The absolute path to the respective XML file"""
+
+
+@create
 class Terminal(TermgrModel):
     """A physical terminal out in the field"""
 
@@ -137,8 +147,13 @@ class Terminal(TermgrModel):
     """Virtual display, running on the physical terminal"""
     location = ForeignKeyField(Address, null=True, db_column='location')
     """The address of the terminal"""
-    deleted = BooleanField(default=False)
-    """Flags whether the terminal is considered deleted"""
+    deleted = DateTimeField(null=True, default=None)
+    """Flag and date time when and whether the terminal was deleted"""
+    weather = ForeignKeyField(Weather, null=True, db_column='weather',
+                              related_name='terminals')
+    """The weather configured for the respective terminal"""
+    rotation = IntegerField()
+    """The clockwise display rotation in degrees"""
 
     def __repr__(self):
         """Converts the terminal to a unique string"""
