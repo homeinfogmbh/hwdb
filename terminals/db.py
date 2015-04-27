@@ -336,14 +336,13 @@ class Terminal(TermgrModel):
                 rotation = True
                 rotation_degrees = rot
         knr = '='.join(['knr', str(self.customer.id)])
-        monitorid = '='.join(['monitorid', str(self.virtual_display)])
         trackingid = '='.join(['trackingid', str(trackingid)])
         mouse_visible = '='.join(['mouse_visible', str(mouse_visible).lower()])
         checkdate = '='.join(['checkdate', str(checkdate).lower()])
         rotation = '='.join(['rotation', str(rotation).lower()])
         rotation_degrees = '='.join(['rotationDegrees', str(rotation_degrees)])
-        return '\n'.join([knr, monitorid, trackingid, mouse_visible,
-                          checkdate, rotation, rotation_degrees])
+        return '\n'.join([knr, trackingid, mouse_visible, checkdate, rotation,
+                          rotation_degrees])
 
     def gen_vpn_keys(self):
         """Generates an OpenVPN key pair for the terminal"""
