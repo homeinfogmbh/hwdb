@@ -2,8 +2,6 @@
 
 from math import pi
 
-__date__ = "23.04.2015"
-__author__ = "Richard Neumann <r.neumann@homeinfo.de>"
 __all__ = ['Rotation']
 
 

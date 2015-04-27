@@ -1,7 +1,5 @@
 """Abstract base classes for the terminal management"""
 
-__author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
-__date__ = '22.04.2015'
 __all__ = ['TerminalAware']
 
 

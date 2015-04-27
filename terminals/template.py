@@ -1,7 +1,5 @@
 """Renderable template"""
 
-__date__ = '12.12.2014'
-__author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __all__ = ['Template']
 
 

@@ -4,8 +4,6 @@ from .abc import TerminalAware
 from .db import ConsoleHistory
 from .remotectrl import RemoteController
 
-__date__ = "25.03.2015"
-__author__ = "Richard Neumann <r.neumann@homeinfo.de>"
 __all__ = ['VirtualTerminal']
 
 

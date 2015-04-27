@@ -2,8 +2,6 @@
 
 from configparser import ConfigParser
 
-__date__ = '12.12.2014'
-__author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
 __all__ = ['db', 'net', 'openvpn', 'pacman', 'screenshot', 'ssh']
 
 CONFIG_FILE = '/usr/local/etc/terminals.conf'

@@ -7,19 +7,17 @@ from ipaddress import IPv4Address, AddressValueError
 from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
     BooleanField, create, PrimaryKeyField
-from homeinfo.misc import classproperty
-from homeinfo.system import run
-from homeinfo.mime import mimetype
-from homeinfo.crm.customer import Customer
-from homeinfo.crm.address import Address
-from homeinfo.crm.company import Company
+from homeinfo.lib.misc import classproperty
+from homeinfo.lib.system import run
+from homeinfo.lib.mime import mimetype
+from homeinfo.crm import Customer
+from homeinfo.crm import Address
+from homeinfo.crm import Company
 from .config import db, net, openvpn
 from .dom import Class as ClassDOM, Domain as DomainDOM,\
     Screenshot as ScreenshotDOM, Terminal as TerminalDOM, TerminalDetail
 from .lib import Rotation
 
-__author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
-__date__ = '10.03.2015'
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator']
 

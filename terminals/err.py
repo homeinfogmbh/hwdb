@@ -1,7 +1,5 @@
 """Library for terminal configuration errors"""
 
-__date__ = "23.03.2015"
-__author__ = "Richard Neumann <r.neumann@homeinfo.de>"
 __all__ = ['KeygenError', 'UnconfiguredError']
 
 

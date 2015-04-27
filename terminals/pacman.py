@@ -4,8 +4,6 @@ from .config import pacman, net
 from .abc import TerminalAware
 from .remotectrl import RemoteController
 
-__date__ = "10.03.2015"
-__author__ = "Richard Neumann <r.neumann@homeinfo.de>"
 __all__ = ['PacmanConfig']
 
 
