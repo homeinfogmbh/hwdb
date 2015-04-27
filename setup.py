@@ -11,7 +11,7 @@ setup(
     packages=['homeinfo.terminals'],
     requires=['peewee',
               'pyxb',
-              'homeinfo-lib'],
+              'homeinfo.lib'],
     data_files=[('/usr/local/etc', ['files/usr/local/etc/terminals.conf']),
                 ('/usr/local/sbin',
                  ['files/usr/local/sbin/build-key-terminal',
