@@ -83,7 +83,7 @@ def mkgroups():
     # Customer groups
     customers = {}
     # Fetch customers
-    for terminal in Terminal.select().where(Terminal.deleted == 0):
+    for terminal in Terminal.select().where(Terminal.deleted >> None):
         if terminal.customer.id in customers:
             customers[terminal.customer.id][1].append(terminal)
         else:
