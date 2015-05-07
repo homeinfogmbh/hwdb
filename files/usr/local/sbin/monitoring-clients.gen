@@ -4,7 +4,7 @@ from HOMEINFO terminal records
 """
 
 from os.path import join
-from homeinfo.system import run, evaluate
+from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal, Class
 from homeinfo.terminals.config import monitoring
 
