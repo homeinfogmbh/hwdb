@@ -316,7 +316,7 @@ class Terminal(TermgrModel):
         return chain(AdministratorTerminals.operators(self),
                      Administrator.root)
 
-    def appconf(self, trackingid=42, checkdate=False):
+    def appconf(self, checkdate=False):
         """Generates the content for the config.ini, respectively
         the application.conf configuration file for the application
         """
@@ -336,12 +336,14 @@ class Terminal(TermgrModel):
                 rotation = True
                 rotation_degrees = rot
         knr = '='.join(['knr', str(self.customer.id)])
-        trackingid = '='.join(['trackingid', str(trackingid)])
+        tracking_id = self.customer.piwik_tracking_id
+        tracking_id = '='.join(['trackingid', str(tracking_id) if
+                                tracking_id is not None else 42])
         mouse_visible = '='.join(['mouse_visible', str(mouse_visible).lower()])
         checkdate = '='.join(['checkdate', str(checkdate).lower()])
         rotation = '='.join(['rotation', str(rotation).lower()])
         rotation_degrees = '='.join(['rotationDegrees', str(rotation_degrees)])
-        return '\n'.join([knr, trackingid, mouse_visible, checkdate, rotation,
+        return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
                           rotation_degrees])
 
     def gen_vpn_keys(self):
