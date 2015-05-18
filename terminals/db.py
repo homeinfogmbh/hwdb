@@ -338,7 +338,7 @@ class Terminal(TermgrModel):
         knr = '='.join(['knr', str(self.customer.id)])
         tracking_id = self.customer.piwik_tracking_id
         tracking_id = '='.join(['trackingid', str(tracking_id) if
-                                tracking_id is not None else 42])
+                                tracking_id is not None else '42'])
         mouse_visible = '='.join(['mouse_visible', str(mouse_visible).lower()])
         checkdate = '='.join(['checkdate', str(checkdate).lower()])
         rotation = '='.join(['rotation', str(rotation).lower()])
