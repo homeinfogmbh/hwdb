@@ -16,9 +16,9 @@ def mkhosts():
 
     def render(tid, cid, template, host_name, alias, address):
         """Renders the template with the respective data"""
-        rendered = rendered.replace('%TID%', str(tid))
+        rendered = template.replace('%TID%', str(tid))
         rendered = rendered.replace('%CID%', str(cid))
-        rendered = template.replace('%HOST_NAME%', host_name)
+        rendered = rendered.replace('%HOST_NAME%', host_name)
         rendered = rendered.replace('%ALIAS%', alias)
         rendered = rendered.replace('%ADDRESS%', address)
         rendered = rendered.replace('%OS%', 'linux')  # TODO: Make dynamic
