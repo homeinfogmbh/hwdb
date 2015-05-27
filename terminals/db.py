@@ -26,10 +26,9 @@ class TermgrModel(Model):
     """Terminal manager base Model"""
 
     class Meta:
-        database = MySQLDatabase(db.get('db'),
-                                 host=db.get('host'),
-                                 user=db.get('user'),
-                                 passwd=db.get('passwd'))
+        database = MySQLDatabase(
+            db.get('db'), host=db.get('host'), user=db.get('user'),
+            passwd=db.get('passwd'))
         schema = database.database
 
     id = PrimaryKeyField()
