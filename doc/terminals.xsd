@@ -305,21 +305,21 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="code" type="xs:byte">
+            <xs:element name="exit_code" type="xs:byte">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
                         The return code
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="stdout" type="xs:string">
+            <xs:element name="stdout" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
                         Text of the STDOUT
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="stderr" type="xs:string">
+            <xs:element name="stderr" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
                         Text of the STDERR

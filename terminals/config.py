@@ -2,7 +2,7 @@
 
 from configparser import ConfigParser
 
-__all__ = ['db', 'net', 'openvpn', 'pacman', 'screenshot', 'ssh']
+__all__ = ['db', 'monitoring', 'net', 'openvpn', 'pacman', 'screenshot', 'ssh']
 
 CONFIG_FILE = '/usr/local/etc/terminals.conf'
 config = ConfigParser()

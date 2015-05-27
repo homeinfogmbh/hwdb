@@ -1,10 +1,10 @@
 """Library for terminal remote control"""
 
-from os.path import splitext
-from os import unlink
+from os.path import splitext, join
 from datetime import datetime
 from tempfile import NamedTemporaryFile
-from homeinfo.lib.system import run
+from itertools import chain
+from homeinfo.lib.system import run, ProcessResult
 from .config import ssh, screenshot
 from .abc import TerminalAware
 
@@ -14,29 +14,60 @@ __all__ = ['RemoteController']
 class RemoteController(TerminalAware):
     """Controls a terminal remotely"""
 
+    # Options for SSH to trick it into not checking the host key
+    _SSH_OPTS = {'UserKnownHostsFile': '/dev/null',
+                 'StrictHostKeyChecking': 'no'}
+
+    def __init__(self, user, terminal, keyfile=None):
+        """Initializes a remote terminal controller"""
+        super().__init__(terminal)
+        self._user = user
+        self._keyfile = keyfile
+
+    @property
+    def user(self):
+        """Returns the user name"""
+        return self._user
+
+    @property
+    def keyfile(self):
+        """Returns the path to the SSH key file"""
+        return self._keyfile or join(
+            '', 'home', self.user, '.ssh', 'terminals')
+
     @property
     def _identity_file(self):
         """Returns the SSH identity file argument
         with the respective identity file's path
         """
-        return ' '.join(['-i', ssh['PRIVATE_KEY_TERMGR']])
+        return ' '.join(['-i', self.keyfile])
 
     @property
-    def _remote_shell(self):
+    def _ssh_opts(self):
+        """Returns options for SSH"""
+        return ' '.join([
+            ' '.join(['-o', '='.join([key, self._SSH_OPTS[key]])])
+            for key in self._SSH_OPTS])
+
+    @property
+    def _ssh_cmd(self):
+        """Returns the SSH basic command line"""
+        return ' '.join([ssh['SSH_BIN'], self._identity_file,
+                         self._ssh_options])
+
+    @property
+    def _rsync_shell(self):
         """Returns the rsync remote shell"""
-        return ' '.join(['-e', ''.join(['"', ssh['SSH_BIN']]),
-                         ''.join([self._identity_file, '"'])])
+        return ' '.join(['-e', ''.join(['"', self._ssh_cmd, '"'])])
 
     @property
     def _user_host(self):
         """Returns the respective user@host string"""
-        return '@'.join([ssh['USER'], str(self.terminal.ipv4addr)])
+        return '@'.join([self.user, str(self.terminal.ipv4addr)])
 
-    def _remote(self, cmd):
+    def _remote(self, cmd, *args):
         """Makes a command remote"""
-        return ' '.join([ssh['SSH_BIN'], self._identity_file,
-                         self._user_host,
-                         ''.join(['"', cmd, '"'])])
+        return ' '.join(chain([self._ssh_cmd, self._user_host, cmd], args))
 
     def _remote_file(self, src):
         """Returns a remote file path"""
@@ -76,7 +107,7 @@ class RemoteController(TerminalAware):
         """Returns a thumbnail of a screenshot"""
         return self.get_screenshot(thumbnail=True)
 
-    def get_screenshot(self, thumbnail=False):
+    def get_screenshot(self, full=True, thumbnail=False):
         """Creates a screenshot on the terminal and
         fetches its content to the local machine
         """
@@ -93,21 +124,19 @@ class RemoteController(TerminalAware):
         else:
             return None
 
-    def execute(self, cmd):
+    def execute(self, cmd, *args):
         """Executes a certain command on a remote terminal"""
-        return run(self._remote(cmd), shell=True)
+        if self._check_command(cmd, *args):
+            return run(self._remote(cmd), shell=True)
+        else:
+            return ProcessResult(3, stderr='Command not allowed.'.encode())
 
     def getfile(self, file):
         """Gets a file from a remote terminal"""
-        with NamedTemporaryFile('wb', delete=False) as tmp:
-            temp_name = tmp.name
-        try:
+        with NamedTemporaryFile('rb') as tmp:
             rsync = self._rsync(file, tmp.name)
             pr = run(rsync, shell=True)
             if pr:
-                with open(temp_name, 'rb') as tmp:
-                    return tmp.read()
+                return tmp.read()
             else:
                 return pr
-        finally:
-            unlink(temp_name)
