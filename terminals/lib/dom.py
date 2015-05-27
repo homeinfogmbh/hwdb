@@ -1,7 +1,7 @@
 # ./dom.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-05-27 15:44:51.360691 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-05-27 16:47:23.625704 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -15,7 +15,7 @@ import sys
 import pyxb.utils.six as _six
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:8c65a25a-0476-11e5-9597-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:48ec0e5c-047f-11e5-8326-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -491,11 +491,11 @@ class TerminalResult (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.anyType
     
-    # Element code uses Python identifier code
-    __code = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'code'), 'code', '__httpxml_homeinfo_deschematerminallib_TerminalResult_code', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 308, 12), )
+    # Element exit_code uses Python identifier exit_code
+    __exit_code = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'exit_code'), 'exit_code', '__httpxml_homeinfo_deschematerminallib_TerminalResult_exit_code', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 308, 12), )
 
     
-    code = property(__code.value, __code.set, None, '\n                        The return code\n                    ')
+    exit_code = property(__exit_code.value, __exit_code.set, None, '\n                        The return code\n                    ')
 
     
     # Element stdout uses Python identifier stdout
@@ -536,7 +536,7 @@ class TerminalResult (pyxb.binding.basis.complexTypeDefinition):
     tid = property(__tid.value, __tid.set, None, '\n                    The terminal ID\n                ')
 
     _ElementMap.update({
-        __code.name() : __code,
+        __exit_code.name() : __exit_code,
         __stdout.name() : __stdout,
         __stderr.name() : __stderr
     })
@@ -1131,7 +1131,7 @@ WebConsole._Automaton = _BuildAutomaton_3()
 
 
 
-TerminalResult._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'code'), pyxb.binding.datatypes.byte, scope=TerminalResult, documentation='\n                        The return code\n                    ', location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 308, 12)))
+TerminalResult._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'exit_code'), pyxb.binding.datatypes.byte, scope=TerminalResult, documentation='\n                        The return code\n                    ', location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 308, 12)))
 
 TerminalResult._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'stdout'), pyxb.binding.datatypes.string, scope=TerminalResult, documentation='\n                        Text of the STDOUT\n                    ', location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 315, 12)))
 
@@ -1144,28 +1144,40 @@ def _BuildAutomaton_4 ():
     import pyxb.utils.fac as fac
 
     counters = set()
+    cc_0 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 315, 12))
+    counters.add(cc_0)
+    cc_1 = fac.CounterCondition(min=0, max=1, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 322, 12))
+    counters.add(cc_1)
     states = []
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalResult._UseForTag(pyxb.namespace.ExpandedName(None, 'code')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 308, 12))
+    final_update = set()
+    symbol = pyxb.binding.content.ElementUse(TerminalResult._UseForTag(pyxb.namespace.ExpandedName(None, 'exit_code')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 308, 12))
     st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
     states.append(st_0)
-    final_update = None
+    final_update = set()
+    final_update.add(fac.UpdateInstruction(cc_0, False))
     symbol = pyxb.binding.content.ElementUse(TerminalResult._UseForTag(pyxb.namespace.ExpandedName(None, 'stdout')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 315, 12))
     st_1 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_1)
     final_update = set()
+    final_update.add(fac.UpdateInstruction(cc_1, False))
     symbol = pyxb.binding.content.ElementUse(TerminalResult._UseForTag(pyxb.namespace.ExpandedName(None, 'stderr')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 322, 12))
     st_2 = fac.State(symbol, is_initial=False, final_update=final_update, is_unordered_catenation=False)
     states.append(st_2)
     transitions = []
     transitions.append(fac.Transition(st_1, [
          ]))
-    st_0._set_transitionSet(transitions)
-    transitions = []
     transitions.append(fac.Transition(st_2, [
          ]))
+    st_0._set_transitionSet(transitions)
+    transitions = []
+    transitions.append(fac.Transition(st_1, [
+        fac.UpdateInstruction(cc_0, True) ]))
+    transitions.append(fac.Transition(st_2, [
+        fac.UpdateInstruction(cc_0, False) ]))
     st_1._set_transitionSet(transitions)
     transitions = []
+    transitions.append(fac.Transition(st_2, [
+        fac.UpdateInstruction(cc_1, True) ]))
     st_2._set_transitionSet(transitions)
     return fac.Automaton(states, counters, False, containing_state=None)
 TerminalResult._Automaton = _BuildAutomaton_4()
