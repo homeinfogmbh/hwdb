@@ -17,9 +17,10 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice>
-                <xs:element name="list" type="TerminalList"/>
+                <xs:element name="terminal" type="BasicTerminalInfo" maxOccurs="unbounded"/>
                 <xs:element name="details" type="TerminalDetails"/>
                 <xs:element name="console" type="WebConsole"/>
+                <xs:element name="screenshot" type="Screenshot"/>
                 <xs:element name="class" type="Class" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="domain" type="Domain" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="setup_operator" type="SetupOperator" minOccurs="0" maxOccurs="unbounded"/>
@@ -36,21 +37,8 @@
     </xs:complexType>
 
 
-    <!-- A list of terminal data -->
-    <xs:complexType name="TerminalList">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">
-                Terminal data for a certain customer
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="terminal" type="TerminalShortInfo" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:complexType>
-
-
-    <!-- Basic terminal information -->
-    <xs:complexType name="BasicTerminalInfo" abstract="true">
+    <!-- Basic terminal information for listing -->
+    <xs:complexType name="BasicTerminalInfo">
         <xs:annotation>
             <xs:documentation xml:lang="en">
                 Basic terminal information
@@ -117,23 +105,6 @@
     </xs:complexType>
 
 
-    <!-- Terminal short list info -->
-    <xs:complexType name="TerminalShortInfo">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">
-                More detailed terminal information
-            </xs:documentation>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="BasicTerminalInfo">
-                <xs:sequence>
-                    <xs:element name="thumbnail" type="Picture"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
     <!-- Terminal verbose details -->
     <xs:complexType name="TerminalDetails">
         <xs:annotation>
@@ -144,7 +115,6 @@
         <xs:complexContent>
             <xs:extension base="BasicTerminalInfo">
                 <xs:sequence>
-                    <xs:element name="screenshot" type="Picture"/>
                     <xs:element name="customer" type="Customer"/>
                     <xs:element name="location" type="Address"/>
                     <xs:element name="uptime" type="xs:unsignedLong"/>
@@ -234,8 +204,8 @@
     </xs:complexType>
 
 
-    <!-- Screenshot data -->
-    <xs:complexType name="Picture">
+    <!-- A terminal's screenshot -->
+    <xs:complexType name="Screenshot">
         <xs:annotation>
             <xs:documentation xml:lang="en">
                 A screen shot of a terminal
@@ -243,6 +213,20 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
+                <xs:attribute name="tid" type="xs:integer" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            The appropriate terminal's ID
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="cid" type="xs:integer" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            The appropriate terminal's customer's ID
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="timestamp" type="xs:dateTime" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">

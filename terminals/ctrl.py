@@ -18,11 +18,14 @@ class RemoteController(TerminalAware):
     _SSH_OPTS = {'UserKnownHostsFile': '/dev/null',
                  'StrictHostKeyChecking': 'no'}
 
-    def __init__(self, user, terminal, keyfile=None):
+    def __init__(self, user, terminal, keyfile=None, white_list=None, bl=None):
         """Initializes a remote terminal controller"""
         super().__init__(terminal)
         self._user = user
         self._keyfile = keyfile
+        # Commands white and black list
+        self._white_list = white_list
+        self._black_list = bl
 
     @property
     def user(self):
@@ -86,19 +89,48 @@ class RemoteController(TerminalAware):
         scrot_args = ' '.join([screenshot['SCROT_ARGS'],
                                screenshot['THUMBNAIL_PERCENT']])
         display = screenshot['DISPLAY']
-        display_cmd = ' '.join(['export',
-                                ''.join(['='.join(['DISPLAY',
-                                                   display]),
-                                         ';'])])
+        display_cmd = ' '.join(
+            ['export', ''.join(['='.join(['DISPLAY', display]), ';'])])
         return ' '.join([display_cmd, scrot_cmd, scrot_args, fname])
+
+    def _check_command(self, cmd):
+        """Checks the command against the white- and blacklists"""
+        result = True
+        if self._white_list is not None:
+            if cmd not in self._white_list:
+                result = False
+        if self._black_list is not None:
+            if cmd in self._black_list:
+                result = False
+        return result
+
+    def execute(self, cmd, *args):
+        """Executes a certain command on a remote terminal"""
+        if self._check_command(cmd):
+            return run(self._remote(cmd, *args), shell=True)
+        else:
+            return ProcessResult(3, stderr='Command not allowed.'.encode())
+
+    def getfile(self, file):
+        """Gets a file from a remote terminal"""
+        with NamedTemporaryFile('rb') as tmp:
+            rsync = self._rsync(file, tmp.name)
+            pr = run(rsync, shell=True)
+            if pr:
+                return tmp.read()
+            else:
+                return pr
+
+
+class DisplayController(RemoteController):
+    """Remote controller for display interactions"""
 
     def _mkscreenshot(self, fname):
         """Creates a screenshot on the remote terminal"""
         scrot_cmd = self._scrot_cmd(fname)
         return (self.execute(scrot_cmd), datetime.now())
 
-    @property
-    def screenshot(self):
+    def screenshot(self, quality=None):
         """Returns a screenshot"""
         return self.get_screenshot(thumbnail=False)
 
@@ -123,20 +155,3 @@ class RemoteController(TerminalAware):
             return (data, timestamp)
         else:
             return None
-
-    def execute(self, cmd, *args):
-        """Executes a certain command on a remote terminal"""
-        if self._check_command(cmd, *args):
-            return run(self._remote(cmd), shell=True)
-        else:
-            return ProcessResult(3, stderr='Command not allowed.'.encode())
-
-    def getfile(self, file):
-        """Gets a file from a remote terminal"""
-        with NamedTemporaryFile('rb') as tmp:
-            rsync = self._rsync(file, tmp.name)
-            pr = run(rsync, shell=True)
-            if pr:
-                return tmp.read()
-            else:
-                return pr
