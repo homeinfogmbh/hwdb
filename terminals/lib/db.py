@@ -388,6 +388,8 @@ class _User(TermgrModel):
     """Flags whether the account is enabled"""
     annotation = CharField(255, null=True)
     """An optional Annotation"""
+    root = BooleanField(default=False)
+    """Flag, whether we deal with a root user"""
 
     @classmethod
     def authenticate(cls, name, passwd):
@@ -440,7 +442,7 @@ class SetupOperator(_User):
         """Checks whether the setup operator is
         allowed to setup a certain terminal
         """
-        return terminal in self.terminals
+        return self.root or terminal in self.terminals
 
 
 @create
