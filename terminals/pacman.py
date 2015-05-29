@@ -2,7 +2,7 @@
 
 from .config import pacman, net
 from .abc import TerminalAware
-from .remotectrl import RemoteController
+from .ctrl import RemoteController
 
 __all__ = ['PacmanConfig']
 
