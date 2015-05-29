@@ -17,7 +17,7 @@ class OpenVPNKeyMgr(TerminalAware):
     @property
     def host_name(self):
         """Returns the appropriate host name"""
-        return '.'.join([str(self.terminal.tid), str(self.terminal.cid)])
+        return self.idstr
 
     @property
     def key_dir(self):

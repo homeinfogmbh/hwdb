@@ -14,3 +14,8 @@ class TerminalAware():
     def terminal(self):
         """Returns the terminal"""
         return self._terminal
+
+    @property
+    def idstr(self):
+        """Returns the identifiers string"""
+        return '.'.join([str(self.terminal.tid), str(self.terminal.cid)])
