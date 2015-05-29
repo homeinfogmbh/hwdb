@@ -12,7 +12,7 @@ def terminal2dom(terminal):
     """Converts a terminal ORM instance
     to a terminal DOM instance
     """
-    result = dom.TerminalShortInfo()
+    result = dom.BasicTerminalInfo()
     # Elements
     class_ = dom.Class(terminal.class_.name)
     class_.full_name = terminal.class_.full_name
