@@ -126,7 +126,7 @@ class Terminal(TermgrModel):
     """Virtual display, running on the physical terminal"""
     location = ForeignKeyField(Address, null=True, db_column='location')
     """The address of the terminal"""
-    deleted = DateTimeField(null=True)
+    deleted = DateTimeField(null=True, default=None)
     """Flag and date time when and whether the terminal was deleted"""
     weather = ForeignKeyField(Weather, null=True, db_column='weather',
                               related_name='terminals')
