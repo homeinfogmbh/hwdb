@@ -3,7 +3,7 @@
 and add HOMEINFO terminal records
 """
 
-from homeinfo.terminals.db import Terminal
+from homeinfo.terminals.lib.db import Terminal
 from itertools import chain
 
 __author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
