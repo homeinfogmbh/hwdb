@@ -1,6 +1,5 @@
 """Terminal library database models"""
 
-from os.path import isfile, join
 from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
@@ -8,10 +7,9 @@ from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
     BooleanField, create, PrimaryKeyField
 from homeinfo.lib.misc import classproperty
-from homeinfo.lib.system import run
 from homeinfo.crm import Customer, Address, Company
-from ..config import db, net, openvpn
-from .misc import Rotation
+from .config import db, net
+from .lib import Rotation
 
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator']
@@ -325,18 +323,6 @@ class Terminal(TermgrModel):
         rotation_degrees = '='.join(['rotationDegrees', str(rotation_degrees)])
         return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
                           rotation_degrees])
-
-    def gen_vpn_keys(self):
-        """Generates an OpenVPN key pair for the terminal"""
-        build_script = openvpn['BUILD_SCRIPT']
-        key_file_name = '.'.join([str(self.tid), str(self.customer.id)])
-        rsa_dir = openvpn['EASY_RSA_DIR']
-        keys_dir = openvpn['KEYS_DIR']
-        key_file_path = join(keys_dir, key_file_name)
-        if isfile(key_file_path):
-            return False
-        else:
-            return run([build_script, rsa_dir, key_file_name])
 
 
 @create

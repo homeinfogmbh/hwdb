@@ -4,6 +4,7 @@ from posix import system
 from posixpath import join, isfile, basename
 from tempfile import NamedTemporaryFile
 import tarfile
+from homeinfo.lib.system import run
 from .config import openvpn
 from .abc import TerminalAware
 from .err import KeygenError, UnconfiguredError
@@ -65,14 +66,15 @@ class OpenVPNKeyMgr(TerminalAware):
         return not system(cmd)
 
     def generate(self):
-        """Returns the public key"""
-        if not self._key_exists:
-            if not self._build_key():
-                raise KeygenError('Cannot build openVPN key')
-            else:
-                return True
+        """Generates an OpenVPN key pair for the terminal"""
+        build_script = openvpn['BUILD_SCRIPT']
+        key_file_name = '.'.join([str(self.tid), str(self.customer.id)])
+        key_file_path = join(openvpn['KEYS_DIR'], key_file_name)
+        if isfile(key_file_path):
+            raise KeygenError(
+                ' '.join(['Keys already exist for', key_file_name]))
         else:
-            return False    # Already exists
+            return run([build_script, openvpn['EASY_RSA_DIR'], key_file_name])
 
     def revoke(self):
         """Revokes a terminal's key"""
