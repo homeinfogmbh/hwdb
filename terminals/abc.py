@@ -16,16 +16,6 @@ class TerminalAware():
         return self._terminal
 
     @property
-    def cid(self):
-        """Returns the respective terminal's customer's ID"""
-        return self.terminal.cid
-
-    @property
-    def tid(self):
-        """Returns the respective terminal's ID"""
-        return self.terminal.tid
-
-    @property
     def idstr(self):
         """Returns the identifiers string"""
-        return '.'.join([str(self.tid), str(self.cid)])
+        return '.'.join([str(self.terminal.tid), str(self.terminal.cid)])

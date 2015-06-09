@@ -1,6 +1,5 @@
 """Library for terminal OpenVPN management"""
 
-from posix import system
 from posixpath import join, isfile, basename
 from tempfile import NamedTemporaryFile
 import tarfile
@@ -58,17 +57,11 @@ class OpenVPNKeyMgr(TerminalAware):
         else:
             return False
 
-    def _build_key(self):
-        """Generates a new key for the terminal"""
-        host_name = self.idstr
-        build_script = openvpn['BUILD_SCRIPT']  # ./build-key-auto
-        cmd = ' '.join([build_script, openvpn['EASY_RSA_DIR'], host_name])
-        return not system(cmd)
-
     def generate(self):
         """Generates an OpenVPN key pair for the terminal"""
         build_script = openvpn['BUILD_SCRIPT']
-        key_file_name = '.'.join([str(self.tid), str(self.customer.id)])
+        key_file_name = '.'.join([str(self.terminal.tid),
+                                  str(self.terminal.cid)])
         key_file_path = join(openvpn['KEYS_DIR'], key_file_name)
         if isfile(key_file_path):
             raise KeygenError(
