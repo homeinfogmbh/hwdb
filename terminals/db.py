@@ -25,7 +25,6 @@ class TermgrModel(Model):
         schema = database.database
 
     id = PrimaryKeyField()
-    """The table's primary key"""
 
 
 @create
