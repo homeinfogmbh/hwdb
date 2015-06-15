@@ -32,11 +32,9 @@ class Class(TermgrModel):
     """Terminal classes"""
 
     name = CharField(32)
-    """The class' name"""
     full_name = CharField(32)
-    """The class' verbose name"""
+    # Touch display flag
     touch = BooleanField()
-    """Flag, whether it is a class with touch-display"""
 
     @classmethod
     def add(cls, name, full_name=None, touch=False):
@@ -58,8 +56,8 @@ class Class(TermgrModel):
 class Domain(TermgrModel):
     """Terminal domains"""
 
+    # The domain's fully qulaifited domain name
     _fqdn = CharField(32, db_column='fqdn')
-    """The domain's fully qulaifited domain name"""
 
     @classmethod
     def add(cls, fqdn):
@@ -103,33 +101,35 @@ class Weather(TermgrModel):
 
 
 @create
+class SyncTicket(TermgrModel):
+    """A synchronization ticket"""
+
+    issued = DateTimeField()
+    finished = DateTimeField(null=True, default=None)
+    status = BooleanField(default=False)
+    annotation = CharField(255, null=True, default=None)
+
+
+@create
 class Terminal(TermgrModel):
     """A physical terminal out in the field"""
 
     customer = ForeignKeyField(Customer, db_column='customer',
                                related_name='terminals')
-    """The customer this terminal belongs to"""
-    tid = IntegerField()
-    """The terminal ID"""
+    tid = IntegerField()    # Customer-unique terminal identifier
     class_ = ForeignKeyField(Class, db_column='class',
                              related_name='terminals')
-    """The terminal's class"""
     domain = ForeignKeyField(Domain, db_column='domain',
                              related_name='terminals')
-    """The terminal's domain"""
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
-    """The terminal's clear-text htpasswd-password"""
     virtual_display = IntegerField(null=True)
-    """Virtual display, running on the physical terminal"""
     location = ForeignKeyField(Address, null=True, db_column='location')
-    """The address of the terminal"""
     deleted = DateTimeField(null=True, default=None)
-    """Flag and date time when and whether the terminal was deleted"""
     weather = ForeignKeyField(Weather, null=True, db_column='weather',
                               related_name='terminals')
-    """The weather configured for the respective terminal"""
     _rotation = IntegerField(db_column='rotation')
-    """The clockwise display rotation in degrees"""
+    ticket = ForeignKeyField(SyncTicket, db_column='ticket',
+                             null=True, default=None)
 
     def __repr__(self):
         """Converts the terminal to a unique string"""
