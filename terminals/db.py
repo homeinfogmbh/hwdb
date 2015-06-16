@@ -111,22 +111,22 @@ class SyncTicket(TermgrModel):
 class Terminal(TermgrModel):
     """A physical terminal out in the field"""
 
-    customer = ForeignKeyField(Customer, db_column='customer',
-                               related_name='terminals')
+    customer = ForeignKeyField(
+        Customer, db_column='customer', related_name='terminals')
     tid = IntegerField()    # Customer-unique terminal identifier
-    class_ = ForeignKeyField(Class, db_column='class',
-                             related_name='terminals')
-    domain = ForeignKeyField(Domain, db_column='domain',
-                             related_name='terminals')
+    class_ = ForeignKeyField(
+        Class, db_column='class', related_name='terminals')
+    domain = ForeignKeyField(
+        Domain, db_column='domain', related_name='terminals')
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
     virtual_display = IntegerField(null=True)
     location = ForeignKeyField(Address, null=True, db_column='location')
     deleted = DateTimeField(null=True, default=None)
-    weather = ForeignKeyField(Weather, null=True, db_column='weather',
-                              related_name='terminals')
+    weather = ForeignKeyField(
+        Weather, null=True, db_column='weather', related_name='terminals')
     _rotation = IntegerField(db_column='rotation')
-    ticket = ForeignKeyField(SyncTicket, db_column='ticket',
-                             null=True, default=None)
+    ticket = ForeignKeyField(
+        SyncTicket, db_column='ticket', null=True, default=None)
 
     def __repr__(self):
         """Converts the terminal to a unique string"""
