@@ -101,16 +101,6 @@ class Weather(TermgrModel):
 
 
 @create
-class Synchronization(TermgrModel):
-    """A synchronization log"""
-
-    started = DateTimeField()
-    finished = DateTimeField(null=True, default=None)
-    status = BooleanField(default=False)
-    annotation = CharField(255, null=True, default=None)
-
-
-@create
 class SyncTicket(TermgrModel):
     """A synchronization ticket"""
 
@@ -332,18 +322,26 @@ class Terminal(TermgrModel):
 
 
 @create
+class Synchronization(TermgrModel):
+    """A synchronization log"""
+
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal', related_name='syncs')
+    started = DateTimeField()
+    finished = DateTimeField(null=True, default=None)
+    status = BooleanField(default=False)
+    annotation = CharField(255, null=True, default=None)
+
+
+@create
 class Screenshot(TermgrModel):
     """Terminal screenshots"""
 
-    terminal = ForeignKeyField(Terminal, db_column='terminal',
-                               related_name='screenshots')
-    """The terminal, the screenshot has been taken from"""
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal', related_name='screenshots')
     screenshot = BlobField()
-    """The actual screenshot data"""
     thumbnail = BlobField()
-    """A smaller preview of the screenshot"""
     date = DateTimeField(default=datetime.now())
-    """The date and time when the screenshot has been taken"""
 
 
 @create
@@ -355,17 +353,11 @@ class ConsoleHistory(TermgrModel):
 
     terminal = ForeignKeyField(Terminal, db_column='terminal',
                                related_name='console_log')
-    """The terminal this history belongs to"""
     timestamp = DateTimeField(default=datetime.now())
-    """A time stamp when the command was executed"""
     command = CharField(255)
-    """The command, that was issued"""
     stdout = BlobField()
-    """The STDOUT result of the command"""
     stderr = BlobField()
-    """The STDERR result of the command"""
     exit_code = IntegerField()
-    """The exit code of the command"""
 
 
 # XXX: Abstract
@@ -373,15 +365,10 @@ class _User(TermgrModel):
     """A generic user"""
 
     name = CharField(64)
-    """The login name"""
     passwd = CharField(64)
-    """The SHA-256 encoded password"""
     enabled = BooleanField()
-    """Flags whether the account is enabled"""
     annotation = CharField(255, null=True)
-    """An optional Annotation"""
     root = BooleanField(default=False)
-    """Flag, whether we deal with a root user"""
 
     @classmethod
     def authenticate(cls, name, passwd):
@@ -418,9 +405,8 @@ class Administrator(_User):
 class SetupOperator(_User):
     """A user that is allowed to setup systems by HOMEINFO"""
 
-    company = ForeignKeyField(Company, db_column='company',
-                              related_name='setup_operators')
-    """The respective company"""
+    company = ForeignKeyField(
+        Company, db_column='company', related_name='setup_operators')
 
     class Meta:
         db_table = 'setup_operator'
@@ -470,9 +456,7 @@ class AdministratorTerminals(TermgrModel):
         db_table = 'terminal_admins'
 
     administrator = ForeignKeyField(Administrator, db_column='administrator')
-    """The respective setup operator"""
     terminal = ForeignKeyField(Terminal, db_column='terminal')
-    """The respective terminal"""
 
     @classmethod
     def terminals(cls, operator):
