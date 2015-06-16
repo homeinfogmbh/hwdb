@@ -101,13 +101,20 @@ class Weather(TermgrModel):
 
 
 @create
+class Synchronization(TermgrModel):
+    """A synchronization log"""
+
+    started = DateTimeField()
+    finished = DateTimeField(null=True, default=None)
+    status = BooleanField(default=False)
+    annotation = CharField(255, null=True, default=None)
+
+
+@create
 class SyncTicket(TermgrModel):
     """A synchronization ticket"""
 
     issued = DateTimeField()
-    finished = DateTimeField(null=True, default=None)
-    status = BooleanField(default=False)
-    annotation = CharField(255, null=True, default=None)
 
 
 @create
