@@ -82,12 +82,13 @@ class RemoteController(TerminalAware):
         """Returns a remote file path"""
         return ':'.join([self._user_host, src])
 
-    def _rsync(self, src, dst):
+    def _rsync(self, dst, *srcs, options=None):
         """Returns an rsync command line to retrieve
         src file from terminal to local file dst
         """
-        return ' '.join([terminals_config.ssh['RSYNC_BIN'],
-                         self._remote_shell, src, dst])
+        options = '' if options is None else ' '.join(options)
+        return ' '.join([terminals_config.ssh['RSYNC_BIN'], options,
+                         self._remote_shell, ' '.join(srcs), dst])
 
     def _check_command(self, cmd):
         """Checks the command against the white- and blacklists"""
@@ -106,18 +107,19 @@ class RemoteController(TerminalAware):
         else:
             return ProcessResult(3, stderr='Command not allowed.'.encode())
 
-    def getfile(self, file):
+    def getfile(self, file, options=None):
         """Gets a file from a remote terminal"""
         with NamedTemporaryFile('rb') as tmp:
-            rsync = self._rsync(self._remote_file(file), tmp.name)
+            rsync = self._rsync(
+                tmp.name, [self._remote_file(file)], options=options)
             pr = run(rsync, shell=True)
             if pr:
                 return tmp.read()
             else:
                 return pr
 
-    def sendfile(self, src, dst):
+    def sendfiles(self, dst, *srcs, options=None):
         """Gets a file from a remote terminal"""
-        rsync = self._rsync(src, self._remote_file(dst))
+        rsync = self._rsync(self._remote_file(dst), *srcs, options=options)
         pr = run(rsync, shell=True)
         return pr
