@@ -24,7 +24,7 @@ class RemoteController(TerminalAware):
         self._white_list = white_list
         self._black_list = bl
         # FUrther options for SSH
-        _SSH_OPTS = {
+        self._SSH_OPTS = {
             # Trick SSH it into not checking the host key
             'UserKnownHostsFile':
                 terminals_config.ssh['USER_KNOWN_HOSTS_FILE'],
