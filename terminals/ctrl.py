@@ -52,7 +52,7 @@ class RemoteController(TerminalAware):
         return ' '.join(['-i', self.keyfile])
 
     @property
-    def _ssh_opts(self):
+    def _ssh_options(self):
         """Returns options for SSH"""
         return ' '.join([
             ' '.join(['-o', '='.join([key, self._SSH_OPTS[key]])])
