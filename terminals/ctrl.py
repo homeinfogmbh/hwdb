@@ -42,7 +42,7 @@ class RemoteController(TerminalAware):
     def keyfile(self):
         """Returns the path to the SSH key file"""
         return self._keyfile or join(
-            '', 'home', self.user, '.ssh', 'terminals')
+            '/home', self.user, '.ssh', 'terminals')
 
     @property
     def _identity(self):
@@ -86,7 +86,6 @@ class RemoteController(TerminalAware):
         """Returns an rsync command line to retrieve
         src file from terminal to local file dst
         """
-        options = '' if options is None else ' '.join(options)
         return ' '.join([terminals_config.ssh['RSYNC_BIN'], options,
                          self._remote_shell, ' '.join(srcs), dst])
 
