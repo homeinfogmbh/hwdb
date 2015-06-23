@@ -8,7 +8,7 @@ from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     BooleanField, create, PrimaryKeyField
 from homeinfo.lib.misc import classproperty
 from homeinfo.crm import Customer, Address, Company
-from .config import db, net
+from .config import terminals_config
 from .lib import Rotation
 
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
@@ -20,8 +20,10 @@ class TermgrModel(Model):
 
     class Meta:
         database = MySQLDatabase(
-            db.get('db'), host=db.get('host'), user=db.get('user'),
-            passwd=db.get('passwd'))
+            terminals_config.db['db'],
+            host=terminals_config.db['host'],
+            user=terminals_config.db['user'],
+            passwd=terminals_config.db['passwd'])
         schema = database.database
 
     id = PrimaryKeyField()
@@ -172,7 +174,7 @@ class Terminal(TermgrModel):
     def gen_ipv4addr(cls, desired=None):
         """Generates a unique IPv4 address for the terminal"""
         if desired is None:
-            net_base = net['IPV4NET']
+            net_base = terminals_config.net['IPV4NET']
             ipv4addr_base = IPv4Address(net_base)
             # Skip first 10 IP Addresses
             ipv4addr = ipv4addr_base + 10
