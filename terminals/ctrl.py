@@ -107,7 +107,7 @@ class RemoteController(TerminalAware):
         else:
             return ProcessResult(3, stderr='Command not allowed.'.encode())
 
-    def getfile(self, file, options=None):
+    def get(self, file, options=None):
         """Gets a file from a remote terminal"""
         with NamedTemporaryFile('rb') as tmp:
             rsync = self._rsync(
@@ -118,7 +118,7 @@ class RemoteController(TerminalAware):
             else:
                 return pr
 
-    def sendfiles(self, dst, *srcs, options=None):
+    def send(self, dst, *srcs, options=None):
         """Gets a file from a remote terminal"""
         rsync = self._rsync(self._remote_file(dst), *srcs, options=options)
         pr = run(rsync, shell=True)
