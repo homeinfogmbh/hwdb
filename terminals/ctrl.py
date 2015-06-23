@@ -65,7 +65,7 @@ class RemoteController(TerminalAware):
                          self._ssh_options])
 
     @property
-    def _rsync_shell(self):
+    def _remote_shell(self):
         """Returns the rsync remote shell"""
         return ' '.join(['-e', ''.join(['"', self._ssh_cmd, '"'])])
 
