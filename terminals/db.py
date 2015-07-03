@@ -103,13 +103,6 @@ class Weather(TermgrModel):
 
 
 @create
-class SyncTicket(TermgrModel):
-    """A synchronization ticket"""
-
-    issued = DateTimeField()
-
-
-@create
 class Terminal(TermgrModel):
     """A physical terminal out in the field"""
 
@@ -127,8 +120,7 @@ class Terminal(TermgrModel):
     weather = ForeignKeyField(
         Weather, null=True, db_column='weather', related_name='terminals')
     _rotation = IntegerField(db_column='rotation')
-    ticket = ForeignKeyField(
-        SyncTicket, db_column='ticket', null=True, default=None)
+    last_sync = DateTimeField(null=True, default=None)
 
     def __repr__(self):
         """Converts the terminal to a unique string"""
