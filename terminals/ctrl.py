@@ -122,5 +122,5 @@ class RemoteController(TerminalAware):
         rsync = self._rsync(self._remote_file(dst), *srcs, options=options)
         print('Executing:', rsync)
         pr = run(rsync, shell=True)
-        print('Result:', str(pr))
+        print('Result:', str(pr), pr.exit_code, pr.stdout, pr.stderr)
         return pr
