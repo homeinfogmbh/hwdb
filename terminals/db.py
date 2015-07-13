@@ -316,18 +316,6 @@ class Terminal(TermgrModel):
 
 
 @create
-class Synchronization(TermgrModel):
-    """A synchronization log"""
-
-    terminal = ForeignKeyField(
-        Terminal, db_column='terminal', related_name='syncs')
-    started = DateTimeField()
-    finished = DateTimeField(null=True, default=None)
-    status = BooleanField(default=False)
-    annotation = CharField(255, null=True, default=None)
-
-
-@create
 class Screenshot(TermgrModel):
     """Terminal screenshots"""
 
@@ -335,7 +323,7 @@ class Screenshot(TermgrModel):
         Terminal, db_column='terminal', related_name='screenshots')
     screenshot = BlobField()
     thumbnail = BlobField()
-    date = DateTimeField(default=datetime.now())
+    date = DateTimeField(default=None)
 
 
 @create
