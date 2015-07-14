@@ -122,7 +122,7 @@ class Terminal(TermgrModel):
     _rotation = IntegerField(db_column='rotation')
     last_sync = DateTimeField(null=True, default=None)
 
-    def __repr__(self):
+    def __str__(self):
         """Converts the terminal to a unique string"""
         return '.'.join([str(ident) for ident in self.idents])
 
