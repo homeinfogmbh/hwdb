@@ -10,6 +10,7 @@ from homeinfo.lib.misc import classproperty
 from homeinfo.crm import Customer, Address, Company
 from .config import terminals_config
 from .lib import Rotation
+from homeinfo.lib.system import run
 
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator']
@@ -283,6 +284,13 @@ class Terminal(TermgrModel):
         """
         return chain(AdministratorTerminals.operators(self),
                      Administrator.root)
+
+    @property
+    def online(self):
+        """Determines whether the terminal is online"""
+        return run(' '.join(['ping -q -c 3 -t 1', self.hostname,
+                             ' > /dev/null 2> /dev/null']),
+                   shell=True)
 
     def appconf(self, checkdate=False):
         """Generates the content for the config.ini, respectively
