@@ -1,6 +1,5 @@
 """Library for terminal remote control"""
 
-from os.path import join
 from tempfile import NamedTemporaryFile
 from itertools import chain
 
@@ -41,15 +40,14 @@ class RemoteController(TerminalAware):
     @property
     def keyfile(self):
         """Returns the path to the SSH key file"""
-        return self._keyfile or join(
-            '/home', self.user, '.ssh', 'terminals')
+        return self._keyfile or '/home/{0}/.ssh/terminals'.format(self.user)
 
     @property
     def _identity(self):
         """Returns the SSH identity file argument
         with the respective identity file's path
         """
-        return ' '.join(['-i', self.keyfile])
+        return '-i {0}'.format(self.keyfile)
 
     @property
     def _ssh_options(self):
@@ -67,12 +65,12 @@ class RemoteController(TerminalAware):
     @property
     def _remote_shell(self):
         """Returns the rsync remote shell"""
-        return ' '.join(['-e', ''.join(['"', self._ssh_cmd, '"'])])
+        return '-e "{0}"'.format(self._ssh_cmd)
 
     @property
     def _user_host(self):
         """Returns the respective user@host string"""
-        return '@'.join([self.user, str(self.terminal.ipv4addr)])
+        return '{0}@{1}'.format(self.user, self.terminal.ipv4addr)
 
     def _remote(self, cmd, *args):
         """Makes a command remote"""
@@ -80,7 +78,7 @@ class RemoteController(TerminalAware):
 
     def _remote_file(self, src):
         """Returns a remote file path"""
-        return ':'.join([self._user_host, src])
+        return '{0}:{1}'.format(self._user_host, src)
 
     def _rsync(self, dst, *srcs, options=None):
         """Returns an rsync command line to retrieve

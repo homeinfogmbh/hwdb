@@ -112,8 +112,8 @@ class Rotation():
             self._degrees = degrees
             self._pi = None
         else:
-            raise ValueError(' '.join(['Degrees must be one of:',
-                                       str(self._VALID_DEGREES)]))
+            raise ValueError('Degrees must be one of: {0}'.format(
+                self._VALID_DEGREES))
 
     @property
     def pi(self):
@@ -130,5 +130,5 @@ class Rotation():
             self._pi = pi
             self._degrees = None
         else:
-            raise ValueError(' '.join(['Pi multiplier must be one of:',
-                                       str(self._VALID_PI_MULTIS)]))
+            raise ValueError('Pi multiplier must be one of: {0}'.format(
+                self._VALID_PI_MULTIS))

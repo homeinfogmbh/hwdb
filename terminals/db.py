@@ -85,7 +85,7 @@ class Domain(TermgrModel):
         if fqdn.endswith('.') and not fqdn.startswith('.'):
             self.fqdn = fqdn
         else:
-            raise ValueError(' '.join(['Not a FQDN:', fqdn]))
+            raise ValueError('Not a FQDN: {0}'.format(fqdn))
 
     @property
     def name(self):
@@ -139,7 +139,7 @@ class Terminal(TermgrModel):
     def hosts(cls):
         """Yields entries for /etc/hosts"""
         for terminal in cls.select().where(True):
-            yield '\t'.join([str(terminal.ipv4addr), terminal.hostname])
+            yield '{0}\t{1}'.format(terminal.ipv4addr, terminal.hostname)
 
     @classmethod
     def by_ids(cls, cid, tid, deleted=False):
@@ -180,8 +180,8 @@ class Terminal(TermgrModel):
             try:
                 ipv4addr = IPv4Address(desired)
             except AddressValueError:
-                raise ValueError(' '.join(['Not and IPv4 address:',
-                                           str(desired)])) from None
+                raise ValueError('Not and IPv4 address: {0}'.format(
+                    desired)) from None
             else:
                 if ipv4addr not in cls.used_ipv4addr:
                     return ipv4addr
@@ -223,8 +223,7 @@ class Terminal(TermgrModel):
     @property
     def hostname(self):
         """Generates and returns the terminal's host name"""
-        return '.'.join([str(self.tid), str(self.cid),
-                         self.domain.name])
+        return '{0}.{1}.{2}'.format(self.tid, self.cid, self.domain.name)
 
     @property
     def ipv4addr(self):
@@ -240,16 +239,17 @@ class Terminal(TermgrModel):
     def address(self):
         location = self.location
         try:
-            street_houseno = ' '.join([location.street, location.house_number])
+            street_houseno = '{0} {1}'.format(
+                location.street, location.house_number)
         except (TypeError, ValueError):
             return None
         else:
             try:
-                zip_city = ' '.join([location.zip_code, location.city])
+                zip_city = '{0} {1}'.format(location.zip_code, location.city)
             except (TypeError, ValueError):
                 return None
             else:
-                return ', '.join([street_houseno, zip_city])
+                return '{0}, {1}'.format(street_houseno, zip_city)
 
     @property
     def rotation(self):
@@ -288,9 +288,9 @@ class Terminal(TermgrModel):
     @property
     def online(self):
         """Determines whether the terminal is online"""
-        return run(' '.join(['ping -q -c 3 -t 1', self.hostname,
-                             ' > /dev/null 2> /dev/null']),
-                   shell=True)
+        ping = 'ping -q -c 3 -t 1 {0} > /dev/null 2> /dev/null'.format(
+            self.hostname)
+        return run(ping, shell=True)
 
     def appconf(self, checkdate=False):
         """Generates the content for the config.ini, respectively
@@ -311,14 +311,14 @@ class Terminal(TermgrModel):
             else:
                 rotation = True
                 rotation_degrees = rot
-        knr = '='.join(['knr', str(self.customer.id)])
+        knr = 'knr={0}'.format(self.customer.id)
         tracking_id = self.customer.piwik_tracking_id
-        tracking_id = '='.join(['trackingid', str(tracking_id) if
-                                tracking_id is not None else '42'])
-        mouse_visible = '='.join(['mouse_visible', str(mouse_visible).lower()])
-        checkdate = '='.join(['checkdate', str(checkdate).lower()])
-        rotation = '='.join(['rotation', str(rotation).lower()])
-        rotation_degrees = '='.join(['rotationDegrees', str(rotation_degrees)])
+        tracking_id = 'trackingid={0}'.format(
+            tracking_id if tracking_id is not None else '42')
+        mouse_visible = 'mouse_visible={0}'.format(mouse_visible).lower()
+        checkdate = 'checkdate={0}'.format(checkdate).lower()
+        rotation = 'rotation={0}'.format(rotation).lower()
+        rotation_degrees = 'rotationDegrees={0}'.format(rotation_degrees)
         return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
                           rotation_degrees])
 
