@@ -63,7 +63,8 @@ def mkcontactgroups():
         # Exclude admins
         members = [m.name for m in class_.members if not m.admin]
         if members:
-            rendered = template.replace('%NAME%', class_.name)
+            rendered = template.replace(
+                '%NAME%', '_'.join([class_.name, 'admins']))
             rendered = rendered.replace('%ALIAS%', class_.full_name)
             rendered = rendered.replace('%MEMBERS%', ','.join(members))
             return rendered
@@ -95,6 +96,7 @@ def mkcontactgroups():
         rendered = rendered.replace(
             '%ALIAS%', 'Global terminal administrators')
         rendered = rendered.replace('%MEMBERS%', ','.join(admins))
+        data += '{0}\n\n'.format(rendered)
 
     with open(conf_path, 'w') as cfg:
         cfg.write(data)
