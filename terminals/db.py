@@ -472,12 +472,19 @@ class NagiosAdmins(TerminalModel):
 
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
-    class_ = ForeignKeyField(Class, db_column='class', related_name='members')
+    class_ = ForeignKeyField(
+        Class, null=True, db_column='class', related_name='members')
     service_period = CharField(16, default='24x7')
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
     host_options = CharField(16, default='d,r')
-    admin = BooleanField(default=False)
+
+    @property
+    def admin(self):
+        """Determines whether the Nagios
+        admin is a global terminal admin
+        """
+        return self.class_ is None
 
     @property
     def name(self):

@@ -86,7 +86,7 @@ def mkcontactgroups():
             data += '{0}\n\n'.format(rendered)
 
     admins = []
-    for admin in NagiosAdmins.select().where(NagiosAdmins.admin == 1):
+    for admin in NagiosAdmins.select().where(NagiosAdmins.class_ >> None):
         admins.append(admin.name)
 
     if admins:
