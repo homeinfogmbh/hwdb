@@ -26,7 +26,7 @@ def mkcontacts():
     def render(template, admin):
         """Renders a Nagios administrator"""
         rendered = template.replace('%NAME%', admin.name)
-        rendered = rendered.replace('%ALIAS%', str(admin.admin))
+        rendered = rendered.replace('%ALIAS%', str(admin.employee))
         rendered = rendered.replace(
             '%SERVICE_PERIOD%', str(admin.service_period))
         rendered = rendered.replace(
