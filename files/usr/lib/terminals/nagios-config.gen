@@ -59,7 +59,7 @@ def mkcontactgroups():
 
     def render(template, class_):
         """Renders a Nagios administrator"""
-        members = [str(m) for m in class_.members]
+        members = [m.name for m in class_.members]
         if members:
             rendered = template.replace('%NAME%', class_.name)
             rendered = rendered.replace('%ALIAS%', class_.full_name)
