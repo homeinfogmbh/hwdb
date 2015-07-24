@@ -12,7 +12,14 @@ setup(
               'pyxb',
               'homeinfo.lib'],
     packages=['homeinfo.terminals'],
-    data_files=[('/etc', ['files/etc/terminals.conf'])],
+    data_files=[('/etc', ['files/etc/terminals.conf']),
+                ('/usr/share/terminals',
+                 ['files/usr/share/terminals/pacman.conf.temp',
+                  'files/usr/share/terminals/openvpn.conf.temp',
+                  'files/usr/share/terminals/nagios.contact.temp',
+                  'files/usr/share/terminals/nagios.contactgroup.temp',
+                  'files/usr/share/terminals/nagios.hostgroup.temp',
+                  'files/usr/share/terminals/nagios.terminal.temp'])],
     license=open('LICENSE.txt').read(),
     description=('Homeinfo Terminal Libary')
     )

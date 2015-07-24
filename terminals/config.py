@@ -14,9 +14,19 @@ class TerminalsConfiguration(Configuration):
         return self['db']
 
     @property
+    def monitoring(self):
+        self.load()
+        return self['monitoring']
+
+    @property
     def net(self):
         self.load()
         return self['net']
+
+    @property
+    def openvpn(self):
+        self.load()
+        return self['openvpn']
 
     @property
     def ssh(self):

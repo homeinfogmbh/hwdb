@@ -470,9 +470,18 @@ class NagiosAdmins(TerminalModel):
     class Meta:
         db_table = 'nagios_admins'
 
+    _name = CharField(16, null=True, default=None)
     admin = ForeignKeyField(Employee, db_column='admin')
-    class_ = ForeignKeyField(Class, db_column='class')
+    class_ = ForeignKeyField(Class, db_column='class', related_name='members')
     service_period = CharField(16, default='24x7')
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
     host_options = CharField(16, default='d,r')
+
+    @property
+    def name(self):
+        """Returns a short name"""
+        if self._name is None:
+            return self.admin.surname
+        else:
+            return self._name
