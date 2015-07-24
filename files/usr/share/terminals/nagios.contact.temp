@@ -1,0 +1,11 @@
+define contact{
+        contact_name                    %NAME%
+        alias                           %ALIAS%
+        service_notification_period     %SERVICE_PERIOD%
+        host_notification_period        %HOST_PERIOD%
+        service_notification_options    %SERVICE_OPTIONS%
+        host_notification_options       %HOST_OPTIONS%
+        service_notification_commands   notify-service-by-email
+        host_notification_commands      notify-host-by-email
+        email                           %EMAIL%
+        }

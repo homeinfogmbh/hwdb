@@ -1,0 +1,12 @@
+define host{
+    use        %HOST_TYPE%
+    host_name  %HOST_NAME%
+    alias      %ALIAS%
+    address    %ADDRESS%
+}
+
+define hostextinfo {
+    host_name  %HOST_NAME%
+    notes_url https://tls.homeinfo.de/termgr/mgr?cid=%CID%&tid=%TID%&action=details
+    icon_image logos/%OS%.gif
+}

@@ -1,0 +1,5 @@
+define hostgroup {
+    hostgroup_name     %NAME%
+    alias              %FULL_NAME%
+    members            %MEMBERS%
+}

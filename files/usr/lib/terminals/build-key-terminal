@@ -1,0 +1,15 @@
+#!/bin/bash
+# 
+# Automatically build and sign client certificates
+#
+# (C) 2015: HOMEINFO – Digitale Informationssysteme GmbH
+#
+# Maintainer: Richard Neumann <r.neumann@homeinfo.de>
+#
+########################################################
+
+BASE="${1}"
+shift
+cd "${BASE}"
+source ./vars
+./pkitool $@

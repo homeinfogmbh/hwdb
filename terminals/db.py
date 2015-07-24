@@ -7,16 +7,16 @@ from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
     BooleanField, create, PrimaryKeyField
 from homeinfo.lib.misc import classproperty
-from homeinfo.crm import Customer, Address, Company
+from homeinfo.crm import Customer, Address, Company, Employee
 from .config import terminals_config
 from .lib import Rotation
 from homeinfo.lib.system import run
 
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
-           'Administrator', 'SetupOperator']
+           'Administrator', 'SetupOperator', 'NagiosAdmins']
 
 
-class TermgrModel(Model):
+class TerminalModel(Model):
     """Terminal manager base Model"""
 
     class Meta:
@@ -31,7 +31,7 @@ class TermgrModel(Model):
 
 
 @create
-class Class(TermgrModel):
+class Class(TerminalModel):
     """Terminal classes"""
 
     name = CharField(32)
@@ -56,7 +56,7 @@ class Class(TermgrModel):
 
 
 @create
-class Domain(TermgrModel):
+class Domain(TerminalModel):
     """Terminal domains"""
 
     # The domain's fully qulaifited domain name
@@ -94,7 +94,7 @@ class Domain(TermgrModel):
 
 
 @create
-class Weather(TermgrModel):
+class Weather(TerminalModel):
     """Weather data records"""
 
     name = CharField(16)
@@ -104,7 +104,7 @@ class Weather(TermgrModel):
 
 
 @create
-class Terminal(TermgrModel):
+class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
     customer = ForeignKeyField(
@@ -324,7 +324,7 @@ class Terminal(TermgrModel):
 
 
 @create
-class Screenshot(TermgrModel):
+class Screenshot(TerminalModel):
     """Terminal screenshots"""
 
     terminal = ForeignKeyField(
@@ -335,7 +335,7 @@ class Screenshot(TermgrModel):
 
 
 @create
-class ConsoleHistory(TermgrModel):
+class ConsoleHistory(TerminalModel):
     """A physical terminal's virtual console's history"""
 
     class Meta:
@@ -351,7 +351,7 @@ class ConsoleHistory(TermgrModel):
 
 
 # XXX: Abstract
-class _User(TermgrModel):
+class _User(TerminalModel):
     """A generic user"""
 
     name = CharField(64)
@@ -414,7 +414,7 @@ class SetupOperator(_User):
 
 
 @create
-class SetupOperatorTerminals(TermgrModel):
+class SetupOperatorTerminals(TerminalModel):
     """Many-to-many mapping in-between setup operators and terminals"""
 
     class Meta:
@@ -439,7 +439,7 @@ class SetupOperatorTerminals(TermgrModel):
 
 
 @create
-class AdministratorTerminals(TermgrModel):
+class AdministratorTerminals(TerminalModel):
     """Many-to-many mapping in-between setup operators and terminals"""
 
     class Meta:
@@ -459,3 +459,20 @@ class AdministratorTerminals(TermgrModel):
         """Yields operators of the specified terminal"""
         for mapping in cls.select().where(cls.terminal == terminal):
             yield mapping.operator
+
+
+@create
+class NagiosAdmins(TerminalModel):
+    """Many-to-many mapping in-between
+    Employees and terminal classes
+    """
+
+    class Meta:
+        db_table = 'nagios_admins'
+
+    admin = ForeignKeyField(Employee, db_column='admin')
+    class_ = ForeignKeyField(Class, db_column='class')
+    service_period = CharField(16, default='24x7')
+    host_period = CharField(16, default='24x7')
+    service_options = CharField(16, default='w,u,c,r')
+    host_options = CharField(16, default='d,r')
