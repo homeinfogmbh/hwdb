@@ -470,7 +470,7 @@ class NagiosAdmins(TerminalModel):
     class Meta:
         db_table = 'nagios_admins'
 
-    _name = CharField(16, null=True, default=None)
+    _name = CharField(16, db_column='name', null=True, default=None)
     admin = ForeignKeyField(Employee, db_column='admin')
     class_ = ForeignKeyField(Class, db_column='class', related_name='members')
     service_period = CharField(16, default='24x7')
