@@ -17,7 +17,7 @@ setup(
                  ['files/usr/lib/terminals/build-key-terminal',
                   'files/usr/lib/terminals/hosts.gen',
                   'files/usr/lib/terminals/nagios-config.gen',
-                  'files/usr/lib/terminals/openvpn-client-config.gen'])
+                  'files/usr/lib/terminals/openvpn-client-config.gen']),
                 ('/usr/share/terminals',
                  ['files/usr/share/terminals/pacman.conf.temp',
                   'files/usr/share/terminals/openvpn.conf.temp',
