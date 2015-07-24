@@ -13,6 +13,8 @@ setup(
               'homeinfo.lib'],
     packages=['homeinfo.terminals'],
     data_files=[('/etc', ['files/etc/terminals.conf']),
+                ('/etc/nagios3/conf.d',
+                 ['files/etc/nagios3/conf.d/homeinfo-terminal.cfg']),
                 ('/usr/lib/terminals',
                  ['files/usr/lib/terminals/build-key-terminal',
                   'files/usr/lib/terminals/hosts.gen',
