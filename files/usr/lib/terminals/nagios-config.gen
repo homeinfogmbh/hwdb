@@ -59,7 +59,7 @@ def mkcontactgroups():
     """Generates contact group configurations"""
 
     def render(template, class_):
-        """Renders a Nagios administrator"""
+        """Renders a Nagios administrators for specific classes"""
         # Exclude admins
         members = [m.name for m in class_.members if not m.admin]
         if members:
@@ -92,6 +92,7 @@ def mkcontactgroups():
         admins.append(admin.name)
 
     if admins:
+        # Renders admins for all terminal classes
         rendered = template.replace('%NAME%', 'admins')
         rendered = rendered.replace(
             '%ALIAS%', 'Global terminal administrators')
