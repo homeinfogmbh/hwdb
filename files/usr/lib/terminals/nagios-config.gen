@@ -59,7 +59,8 @@ def mkcontactgroups():
 
     def render(template, class_):
         """Renders a Nagios administrator"""
-        members = [m.name for m in class_.members]
+        # Exclude admins
+        members = [m.name for m in class_.members if not member.admin]
         if members:
             rendered = template.replace('%NAME%', class_.name)
             rendered = rendered.replace('%ALIAS%', class_.full_name)
@@ -67,6 +68,7 @@ def mkcontactgroups():
             return rendered
         else:
             return ''
+            
     
     conf_path = join(
         terminals_config.monitoring['CONF_DIR'],
@@ -82,6 +84,16 @@ def mkcontactgroups():
         rendered = render(template, class_)
         if rendered:
             data += '{0}\n\n'.format(rendered)
+
+    admins = []
+    for admin in NagiosAdmins.select().where(NagiosAdmins.admin == 1):
+        admins.append(admin.name)
+
+    if admins:
+        rendered = template.replace('%NAME%', 'admins')
+        rendered = rendered.replace(
+            '%ALIAS%', 'Global terminal administrators')
+        rendered = rendered.replace('%MEMBERS%', ','.join(admins))
 
     with open(conf_path, 'w') as cfg:
         cfg.write(data)
