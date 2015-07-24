@@ -30,7 +30,7 @@ if __name__ == '__main__':
         terminals_config.openvpn['CLIENTS_DIR'],
         str(terminal))
     with open(file_path, 'w') as cfg:
-        cfg.write(data + '\n')
+        cfg.write(data)
     
     print('Restarting OpenVPN', end='                      ')
     evaluate(run('systemctl restart openvpn@terminals.service', shell=True))
