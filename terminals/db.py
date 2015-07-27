@@ -478,7 +478,7 @@ class NagiosAdmins(TerminalModel):
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
     host_options = CharField(16, default='d,r')
-    host_command = CharField(32, default='notify-terminal-by-email-with-id')
+    host_command = CharField(64, default='notify-terminal-by-email-with-id')
 
     @property
     def admin(self):
