@@ -36,6 +36,8 @@ def mkcontacts():
         rendered = rendered.replace(
             '%HOST_OPTIONS%', str(admin.host_options))
         rendered = rendered.replace('%EMAIL%', str(admin.employee.email))
+        rendered = rendered.replace('%HOST_COMMAND%', admin.host_command)
+        
         return rendered
     
     conf_path = join(

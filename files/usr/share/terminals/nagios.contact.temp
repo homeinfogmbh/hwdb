@@ -6,6 +6,6 @@ define contact{
         service_notification_options    %SERVICE_OPTIONS%
         host_notification_options       %HOST_OPTIONS%
         service_notification_commands   notify-service-by-email
-        host_notification_commands      notify-host-by-email
+        host_notification_commands      %HOST_COMMAND%
         email                           %EMAIL%
         }
