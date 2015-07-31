@@ -115,15 +115,16 @@ class Domain(TerminalModel):
 class Weather(TerminalModel):
     """Weather data records"""
 
-    name = CharField(16)
-    """The location name"""
+    name = CharField(16)  # The location name
+    # The absolute path to the respective XML file
     xml_file = CharField(128)
-    """The absolute path to the respective XML file"""
 
 
 @create
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
+
+    _CHK_CMD = '/bin/ping -c 1 -t 1 -i 1 1.{0}'
 
     customer = ForeignKeyField(
         Customer, db_column='customer', related_name='terminals')
@@ -140,7 +141,6 @@ class Terminal(TerminalModel):
         Weather, null=True, db_column='weather', related_name='terminals')
     _rotation = IntegerField(db_column='rotation')
     last_sync = DateTimeField(null=True, default=None)
-    status = CharField(16, null=True, default=None)
 
     def __str__(self):
         """Converts the terminal to a unique string"""
@@ -310,6 +310,15 @@ class Terminal(TerminalModel):
         ping = 'ping -q -c 3 -t 1 {0} > /dev/null 2> /dev/null'.format(
             self.hostname)
         return run(ping, shell=True)
+
+    @property
+    def status(self):
+        """Determines the status of the terminal"""
+        chk_cmd = self._CHK_CMD.format(self.hostname)
+        if run(chk_cmd, shell=True):
+            return True
+        else:
+            return False
 
     def appconf(self, checkdate=False):
         """Generates the content for the config.ini, respectively

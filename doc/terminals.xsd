@@ -88,7 +88,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="status" type="xs:string" use="required">
+        <xs:attribute name="status" type="xs:boolean" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     The terminal's current status

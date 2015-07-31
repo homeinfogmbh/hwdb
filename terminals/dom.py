@@ -1,7 +1,7 @@
 # ./terminals.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-07-31 13:48:25.077980 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-07-31 14:01:57.257010 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -14,7 +14,7 @@ import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:0d19be0a-377a-11e5-b603-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:f1326e6a-377b-11e5-80ab-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -751,7 +751,7 @@ class BasicTerminalInfo (pyxb.binding.basis.complexTypeDefinition):
 
     
     # Attribute status uses Python identifier status
-    __status = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'status'), 'status', '__httpxml_homeinfo_deschematerminallib_BasicTerminalInfo_status', pyxb.binding.datatypes.string, required=True)
+    __status = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'status'), 'status', '__httpxml_homeinfo_deschematerminallib_BasicTerminalInfo_status', pyxb.binding.datatypes.boolean, required=True)
     __status._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 91, 8)
     __status._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 91, 8)
     
