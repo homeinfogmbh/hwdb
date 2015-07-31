@@ -8,9 +8,11 @@ from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     BooleanField, create, PrimaryKeyField
 from homeinfo.lib.misc import classproperty
 from homeinfo.crm import Customer, Address, Company, Employee
+from homeinfo.lib.system import run
+
 from .config import terminals_config
 from .lib import Rotation
-from homeinfo.lib.system import run
+from . import dom
 
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator', 'NagiosAdmins']
@@ -54,6 +56,15 @@ class Class(TerminalModel):
         finally:
             return new_class
 
+    @property
+    def dom(self):
+        """Converts the class to a DOM"""
+        result = dom.Class(self.name)
+        result.id = self.id
+        result.full_name = self.full_name
+        result.touch = self.touch
+        return result
+
 
 @create
 class Domain(TerminalModel):
@@ -91,6 +102,13 @@ class Domain(TerminalModel):
     def name(self):
         """Returns the domain name without trailing '.'"""
         return self._fqdn[:-1]
+
+    @property
+    def dom(self):
+        """Converts the domain to a DOM"""
+        result = dom.Domain(self.fqdn)
+        result.id = self.id
+        return result
 
 
 @create
@@ -321,6 +339,37 @@ class Terminal(TerminalModel):
         rotation_degrees = 'rotationDegrees={0}'.format(rotation_degrees)
         return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
                           rotation_degrees])
+
+    def dom(self, details=False, screenshot=None):
+        """Converts the record to a DOM"""
+        if details:
+            result = dom.TerminalDetails()
+            customer = dom.Customer(self.customer.name)
+            customer.cid = self.customer.id
+            result.customer = customer
+            address = dom.Address()
+            address.street = self.location.street
+            address.house_number = self.location.house_number
+            address.city = self.location.city
+            address.zip_code = self.location.zip_code
+            address.id = self.location.id
+            result.address = address
+            result.uptime = 0
+            if self.virtual_display:
+                result.virtual_display = self.virtual_display
+            if screenshot is not None:
+                result.screenshot = screenshot
+        else:
+            result = dom.BasicTerminalInfo()
+        result.class_ = self.class_.dom
+        result.domain = self.domain.dom
+        result.id = self.id
+        result.tid = self.tid
+        result.cid = self.customer.id
+        result.deleted = self.deleted
+        result.status = ''
+        result.ipv4addr = str(self.ipv4addr)
+        return result
 
 
 @create
