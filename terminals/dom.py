@@ -1,7 +1,7 @@
 # ./terminals.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-07-31 14:28:11.592022 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-07-31 14:31:40.798065 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -14,7 +14,7 @@ import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:9b92f282-377f-11e5-afcc-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:184483c2-3780-11e5-9398-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -262,45 +262,45 @@ class Screenshot (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.base64Binary
     
-    # Attribute tid uses Python identifier tid
-    __tid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'tid'), 'tid', '__httpxml_homeinfo_deschematerminallib_Screenshot_tid', pyxb.binding.datatypes.integer, required=True)
-    __tid._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 217, 16)
-    __tid._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 217, 16)
-    
-    tid = property(__tid.value, __tid.set, None, "\n                            The appropriate terminal's ID\n                        ")
-
-    
-    # Attribute cid uses Python identifier cid
-    __cid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'cid'), 'cid', '__httpxml_homeinfo_deschematerminallib_Screenshot_cid', pyxb.binding.datatypes.integer, required=True)
-    __cid._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 224, 16)
-    __cid._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 224, 16)
-    
-    cid = property(__cid.value, __cid.set, None, "\n                            The appropriate terminal's customer's ID\n                        ")
-
-    
     # Attribute timestamp uses Python identifier timestamp
     __timestamp = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'timestamp'), 'timestamp', '__httpxml_homeinfo_deschematerminallib_Screenshot_timestamp', pyxb.binding.datatypes.dateTime, required=True)
-    __timestamp._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 231, 16)
-    __timestamp._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 231, 16)
+    __timestamp._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 217, 16)
+    __timestamp._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 217, 16)
     
     timestamp = property(__timestamp.value, __timestamp.set, None, '\n                            The time, when the screenshot was taken\n                        ')
 
     
     # Attribute mimetype uses Python identifier mimetype
     __mimetype = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'mimetype'), 'mimetype', '__httpxml_homeinfo_deschematerminallib_Screenshot_mimetype', pyxb.binding.datatypes.string, required=True)
-    __mimetype._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 238, 16)
-    __mimetype._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 238, 16)
+    __mimetype._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 224, 16)
+    __mimetype._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 224, 16)
     
     mimetype = property(__mimetype.value, __mimetype.set, None, "\n                            The screenshot picture's mime type\n                        ")
+
+    
+    # Attribute tid uses Python identifier tid
+    __tid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'tid'), 'tid', '__httpxml_homeinfo_deschematerminallib_Screenshot_tid', pyxb.binding.datatypes.integer)
+    __tid._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 231, 16)
+    __tid._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 231, 16)
+    
+    tid = property(__tid.value, __tid.set, None, "\n                            The appropriate terminal's ID\n                        ")
+
+    
+    # Attribute cid uses Python identifier cid
+    __cid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'cid'), 'cid', '__httpxml_homeinfo_deschematerminallib_Screenshot_cid', pyxb.binding.datatypes.integer)
+    __cid._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 238, 16)
+    __cid._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 238, 16)
+    
+    cid = property(__cid.value, __cid.set, None, "\n                            The appropriate terminal's customer's ID\n                        ")
 
     _ElementMap.update({
         
     })
     _AttributeMap.update({
-        __tid.name() : __tid,
-        __cid.name() : __cid,
         __timestamp.name() : __timestamp,
-        __mimetype.name() : __mimetype
+        __mimetype.name() : __mimetype,
+        __tid.name() : __tid,
+        __cid.name() : __cid
     })
 _module_typeBindings.Screenshot = Screenshot
 Namespace.addCategoryObject('typeBinding', 'Screenshot', Screenshot)

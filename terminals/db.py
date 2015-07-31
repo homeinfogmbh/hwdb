@@ -371,8 +371,6 @@ class Terminal(TerminalModel):
             if screenshot is not None:
                 mime = mimetype(screenshot)
                 screenshot = dom.Screenshot(screenshot)
-                screenshot.tid = self.tid
-                screenshot.cid = self.customer.id
                 screenshot.timestamp = datetime.now()
                 screenshot.mimetype = mime
                 result.screenshot = screenshot

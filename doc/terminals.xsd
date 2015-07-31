@@ -214,20 +214,6 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attribute name="tid" type="xs:integer" use="required">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">
-                            The appropriate terminal's ID
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
-                <xs:attribute name="cid" type="xs:integer" use="required">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">
-                            The appropriate terminal's customer's ID
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
                 <xs:attribute name="timestamp" type="xs:dateTime" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
@@ -239,6 +225,20 @@
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
                             The screenshot picture's mime type
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="tid" type="xs:integer">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            The appropriate terminal's ID
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="cid" type="xs:integer">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            The appropriate terminal's customer's ID
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
