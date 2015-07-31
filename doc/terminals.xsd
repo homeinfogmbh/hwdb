@@ -270,7 +270,7 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="cid" type="xs:integer" use="required">
+                <xs:attribute name="id" type="xs:integer" use="required">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
                             The customer's ID

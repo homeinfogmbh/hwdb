@@ -356,7 +356,7 @@ class Terminal(TerminalModel):
         if details:
             result = dom.TerminalDetails()
             customer = dom.Customer(self.customer.name)
-            customer.cid = self.customer.id
+            customer.id = self.customer.id
             result.customer = customer
             address = dom.Address()
             address.street = self.location.street

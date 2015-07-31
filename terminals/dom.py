@@ -1,7 +1,7 @@
 # ./terminals.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-07-31 14:36:17.123184 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-07-31 14:37:52.311180 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -14,7 +14,7 @@ import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:bcf82766-3780-11e5-9b0d-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:f5b54160-3780-11e5-ae64-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -320,18 +320,18 @@ class Customer (pyxb.binding.basis.complexTypeDefinition):
     _AttributeMap = {}
     # Base type is pyxb.binding.datatypes.string
     
-    # Attribute cid uses Python identifier cid
-    __cid = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'cid'), 'cid', '__httpxml_homeinfo_deschematerminallib_Customer_cid', pyxb.binding.datatypes.integer, required=True)
-    __cid._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 273, 16)
-    __cid._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 273, 16)
+    # Attribute id uses Python identifier id
+    __id = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'id'), 'id', '__httpxml_homeinfo_deschematerminallib_Customer_id', pyxb.binding.datatypes.integer, required=True)
+    __id._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 273, 16)
+    __id._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 273, 16)
     
-    cid = property(__cid.value, __cid.set, None, "\n                            The customer's ID\n                        ")
+    id = property(__id.value, __id.set, None, "\n                            The customer's ID\n                        ")
 
     _ElementMap.update({
         
     })
     _AttributeMap.update({
-        __cid.name() : __cid
+        __id.name() : __id
     })
 _module_typeBindings.Customer = Customer
 Namespace.addCategoryObject('typeBinding', 'Customer', Customer)
