@@ -124,7 +124,7 @@ class Weather(TerminalModel):
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
-    _CHK_CMD = '/bin/ping -c 1 -t 1 -i 1 1.{0}'
+    _CHK_CMD = '/bin/ping -c 1 -t 1 -i 1 {0}'
 
     customer = ForeignKeyField(
         Customer, db_column='customer', related_name='terminals')
