@@ -358,13 +358,6 @@ class Terminal(TerminalModel):
             customer = dom.Customer(self.customer.name)
             customer.id = self.customer.id
             result.customer = customer
-            address = dom.Address()
-            address.street = self.location.street
-            address.house_number = self.location.house_number
-            address.city = self.location.city
-            address.zip_code = self.location.zip_code
-            address.id = self.location.id
-            result.location = address
             result.uptime = 0
             if self.virtual_display:
                 result.virtual_display = self.virtual_display
@@ -377,6 +370,13 @@ class Terminal(TerminalModel):
         else:
             result = dom.BasicTerminalInfo()
             result.cid = self.customer.id
+        address = dom.Address()
+        address.street = self.location.street
+        address.house_number = self.location.house_number
+        address.city = self.location.city
+        address.zip_code = self.location.zip_code
+        address.id = self.location.id
+        result.location = address
         result.class_ = self.class_.dom
         result.domain = self.domain.dom
         result.id = self.id

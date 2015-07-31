@@ -45,6 +45,13 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="location" type="Address">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The terminal's location
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="class" type="Class">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
@@ -130,7 +137,6 @@
             <xs:extension base="TerminalData">
                 <xs:sequence>
                     <xs:element name="customer" type="Customer"/>
-                    <xs:element name="location" type="Address"/>
                     <xs:element name="uptime" type="xs:unsignedLong"/>
                     <xs:element name="virtual_display" type="xs:integer" minOccurs="0"/>
                     <xs:element name="screenshot" type="Screenshot" minOccurs="0"/>
