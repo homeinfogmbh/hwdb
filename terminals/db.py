@@ -367,7 +367,7 @@ class Terminal(TerminalModel):
         result.tid = self.tid
         result.cid = self.customer.id
         result.deleted = self.deleted
-        result.status = ''
+        result.status = 'UNKNOWN'   # TODO: implement
         result.ipv4addr = str(self.ipv4addr)
         return result
 

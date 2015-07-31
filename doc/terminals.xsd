@@ -452,6 +452,7 @@
             <xs:enumeration value="UP"/>
             <xs:enumeration value="DOWN"/>
             <xs:enumeration value="UNREACHABLE"/>
+            <xs:enumeration value="UNKNOWN"/>
         </xs:restriction>
     </xs:simpleType>
 
