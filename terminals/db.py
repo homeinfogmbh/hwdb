@@ -385,7 +385,7 @@ class Terminal(TerminalModel):
         result.id = self.id
         result.tid = self.tid
         result.deleted = self.deleted
-        result.status = self.status
+        result.status = True  # self.status
         result.ipv4addr = str(self.ipv4addr)
         return result
 
