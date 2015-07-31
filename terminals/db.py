@@ -376,11 +376,11 @@ class Terminal(TerminalModel):
                 result.screenshot = screenshot
         else:
             result = dom.BasicTerminalInfo()
+            result.cid = self.customer.id
         result.class_ = self.class_.dom
         result.domain = self.domain.dom
         result.id = self.id
         result.tid = self.tid
-        result.cid = self.customer.id
         result.deleted = self.deleted
         result.status = self.status
         result.ipv4addr = str(self.ipv4addr)
