@@ -156,6 +156,13 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
+                <xs:attribute name="touch" type="xs:boolean" use="required">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            Flag whether it is a class with touch screen
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="id" type="xs:integer">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
@@ -170,10 +177,10 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="touch" type="xs:boolean" use="required">
+                <xs:attribute name="amount" type="xs:integer">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">
-                            Flag whether it is a class with touch screen
+                            An amount of terminals in this class
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
