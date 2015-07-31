@@ -17,11 +17,12 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice>
+                <xs:element name="customer" type="Customer" maxOccurs="unbounded"/>
                 <xs:element name="terminal" type="BasicTerminalInfo" maxOccurs="unbounded"/>
+                <xs:element name="class" type="Class" maxOccurs="unbounded"/>
                 <xs:element name="details" type="TerminalDetails"/>
                 <xs:element name="console" type="WebConsole"/>
                 <xs:element name="screenshot" type="Screenshot"/>
-                <xs:element name="class" type="Class" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="domain" type="Domain" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="setup_operator" type="SetupOperator" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="administrator" type="Administrator" minOccurs="0" maxOccurs="unbounded"/>
