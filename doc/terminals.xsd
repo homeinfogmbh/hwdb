@@ -88,7 +88,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="status" type="TerminalStatus" use="required">
+        <xs:attribute name="status" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">
                     The terminal's current status
@@ -440,21 +440,6 @@
 
 
     <!-- SIMPLE TYPES -->
-
-    <!-- Terminal status -->
-    <xs:simpleType name="TerminalStatus">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">
-                The status of the terminal
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="UP"/>
-            <xs:enumeration value="DOWN"/>
-            <xs:enumeration value="UNREACHABLE"/>
-            <xs:enumeration value="UNKNOWN"/>
-        </xs:restriction>
-    </xs:simpleType>
 
 
     <!-- IPv4 address -->

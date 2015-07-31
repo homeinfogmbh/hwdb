@@ -27,7 +27,10 @@ setup(
                   'files/usr/share/terminals/nagios.contact.temp',
                   'files/usr/share/terminals/nagios.contactgroup.temp',
                   'files/usr/share/terminals/nagios.hostgroup.temp',
-                  'files/usr/share/terminals/nagios.terminal.temp'])],
+                  'files/usr/share/terminals/nagios.terminal.temp']),
+                ('/usr/share/nagios3/plugins/eventhandlers',
+                 ['files/usr/share/nagios3/plugins/eventhandlers/updtrmdb'])
+                ],
     license=open('LICENSE.txt').read(),
     description=('Homeinfo Terminal Libary')
     )

@@ -1,7 +1,7 @@
 # ./terminals.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-07-31 11:58:44.583557 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-07-31 13:48:25.077980 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -14,7 +14,7 @@ import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:bad1d524-376a-11e5-8707-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:0d19be0a-377a-11e5-b603-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -76,25 +76,6 @@ def CreateFromDOM (node, default_namespace=None):
     return pyxb.binding.basis.element.AnyCreateFromDOM(node, default_namespace)
 
 
-# Atomic simple type: {http://xml.homeinfo.de/schema/terminallib}TerminalStatus
-class TerminalStatus (pyxb.binding.datatypes.string, pyxb.binding.basis.enumeration_mixin):
-
-    """
-                The status of the terminal
-            """
-
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'TerminalStatus')
-    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 445, 4)
-    _Documentation = '\n                The status of the terminal\n            '
-TerminalStatus._CF_enumeration = pyxb.binding.facets.CF_enumeration(enum_prefix=None, value_datatype=TerminalStatus)
-TerminalStatus.UP = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='UP', tag='UP')
-TerminalStatus.DOWN = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='DOWN', tag='DOWN')
-TerminalStatus.UNREACHABLE = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='UNREACHABLE', tag='UNREACHABLE')
-TerminalStatus.UNKNOWN = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='UNKNOWN', tag='UNKNOWN')
-TerminalStatus._InitializeFacetMap(TerminalStatus._CF_enumeration)
-Namespace.addCategoryObject('typeBinding', 'TerminalStatus', TerminalStatus)
-_module_typeBindings.TerminalStatus = TerminalStatus
-
 # Atomic simple type: {http://xml.homeinfo.de/schema/terminallib}IPv4Address
 class IPv4Address (pyxb.binding.datatypes.string):
 
@@ -103,7 +84,7 @@ class IPv4Address (pyxb.binding.datatypes.string):
             """
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'IPv4Address')
-    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 461, 4)
+    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 446, 4)
     _Documentation = '\n                An IPv4 address\n            '
 IPv4Address._CF_pattern = pyxb.binding.facets.CF_pattern()
 IPv4Address._CF_pattern.addPattern(pattern='(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]?[0-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]?[0-9])')
@@ -117,7 +98,7 @@ class UUID4 (pyxb.binding.datatypes.string):
     """A Universally Unique Identifier"""
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'UUID4')
-    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 476, 4)
+    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 461, 4)
     _Documentation = 'A Universally Unique Identifier'
 UUID4._CF_pattern = pyxb.binding.facets.CF_pattern()
 UUID4._CF_pattern.addPattern(pattern='[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
@@ -770,7 +751,7 @@ class BasicTerminalInfo (pyxb.binding.basis.complexTypeDefinition):
 
     
     # Attribute status uses Python identifier status
-    __status = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'status'), 'status', '__httpxml_homeinfo_deschematerminallib_BasicTerminalInfo_status', _module_typeBindings.TerminalStatus, required=True)
+    __status = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'status'), 'status', '__httpxml_homeinfo_deschematerminallib_BasicTerminalInfo_status', pyxb.binding.datatypes.string, required=True)
     __status._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 91, 8)
     __status._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 91, 8)
     

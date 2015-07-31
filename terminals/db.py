@@ -140,6 +140,7 @@ class Terminal(TerminalModel):
         Weather, null=True, db_column='weather', related_name='terminals')
     _rotation = IntegerField(db_column='rotation')
     last_sync = DateTimeField(null=True, default=None)
+    status = CharField(16, null=True, default=None)
 
     def __str__(self):
         """Converts the terminal to a unique string"""
@@ -367,7 +368,7 @@ class Terminal(TerminalModel):
         result.tid = self.tid
         result.cid = self.customer.id
         result.deleted = self.deleted
-        result.status = 'UNKNOWN'   # TODO: implement
+        result.status = self.status
         result.ipv4addr = str(self.ipv4addr)
         return result
 
