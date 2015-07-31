@@ -353,7 +353,7 @@ class Terminal(TerminalModel):
             address.city = self.location.city
             address.zip_code = self.location.zip_code
             address.id = self.location.id
-            result.address = address
+            result.location = address
             result.uptime = 0
             if self.virtual_display:
                 result.virtual_display = self.virtual_display
