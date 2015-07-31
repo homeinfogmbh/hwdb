@@ -3,9 +3,12 @@
 from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
+from hashlib import sha256
+
 from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
     BooleanField, create, PrimaryKeyField
+
 from homeinfo.lib.misc import classproperty
 from homeinfo.crm import Customer, Address, Company, Employee
 from homeinfo.lib.system import run
@@ -434,7 +437,7 @@ class _User(TerminalModel):
                 return False
             else:
                 if user.passwd:
-                    if user.passwd == passwd:
+                    if user.passwd == sha256(passwd.encode()).hexdigest():
                         if user.enabled:
                             return user
                         else:
