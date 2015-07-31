@@ -20,5 +20,5 @@ if __name__ == '__main__':
     db_state = ' '.join([state, typ, str(attempt)])
 
     terminal = Terminal.by_ids(cid, tid)
-    terminal.state = db_state
+    terminal.status = db_state
     terminal.save()
