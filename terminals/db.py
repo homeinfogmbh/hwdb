@@ -16,7 +16,6 @@ from homeinfo.lib.mime import mimetype
 
 from .config import terminals_config
 from .lib import Rotation
-from . import dom
 
 __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator', 'NagiosAdmins']
@@ -59,15 +58,6 @@ class Class(TerminalModel):
             new_class.save()
         finally:
             return new_class
-
-    @property
-    def dom(self):
-        """Converts the class to a DOM"""
-        result = dom.Class(self.name)
-        result.id = self.id
-        result.full_name = self.full_name
-        result.touch = self.touch
-        return result
 
 
 @create
