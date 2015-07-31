@@ -9,6 +9,7 @@ from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
 from homeinfo.lib.misc import classproperty
 from homeinfo.crm import Customer, Address, Company, Employee
 from homeinfo.lib.system import run
+from homeinfo.lib.mime import mimetype
 
 from .config import terminals_config
 from .lib import Rotation
@@ -368,6 +369,12 @@ class Terminal(TerminalModel):
             if self.virtual_display:
                 result.virtual_display = self.virtual_display
             if screenshot is not None:
+                mime = mimetype(screenshot)
+                screenshot = dom.Screenshot(screenshot)
+                screenshot.tid = self.tid
+                screenshot.cid = self.customer.id
+                screenshot.timestamp = datetime.now()
+                screenshot.mimetype = mime
                 result.screenshot = screenshot
         else:
             result = dom.BasicTerminalInfo()

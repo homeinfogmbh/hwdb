@@ -1,7 +1,7 @@
 # ./terminals.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-07-31 14:01:57.257010 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-07-31 14:28:11.592022 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -14,7 +14,7 @@ import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:f1326e6a-377b-11e5-80ab-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:9b92f282-377f-11e5-afcc-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -1169,7 +1169,7 @@ TerminalDetails._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedNa
 
 TerminalDetails._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'virtual_display'), pyxb.binding.datatypes.integer, scope=TerminalDetails, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 121, 20)))
 
-TerminalDetails._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'screenshot'), pyxb.binding.datatypes.base64Binary, scope=TerminalDetails, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 122, 20)))
+TerminalDetails._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'screenshot'), Screenshot, scope=TerminalDetails, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 122, 20)))
 
 def _BuildAutomaton_6 ():
     # Remove this helper function from the namespace after it is invoked
