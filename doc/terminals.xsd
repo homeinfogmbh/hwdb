@@ -26,14 +26,14 @@
                 <xs:element name="setup_operator" type="SetupOperator" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="administrator" type="Administrator" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
-            <xs:element name="session_token" type="UUID4">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">
-                        A session token
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
         </xs:sequence>
+        <xs:attribute name="session_token" type="UUID4">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    A session token
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
 

@@ -1,7 +1,7 @@
 # ./terminals.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:e0f2b2b6088681bd91db874b9eaa9b60ccb9bc46
-# Generated 2015-07-31 11:48:59.361340 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
+# Generated 2015-07-31 11:58:44.583557 by PyXB version 1.2.5-DEV using Python 3.4.3.final.0
 # Namespace http://xml.homeinfo.de/schema/terminallib
 
 from __future__ import unicode_literals
@@ -14,7 +14,7 @@ import pyxb.utils.domutils
 import sys
 import pyxb.utils.six as _six
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:5dfc13c4-3769-11e5-9530-7427eaa9df7d')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:bad1d524-376a-11e5-8707-7427eaa9df7d')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.5-DEV'
@@ -86,7 +86,7 @@ class TerminalStatus (pyxb.binding.datatypes.string, pyxb.binding.basis.enumerat
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'TerminalStatus')
     _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 445, 4)
     _Documentation = '\n                The status of the terminal\n            '
-TerminalStatus._CF_enumeration = pyxb.binding.facets.CF_enumeration(value_datatype=TerminalStatus, enum_prefix=None)
+TerminalStatus._CF_enumeration = pyxb.binding.facets.CF_enumeration(enum_prefix=None, value_datatype=TerminalStatus)
 TerminalStatus.UP = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='UP', tag='UP')
 TerminalStatus.DOWN = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='DOWN', tag='DOWN')
 TerminalStatus.UNREACHABLE = TerminalStatus._CF_enumeration.addEnumeration(unicode_value='UNREACHABLE', tag='UNREACHABLE')
@@ -124,100 +124,6 @@ UUID4._CF_pattern.addPattern(pattern='[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-
 UUID4._InitializeFacetMap(UUID4._CF_pattern)
 Namespace.addCategoryObject('typeBinding', 'UUID4', UUID4)
 _module_typeBindings.UUID4 = UUID4
-
-# Complex type {http://xml.homeinfo.de/schema/terminallib}TerminalLibrary with content type ELEMENT_ONLY
-class TerminalLibrary (pyxb.binding.basis.complexTypeDefinition):
-    """
-                A terminal web API solution by HOMEINFO Digitale Informationssysteme GmbH
-            """
-    _TypeDefinition = None
-    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
-    _Abstract = False
-    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'TerminalLibrary')
-    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 12, 4)
-    _ElementMap = {}
-    _AttributeMap = {}
-    # Base type is pyxb.binding.datatypes.anyType
-    
-    # Element terminal uses Python identifier terminal
-    __terminal = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'terminal'), 'terminal', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_terminal', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 20, 16), )
-
-    
-    terminal = property(__terminal.value, __terminal.set, None, None)
-
-    
-    # Element details uses Python identifier details
-    __details = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'details'), 'details', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_details', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 21, 16), )
-
-    
-    details = property(__details.value, __details.set, None, None)
-
-    
-    # Element console uses Python identifier console
-    __console = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'console'), 'console', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_console', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 22, 16), )
-
-    
-    console = property(__console.value, __console.set, None, None)
-
-    
-    # Element screenshot uses Python identifier screenshot
-    __screenshot = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'screenshot'), 'screenshot', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_screenshot', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 23, 16), )
-
-    
-    screenshot = property(__screenshot.value, __screenshot.set, None, None)
-
-    
-    # Element class uses Python identifier class_
-    __class = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'class'), 'class_', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_class', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16), )
-
-    
-    class_ = property(__class.value, __class.set, None, None)
-
-    
-    # Element domain uses Python identifier domain
-    __domain = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'domain'), 'domain', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_domain', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16), )
-
-    
-    domain = property(__domain.value, __domain.set, None, None)
-
-    
-    # Element setup_operator uses Python identifier setup_operator
-    __setup_operator = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'setup_operator'), 'setup_operator', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_setup_operator', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16), )
-
-    
-    setup_operator = property(__setup_operator.value, __setup_operator.set, None, None)
-
-    
-    # Element administrator uses Python identifier administrator
-    __administrator = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'administrator'), 'administrator', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_administrator', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16), )
-
-    
-    administrator = property(__administrator.value, __administrator.set, None, None)
-
-    
-    # Element session_token uses Python identifier session_token
-    __session_token = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'session_token'), 'session_token', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_session_token', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 29, 12), )
-
-    
-    session_token = property(__session_token.value, __session_token.set, None, '\n                        A session token\n                    ')
-
-    _ElementMap.update({
-        __terminal.name() : __terminal,
-        __details.name() : __details,
-        __console.name() : __console,
-        __screenshot.name() : __screenshot,
-        __class.name() : __class,
-        __domain.name() : __domain,
-        __setup_operator.name() : __setup_operator,
-        __administrator.name() : __administrator,
-        __session_token.name() : __session_token
-    })
-    _AttributeMap.update({
-        
-    })
-_module_typeBindings.TerminalLibrary = TerminalLibrary
-Namespace.addCategoryObject('typeBinding', 'TerminalLibrary', TerminalLibrary)
-
 
 # Complex type {http://xml.homeinfo.de/schema/terminallib}Class with content type SIMPLE
 class Class (pyxb.binding.basis.complexTypeDefinition):
@@ -709,6 +615,100 @@ _module_typeBindings.Administrator = Administrator
 Namespace.addCategoryObject('typeBinding', 'Administrator', Administrator)
 
 
+# Complex type {http://xml.homeinfo.de/schema/terminallib}TerminalLibrary with content type ELEMENT_ONLY
+class TerminalLibrary (pyxb.binding.basis.complexTypeDefinition):
+    """
+                A terminal web API solution by HOMEINFO Digitale Informationssysteme GmbH
+            """
+    _TypeDefinition = None
+    _ContentTypeTag = pyxb.binding.basis.complexTypeDefinition._CT_ELEMENT_ONLY
+    _Abstract = False
+    _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'TerminalLibrary')
+    _XSDLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 12, 4)
+    _ElementMap = {}
+    _AttributeMap = {}
+    # Base type is pyxb.binding.datatypes.anyType
+    
+    # Element terminal uses Python identifier terminal
+    __terminal = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'terminal'), 'terminal', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_terminal', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 20, 16), )
+
+    
+    terminal = property(__terminal.value, __terminal.set, None, None)
+
+    
+    # Element details uses Python identifier details
+    __details = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'details'), 'details', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_details', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 21, 16), )
+
+    
+    details = property(__details.value, __details.set, None, None)
+
+    
+    # Element console uses Python identifier console
+    __console = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'console'), 'console', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_console', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 22, 16), )
+
+    
+    console = property(__console.value, __console.set, None, None)
+
+    
+    # Element screenshot uses Python identifier screenshot
+    __screenshot = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'screenshot'), 'screenshot', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_screenshot', False, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 23, 16), )
+
+    
+    screenshot = property(__screenshot.value, __screenshot.set, None, None)
+
+    
+    # Element class uses Python identifier class_
+    __class = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'class'), 'class_', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_class', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16), )
+
+    
+    class_ = property(__class.value, __class.set, None, None)
+
+    
+    # Element domain uses Python identifier domain
+    __domain = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'domain'), 'domain', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_domain', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16), )
+
+    
+    domain = property(__domain.value, __domain.set, None, None)
+
+    
+    # Element setup_operator uses Python identifier setup_operator
+    __setup_operator = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'setup_operator'), 'setup_operator', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_setup_operator', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16), )
+
+    
+    setup_operator = property(__setup_operator.value, __setup_operator.set, None, None)
+
+    
+    # Element administrator uses Python identifier administrator
+    __administrator = pyxb.binding.content.ElementDeclaration(pyxb.namespace.ExpandedName(None, 'administrator'), 'administrator', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_administrator', True, pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16), )
+
+    
+    administrator = property(__administrator.value, __administrator.set, None, None)
+
+    
+    # Attribute session_token uses Python identifier session_token
+    __session_token = pyxb.binding.content.AttributeUse(pyxb.namespace.ExpandedName(None, 'session_token'), 'session_token', '__httpxml_homeinfo_deschematerminallib_TerminalLibrary_session_token', _module_typeBindings.UUID4)
+    __session_token._DeclarationLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 30, 8)
+    __session_token._UseLocation = pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 30, 8)
+    
+    session_token = property(__session_token.value, __session_token.set, None, '\n                    A session token\n                ')
+
+    _ElementMap.update({
+        __terminal.name() : __terminal,
+        __details.name() : __details,
+        __console.name() : __console,
+        __screenshot.name() : __screenshot,
+        __class.name() : __class,
+        __domain.name() : __domain,
+        __setup_operator.name() : __setup_operator,
+        __administrator.name() : __administrator
+    })
+    _AttributeMap.update({
+        __session_token.name() : __session_token
+    })
+_module_typeBindings.TerminalLibrary = TerminalLibrary
+Namespace.addCategoryObject('typeBinding', 'TerminalLibrary', TerminalLibrary)
+
+
 # Complex type {http://xml.homeinfo.de/schema/terminallib}BasicTerminalInfo with content type ELEMENT_ONLY
 class BasicTerminalInfo (pyxb.binding.basis.complexTypeDefinition):
     """
@@ -883,126 +883,6 @@ Namespace.addCategoryObject('elementBinding', terminals.name().localName(), term
 
 
 
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'terminal'), BasicTerminalInfo, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 20, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'details'), TerminalDetails, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 21, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'console'), WebConsole, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 22, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'screenshot'), Screenshot, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 23, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'class'), Class, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'domain'), Domain, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'setup_operator'), SetupOperator, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'administrator'), Administrator, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16)))
-
-TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'session_token'), UUID4, scope=TerminalLibrary, documentation='\n                        A session token\n                    ', location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 29, 12)))
-
-def _BuildAutomaton ():
-    # Remove this helper function from the namespace after it is invoked
-    global _BuildAutomaton
-    del _BuildAutomaton
-    import pyxb.utils.fac as fac
-
-    counters = set()
-    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16))
-    counters.add(cc_0)
-    cc_1 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16))
-    counters.add(cc_1)
-    cc_2 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16))
-    counters.add(cc_2)
-    cc_3 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16))
-    counters.add(cc_3)
-    states = []
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'terminal')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 20, 16))
-    st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_0)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'details')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 21, 16))
-    st_1 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_1)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'console')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 22, 16))
-    st_2 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_2)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'screenshot')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 23, 16))
-    st_3 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_3)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'class')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16))
-    st_4 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_4)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'domain')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16))
-    st_5 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_5)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'setup_operator')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16))
-    st_6 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_6)
-    final_update = None
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'administrator')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16))
-    st_7 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_7)
-    final_update = set()
-    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'session_token')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 29, 12))
-    st_8 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
-    states.append(st_8)
-    transitions = []
-    transitions.append(fac.Transition(st_0, [
-         ]))
-    transitions.append(fac.Transition(st_8, [
-         ]))
-    st_0._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_8, [
-         ]))
-    st_1._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_8, [
-         ]))
-    st_2._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_8, [
-         ]))
-    st_3._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_4, [
-        fac.UpdateInstruction(cc_0, True) ]))
-    transitions.append(fac.Transition(st_8, [
-        fac.UpdateInstruction(cc_0, False) ]))
-    st_4._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_5, [
-        fac.UpdateInstruction(cc_1, True) ]))
-    transitions.append(fac.Transition(st_8, [
-        fac.UpdateInstruction(cc_1, False) ]))
-    st_5._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_6, [
-        fac.UpdateInstruction(cc_2, True) ]))
-    transitions.append(fac.Transition(st_8, [
-        fac.UpdateInstruction(cc_2, False) ]))
-    st_6._set_transitionSet(transitions)
-    transitions = []
-    transitions.append(fac.Transition(st_7, [
-        fac.UpdateInstruction(cc_3, True) ]))
-    transitions.append(fac.Transition(st_8, [
-        fac.UpdateInstruction(cc_3, False) ]))
-    st_7._set_transitionSet(transitions)
-    transitions = []
-    st_8._set_transitionSet(transitions)
-    return fac.Automaton(states, counters, False, containing_state=None)
-TerminalLibrary._Automaton = _BuildAutomaton()
-
-
-
-
 Address._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'street'), pyxb.binding.datatypes.string, scope=Address, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 193, 12)))
 
 Address._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'house_number'), pyxb.binding.datatypes.string, scope=Address, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 194, 12)))
@@ -1011,10 +891,10 @@ Address._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None,
 
 Address._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'zip_code'), pyxb.binding.datatypes.string, scope=Address, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 196, 12)))
 
-def _BuildAutomaton_ ():
+def _BuildAutomaton ():
     # Remove this helper function from the namespace after it is invoked
-    global _BuildAutomaton_
-    del _BuildAutomaton_
+    global _BuildAutomaton
+    del _BuildAutomaton
     import pyxb.utils.fac as fac
 
     counters = set()
@@ -1050,7 +930,7 @@ def _BuildAutomaton_ ():
     transitions = []
     st_3._set_transitionSet(transitions)
     return fac.Automaton(states, counters, False, containing_state=None)
-Address._Automaton = _BuildAutomaton_()
+Address._Automaton = _BuildAutomaton()
 
 
 
@@ -1059,10 +939,10 @@ WebConsole._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(No
 
 WebConsole._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'reply'), TerminalResult, scope=WebConsole, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 280, 12)))
 
-def _BuildAutomaton_2 ():
+def _BuildAutomaton_ ():
     # Remove this helper function from the namespace after it is invoked
-    global _BuildAutomaton_2
-    del _BuildAutomaton_2
+    global _BuildAutomaton_
+    del _BuildAutomaton_
     import pyxb.utils.fac as fac
 
     counters = set()
@@ -1087,7 +967,7 @@ def _BuildAutomaton_2 ():
         fac.UpdateInstruction(cc_0, True) ]))
     st_1._set_transitionSet(transitions)
     return fac.Automaton(states, counters, False, containing_state=None)
-WebConsole._Automaton = _BuildAutomaton_2()
+WebConsole._Automaton = _BuildAutomaton_()
 
 
 
@@ -1098,10 +978,10 @@ TerminalResult._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedNam
 
 TerminalResult._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'stderr'), pyxb.binding.datatypes.string, scope=TerminalResult, documentation='\n                        Text of the STDERR\n                    ', location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 307, 12)))
 
-def _BuildAutomaton_3 ():
+def _BuildAutomaton_2 ():
     # Remove this helper function from the namespace after it is invoked
-    global _BuildAutomaton_3
-    del _BuildAutomaton_3
+    global _BuildAutomaton_2
+    del _BuildAutomaton_2
     import pyxb.utils.fac as fac
 
     counters = set()
@@ -1141,17 +1021,17 @@ def _BuildAutomaton_3 ():
         fac.UpdateInstruction(cc_1, True) ]))
     st_2._set_transitionSet(transitions)
     return fac.Automaton(states, counters, False, containing_state=None)
-TerminalResult._Automaton = _BuildAutomaton_3()
+TerminalResult._Automaton = _BuildAutomaton_2()
 
 
 
 
 Message._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'text'), Text, scope=Message, documentation="\n                        The messages' body or content\n                    ", location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 347, 12)))
 
-def _BuildAutomaton_4 ():
+def _BuildAutomaton_3 ():
     # Remove this helper function from the namespace after it is invoked
-    global _BuildAutomaton_4
-    del _BuildAutomaton_4
+    global _BuildAutomaton_3
+    del _BuildAutomaton_3
     import pyxb.utils.fac as fac
 
     counters = set()
@@ -1163,7 +1043,107 @@ def _BuildAutomaton_4 ():
     transitions = []
     st_0._set_transitionSet(transitions)
     return fac.Automaton(states, counters, False, containing_state=None)
-Message._Automaton = _BuildAutomaton_4()
+Message._Automaton = _BuildAutomaton_3()
+
+
+
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'terminal'), BasicTerminalInfo, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 20, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'details'), TerminalDetails, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 21, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'console'), WebConsole, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 22, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'screenshot'), Screenshot, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 23, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'class'), Class, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'domain'), Domain, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'setup_operator'), SetupOperator, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16)))
+
+TerminalLibrary._AddElement(pyxb.binding.basis.element(pyxb.namespace.ExpandedName(None, 'administrator'), Administrator, scope=TerminalLibrary, location=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16)))
+
+def _BuildAutomaton_4 ():
+    # Remove this helper function from the namespace after it is invoked
+    global _BuildAutomaton_4
+    del _BuildAutomaton_4
+    import pyxb.utils.fac as fac
+
+    counters = set()
+    cc_0 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16))
+    counters.add(cc_0)
+    cc_1 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16))
+    counters.add(cc_1)
+    cc_2 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16))
+    counters.add(cc_2)
+    cc_3 = fac.CounterCondition(min=0, max=None, metadata=pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16))
+    counters.add(cc_3)
+    states = []
+    final_update = set()
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'terminal')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 20, 16))
+    st_0 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_0)
+    final_update = set()
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'details')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 21, 16))
+    st_1 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_1)
+    final_update = set()
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'console')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 22, 16))
+    st_2 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_2)
+    final_update = set()
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'screenshot')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 23, 16))
+    st_3 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_3)
+    final_update = set()
+    final_update.add(fac.UpdateInstruction(cc_0, False))
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'class')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 24, 16))
+    st_4 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_4)
+    final_update = set()
+    final_update.add(fac.UpdateInstruction(cc_1, False))
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'domain')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 25, 16))
+    st_5 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_5)
+    final_update = set()
+    final_update.add(fac.UpdateInstruction(cc_2, False))
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'setup_operator')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 26, 16))
+    st_6 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_6)
+    final_update = set()
+    final_update.add(fac.UpdateInstruction(cc_3, False))
+    symbol = pyxb.binding.content.ElementUse(TerminalLibrary._UseForTag(pyxb.namespace.ExpandedName(None, 'administrator')), pyxb.utils.utility.Location('/home/rne/Dokumente/Programmierung/python/homeinfo-terminals/doc/terminals.xsd', 27, 16))
+    st_7 = fac.State(symbol, is_initial=True, final_update=final_update, is_unordered_catenation=False)
+    states.append(st_7)
+    transitions = []
+    transitions.append(fac.Transition(st_0, [
+         ]))
+    st_0._set_transitionSet(transitions)
+    transitions = []
+    st_1._set_transitionSet(transitions)
+    transitions = []
+    st_2._set_transitionSet(transitions)
+    transitions = []
+    st_3._set_transitionSet(transitions)
+    transitions = []
+    transitions.append(fac.Transition(st_4, [
+        fac.UpdateInstruction(cc_0, True) ]))
+    st_4._set_transitionSet(transitions)
+    transitions = []
+    transitions.append(fac.Transition(st_5, [
+        fac.UpdateInstruction(cc_1, True) ]))
+    st_5._set_transitionSet(transitions)
+    transitions = []
+    transitions.append(fac.Transition(st_6, [
+        fac.UpdateInstruction(cc_2, True) ]))
+    st_6._set_transitionSet(transitions)
+    transitions = []
+    transitions.append(fac.Transition(st_7, [
+        fac.UpdateInstruction(cc_3, True) ]))
+    st_7._set_transitionSet(transitions)
+    return fac.Automaton(states, counters, True, containing_state=None)
+TerminalLibrary._Automaton = _BuildAutomaton_4()
 
 
 
