@@ -20,8 +20,8 @@ class RemoteController(TerminalAware):
         self._user = user
         self._keyfile = keyfile
         # Commands white and black list
-        self._white_list = white_list
-        self._black_list = bl
+        self._white_list = white_list or []
+        self._black_list = bl or []
         # FUrther options for SSH
         self._SSH_OPTS = {
             # Trick SSH it into not checking the host key
@@ -122,3 +122,22 @@ class RemoteController(TerminalAware):
         pr = run(rsync, shell=True)
         # print('Result:', str(pr), pr.exit_code, pr.stdout, pr.stderr)
         return pr
+
+    def screenshot(self, thumbnail=False):
+        """Returns a screenshot from the terminal"""
+        remote_file = '/tmp/screenshot.png'
+        remote_thumb = '/tmp/screenshot-thumb.png'
+        if thumbnail:
+            cmd = self._remote(' '.join(
+                ['export DISPLAY=:0; scrot -z', remote_file]))
+        else:
+            cmd = self._remote(' '.join(
+                ['export DISPLAY=:0; scrot -zt', str(thumbnail), remote_file]))
+        pr = run(cmd, shell=True)
+        if pr:
+            data = self.get(remote_file)
+        else:
+            data = None
+        # Remove remote temporary file
+        cmd = self._remote(' '.join(['rm -f', remote_file, remote_thumb]))
+        return data
