@@ -175,6 +175,7 @@ def mkhostgroups():
             if terminal in terminals():
                 member = str(terminal.hostname)
                 members.append(member)
+                print(str(terminal))
         name = class_.name
         full_name = class_.full_name
         rendered = render(template, name, full_name, members)
