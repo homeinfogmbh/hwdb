@@ -127,6 +127,8 @@ class Terminal(TerminalModel):
         Weather, null=True, db_column='weather', related_name='terminals')
     _rotation = IntegerField(db_column='rotation')
     last_sync = DateTimeField(null=True, default=None)
+    deployed = BooleanField(default=False)
+    testing = BooleanField(default=False)
 
     def __str__(self):
         """Converts the terminal to a unique string"""
@@ -305,6 +307,11 @@ class Terminal(TerminalModel):
             return True
         else:
             return False
+
+    @property
+    def productive(self):
+        """Returns whether the system has been deployed and is non-testing"""
+        return True if self.deployed and not self.testing else False
 
     def appconf(self, checkdate=False):
         """Generates the content for the config.ini, respectively
