@@ -4,11 +4,19 @@ from tempfile import NamedTemporaryFile
 from itertools import chain
 
 from homeinfo.lib.system import run, ProcessResult
+from homeinfo.lib.signal import Signal
+from homeinfo.lib.ipc import IPCClient
+from homeinfo.lib.misc import Screenshot
 from homeinfo.terminals.abc import TerminalAware
 
 from .config import terminals_config
 
-__all__ = ['RemoteController']
+__all__ = ['RPCError', 'RemoteController', 'ZMQController']
+
+
+class RPCError(Exception):
+    """Indicated an error during a remote procedure call"""
+    pass
 
 
 class RemoteController(TerminalAware):
@@ -122,3 +130,60 @@ class RemoteController(TerminalAware):
         pr = run(rsync, shell=True)
         # print('Result:', str(pr), pr.exit_code, pr.stdout, pr.stderr)
         return pr
+
+
+class ZMQController():
+    """Controls terminals via ZMQ"""
+
+    def __init__(self, terminal, port, proto=None):
+        """Initializes with a terminal"""
+        self._terminal = terminal
+        self._port = int(port)
+        self._proto = proto or 'tcp'
+
+    @property
+    def terminal(self):
+        """Returns a terminal ORM instance from the database"""
+        return self._terminal
+
+    @property
+    def port(self):
+        """Returns the remote control port"""
+        return self._port
+
+    @property
+    def proto(self):
+        """Returns the used protocol"""
+        return self._proto
+
+    @property
+    def addr(self):
+        """Returns the target terminal's IPv4 address"""
+        return self.terminal.ipv4addr
+
+    def screenshot(self, file_format='png', quality=75, thumbnail=False,
+                   count=None, interval=None):
+        """Yields screenshot files as byte streams"""
+        screenshot = Screenshot(
+            file_format, quality, thumbnail, count, interval)
+        with IPCClient(self.port, proto=self.proto, addr=self.addr) as client:
+            screenshot_command = repr(screenshot)
+            reply = client.query(screenshot_command)
+            try:
+                msg = reply.decode()
+            except ValueError:
+                return reply
+            else:
+                if msg == Signal.NACK:
+                    raise RPCError('Could not take remote screenshot')
+                else:
+                    raise RPCError('Got unexpected signal: {0}'.format(msg))
+
+    def appreload(self, timeout=3000):
+        """Reloads the application on the remote system"""
+        with IPCClient(self.port, proto=self.proto, addr=self.addr) as client:
+            reply = client.squery(Signal.RELOAD, timeout=timeout, linger=0)
+            if reply == Signal.ACK:
+                return True
+            else:
+                return False
