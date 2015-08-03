@@ -22,12 +22,10 @@ options = docopt(__doc__)
 
 def terminals():
     """Yields monitored terminals"""
-    for terminal in Terminal:
-        if Terminal.deleted is None:
-            if not Terminal.testing:
-                if Terminal.deployed:
-                    print('TERMINAL:', str(terminal))
-                    yield terminal
+    return Terminal.select().where(
+            (Terminal.deleted >> None) &
+            ~(Terminal.testing == 1) &
+            (Terminal.deployed == 1))
     
 
 def mkcontacts():
@@ -176,7 +174,6 @@ def mkhostgroups():
             if terminal in terminals():
                 member = str(terminal.hostname)
                 members.append(member)
-                print(str(terminal))
         name = class_.name
         full_name = class_.full_name
         rendered = render(template, name, full_name, members)
@@ -186,7 +183,7 @@ def mkhostgroups():
     # Customer groups
     customers = {}
     # Fetch customers
-    for terminal in Terminal.select().where(Terminal.deleted >> None):
+    for terminal in terminals():
         if terminal.customer.id in customers:
             customers[terminal.customer.id][1].append(terminal)
         else:
