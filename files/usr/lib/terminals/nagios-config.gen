@@ -26,6 +26,7 @@ def terminals():
         if Terminal.deleted is None:
             if not Terminal.testing:
                 if Terminal.deployed:
+                    print('TERMINAL:', str(terminal))
                     yield terminal
     
 
