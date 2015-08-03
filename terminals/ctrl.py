@@ -153,7 +153,7 @@ class TerminalController():
     @property
     def proto(self):
         """Returns the used protocol"""
-        return terminals_config.ctrl['PORT']
+        return terminals_config.ctrl['PROTO']
 
     @property
     def addr(self):
