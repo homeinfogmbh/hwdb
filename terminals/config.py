@@ -9,6 +9,11 @@ class TerminalsConfiguration(Configuration):
     """Main terminals configuration class"""
 
     @property
+    def ctrl(self):
+        self.load()
+        return self['ctrl']
+
+    @property
     def db(self):
         self.load()
         return self['db']

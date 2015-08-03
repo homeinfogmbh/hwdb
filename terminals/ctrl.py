@@ -11,7 +11,7 @@ from homeinfo.terminals.abc import TerminalAware
 
 from .config import terminals_config
 
-__all__ = ['RPCError', 'RemoteController', 'ZMQController']
+__all__ = ['RPCError', 'RemoteController', 'TerminalController']
 
 
 class RPCError(Exception):
@@ -132,14 +132,12 @@ class RemoteController(TerminalAware):
         return pr
 
 
-class ZMQController():
+class TerminalController():
     """Controls terminals via ZMQ"""
 
-    def __init__(self, terminal, port, proto=None):
+    def __init__(self, terminal):
         """Initializes with a terminal"""
         self._terminal = terminal
-        self._port = int(port)
-        self._proto = proto or 'tcp'
 
     @property
     def terminal(self):
@@ -149,12 +147,12 @@ class ZMQController():
     @property
     def port(self):
         """Returns the remote control port"""
-        return self._port
+        return int(terminals_config.ctrl['PORT'])
 
     @property
     def proto(self):
         """Returns the used protocol"""
-        return self._proto
+        return terminals_config.ctrl['PORT']
 
     @property
     def addr(self):
