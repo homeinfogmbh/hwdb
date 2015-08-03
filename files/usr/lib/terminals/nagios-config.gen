@@ -132,7 +132,7 @@ def mkhosts():
     for terminal in Terminal.select().where(
             (Terminal.deleted >> None) &
             (Terminal.testing == 0) &
-            (Terminals.deployed == 1)):
+            (Terminal.deployed == 1)):
         data += '\n# {0}\n{1}\n'.format(terminal, render(template, terminal))
 
     with open(conf_path, 'w') as cfg:
