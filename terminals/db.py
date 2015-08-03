@@ -12,7 +12,6 @@ from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
 from homeinfo.lib.misc import classproperty
 from homeinfo.crm import Customer, Address, Company, Employee
 from homeinfo.lib.system import run
-from homeinfo.lib.mime import mimetype
 
 from .config import terminals_config
 from .lib import Rotation
@@ -96,13 +95,6 @@ class Domain(TerminalModel):
     def name(self):
         """Returns the domain name without trailing '.'"""
         return self._fqdn[:-1]
-
-    @property
-    def dom(self):
-        """Converts the domain to a DOM"""
-        result = dom.Domain(self.fqdn)
-        result.id = self.id
-        return result
 
 
 @create
@@ -343,41 +335,6 @@ class Terminal(TerminalModel):
         rotation_degrees = 'rotationDegrees={0}'.format(rotation_degrees)
         return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
                           rotation_degrees])
-
-    def dom(self, details=False, screenshot=None):
-        """Converts the record to a DOM"""
-        if details:
-            result = dom.TerminalDetails()
-            customer = dom.Customer(self.customer.name)
-            customer.id = self.customer.id
-            result.customer = customer
-            result.uptime = 0
-            if self.virtual_display:
-                result.virtual_display = self.virtual_display
-            if screenshot is not None:
-                mime = mimetype(screenshot)
-                screenshot = dom.Screenshot(screenshot)
-                screenshot.timestamp = datetime.now()
-                screenshot.mimetype = mime
-                result.screenshot = screenshot
-        else:
-            result = dom.BasicTerminalInfo()
-            result.cid = self.customer.id
-        address = dom.Address()
-        address.street = self.location.street
-        address.house_number = self.location.house_number
-        address.city = self.location.city
-        address.zip_code = self.location.zip_code
-        address.id = self.location.id
-        result.location = address
-        result.class_ = self.class_.dom
-        result.domain = self.domain.dom
-        result.id = self.id
-        result.tid = self.tid
-        result.deleted = self.deleted
-        result.status = True  # self.status
-        result.ipv4addr = str(self.ipv4addr)
-        return result
 
 
 @create
