@@ -28,8 +28,8 @@ class RemoteController(TerminalAware):
         self._user = user
         self._keyfile = keyfile
         # Commands white and black list
-        self._white_list = white_list or []
-        self._black_list = bl or []
+        self._white_list = white_list
+        self._black_list = bl
         # FUrther options for SSH
         self._SSH_OPTS = {
             # Trick SSH it into not checking the host key
@@ -109,7 +109,6 @@ class RemoteController(TerminalAware):
         """Executes a certain command on a remote terminal"""
         if self._check_command(cmd):
             cmd = self._remote(cmd, *args)
-            print('EXECUTING:', cmd)
             return run(cmd, shell=True)
         else:
             return ProcessResult(3, stderr='Command not allowed.'.encode())
