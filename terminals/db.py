@@ -293,13 +293,6 @@ class Terminal(TerminalModel):
                      Administrator.root)
 
     @property
-    def online(self):
-        """Determines whether the terminal is online"""
-        ping = 'ping -q -c 3 -t 1 {0} > /dev/null 2> /dev/null'.format(
-            self.hostname)
-        return run(ping, shell=True)
-
-    @property
     def status(self):
         """Determines the status of the terminal"""
         chk_cmd = self._CHK_CMD.format(self.hostname)
