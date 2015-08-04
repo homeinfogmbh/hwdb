@@ -1,7 +1,8 @@
 """Miscellaneous library"""
 
 from math import pi
-from terminals.db import Terminal
+
+from .db import Terminal
 
 __all__ = ['TerminalGetter', 'Rotation']
 
