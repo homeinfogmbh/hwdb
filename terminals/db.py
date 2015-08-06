@@ -306,14 +306,15 @@ class Terminal(TerminalModel):
         """Returns whether the system has been deployed and is non-testing"""
         return True if self.deployed and not self.testing else False
 
-    def appconf(self, checkdate=False):
+    def appconf(self, checkdate=False, mouse_visible=False):
         """Generates the content for the config.ini, respectively
         the application.conf configuration file for the application
         """
-        if self.class_.touch:
-            mouse_visible = False
-        else:
-            mouse_visible = True
+        if mouse_visible is None:
+            if self.class_.touch:
+                mouse_visible = False
+            else:
+                mouse_visible = True
         if self.rotation is None:
             rotation = True
             rotation_degrees = 0
