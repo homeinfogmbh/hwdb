@@ -28,7 +28,8 @@ class TerminalModel(Model):
             terminals_config.db['db'],
             host=terminals_config.db['host'],
             user=terminals_config.db['user'],
-            passwd=terminals_config.db['passwd'])
+            passwd=terminals_config.db['passwd'],
+            closing=True)
         schema = database.database
 
     id = PrimaryKeyField()
