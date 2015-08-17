@@ -9,6 +9,7 @@ class TerminalGetter():
     """Gets terminals by ID strings"""
 
     _IDENT_SEP = ','
+    _IDENT_RANGE = '-'
     _VID_PREFIX = 'v'
 
     def __init__(self, expr):
@@ -61,9 +62,21 @@ class TerminalGetter():
             return None
         else:
             for ident in self._idents.split(self._IDENT_SEP):
-                if ident:
-                    if ident.startswith(self._VID_PREFIX):
-                        vid = ident.replace(self._VID_PREFIX, '')
+                if ident.startswith(self._VID_PREFIX):
+                    vid = ident.replace(self._VID_PREFIX, '')
+                    try:
+                        start, end = ident.split(self._IDENT_RANGE)
+                    except ValueError:
+                        try:
+                            start, end = int(start), int(end)
+                        except (ValueError, TypeError):
+                            raise ValueError('VID must be an integer')
+                        else:
+                            for vid in range(start, end+1):
+                                if vid not in processed:
+                                    processed.append(vid)
+                                    yield vid
+                    else:
                         try:
                             vid = int(vid)
                         except ValueError:
@@ -81,12 +94,24 @@ class TerminalGetter():
             return None
         else:
             for ident in self._idents.split(self._IDENT_SEP):
-                if ident:
-                    if not ident.startswith(self._VID_PREFIX):
+                if ident and not ident.startswith(self._VID_PREFIX):
+                    try:
+                        start, end = ident.split(self._IDENT_RANGE)
+                    except ValueError:
+                        try:
+                            start, end = int(start), int(end)
+                        except (ValueError, TypeError):
+                            raise ValueError('VID must be an integer')
+                        else:
+                            for tid in range(start, end+1):
+                                if tid not in processed:
+                                    processed.append(tid)
+                                    yield tid
+                    else:
                         try:
                             tid = int(ident)
                         except ValueError:
-                            raise ValueError('TID must be an integer')
+                            raise ValueError('VID must be an integer')
                         else:
                             if tid not in processed:
                                 processed.append(tid)
