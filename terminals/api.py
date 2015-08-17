@@ -68,6 +68,15 @@ class TerminalGetter():
                         start, end = ident.split(self._IDENT_RANGE)
                     except ValueError:
                         try:
+                            vid = int(vid)
+                        except ValueError:
+                            raise ValueError('VID must be an integer')
+                        else:
+                            if vid not in processed:
+                                processed.append(vid)
+                                yield vid
+                    else:
+                        try:
                             start, end = int(start), int(end)
                         except (ValueError, TypeError):
                             raise ValueError('VID must be an integer')
@@ -76,15 +85,6 @@ class TerminalGetter():
                                 if vid not in processed:
                                     processed.append(vid)
                                     yield vid
-                    else:
-                        try:
-                            vid = int(vid)
-                        except ValueError:
-                            raise ValueError('VID must be an integer')
-                        else:
-                            if vid not in processed:
-                                processed.append(vid)
-                                yield vid
 
     @property
     def tids(self):
@@ -99,6 +99,15 @@ class TerminalGetter():
                         start, end = ident.split(self._IDENT_RANGE)
                     except ValueError:
                         try:
+                            tid = int(ident)
+                        except ValueError:
+                            raise ValueError('VID must be an integer')
+                        else:
+                            if tid not in processed:
+                                processed.append(tid)
+                                yield tid
+                    else:
+                        try:
                             start, end = int(start), int(end)
                         except (ValueError, TypeError):
                             raise ValueError('VID must be an integer')
@@ -107,12 +116,3 @@ class TerminalGetter():
                                 if tid not in processed:
                                     processed.append(tid)
                                     yield tid
-                    else:
-                        try:
-                            tid = int(ident)
-                        except ValueError:
-                            raise ValueError('VID must be an integer')
-                        else:
-                            if tid not in processed:
-                                processed.append(tid)
-                                yield tid
