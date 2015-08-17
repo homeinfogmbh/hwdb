@@ -14,9 +14,6 @@ from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal, Class, NagiosAdmins
 from homeinfo.terminals.config import terminals_config
 
-__author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
-__date__ = '22.04.2015'
-
 options = docopt(__doc__)
 
 
@@ -122,7 +119,7 @@ def mkhosts():
         rendered = rendered.replace('%CID%', str(terminal.cid))
         rendered = rendered.replace('%HOST_TYPE%', terminal.class_.name)
         rendered = rendered.replace('%HOST_NAME%', terminal.hostname)
-        rendered = rendered.replace('%ALIAS%', repr(terminal.location))
+        rendered = rendered.replace('%ALIAS%', str(terminal.location))
         rendered = rendered.replace('%ADDRESS%', str(terminal.ipv4addr))
         rendered = rendered.replace('%OS%', 'linux')  # TODO: Make dynamic
         return rendered
