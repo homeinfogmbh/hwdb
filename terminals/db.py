@@ -4,6 +4,7 @@ from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Address, AddressValueError
 from hashlib import sha256
+from uuid import uuid4
 
 from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
     CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
@@ -371,7 +372,8 @@ class _User(TerminalModel):
     """A generic user"""
 
     name = CharField(64)
-    passwd = CharField(64)
+    pwhash = CharField(64)
+    salt = CharField(36)
     enabled = BooleanField()
     annotation = CharField(255, null=True)
     root = BooleanField(default=False)
@@ -385,8 +387,10 @@ class _User(TerminalModel):
             except DoesNotExist:
                 return False
             else:
-                if user.passwd:
-                    if user.passwd == sha256(passwd.encode()).hexdigest():
+                if user.passwd and passwd:
+                    pwstr = passwd + user.salt
+                    pwhash = sha256(pwstr.encode()).hexdigest()
+                    if user.pwhash == pwhash:
                         if user.enabled:
                             return user
                         else:
@@ -397,6 +401,21 @@ class _User(TerminalModel):
                     return False
         else:
             return False
+
+    @property
+    def passwd(self):
+        """Returns the password hash"""
+        return self.pwhash
+
+    @passwd.setter
+    def passwd(self, passwd):
+        """Creates a new password hash"""
+        salt = str(uuid4())
+        pwstr = passwd + salt
+        pwhash = sha256(pwstr.encode()).hexdigest()
+        self.salt = salt
+        self.pwhash = pwhash
+        self.save()
 
 
 @create
