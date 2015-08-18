@@ -2,7 +2,7 @@
 
 from .db import Terminal
 
-__all__ = ['TerminalGetter']
+__all__ = ['TerminalGetter', 'VIDGetter']
 
 
 class TerminalGetter():
@@ -116,3 +116,21 @@ class TerminalGetter():
                                 if tid not in processed:
                                     processed.append(tid)
                                     yield tid
+
+
+class VIDGetter():
+    """Yields VIDs of terminal groups"""
+
+    def __init__(self, terminals):
+        """Sets the respective terminals"""
+        self._terminals = terminals
+
+    def __iter__(self):
+        """Yields the unique VIDs"""
+        processed = []
+        for terminal in self._terminals:
+            vid = terminal.virtual_terminal
+            if vid is not None:
+                if vid not in processed:
+                    processed.append(vid)
+                    yield vid
