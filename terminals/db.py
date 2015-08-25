@@ -6,11 +6,12 @@ from ipaddress import IPv4Address, AddressValueError
 from hashlib import sha256
 from uuid import uuid4
 
-from peewee import Model, MySQLDatabase, ForeignKeyField, IntegerField,\
-    CharField, BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
-    BooleanField, create, PrimaryKeyField
+from peewee import Model, ForeignKeyField, IntegerField, CharField,\
+    BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
+    BooleanField, PrimaryKeyField
 
 from homeinfo.lib.misc import classproperty
+from homeinfo.peewee import MySQLDatabase, create
 from homeinfo.crm import Customer, Address, Company, Employee
 from homeinfo.lib.system import run
 
