@@ -3,6 +3,11 @@
 from .db import Terminal
 
 
+__all__ = ['InvalidCustomerID', 'InvalidTerminalIDs', 'InvalidRangeError',
+           'InvalidIDError', 'NoSuchTerminals', 'VidFilter', 'TidFilter',
+           'TerminalFilter']
+
+
 class InvalidCustomerID(Exception):
     """Indicates an invalid customer ID"""
     pass
@@ -121,7 +126,7 @@ class ExpressionParser():
                 yield from self._block_range(block)
 
 
-class VirtualIDFilter(ExpressionParser):
+class VidFilter(ExpressionParser):
     """Filters expressions for virtual IDs"""
 
     def __iter__(self):
@@ -141,7 +146,7 @@ class VirtualIDFilter(ExpressionParser):
                         yield vid
 
 
-class TerminalIDFilter(ExpressionParser):
+class TidFilter(ExpressionParser):
     """Filters expressions for physical IDs"""
 
     def __iter__(self):
