@@ -159,17 +159,21 @@ class TerminalIDFilter(ExpressionParser):
                     yield terminal.tid
 
 
-class TerminalFilter(TerminalIDFilter):
+class TerminalFilter(ExpressionParser):
     """Filters expressions for terminal records"""
 
     def __iter__(self):
         """Yields appropriate terminal records"""
+        processed = []
         nonexistant = []
-        for tid in super().__iter__():
-            terminal = Terminal.by_ids(self.cid, tid)
-            if terminal is None:
-                nonexistant.append(tid)
-            else:
+        for tid in self.tids:
+            if tid not in processed:
+                processed.append(tid)
+                terminal = Terminal.by_ids(self.cid, tid)
+                if terminal is not None:
+                    yield terminal
+                else:
+                    nonexistant.append(tid)
+        for vid in self.vids:
+            for terminal in Terminal.by_virt(self.cid, vid):
                 yield terminal
-        if nonexistant:
-            raise NoSuchTerminals(self.cid, nonexistant)
