@@ -26,32 +26,23 @@ class IdFilter():
         """Sets the respective expression, TIDs and VIDs"""
         if type(cid_or_expr) is str:
             parser = TerminalSelectionParser(cid_or_expr)
-            self._cid = parser.cid
+            self.cid = parser.cid
             self._vids = [vid for vid in parser.vids]
             self._tids = [tid for tid in parser.tids]
         else:
-            self._cid = cid_or_expr
+            self.cid = cid_or_expr
             self._vids = vids
             self._tids = tids
 
     @property
-    def cid(self):
-        """Returns the customer ID"""
-        return self._cid
-
-    @property
     def tids(self):
         """Yields the respective tids"""
-        if self._parser is not None:
-            yield from self._parser.tids
         if self._tids is not None:
             yield from self._tids
 
     @property
     def vids(self):
         """Yields the respective tids"""
-        if self._parser is not None:
-            yield from self._parser.vids
         if self._vids is not None:
             yield from self._vids
 
