@@ -1,8 +1,7 @@
 """Terminal selection expression parsing"""
 
 __all__ = ['InvalidCustomerID', 'InvalidTerminalIDs', 'InvalidRangeError',
-           'InvalidIDError', 'NoSuchTerminals', 'TerminalSelectionParser',
-           'VidParser', 'TidParser']
+           'InvalidIDError', 'NoSuchTerminals', 'TerminalSelectionParser']
 
 
 class InvalidCustomerID(Exception):
@@ -37,12 +36,6 @@ class TerminalSelectionParser():
         """Sets respective expression"""
         self._ids_cid = expr.split(self.IDENT_SEP)
 
-    def __iter__(self):
-        """Yields identifier blocks"""
-        for block in self._ident_str.split(self.BLOCK_SEP):
-            if block:
-                yield block
-
     @property
     def _cid_str(self):
         """Returns the raw customer ID string"""
@@ -68,6 +61,28 @@ class TerminalSelectionParser():
             return self._ids_cid[0]
         else:
             raise InvalidTerminalIDs()
+
+    @property
+    def _blocks(self):
+        """Yields identifier blocks"""
+        for block in self._ident_str.split(self.BLOCK_SEP):
+            if block:
+                yield block
+
+    @property
+    def vids(self):
+        """Yields virtual identifiers"""
+        for block in self._blocks:
+            if block.startswith(self.VID_PREFIX):
+                block = block[1:]
+                yield from self._block_range(block)
+
+    @property
+    def tids(self):
+        """Yields physical identifiers"""
+        for block in self._blocks:
+            if not block.startswith(self.VID_PREFIX):
+                yield from self._block_range(block)
 
     def _block_range(self, block):
         """Yields elements of a block range or a single ID"""
@@ -95,24 +110,3 @@ class TerminalSelectionParser():
                 raise InvalidIDError(block)
             else:
                 yield ident
-
-
-class VidParser(TerminalSelectionParser):
-    """Parser for physical terminal IDs"""
-
-    def __iter__(self):
-        """Yields virtual identifiers"""
-        for block in super.__iter__():
-            if block.startswith(self.VID_PREFIX):
-                block = block[1:]
-                yield from self._block_range(block)
-
-
-class TidParser(TerminalSelectionParser):
-    """Parser for physical terminal IDs"""
-
-    def __iter__(self):
-        """Yields physical identifiers"""
-        for block in super().__iter__():
-            if not block.startswith(self.VID_PREFIX):
-                yield from self._block_range(block)

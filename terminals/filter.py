@@ -1,6 +1,6 @@
 """Terminal filters"""
 
-from .parse import VidParser, TidParser
+from .parse import TerminalSelectionParser
 from .db import Terminal
 
 
@@ -22,26 +22,36 @@ class NoSuchTerminals(Exception):
 class IdFilter():
     """An abstract identifier filter"""
 
-    def __init__(self, expr=None, vids=None, tids=None):
+    def __init__(self, cid_or_expr, vids=None, tids=None):
         """Sets the respective expression, TIDs and VIDs"""
-        self._vid_parser = VidParser(expr) if expr is not None else None
-        self._tid_parser = TidParser(expr) if expr is not None else None
-        self._vids = vids
-        self._tids = tids
+        if type(cid_or_expr) is str:
+            parser = TerminalSelectionParser(cid_or_expr)
+            self._cid = parser.cid
+            self._vids = [vid for vid in parser.vids]
+            self._tids = [tid for tid in parser.tids]
+        else:
+            self._cid = cid_or_expr
+            self._vids = vids
+            self._tids = tids
+
+    @property
+    def cid(self):
+        """Returns the customer ID"""
+        return self._cid
 
     @property
     def tids(self):
         """Yields the respective tids"""
-        if self._tid_parser is not None:
-            yield from self._tid_parser
+        if self._parser is not None:
+            yield from self._parser.tids
         if self._tids is not None:
             yield from self._tids
 
     @property
     def vids(self):
         """Yields the respective tids"""
-        if self._vid_parser is not None:
-            yield from self._vid_parser
+        if self._parser is not None:
+            yield from self._parser.vids
         if self._vids is not None:
             yield from self._vids
 
