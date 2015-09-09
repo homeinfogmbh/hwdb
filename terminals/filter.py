@@ -121,3 +121,5 @@ class TerminalFilter(IdFilter):
                     if tid not in processed:
                         processed.append(tid)
                         yield terminal
+            if nonexistant:
+                raise NoSuchTerminals(self.cid, nonexistant)
