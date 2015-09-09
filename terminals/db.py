@@ -217,8 +217,9 @@ class Terminal(TerminalModel):
         """Yields terminals of a customer that
         run the specified virtual terminal
         """
-        return cls.select().where((cls.customer == cid) &
-                                  (cls.virtual_display == vid))
+        return cls.select().where(
+            (cls.customer == cid) &
+            (cls.virtual_display == vid))
 
     @property
     def cid(self):

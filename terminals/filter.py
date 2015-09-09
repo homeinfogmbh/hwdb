@@ -24,27 +24,23 @@ class IdFilter():
 
     def __init__(self, cid_or_expr, vids=None, tids=None):
         """Sets the respective expression, TIDs and VIDs"""
-        if type(cid_or_expr) is str:
+        if type(cid_or_expr) is int:
+            self.cid = cid_or_expr
+            self.vids = vids or []
+            self.tids = tids or []
+        else:
             parser = TerminalSelectionParser(cid_or_expr)
             self.cid = parser.cid
-            self._vids = [vid for vid in parser.vids]
-            self._tids = [tid for tid in parser.tids]
+            self.vids = [vid for vid in parser.vids]
+            self.tids = [tid for tid in parser.tids]
+
+    @property
+    def all(self):
+        """Determines whether all terminals should be synchronized"""
+        if not self.vids and not self.tids:
+            return True
         else:
-            self.cid = cid_or_expr
-            self._vids = vids
-            self._tids = tids
-
-    @property
-    def tids(self):
-        """Yields the respective tids"""
-        if self._tids is not None:
-            yield from self._tids
-
-    @property
-    def vids(self):
-        """Yields the respective tids"""
-        if self._vids is not None:
-            yield from self._vids
+            return False
 
 
 class VidFilter(IdFilter):
@@ -53,18 +49,27 @@ class VidFilter(IdFilter):
     def __iter__(self):
         """Yields virtual IDs"""
         processed = []
-        for vid in self.vids:
-            if vid not in processed:
-                processed.append(vid)
-                yield vid
-        for tid in self.tids:
-            terminal = Terminal.by_ids(self.cid, tid)
-            if terminal is not None:
+        if self.all:
+            for terminal in Terminal.select.where(
+                    Terminal.customer == self.cid):
                 vid = terminal.virtual_display
                 if vid is not None:
                     if vid not in processed:
                         processed.append(vid)
                         yield vid
+        else:
+            for vid in self.vids:
+                if vid not in processed:
+                    processed.append(vid)
+                    yield vid
+            for tid in self.tids:
+                terminal = Terminal.by_ids(self.cid, tid)
+                if terminal is not None:
+                    vid = terminal.virtual_display
+                    if vid is not None:
+                        if vid not in processed:
+                            processed.append(vid)
+                            yield vid
 
 
 class TidFilter(IdFilter):
@@ -72,17 +77,22 @@ class TidFilter(IdFilter):
 
     def __iter__(self):
         """Yields physical identifiers"""
-        processed = []
-        for tid in self.tids:
-            if tid not in processed:
-                processed.append(tid)
-                yield tid
-        for vid in self.vids:
-            for terminal in Terminal.by_virt(self.cid, vid):
-                tid = terminal.tid
+        if self.all:
+            for terminal in Terminal.select.where(
+                    Terminal.customer == self.cid):
+                yield terminal.tid
+        else:
+            processed = []
+            for tid in self.tids:
                 if tid not in processed:
                     processed.append(tid)
-                    yield terminal.tid
+                    yield tid
+            for vid in self.vids:
+                for terminal in Terminal.by_virt(self.cid, vid):
+                    tid = terminal.tid
+                    if tid not in processed:
+                        processed.append(tid)
+                        yield terminal.tid
 
 
 class TerminalFilter(IdFilter):
@@ -90,16 +100,24 @@ class TerminalFilter(IdFilter):
 
     def __iter__(self):
         """Yields appropriate terminal records"""
-        processed = []
-        nonexistant = []
-        for tid in self.tids:
-            if tid not in processed:
-                processed.append(tid)
-                terminal = Terminal.by_ids(self.cid, tid)
-                if terminal is not None:
-                    yield terminal
-                else:
-                    nonexistant.append(tid)
-        for vid in self.vids:
-            for terminal in Terminal.by_virt(self.cid, vid):
+        if self.all:
+            for terminal in Terminal.select.where(
+                    Terminal.customer == self.cid):
                 yield terminal
+        else:
+            processed = []
+            nonexistant = []
+            for tid in self.tids:
+                if tid not in processed:
+                    processed.append(tid)
+                    terminal = Terminal.by_ids(self.cid, tid)
+                    if terminal is not None:
+                        yield terminal
+                    else:
+                        nonexistant.append(tid)
+            for vid in self.vids:
+                for terminal in Terminal.by_virt(self.cid, vid):
+                    tid = terminal.tid
+                    if tid not in processed:
+                        processed.append(tid)
+                        yield terminal
