@@ -11,9 +11,9 @@ from peewee import Model, ForeignKeyField, IntegerField, CharField,\
     BooleanField, PrimaryKeyField
 
 from homeinfo.lib.misc import classproperty
+from homeinfo.lib.system import run
 from homeinfo.peewee import MySQLDatabase, create
 from homeinfo.crm import Customer, Address, Company, Employee
-from homeinfo.lib.system import run
 
 from .config import terminals_config
 from .lib import Rotation
