@@ -1,31 +1,10 @@
 """Terminal filters"""
 
+from .parse import VidParser, TidParser
 from .db import Terminal
 
 
-__all__ = ['InvalidCustomerID', 'InvalidTerminalIDs', 'InvalidRangeError',
-           'InvalidIDError', 'NoSuchTerminals', 'VidFilter', 'TidFilter',
-           'TerminalFilter']
-
-
-class InvalidCustomerID(Exception):
-    """Indicates an invalid customer ID"""
-    pass
-
-
-class InvalidTerminalIDs(Exception):
-    """Indicates invalid terminal identifiers"""
-    pass
-
-
-class InvalidRangeError(Exception):
-    """Indicates an invalid ID range definition"""
-    pass
-
-
-class InvalidIDError(Exception):
-    """Indicates an invalid ID"""
-    pass
+__all__ = ['VidFilter', 'TidFilter', 'TerminalFilter']
 
 
 class NoSuchTerminals(Exception):
@@ -40,93 +19,34 @@ class NoSuchTerminals(Exception):
                       str(self.cid)]))
 
 
-class ExpressionParser():
-    """Parses terminal selection expressions"""
+class IdFilter():
+    """An abstract identifier filter"""
 
-    IDENT_SEP = '.'
-    VID_PREFIX = 'v'
-    BLOCK_SEP = ','
-    RANGE_SEP = '-'
-
-    def __init__(self, expr):
-        """Initializes with the respective expression"""
-        self._ids_cid = expr.split(self.IDENT_SEP)
+    def __init__(self, expr=None, vids=None, tids=None):
+        """Sets the respective expression, TIDs and VIDs"""
+        self._vid_parser = VidParser(expr) if expr is not None else None
+        self._tid_parser = TidParser(expr) if expr is not None else None
+        self._vids = vids
+        self._tids = tids
 
     @property
-    def _cid_str(self):
-        """Returns the raw customer ID string"""
-        return self._ids_cid[-1]
-
-    @property
-    def cid(self):
-        """Returns the customer ID"""
-        try:
-            cid = int(self._cid_str)
-        except ValueError:
-            raise InvalidCustomerID(self._cid_str)
-        else:
-            return cid
-
-    @property
-    def _ident_str(self):
-        """Returns the respective ID expressions"""
-        ids_c = len(self._ids_cid)
-        if ids_c == 1:
-            return None
-        elif ids_c == 2:
-            return self._ids_cid[0]
-        else:
-            raise InvalidTerminalIDs()
-
-    @property
-    def _blocks(self):
-        """Yields identifier blocks"""
-        for block in self._ident_str.split(self.BLOCK_SEP):
-            if block:
-                yield block
-
-    def _block_range(self, block):
-        """Yields elements of a block range or a single ID"""
-        if self.RANGE_SEP in block:
-            try:
-                start, end = block.split(self.RANGE_SEP)
-            except ValueError:
-                raise InvalidRangeError(block)
-            else:
-                try:
-                    start = int(start)
-                except ValueError:
-                    raise InvalidIDError(start)
-                else:
-                    try:
-                        end = int(end)
-                    except ValueError:
-                        raise InvalidIDError(start)
-                    else:
-                        return range(start, end+1)
-        else:
-            try:
-                ident = int(block)
-            except ValueError:
-                raise InvalidIDError(block)
-            else:
-                yield ident
-
-    def vids(self):
-        """Yields virtual IDs"""
-        for block in super.__iter__():
-            if block.startswith(self.VID_PREFIX):
-                block = block[1:]
-                yield from self._block_range(block)
-
     def tids(self):
-        """Yields physical identifiers"""
-        for block in self.ident_blocks:
-            if not block.startswith(self.VID_PREFIX):
-                yield from self._block_range(block)
+        """Yields the respective tids"""
+        if self._tid_parser is not None:
+            yield from self._tid_parser
+        if self._tids is not None:
+            yield from self._tids
+
+    @property
+    def vids(self):
+        """Yields the respective tids"""
+        if self._vid_parser is not None:
+            yield from self._vid_parser
+        if self._vids is not None:
+            yield from self._vids
 
 
-class VidFilter(ExpressionParser):
+class VidFilter(IdFilter):
     """Filters expressions for virtual IDs"""
 
     def __iter__(self):
@@ -146,7 +66,7 @@ class VidFilter(ExpressionParser):
                         yield vid
 
 
-class TidFilter(ExpressionParser):
+class TidFilter(IdFilter):
     """Filters expressions for physical IDs"""
 
     def __iter__(self):
@@ -164,7 +84,7 @@ class TidFilter(ExpressionParser):
                     yield terminal.tid
 
 
-class TerminalFilter(ExpressionParser):
+class TerminalFilter(IdFilter):
     """Filters expressions for terminal records"""
 
     def __iter__(self):
