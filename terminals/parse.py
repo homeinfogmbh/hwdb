@@ -102,7 +102,7 @@ class TerminalSelectionParser():
                     except ValueError:
                         raise InvalidIDError(start)
                     else:
-                        return range(start, end+1)
+                        yield from range(start, end+1)
         else:
             try:
                 ident = int(block)
