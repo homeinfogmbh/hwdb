@@ -332,7 +332,7 @@ class Terminal(TerminalModel):
         knr = 'knr={0}'.format(self.customer.id)
         tracking_id = self.customer.piwik_tracking_id
         tracking_id = 'trackingid={0}'.format(
-            tracking_id if tracking_id is not None else '42')
+            tracking_id if tracking_id is not None else 42)
         mouse_visible = 'mouse_visible={0}'.format(mouse_visible).lower()
         checkdate = 'checkdate={0}'.format(checkdate).lower()
         rotation = 'rotation={0}'.format(rotation).lower()
