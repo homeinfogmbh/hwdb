@@ -65,9 +65,11 @@ class TerminalSelectionParser():
     @property
     def _blocks(self):
         """Yields identifier blocks"""
-        for block in self._ident_str.split(self.BLOCK_SEP):
-            if block:
-                yield block
+        ident_str = self._ident_str
+        if ident_str is not None:
+            for block in ident_str.split(self.BLOCK_SEP):
+                if block:
+                    yield block
 
     @property
     def vids(self):

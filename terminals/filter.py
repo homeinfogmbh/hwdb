@@ -36,7 +36,7 @@ class IdFilter():
 
     @property
     def all(self):
-        """Determines whether all terminals should be synchronized"""
+        """Determines whether all terminals should be selected"""
         if not self.vids and not self.tids:
             return True
         else:
