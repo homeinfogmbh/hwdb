@@ -89,7 +89,7 @@ class RemoteController(TerminalAware):
         """Returns an rsync command line to retrieve
         src file from terminal to local file dst
         """
-        return ' '.join([terminals_config.ssh['RSYNC_BIN'], options,
+        return ' '.join([terminals_config.ssh['RSYNC_BIN'], options or '',
                          self._remote_shell, ' '.join(srcs), dst])
 
     def _check_command(self, cmd):
