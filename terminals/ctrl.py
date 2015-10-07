@@ -83,7 +83,7 @@ class RemoteController(TerminalAware):
 
     def _remote_file(self, src):
         """Returns a remote file path"""
-        return '{0}:{1}'.format(self._user_host, src)
+        return '{0}:"{1}"'.format(self._user_host, src)
 
     def _rsync(self, dst, *srcs, options=None):
         """Returns an rsync command line to retrieve
