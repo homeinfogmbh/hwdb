@@ -83,13 +83,13 @@ class RemoteController(TerminalAware):
 
     def _remote_file(self, src):
         """Returns a remote file path"""
-        return '{0}:"{1}"'.format(self._user_host, src)
+        return "{0}:'{1}'".format(self._user_host, src)
 
     def _rsync(self, dst, *srcs, options=None):
         """Returns an rsync command line to retrieve
         src file from terminal to local file dst
         """
-        srcs = ' '.join('"{0}"'.format(src) for src in srcs)
+        srcs = ' '.join("'{0}'".format(src) for src in srcs)
         return ' '.join([terminals_config.ssh['RSYNC_BIN'], options or '',
                          self._remote_shell, srcs, dst])
 
