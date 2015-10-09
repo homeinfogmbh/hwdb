@@ -36,10 +36,10 @@ def chkres(options):
         pr = ctrl.execute(remote_cmd)
         if pr:
             print('Resolution on: ', terminal, '\t',
-                  pr.stdout.decode(), sep='')
+                  pr.stdout.decode().strip(), sep='')
         else:
             print('Could not determine resolution on: ', terminal,
-                  ':\n', pr.stderr.decode(), sep='', file=stderr)
+                  ':\n', pr.stderr.decode().strip(), sep='', file=stderr)
 
 
 if __name__ == '__main__':
