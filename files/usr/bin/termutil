@@ -1,0 +1,44 @@
+#! /usr/bin/env python3
+#
+#  Multi purpose terminal maintenance utility
+#
+#  Maintainer: Richard Neumann <r.neumann@homeinfo.de>
+#
+######################################################
+"""termutil
+
+Check terminal screen resolutions
+
+Usage:
+    termutil (chkres) [<expr>]
+"""
+
+
+from subprocess import call
+
+from docopt import docopt
+
+from homeinfo.terminals.db import Terminal
+from homeinfo.terminals.filter import TerminalFilter
+
+
+def chkres(options):
+    """Checks terminal screen resolutions"""
+    expr = options['<expr>']
+    if expr is None:
+        terminals = Terminal.select().where(
+            (Terminal.deployed == 1) & (Terminal.testing == 0))
+    else:
+        terminals = TerminalFilter(expr)
+    for terminal in terminals:
+        host = '{0}.homeinfo.vpn'.format(terminal)
+        remote_cmd = 'export DISPLAY=:0 \; xrandr | grep " connected"'
+        command = '/usr/bin/ssh {0} {1}'.format(host, remote_cmd)
+        print('Resolution on :', terminal, sep='', end='\t', flush=True)
+        call(command, shell=True)
+
+
+if __name__ == '__main__':
+    options = docopt(__doc__)
+    if options['chkres']:
+        chkres(options)
