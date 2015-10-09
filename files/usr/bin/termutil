@@ -13,13 +13,11 @@ Usage:
     termutil (chkres) [<expr>]
 """
 
-
-from subprocess import call
-
 from docopt import docopt
 
 from homeinfo.terminals.db import Terminal
 from homeinfo.terminals.filter import TerminalFilter
+from homeinfo.terminals.ctrl import RemoteController
 
 
 def chkres(options):
@@ -31,11 +29,10 @@ def chkres(options):
     else:
         terminals = TerminalFilter(expr)
     for terminal in terminals:
-        host = '{0}.homeinfo.vpn'.format(terminal)
+        ctrl = RemoteController('homeinfo', terminal)
         remote_cmd = 'export DISPLAY=:0 \; xrandr | grep " connected"'
-        command = '/usr/bin/ssh {0} {1}'.format(host, remote_cmd)
-        print('Resolution on :', terminal, sep='', end='\t', flush=True)
-        call(command, shell=True)
+        pr = ctrl.execute(remote_cmd)
+        print('Resolution on: ', terminal, '\t', str(pr), sep='')
 
 
 if __name__ == '__main__':
