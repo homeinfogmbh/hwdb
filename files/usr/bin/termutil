@@ -13,6 +13,8 @@ Usage:
     termutil (chkres) [<expr>]
 """
 
+from sys import stderr
+
 from docopt import docopt
 
 from homeinfo.terminals.db import Terminal
@@ -32,7 +34,11 @@ def chkres(options):
         ctrl = RemoteController('homeinfo', terminal)
         remote_cmd = 'export DISPLAY=:0 \; xrandr | grep " connected"'
         pr = ctrl.execute(remote_cmd)
-        print('Resolution on: ', terminal, '\t', str(pr), sep='')
+        if pr:
+            print('Resolution on: ', terminal, '\t', pr.stdout, sep='')
+        else:
+            print('Could not determine resolution on: ', terminal,
+                  ':\n', pr.stderr, sep='', file=stderr)
 
 
 if __name__ == '__main__':
