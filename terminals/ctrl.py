@@ -1,5 +1,6 @@
 """Library for terminal remote control"""
 
+from sys import stdout, stderr
 from tempfile import NamedTemporaryFile
 from itertools import chain
 
@@ -19,7 +20,8 @@ class RPCError(Exception):
 class RemoteController(TerminalAware):
     """Controls a terminal remotely"""
 
-    def __init__(self, user, terminal, keyfile=None, white_list=None, bl=None):
+    def __init__(self, user, terminal, keyfile=None,
+                 white_list=None, bl=None, debug=None):
         """Initializes a remote terminal controller"""
         super().__init__(terminal)
         self._user = user
@@ -27,6 +29,7 @@ class RemoteController(TerminalAware):
         # Commands white and black list
         self._white_list = white_list
         self._black_list = bl
+        self._debug = debug or 0
         # FUrther options for SSH
         self._SSH_OPTS = {
             # Trick SSH it into not checking the host key
@@ -90,8 +93,11 @@ class RemoteController(TerminalAware):
         src file from terminal to local file dst
         """
         srcs = ' '.join("'{0}'".format(src) for src in srcs)
-        return ' '.join([terminals_config.ssh['RSYNC_BIN'], options or '',
-                         self._remote_shell, srcs, dst])
+        cmd = ' '.join([terminals_config.ssh['RSYNC_BIN'], options or '',
+                        self._remote_shell, srcs, dst])
+        if self._debug >= 3:
+            print(cmd)
+        return cmd
 
     def _check_command(self, cmd):
         """Checks the command against the white- and blacklists"""
@@ -117,6 +123,9 @@ class RemoteController(TerminalAware):
             rsync = self._rsync(
                 tmp.name, [self._remote_file(file)], options=options)
             pr = run(rsync, shell=True)
+            if self._debug >= 1:
+                f = stdout if pr else stderr
+                print(pr, file=f)
             if pr:
                 return tmp.read()
             else:
@@ -125,7 +134,9 @@ class RemoteController(TerminalAware):
     def send(self, dst, *srcs, options=None):
         """Gets a file from a remote terminal"""
         rsync = self._rsync(self._remote_file(dst), *srcs, options=options)
-        # print('Executing:', rsync)
+        if self._debug:
+            print('Executing:', rsync)
         pr = run(rsync, shell=True)
-        # print('Result:', str(pr), pr.exit_code, pr.stdout, pr.stderr)
+        if self._debug:
+            print('Result:', str(pr), pr.exit_code, pr.stdout, pr.stderr)
         return pr
