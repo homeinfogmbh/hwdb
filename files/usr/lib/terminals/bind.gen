@@ -7,8 +7,7 @@ from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal
 
 dns_tempate = '/usr/share/terminals/bind.zone.temp'
-dns_config = ' '
-domain = 'homeinfo.vpn'
+dns_config = '/etc/bind/homeinfo.vpn.zone'
 record = '{0}\tIN\tA\t{1}\n'
 
 
