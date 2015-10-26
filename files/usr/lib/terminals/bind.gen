@@ -7,7 +7,7 @@ from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal
 
 dns_tempate = '/usr/share/terminals/bind.zone.temp'
-dns_config = '/etc/bind/homeinfo.vpn.zone'
+dns_config = ' '
 domain = 'homeinfo.vpn'
 record = '{0}\tIN\tA\t{1}\n'
 
@@ -19,7 +19,8 @@ if __name__ == '__main__':
         template = temp.read()
     
     for terminal in Terminal:
-        hostname, ipv4addr = terminal.hostname, terminal.ipv4addr
+        tid, cid, ipv4addr = terminal.tid, terminal.cid, terminal.ipv4addr
+        hostname = '{0}.{1}'.format(tid, cid)
         text += record.format(hostname, ipv4addr)
     
     config = template.format(text)
