@@ -3,8 +3,8 @@
 and add HOMEINFO terminal records
 """
 
+from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal
-from itertools import chain
 
 dns_config = '/etc/bind/homeinfo.vpn.zone'
 dns_tempate = '/usr/share/bind.zone.temp'
@@ -26,3 +26,6 @@ if __name__ == '__main__':
     
     with open(dns_config, 'w') as dns_cfg:
         dns_cfg.write(config)
+
+    print('Restarting bind9 service', end='              ')
+    evaluate(run('systemctl restart bind9.service', shell=True))
