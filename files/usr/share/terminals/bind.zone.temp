@@ -1,0 +1,13 @@
+$TTL 7200
+@       IN      SOA     ns01.homeinfo.vpn. postmaster.homeinfo.vpn. (
+                                        2007011601 ; Serial
+                                        28800      ; Refresh
+                                        1800       ; Retry
+                                        604800     ; Expire - 1 week
+                                        86400 )    ; Minimum
+                IN      NS      ns01
+                IN      NS      ns02
+ns01            IN      A       0.0.0.0
+ns02            IN      A       0.0.0.0
+localhost       IN      A       127.0.0.1
+{0}
