@@ -18,7 +18,7 @@ if __name__ == '__main__':
     with open(dns_tempate, 'r') as temp:
         template = temp.read()
     
-    for terminal in Terminals:
+    for terminal in Terminal:
         hostname, ipv4addr = terminal.hostname, terminal.ipv4addr
         text += record.format(hostname, ipv4addr)
     
