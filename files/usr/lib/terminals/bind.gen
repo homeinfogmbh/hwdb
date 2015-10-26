@@ -22,7 +22,7 @@ if __name__ == '__main__':
         hostname, ipv4addr = terminal.hostname, terminal.ipv4addr
         text += record.format(hostname, ipv4addr)
     
-    config = template.render(text)
+    config = template.format(text)
     
     with open(dns_config, 'w') as dns_cfg:
         dns_cfg.write(config)
