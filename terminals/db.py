@@ -123,7 +123,7 @@ class Terminal(TerminalModel):
     domain = ForeignKeyField(
         Domain, db_column='domain', related_name='terminals')
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
-    _vpn_key = CharField(36, db_column='vpn_key', null=True, default=None)
+    vpn_key = CharField(36, null=True, default=None)
     virtual_display = IntegerField(null=True)
     location = ForeignKeyField(Address, null=True, db_column='location')
     deleted = DateTimeField(null=True, default=None)
@@ -246,19 +246,6 @@ class Terminal(TerminalModel):
     def ipv4addr(self, ipv4addr):
         """Sets the IPv4 address"""
         self._ipv4addr = int(ipv4addr)
-
-    @property
-    def vpn_key(self):
-        """Returns the OpenVPN Key"""
-        if self._vpn_key is None:
-            return '{0}.{1}'.format(self.tid, self.cid)
-        else:
-            return self._vpn_key
-
-    @vpn_key.setter
-    def vpn_key(self, vpn_key):
-        """Sets the OpenVPN Key"""
-        self._vpn_key = vpn_key
 
     @property
     def address(self):
