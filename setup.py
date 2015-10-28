@@ -12,15 +12,18 @@ setup(
               'pyxb',
               'homeinfo.lib'],
     packages=['homeinfo.terminals'],
-    data_files=[('/etc', ['files/etc/terminals.conf']),
+    data_files=[  # Main configuration
+                ('/etc', ['files/etc/terminals.conf']),
+                # Nagios 3 templates
                 ('/etc/nagios3/conf.d',
                  ['files/etc/nagios3/conf.d/homeinfo-terminal.cfg',
                   'files/etc/nagios3/conf.d/homeinfo-commands.cfg']),
+                # Miscellaneous scripts
                 ('/usr/lib/terminals',
                  ['files/usr/lib/terminals/bind.gen',
-                  'files/usr/lib/terminals/build-key-terminal',
                   'files/usr/lib/terminals/nagios-config.gen',
                   'files/usr/lib/terminals/openvpn-client-config.gen']),
+                # Template files
                 ('/usr/share/terminals',
                  ['files/usr/share/terminals/bind.zone.temp',
                   'files/usr/share/terminals/pacman.conf.temp',
@@ -29,6 +32,7 @@ setup(
                   'files/usr/share/terminals/nagios.contactgroup.temp',
                   'files/usr/share/terminals/nagios.hostgroup.temp',
                   'files/usr/share/terminals/nagios.terminal.temp']),
+                # Controller script
                 ('/usr/bin', ['files/usr/bin/termutil'])],
     license=open('LICENSE.txt').read(),
     description=('Homeinfo Terminal Libary')
