@@ -14,8 +14,6 @@ from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal, Class, NagiosAdmins
 from homeinfo.terminals.config import terminals_config
 
-options = docopt(__doc__)
-
 
 def terminals():
     """Yields monitored terminals"""
@@ -200,6 +198,7 @@ def mkhostgroups():
 
 
 if __name__ == '__main__':
+    options = docopt(__doc__)
     contacts = options['--contacts']
     contactgroups = options['--contactgroups']
     hosts = options['--hosts']

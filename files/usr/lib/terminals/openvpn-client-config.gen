@@ -8,9 +8,6 @@ from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal
 from homeinfo.terminals.config import terminals_config
 
-__author__ = 'Richard Neumann <r.neumann@homeinfo.de>'
-__date__ = '22.04.2015'
-
 
 if __name__ == '__main__':
     network = terminals_config.net['IPV4MASK']
