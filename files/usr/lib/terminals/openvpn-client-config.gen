@@ -25,9 +25,9 @@ if __name__ == '__main__':
             ['ifconfig-push', str(terminal.ipv4addr), network])
         data += '\n\n'
 
+        file_name = terminal.vpn_key or str(terminal)
         file_path = join(
-            terminals_config.openvpn['CLIENTS_DIR'],
-            str(terminal))
+            terminals_config.openvpn['CLIENTS_DIR'], file_name)
         with open(file_path, 'w') as cfg:
             cfg.write(data)
     
