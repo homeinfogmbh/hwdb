@@ -13,6 +13,13 @@ Usage:
     termutil (list | ls) [<cid> [(--deployed | --undeployed)] \
 [(--testing | --productive)] [--expr]]
     termutil (chkres) [<expr>]
+
+Options:
+    --deployed    Only print deployed terminals
+    --undeployed  Only print undeployed terminals
+    --testing     Only print testing terminals
+    --productive  Only print productive terminals
+    --expr        Format output as terminal selection expression
 """
 
 from sys import stderr
