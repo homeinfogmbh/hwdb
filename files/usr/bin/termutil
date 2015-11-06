@@ -77,7 +77,8 @@ def list_(options):
                 testflag = 0
             else:
                 testflag = None
-            print(' '.join(_ls_filter(cid, depflag, testflag)))
+            print(' '.join(
+                str(tid) for tid in _ls_filter(cid, depflag, testflag)))
     else:
         customers = {}
         for terminal in Terminal:
