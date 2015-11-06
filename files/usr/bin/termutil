@@ -53,8 +53,8 @@ def list_(options):
                 testflag = None
             for terminal in Terminal.select().where(
                     (Terminal.customer == cid) &
-                    (Terminal.deployed == depflag) &
-                    (Terminal.testing == testflag)):
+                    ((Terminal.deployed == depflag) or depflag is None) &
+                    ((Terminal.testing == testflag) or testflag is None)):
                 print(terminal.tid)
     else:
         customers = {}
