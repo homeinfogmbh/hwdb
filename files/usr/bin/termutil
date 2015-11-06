@@ -82,7 +82,11 @@ def list_(options):
             else:
                 testflag = None
             tids = _ls_filter(cid, depflag, testflag)
-            print(sep.join(str(tid) for tid in tids), end,  sep=psep)
+            result = sep.join(str(tid) for tid in tids)
+            if result:
+                print(result, end,  sep=psep)
+            else:
+                print('')
     else:
         customers = {}
         for terminal in Terminal:
