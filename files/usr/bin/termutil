@@ -80,7 +80,8 @@ def list_(options):
             else:
                 testflag = None
             print(sep.join(
-                str(tid) for tid in _ls_filter(cid, depflag, testflag)))
+                str(tid) for tid in _ls_filter(cid, depflag, testflag)),
+                  cid if expr else '',  sep='.' if expr else '')
     else:
         customers = {}
         for terminal in Terminal:
