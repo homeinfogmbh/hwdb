@@ -54,8 +54,6 @@ def _ls_filter(cid, deployed, testing):
 def list_(options):
     """List all terminals of all customers"""
     cid = options['<cid>']
-    expr = options['--expr']
-    sep = ',' if expr else ' '
     if cid is not None:
         try:
             cid = int(cid)
@@ -67,6 +65,10 @@ def list_(options):
             undeployed = options['--undeployed']
             testing = options['--testing']
             productive = options['--productive']
+            expr = options['--expr']
+            sep = ',' if expr else ' '
+            end = cid if expr else ''
+            psep = '.' if expr else ''
             if deployed:
                 depflag = 1
             elif undeployed:
@@ -79,9 +81,8 @@ def list_(options):
                 testflag = 0
             else:
                 testflag = None
-            print(sep.join(
-                str(tid) for tid in _ls_filter(cid, depflag, testflag)),
-                  cid if expr else '',  sep='.' if expr else '')
+            tids = _ls_filter(cid, depflag, testflag)
+            print(sep.join(str(tid) for tid in tids), end,  sep=psep)
     else:
         customers = {}
         for terminal in Terminal:
