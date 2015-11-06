@@ -40,7 +40,7 @@ def list_():
         if terminal.deployed:
             termc = TerminalColor.green
         else:
-            termc = TerminalColor.yellow
+            termc = TerminalColor.red
         termstr = termf(termc(terminal.tid))
         customers[terminal.customer.id].append(termstr)
     return customers
