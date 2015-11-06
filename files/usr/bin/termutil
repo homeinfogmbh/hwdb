@@ -35,8 +35,7 @@ def list_():
         if terminal.testing:
             termf = TerminalColor.inverted
         else:
-            def termf(x):
-                return x
+            termf = TerminalColor.bold
         if terminal.deployed:
             termc = TerminalColor.green
         else:
