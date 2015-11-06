@@ -73,4 +73,4 @@ if __name__ == '__main__':
     if options['list'] or options['ls']:
         customers = list_()
         for customer in sorted(customers):
-            print('{0}:'.format(customer), customers[customer])
+            print('{0}:'.format(customer), ', '.join(customers[customer]))
