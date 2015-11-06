@@ -11,7 +11,7 @@ Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
     termutil (list | ls) [<cid> [(--deployed | --undeployed)] \
-[(--testing | --productive)]]
+[(--testing | --productive)] [--expr]]
     termutil (chkres) [<expr>]
 """
 
@@ -54,6 +54,8 @@ def _ls_filter(cid, deployed, testing):
 def list_(options):
     """List all terminals of all customers"""
     cid = options['<cid>']
+    expr = options['--expr']
+    sep = ',' if expr else ' '
     if cid is not None:
         try:
             cid = int(cid)
@@ -77,7 +79,7 @@ def list_(options):
                 testflag = 0
             else:
                 testflag = None
-            print(' '.join(
+            print(sep.join(
                 str(tid) for tid in _ls_filter(cid, depflag, testflag)))
     else:
         customers = {}
