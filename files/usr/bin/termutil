@@ -51,11 +51,28 @@ def list_(options):
                 testflag = 0
             else:
                 testflag = None
-            for terminal in Terminal.select().where(
-                    (Terminal.customer == cid) &
-                    ((Terminal.deployed == depflag) or depflag is None) &
-                    ((Terminal.testing == testflag) or testflag is None)):
-                print(terminal.tid)
+            if depflag is None:
+                if testflag is None:
+                    for terminal in Terminal.select().where(
+                            (Terminal.customer == cid)):
+                        print(terminal.tid)
+                else:
+                    for terminal in Terminal.select().where(
+                            (Terminal.customer == cid) &
+                            (Terminal.testing == testflag)):
+                        print(terminal.tid)
+            else:
+                if testflag is None:
+                    for terminal in Terminal.select().where(
+                            (Terminal.customer == cid) &
+                            (Terminal.deployed == depflag)):
+                        print(terminal.tid)
+                else:
+                    for terminal in Terminal.select().where(
+                            (Terminal.customer == cid) &
+                            (Terminal.deployed == depflag) &
+                            (Terminal.testing == testflag)):
+                        print(terminal.tid)
     else:
         customers = {}
         for terminal in Terminal:
