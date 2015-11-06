@@ -25,6 +25,32 @@ from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.ctrl import RemoteController
 
 
+def _ls_filter(cid, deployed, testing):
+    """Filter terminals of customer for deployed and testing"""
+    if deployed is None:
+        if testing is None:
+            for terminal in Terminal.select().where(
+                    (Terminal.customer == cid)):
+                yield terminal.tid
+        else:
+            for terminal in Terminal.select().where(
+                    (Terminal.customer == cid) &
+                    (Terminal.testing == testing)):
+                yield terminal.tid
+    else:
+        if testing is None:
+            for terminal in Terminal.select().where(
+                    (Terminal.customer == cid) &
+                    (Terminal.deployed == deployed)):
+                yield terminal.tid
+        else:
+            for terminal in Terminal.select().where(
+                    (Terminal.customer == cid) &
+                    (Terminal.deployed == deployed) &
+                    (Terminal.testing == testing)):
+                yield terminal.tid
+
+
 def list_(options):
     """List all terminals of all customers"""
     cid = options['<cid>']
@@ -51,28 +77,7 @@ def list_(options):
                 testflag = 0
             else:
                 testflag = None
-            if depflag is None:
-                if testflag is None:
-                    for terminal in Terminal.select().where(
-                            (Terminal.customer == cid)):
-                        print(terminal.tid)
-                else:
-                    for terminal in Terminal.select().where(
-                            (Terminal.customer == cid) &
-                            (Terminal.testing == testflag)):
-                        print(terminal.tid)
-            else:
-                if testflag is None:
-                    for terminal in Terminal.select().where(
-                            (Terminal.customer == cid) &
-                            (Terminal.deployed == depflag)):
-                        print(terminal.tid)
-                else:
-                    for terminal in Terminal.select().where(
-                            (Terminal.customer == cid) &
-                            (Terminal.deployed == depflag) &
-                            (Terminal.testing == testflag)):
-                        print(terminal.tid)
+            print(' '.join(_ls_filter(cid, depflag, testflag)))
     else:
         customers = {}
         for terminal in Terminal:
