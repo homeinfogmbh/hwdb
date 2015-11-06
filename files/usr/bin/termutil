@@ -10,7 +10,8 @@
 Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
-    termutil (list | ls)
+    termutil (list | ls) [<cid> [(--deployed | --undeployed)] \
+[(--testing | --productive)]]
     termutil (chkres) [<expr>]
 """
 
@@ -24,27 +25,58 @@ from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.ctrl import RemoteController
 
 
-def list_():
+def list_(options):
     """List all terminals of all customers"""
-    customers = {}
-    for terminal in Terminal:
+    cid = options['<cid>']
+    if cid is not None:
         try:
-            customers[terminal.customer.id]
-        except KeyError:
-            customers[terminal.customer.id] = []
-        if terminal.testing:
-            termf = TerminalColor.inverted
+            cid = int(cid)
+        except (TypeError, ValueError):
+            print('Invalid customer ID: {0}'.format(cid), file=stderr)
+            exit(3)
         else:
-            def termf(x):
-                return x
-        if terminal.deployed:
-            def termc(x):
-                return TerminalColor.bold(TerminalColor.green(x))
-        else:
-            termc = TerminalColor.red
-        termstr = termf(termc(terminal.tid))
-        customers[terminal.customer.id].append(termstr)
-    return customers
+            deployed = options['--deployed']
+            undeployed = options['--undeployed']
+            testing = options['--testing']
+            productive = options['--productive']
+            if deployed:
+                depflag = 1
+            elif undeployed:
+                depflag = 0
+            else:
+                depflag = None
+            if testing:
+                testflag = 1
+            elif productive:
+                testflag = 0
+            else:
+                testflag = None
+            for terminal in Terminal.select().where(
+                    (Terminal.customer == cid) &
+                    (Terminal.deployed == depflag) &
+                    (Terminal.testing == testflag)):
+                print(terminal.tid)
+    else:
+        customers = {}
+        for terminal in Terminal:
+            try:
+                customers[terminal.customer.id]
+            except KeyError:
+                customers[terminal.customer.id] = []
+            if terminal.testing:
+                termf = TerminalColor.inverted
+            else:
+                def termf(x):
+                    return x
+            if terminal.deployed:
+                def termc(x):
+                    return TerminalColor.bold(TerminalColor.green(x))
+            else:
+                termc = TerminalColor.red
+            termstr = termf(termc(terminal.tid))
+            customers[terminal.customer.id].append(termstr)
+        for customer in sorted(customers):
+            print('{0}:'.format(customer), ', '.join(customers[customer]))
 
 
 def chkres(options):
@@ -72,6 +104,4 @@ if __name__ == '__main__':
     if options['chkres']:
         chkres(options)
     if options['list'] or options['ls']:
-        customers = list_()
-        for customer in sorted(customers):
-            print('{0}:'.format(customer), ', '.join(customers[customer]))
+        list_(options)
