@@ -5,11 +5,12 @@
 #  Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 #
 ######################################################
-"""termutil
+"""Multi purpose terminal maintenance utility
 
-Check terminal screen resolutions
+Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
+    termutil (list | ls)
     termutil (chkres) [<expr>]
 """
 
@@ -17,9 +18,32 @@ from sys import stderr
 
 from docopt import docopt
 
+from homeinfo.lib.strf import Terminal as TerminalColor
 from homeinfo.terminals.db import Terminal
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.ctrl import RemoteController
+
+
+def list_():
+    """List all terminals of all customers"""
+    customers = {}
+    for terminal in Terminal:
+        try:
+            customers[terminal.customer.id]
+        except KeyError:
+            customers[terminal.customer.id] = []
+        if terminal.testing:
+            termf = TerminalColor.inverted
+        else:
+            def termf(x):
+                return x
+        if terminal.deployed:
+            termc = TerminalColor.green
+        else:
+            termc = TerminalColor.yellow
+        termstr = termf(termc(terminal.tid))
+        customers[terminal.customer.id].append(termstr)
+    return customers
 
 
 def chkres(options):
@@ -46,3 +70,7 @@ if __name__ == '__main__':
     options = docopt(__doc__)
     if options['chkres']:
         chkres(options)
+    if options['list'] or options['ls']:
+        customers = list_()
+        for customer in sorted(customers):
+            print('{0}:'.format(customer), customers[customer])
