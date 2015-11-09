@@ -9,8 +9,8 @@
 # intended to gather all HOMEINFO digital      #
 # signage terminals in one central management  #
 # network for remote administration.           #
-# Placeholders in the shape of <foo> are to be #
-# replaced by a rendering script.              #
+# Placeholders in braces are to be replaced by #
+# a rendering script.                          #
 #                                              #
 # (C) 2015: HOMEINFO                           #
 #    Richard Neumann <r.neumann@homeinfo.de>   #
@@ -46,7 +46,7 @@ proto udp
 # The hostname/IP and port of the server.
 # You can have multiple remote entries
 # to load balance between the servers.
-<servers>
+{servers}
 
 # Choose a random host from the remote
 # list for load-balancing.  Otherwise
@@ -91,9 +91,9 @@ persist-tun
 # a separate .crt/.key file pair
 # for each client.  A single ca
 # file can be used for all clients.
-ca <ca>
-cert <host_name>.crt
-key <host_name>.key
+ca {ca}
+cert {cert}
+key {key}
 
 # Verify server certificate by checking
 # that the certicate has the nsCertType
@@ -114,8 +114,8 @@ ns-cert-type server
 # Select a cryptographic cipher.
 # If the cipher option is used on the server
 # then you must also specify it here.
-cipher <cipher>
-auth <auth>
+cipher {cipher}
+auth {auth}
 
 # Enable compression on the VPN link.
 # Don't enable this unless it is also
