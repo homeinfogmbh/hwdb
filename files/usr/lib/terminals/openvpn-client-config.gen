@@ -18,6 +18,9 @@ if __name__ == '__main__':
     
     for terminal in Terminal.select().where(Terminal.deleted >> None):
         data = header
+        data += (
+            '# Terminal no. {tid} for customer {customer} ({cid})\n'.format(
+                tid=terminal.tid, customer=str(customer), cid=customer.id))
         data += ' '.join(
             ['ifconfig-push', str(terminal.ipv4addr), network])
         data += '\n\n'
