@@ -9,12 +9,7 @@ from homeinfo.terminals.abc import TerminalAware
 
 from .config import terminals_config
 
-__all__ = ['RPCError', 'RemoteController']
-
-
-class RPCError(Exception):
-    """Indicated an error during a remote procedure call"""
-    pass
+__all__ = ['RemoteController']
 
 
 class RemoteController(TerminalAware):
@@ -60,15 +55,19 @@ class RemoteController(TerminalAware):
     @property
     def _ssh_options(self):
         """Returns options for SSH"""
-        return ' '.join([
-            ' '.join(['-o', '='.join([key, self._SSH_OPTS[key]])])
-            for key in self._SSH_OPTS])
+        for option in self._SSH_OPTS:
+            value = self._SSH_OPTS[option]
+            option_value = '-o {option}={value}'.format(option, value)
+            yield option_value
 
     @property
     def _ssh_cmd(self):
         """Returns the SSH basic command line"""
-        return ' '.join([terminals_config.ssh['SSH_BIN'], self._identity,
-                         self._ssh_options])
+        options = ' '.join(self._ssh_options)
+        return '{bin} {identity} {options}'.format(
+            bin=terminals_config.ssh['SSH_BIN'],
+            identity=self._identity,
+            options=options)
 
     @property
     def _remote_shell(self):
@@ -93,8 +92,11 @@ class RemoteController(TerminalAware):
         src file from terminal to local file dst
         """
         srcs = ' '.join("'{0}'".format(src) for src in srcs)
-        cmd = ' '.join([terminals_config.ssh['RSYNC_BIN'], options or '',
-                        self._remote_shell, srcs, dst])
+        options = '' if options is None else options
+        cmd = '{bin} {options} {rsh} {srcs} {dst}'.format(
+            bin=terminals_config.ssh['RSYNC_BIN'],
+            options=options, rsh=self._remote_shell,
+            srcs=srcs, dst=dst)
         if self._debug >= 3:
             print(cmd)
         return cmd
