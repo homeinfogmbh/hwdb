@@ -57,7 +57,8 @@ class RemoteController(TerminalAware):
         """Returns options for SSH"""
         for option in self._SSH_OPTS:
             value = self._SSH_OPTS[option]
-            option_value = '-o {option}={value}'.format(option, value)
+            option_value = '-o {option}={value}'.format(
+                option=option, value=value)
             yield option_value
 
     @property
