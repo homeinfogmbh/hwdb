@@ -113,7 +113,8 @@ class Weather(TerminalModel):
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
-    _CHK_CMD = '/bin/ping -c 1 -W 1 {0}'
+    # Ping once and wait two seconds max.
+    _CHK_CMD = '/bin/ping -c 1 -W 2 {0}'
 
     customer = ForeignKeyField(
         Customer, db_column='customer', related_name='terminals')
