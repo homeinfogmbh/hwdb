@@ -512,7 +512,8 @@ class NagiosAdmins(TerminalModel):
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
     class_ = ForeignKeyField(
-        Class, null=True, db_column='class', related_name='members')
+        Class, null=True, db_column='class', related_name='members'
+    )
     service_period = CharField(16, default='24x7')
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
@@ -533,3 +534,31 @@ class NagiosAdmins(TerminalModel):
             return self.employee.surname
         else:
             return self._name
+
+
+@create
+class AccessStats(TerminalModel):
+    """Stores application access statistics"""
+
+    class Meta:
+        db_table = 'access_stats'
+
+    customer = ForeignKeyField(Customer, db_column='customer')
+    tid = IntegerField(null=True, default=None)
+    vid = IntegerField()
+    document = CharField(255)
+    timestamp = DateTimeField()
+
+    @classmethod
+    def add(cls, cid, vid, document, tid=None):
+        """Creates a new record"""
+        record = cls()
+        record.customer = cid
+        record.tid = tid
+        record.vid = vid
+        record.document = document
+        record.timestamp = datetime.now()
+        if record.save():
+            return True
+        else:
+            return False
