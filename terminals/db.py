@@ -367,8 +367,9 @@ class ConsoleHistory(TerminalModel):
     class Meta:
         db_table = 'console_history'
 
-    terminal = ForeignKeyField(Terminal, db_column='terminal',
-                               related_name='console_log')
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal', related_name='console_log'
+    )
     timestamp = DateTimeField(default=datetime.now())
     command = CharField(255)
     stdout = BlobField()
@@ -439,11 +440,12 @@ class Administrator(_User):
 class SetupOperator(_User):
     """A user that is allowed to setup systems by HOMEINFO"""
 
-    company = ForeignKeyField(
-        Company, db_column='company', related_name='setup_operators')
-
     class Meta:
         db_table = 'setup_operator'
+
+    company = ForeignKeyField(
+        Company, db_column='company', related_name='setup_operators'
+    )
 
     @property
     def terminals(self):
@@ -465,9 +467,7 @@ class SetupOperatorTerminals(TerminalModel):
         db_table = 'terminal_operators'
 
     operator = ForeignKeyField(SetupOperator, db_column='operator')
-    """The respective setup operator"""
     terminal = ForeignKeyField(Terminal, db_column='terminal')
-    """The respective terminal"""
 
     @classmethod
     def terminals(cls, operator):
