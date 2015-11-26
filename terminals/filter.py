@@ -26,13 +26,13 @@ class IdFilter():
         """Sets the respective expression, TIDs and VIDs"""
         if type(cid_or_expr) is int:
             self.cid = cid_or_expr
-            self.vids = vids or []
-            self.tids = tids or []
+            self.vids = vids or set()
+            self.tids = tids or set()
         else:
             parser = TerminalSelectionParser(cid_or_expr)
             self.cid = parser.cid
-            self.vids = [vid for vid in parser.vids]
-            self.tids = [tid for tid in parser.tids]
+            self.vids = {vid for vid in parser.vids}
+            self.tids = {tid for tid in parser.tids}
 
     @property
     def all(self):
@@ -48,19 +48,19 @@ class VidFilter(IdFilter):
 
     def __iter__(self):
         """Yields virtual IDs"""
-        processed = []
+        processed = set()
         if self.all:
             for terminal in Terminal.select().where(
                     Terminal.customer == self.cid):
                 vid = terminal.virtual_display
                 if vid is not None:
                     if vid not in processed:
-                        processed.append(vid)
+                        processed.add(vid)
                         yield vid
         else:
             for vid in self.vids:
                 if vid not in processed:
-                    processed.append(vid)
+                    processed.add(vid)
                     yield vid
             for tid in self.tids:
                 terminal = Terminal.by_ids(self.cid, tid)
@@ -68,7 +68,7 @@ class VidFilter(IdFilter):
                     vid = terminal.virtual_display
                     if vid is not None:
                         if vid not in processed:
-                            processed.append(vid)
+                            processed.add(vid)
                             yield vid
 
 
@@ -82,16 +82,16 @@ class TidFilter(IdFilter):
                     Terminal.customer == self.cid):
                 yield terminal.tid
         else:
-            processed = []
+            processed = set()
             for tid in self.tids:
                 if tid not in processed:
-                    processed.append(tid)
+                    processed.add(tid)
                     yield tid
             for vid in self.vids:
                 for terminal in Terminal.by_virt(self.cid, vid):
                     tid = terminal.tid
                     if tid not in processed:
-                        processed.append(tid)
+                        processed.add(tid)
                         yield terminal.tid
 
 
@@ -105,21 +105,21 @@ class TerminalFilter(IdFilter):
                     Terminal.customer == self.cid):
                 yield terminal
         else:
-            processed = []
-            nonexistant = []
+            processed = set()
+            nonexistant = set()
             for tid in self.tids:
                 if tid not in processed:
-                    processed.append(tid)
+                    processed.add(tid)
                     terminal = Terminal.by_ids(self.cid, tid)
                     if terminal is not None:
                         yield terminal
                     else:
-                        nonexistant.append(tid)
+                        nonexistant.add(tid)
             for vid in self.vids:
                 for terminal in Terminal.by_virt(self.cid, vid):
                     tid = terminal.tid
                     if tid not in processed:
-                        processed.append(tid)
+                        processed.add(tid)
                         yield terminal
             if nonexistant:
                 raise NoSuchTerminals(self.cid, nonexistant)

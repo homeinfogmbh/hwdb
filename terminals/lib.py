@@ -35,9 +35,9 @@ class Rotation():
     def __str__(self):
         """Converts the rotation to a string"""
         if self._degrees is not None:
-            return str(self._degrees) + '°'
+            return '{0}°'.format(self._degrees)
         else:
-            return str(self._pi) + ' π'
+            return '{0} π'.format(self._pi)
 
     def __int__(self):
         """Converts the rotation into an integer value"""

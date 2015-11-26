@@ -50,8 +50,10 @@ class Class(TerminalModel):
     def add(cls, name, full_name=None, touch=False):
         """Adds a terminal class"""
         try:
-            new_class = cls.get((cls.name == name) &
-                                (cls.touch == touch))
+            new_class = cls.get(
+                (cls.name == name) &
+                (cls.touch == touch)
+            )
         except DoesNotExist:
             new_class = cls()
             new_class.name = name
@@ -66,7 +68,7 @@ class Class(TerminalModel):
 class Domain(TerminalModel):
     """Terminal domains"""
 
-    # The domain's fully qulaifited domain name
+    # The domain's fully qualified domain name
     _fqdn = CharField(32, db_column='fqdn')
 
     @classmethod
@@ -90,7 +92,7 @@ class Domain(TerminalModel):
     def fqdn(self, fqdn):
         """Sets the FQDN"""
         if fqdn.endswith('.') and not fqdn.startswith('.'):
-            self.fqdn = fqdn
+            self._fqdn = fqdn
         else:
             raise ValueError('Not a FQDN: {0}'.format(fqdn))
 
@@ -117,19 +119,22 @@ class Terminal(TerminalModel):
     _CHK_CMD = '/bin/ping -c 1 -W 2 {0}'
 
     customer = ForeignKeyField(
-        Customer, db_column='customer', related_name='terminals')
+        Customer, db_column='customer', related_name='terminals'
+    )
     tid = IntegerField()    # Customer-unique terminal identifier
     class_ = ForeignKeyField(
         Class, db_column='class', related_name='terminals')
     domain = ForeignKeyField(
-        Domain, db_column='domain', related_name='terminals')
+        Domain, db_column='domain', related_name='terminals'
+    )
     _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
     vpn_key = CharField(36, null=True, default=None)
     virtual_display = IntegerField(null=True)
     location = ForeignKeyField(Address, null=True, db_column='location')
     deleted = DateTimeField(null=True, default=None)
     weather = ForeignKeyField(
-        Weather, null=True, db_column='weather', related_name='terminals')
+        Weather, null=True, db_column='weather', related_name='terminals'
+    )
     _rotation = IntegerField(db_column='rotation')
     last_sync = DateTimeField(null=True, default=None)
     deployed = BooleanField(default=False)
@@ -141,7 +146,7 @@ class Terminal(TerminalModel):
 
     @classproperty
     @classmethod
-    def used_ipv4addr(cls):
+    def ipv4addrs(cls):
         """Yields used IPv4 addresses"""
         for terminal in cls.select().where(True):
             yield terminal.ipv4addr
@@ -170,7 +175,7 @@ class Terminal(TerminalModel):
         return term
 
     @classmethod
-    def used_tids(cls, cid):
+    def tids(cls, cid):
         """Yields used terminal IDs for a certain customer"""
         for terminal in cls.select().where(cls.customer == cid):
             yield terminal.tid
@@ -183,7 +188,7 @@ class Terminal(TerminalModel):
             ipv4addr_base = IPv4Address(net_base)
             # Skip first 10 IP Addresses
             ipv4addr = ipv4addr_base + 10
-            while ipv4addr in cls.used_ipv4addr:
+            while ipv4addr in cls.ipv4addrs:
                 ipv4addr += 1
             # TODO: Catch IP address overflow and check
             # whether IP address is within the network
@@ -195,7 +200,7 @@ class Terminal(TerminalModel):
                 raise ValueError('Not and IPv4 address: {0}'.format(
                     desired)) from None
             else:
-                if ipv4addr not in cls.used_ipv4addr:
+                if ipv4addr not in cls.ipv4addrs:
                     return ipv4addr
                 else:
                     return cls.gen_ip_addr(desired=None)
@@ -205,11 +210,11 @@ class Terminal(TerminalModel):
         """Gets a unique terminal ID for the customer"""
         if desired is None:
             tid = 1
-            while tid in cls.used_tids(cid):
+            while tid in cls.tids(cid):
                 tid += 1
             return tid
         else:
-            if tid in cls.used_tids(cid):
+            if tid in cls.tids(cid):
                 return cls.gen_tid(cid, desired=None)
             else:
                 return tid
