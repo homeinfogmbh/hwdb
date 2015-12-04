@@ -119,6 +119,14 @@ class OS(TerminalModel):
     name = CharField(16)
     version = CharField(16, null=True, default=None)
 
+    def __str__(self):
+        """Returns the family name"""
+        return self.family
+
+    def __repr__(self):
+        """Returns the OS name and version"""
+        return '{0} {1}'.format(self.name, self.version)
+
 
 @create
 class Terminal(TerminalModel):
