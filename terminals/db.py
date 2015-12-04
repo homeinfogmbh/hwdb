@@ -112,6 +112,15 @@ class Weather(TerminalModel):
 
 
 @create
+class OS(TerminalModel):
+    """Operating systems"""
+
+    family = CharField(8)
+    name = CharField(16)
+    version = CharField(16, null=True, default=None)
+
+
+@create
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
@@ -122,6 +131,7 @@ class Terminal(TerminalModel):
         Customer, db_column='customer', related_name='terminals'
     )
     tid = IntegerField()    # Customer-unique terminal identifier
+    os = ForeignKeyField(OS, db_column='os', related_name='terminals')
     class_ = ForeignKeyField(
         Class, db_column='class', related_name='terminals')
     domain = ForeignKeyField(
