@@ -2,7 +2,7 @@
 
 from itertools import chain
 from datetime import datetime
-from ipaddress import IPv4Address, AddressValueError
+from ipaddress import IPv4Network, IPv4Address, AddressValueError
 from hashlib import sha256
 from uuid import uuid4
 
@@ -22,8 +22,8 @@ __all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
            'Administrator', 'SetupOperator', 'NagiosAdmins']
 
 
-class TerminalModel(Model):
-    """Terminal manager base Model"""
+class TerminalBasicModel(Model):
+    """Terminal manager basic Model"""
 
     class Meta:
         database = MySQLDatabase(
@@ -33,6 +33,10 @@ class TerminalModel(Model):
             passwd=terminals_config.db['passwd'],
             closing=True)
         schema = database.database
+
+
+class TerminalModel(TerminalBasicModel):
+    """Terminal manager basic Model with ID"""
 
     id = PrimaryKeyField()
 
@@ -365,6 +369,133 @@ class Terminal(TerminalModel):
         rotation_degrees = 'rotationDegrees={0}'.format(rotation_degrees)
         return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
                           rotation_degrees])
+
+
+# TODO: Use!
+@create
+class Synchronization(TerminalModel):
+    """Synchronization log
+
+    Recommended usage:
+        with Synchronization.start(terminal) as sync:
+            <do_sync_stuff>
+            if sync_succeded:
+                sync.status = True
+            else:
+                sync.status = False
+    """
+
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal', related_name='_synchronizations')
+    started = DateTimeField()
+    finished = DateTimeField(null=True, default=None)
+    status = BooleanField()
+    annotation = CharField(255, null=True, default=None)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.stop()
+
+    @classmethod
+    def start(cls, terminal):
+        """Start a synchronization for this terminal"""
+        sync = cls()
+        sync.terminal = terminal
+        sync.started = datetime.now()
+        sync.finished = None
+        sync.status = False
+        sync.annotation = None
+        return sync
+
+    def stop(self):
+        """Stops the synchronization"""
+        self.finished = datetime.now()
+        return self.save()
+
+
+# TODO: Use!
+@create
+class OpenVPN(TerminalModel):
+    """OpenVPN settings"""
+
+    NETWORK = IPv4Network('10.8.0.0/16')
+
+    terminal = ForeignKeyField(
+        Terminal, primary_key=True, db_column='terminal',
+        related_name='_synchronizations')
+    vpn_key = CharField(36, null=True, default=None)
+    _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
+
+    @classmethod
+    def add(cls, terminal, vpn_key=None, ipv4addr=None):
+        """A unique record for the terminal"""
+        try:
+            openvpn = cls.get(cls.terminal == terminal)
+        except DoesNotExist:
+            return cls._add(terminal, ipv4addr=ipv4addr, vpn_key=vpn_key)
+        else:
+            return openvpn
+
+    @classmethod
+    def _add(cls, terminal, ipv4addr=None, vpn_key=None):
+        """Adds a record for the terminal"""
+        openvpn = cls()
+        openvpn.terminal = terminal
+        openvpn.vpn_key = vpn_key
+        openvpn.ipv4addr = cls._gen_addr(desired=ipv4addr)
+        openvpn.save()
+        return openvpn
+
+    @classproperty
+    @classmethod
+    def used_ipv4addrs(cls):
+        """Yields used IPv4 addresses"""
+        for openvpn in cls:
+            yield openvpn.ipv4addr
+
+    @classproperty
+    @classmethod
+    def free_ipv4addrs(cls):
+        """Yields availiable IPv4 addresses"""
+        used_ipv4addrs = [a for a in cls.used_ipv4addrs]
+        lowest = None
+        for ipv4addr in cls.NETWORK:
+            if lowest is not None:
+                lowest = ipv4addr + 10
+            elif ipv4addr >= lowest:
+                if ipv4addr not in used_ipv4addrs:
+                    yield ipv4addr
+
+    @classmethod
+    def _gen_addr(cls, desired=None):
+        """Generates a unique IPv4 address"""
+        if desired is not None:
+            try:
+                ipv4addr = IPv4Address(desired)
+            except AddressValueError:
+                raise ValueError('Not an IPv4 address: {0}'.format(ipv4addr))
+            else:
+                if ipv4addr in cls.free_ipv4addrs:
+                    return ipv4addr
+                else:
+                    raise ValueError(
+                        'IPv4 address {0} is already in use'.format(ipv4addr))
+        else:
+            for ipv4addr in cls.free_ipv4addrs:
+                return ipv4addr
+            raise ValueError('Network exhausted!')
+
+    @property
+    def ipv4addr(self):
+        """Returns an IPv4 Address"""
+        return IPv4Address(self._ipv4addr)
+
+    @ipv4addr.setter
+    def ipv4addr(self, ipv4addr):
+        """Sets the IPv4 address"""
+        self._ipv4addr = int(ipv4addr)
 
 
 @create
