@@ -372,6 +372,7 @@ class Terminal(TerminalModel):
 
 
 # TODO: Use!
+'''
 @create
 class Synchronization(TerminalModel):
     """Synchronization log
@@ -496,7 +497,7 @@ class OpenVPN(TerminalModel):
     def ipv4addr(self, ipv4addr):
         """Sets the IPv4 address"""
         self._ipv4addr = int(ipv4addr)
-
+'''
 
 @create
 class Screenshot(TerminalModel):
