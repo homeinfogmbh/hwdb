@@ -100,10 +100,10 @@ def mkcontactgroups():
 
     if admins:
         # Renders admins for all terminal classes
-        rendered = template.replace('%NAME%', 'admins')
-        rendered = rendered.replace(
-            '%ALIAS%', 'Global terminal administrators')
-        rendered = rendered.replace('%MEMBERS%', ','.join(admins))
+        rendered = template.format(
+            name='admins',
+            alias='Global terminal administrators',
+            members=','.join(admins))
         data += '{0}\n\n'.format(rendered)
 
     with open(conf_path, 'w') as cfg:
