@@ -10,4 +10,9 @@ $TTL 7200
 ns01            IN      A       0.0.0.0
 ns02            IN      A       0.0.0.0
 localhost       IN      A       127.0.0.1
+;# Management network hosts
+phpmyadmin		IN		A		10.9.0.1
+hipster			IN		A		10.9.0.1
+homie			IN		A		10.9.0.1
+;# Terminal network hosts
 {0}
