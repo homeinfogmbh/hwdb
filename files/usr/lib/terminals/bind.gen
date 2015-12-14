@@ -14,7 +14,6 @@ DNS_CONFIG = '/etc/bind/homeinfo.vpn.zone'
 RECORD = '{0}\tIN\tA\t{1}\n'
 MANAGEMENT_HOSTS = {
     'phpmyadmin': '10.9.0.1',
-    'hipster': '10.9.0.1',
     'homie': '10.9.0.1'
 }
 
