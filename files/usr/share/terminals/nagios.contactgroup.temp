@@ -1,5 +1,5 @@
-define contactgroup{
-        contactgroup_name       %NAME%
-        alias                   %ALIAS%
-        members                 %MEMBERS%
-        }
+define contactgroup {{
+    contactgroup_name  {name}
+    alias              {alias}
+    members            {members}
+}}

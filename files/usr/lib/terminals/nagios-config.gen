@@ -34,19 +34,14 @@ def mkcontacts():
 
     def render(template, admin):
         """Renders a Nagios administrator"""
-        rendered = template.replace('%NAME%', admin.name)
-        rendered = rendered.replace('%ALIAS%', str(admin.employee))
-        rendered = rendered.replace(
-            '%SERVICE_PERIOD%', str(admin.service_period))
-        rendered = rendered.replace(
-            '%HOST_PERIOD%', str(admin.host_period))
-        rendered = rendered.replace(
-            '%SERVICE_OPTIONS%', str(admin.service_options))
-        rendered = rendered.replace(
-            '%HOST_OPTIONS%', str(admin.host_options))
-        rendered = rendered.replace('%EMAIL%', str(admin.employee.email))
-        rendered = rendered.replace('%HOST_COMMAND%', admin.host_command)
-        
+        rendered = template.format(
+            name=admin.name, alias=str(admin.employee),
+            service_notification_period=str(admin.service_period),
+            host_notification_period=str(admin.host_period),
+            service_notification_options=str(admin.service_options),
+            host_notification_options=str(admin.host_options),
+            service_notification_commands=admin.host_command,
+            email=str(admin.employee.email))
         return rendered
     
     conf_path = join(
@@ -74,10 +69,11 @@ def mkcontactgroups():
         # Exclude admins
         members = [m.name for m in class_.members if not m.admin]
         if members:
-            rendered = template.replace(
-                '%NAME%', '_'.join([class_.name, 'admins']))
-            rendered = rendered.replace('%ALIAS%', class_.full_name)
-            rendered = rendered.replace('%MEMBERS%', ','.join(members))
+            name = '_'.join([class_.name, 'admins'])
+            rendered = template.format(
+                name=name,
+                alias=class_.full_name,
+                members=','.join(members))
             return rendered
         else:
             return ''
@@ -150,9 +146,10 @@ def mkhostgroups():
     def render(template, name, full_name, memebers):
         """Renders host groups"""
         if members:
-            rendered = template.replace('%NAME%', name)
-            rendered = rendered.replace('%FULL_NAME%', full_name)
-            rendered = rendered.replace('%MEMBERS%', ','.join(memebers))
+            rendered = template.format(
+                name=name,
+                alias=full_name,
+                members=','.join(memebers))
             return rendered
         else:
             return ''
