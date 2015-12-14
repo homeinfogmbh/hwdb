@@ -25,7 +25,7 @@ def management_hosts():
     for management_host in MANAGEMENT_HOSTS:
         management += RECORD.format(
             management_host,
-            management_hosts[management_host])
+            MANAGEMENT_HOSTS[management_host])
     return management
 
 
