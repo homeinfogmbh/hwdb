@@ -1,4 +1,4 @@
-define hostgroup {
+define hostgroup {{
     hostgroup_name  {name}
     alias           {alias}
     members         {members}
