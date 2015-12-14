@@ -1,7 +1,5 @@
 #! /usr/bin/env python3
-"""Generate /etc/hosts with default configuration
-and add HOMEINFO terminal records
-"""
+"""Generate bind9 configuration for HOMEINFO's VPN networks"""
 
 from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.db import Terminal
