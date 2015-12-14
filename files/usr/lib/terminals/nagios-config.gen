@@ -15,6 +15,12 @@ from homeinfo.terminals.db import Terminal, Class, NagiosAdmins
 from homeinfo.terminals.config import terminals_config
 
 
+ICONS = {
+    'POSIX': 'icons/linux.gif',
+    'NT': 'icons/windows.gif'
+}
+
+
 def terminals():
     """Yields monitored terminals"""
     return Terminal.select().where(
@@ -113,13 +119,12 @@ def mkhosts():
 
     def render(template, terminal):
         """Renders the template with the respective data"""
-        rendered = template.replace('%TID%', str(terminal.tid))
-        rendered = rendered.replace('%CID%', str(terminal.cid))
-        rendered = rendered.replace('%HOST_TYPE%', terminal.class_.name)
-        rendered = rendered.replace('%HOST_NAME%', terminal.hostname)
-        rendered = rendered.replace('%ALIAS%', repr(terminal.location))
-        rendered = rendered.replace('%ADDRESS%', str(terminal.ipv4addr))
-        rendered = rendered.replace('%OS%', 'linux')  # TODO: Make dynamic
+        icon = ICONS.get(terminal.os.family)
+        rendered = template.format(
+            tid=str(terminal.tid), cid=str(terminal.cid),
+            use=terminal.class_.name, host_name=terminal.hostname,
+            alias=repr(terminal.location), address=str(terminal.ipv4addr),
+            icon=icon)
         return rendered
 
     conf_path = join(
