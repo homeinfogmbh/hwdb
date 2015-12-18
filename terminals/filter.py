@@ -51,7 +51,7 @@ class VidFilter(IdFilter):
         if self.all:
             for terminal in Terminal.select().where(
                     Terminal.customer == self.cid):
-                vid = terminal.virtual_display
+                vid = terminal.vid
                 if vid is not None:
                     if vid not in processed:
                         processed.add(vid)
@@ -64,7 +64,7 @@ class VidFilter(IdFilter):
             for tid in self.tids:
                 terminal = Terminal.by_ids(self.cid, tid)
                 if terminal is not None:
-                    vid = terminal.virtual_display
+                    vid = terminal.vid
                     if vid is not None:
                         if vid not in processed:
                             processed.add(vid)
