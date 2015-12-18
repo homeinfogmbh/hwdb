@@ -446,7 +446,10 @@ class Synchronization(TerminalModel):
         Terminal, db_column='terminal', related_name='_synchronizations')
     started = DateTimeField()
     finished = DateTimeField(null=True, default=None)
-    status = BooleanField()
+    reload = BooleanField(null=True, default=None)
+    force = BooleanField(null=True, default=None)
+    nocheck = BooleanField(null=True, default=None)
+    status = BooleanField(default=False)
     annotation = CharField(255, null=True, default=None)
 
     def __enter__(self):
