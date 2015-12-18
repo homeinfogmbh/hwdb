@@ -231,7 +231,7 @@ def chkres(options):
 if __name__ == '__main__':
     options = docopt(__doc__)
     if options['chkres']:
-        if getuser != USER:
+        if getuser() != USER:
             print('You must be {0} to check the resolution'.format(USER))
         else:
             chkres(options)
