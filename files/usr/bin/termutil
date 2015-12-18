@@ -93,8 +93,13 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
 
 def list_class():
     """Lists available classes"""
+    template = '{id: >5.5} {name: >10.10} {full_name: >10.10} {touch: >5.5}'
     for cls in Class.select().where(True):
-        print(cls.id, cls.name, cls.full_name, cls.touch, sep='\t')
+        print(template.format(
+            id=cls.id,
+            name=cls.name,
+            full_name=cls.full_name,
+            touch=cls.touch))
 
 
 def list_os():
