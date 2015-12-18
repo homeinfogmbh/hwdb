@@ -30,8 +30,8 @@ from homeinfo.terminals.ctrl import RemoteController
 def list_terminals(expr, deployed, undeployed, testing, productive):
     """Lists terminal records"""
 
-    template = ('{0:5{id}} {0:5{tid}} {0:10{cid}} {0:5{vid}} {0:12{ipv4addr}} '
-                '{0:21{deployed}} {0:5{testing}} {0:30{address}} {annotation}')
+    template = ('{id:>.5} {tid:>.5} {cid:>.10} {vid:>.5} {ipv4addr:>.12} '
+                '{deployed:>.21} {testing:>.5} {address:>.30} {annotation}')
 
     def _filter(terminals):
         for terminal in terminals:
