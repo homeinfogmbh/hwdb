@@ -17,6 +17,7 @@ Options:
 """
 
 from sys import stderr
+from getpass import getuser
 
 from docopt import docopt
 
@@ -25,6 +26,8 @@ from homeinfo.lib.strf import Terminal as TerminalColor
 from homeinfo.terminals.orm import Class, Domain, OS, VPN, Terminal
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.ctrl import RemoteController
+
+USER = 'termgr'
 
 
 def list_terminals(expr, deployed, undeployed, testing, productive):
@@ -214,7 +217,7 @@ def chkres(options):
     else:
         terminals = TerminalFilter(expr)
     for terminal in terminals:
-        ctrl = RemoteController('termgr', terminal)
+        ctrl = RemoteController(USER, terminal)
         remote_cmd = 'export DISPLAY=:0 \; xrandr | grep " connected"'
         pr = ctrl.execute(remote_cmd)
         if pr:
@@ -228,7 +231,10 @@ def chkres(options):
 if __name__ == '__main__':
     options = docopt(__doc__)
     if options['chkres']:
-        chkres(options)
+        if getuser != USER:
+            print('You must be {0} to check the resolution'.format(USER))
+        else:
+            chkres(options)
     if options['list'] or options['ls']:
         expr = options['<expr>']
         terminals = options['terminals']
