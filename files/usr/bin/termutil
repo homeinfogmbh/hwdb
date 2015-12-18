@@ -87,7 +87,7 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
             deployed=terminal.deployed,
             testing=terminal.testing,
             address=terminal.address,
-            annotataion=terminal.annotation))
+            annotation=terminal.annotation))
 
 
 def list_class():
