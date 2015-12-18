@@ -7,7 +7,7 @@ Usage:
     termutil (list | ls) terminals [<expr> [(--deployed | --undeployed)] \
 [(--testing | --productive)]]
     termutil (list | ls) (class | os | domains)
-    termutil (chkres) [<expr>]
+    termutil chkres [<expr>]
 
 Options:
     --deployed    Only print deployed terminals
@@ -104,7 +104,7 @@ def list_class():
 
 
 def list_os():
-    """Lists available classes"""
+    """Lists available operating systems"""
     template = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
     for os in OS.select().where(True):
         print(template.format(
@@ -112,6 +112,15 @@ def list_os():
             family=os.family,
             name=os.name,
             version=os.version))
+
+
+def list_domains():
+    """Lists available domains"""
+    template = '{id: >5.5}  {fqdn}'
+    for domain in Domain.select().where(True):
+        print(template.format(
+            id=str(domain.id),
+            fqdn=domain.fqdn))
 
 
 def _ls_filter(cid, deployed, testing):
@@ -238,3 +247,5 @@ if __name__ == '__main__':
             list_class()
         elif options['os']:
             list_os()
+        elif options['domains']:
+            list_domains()
