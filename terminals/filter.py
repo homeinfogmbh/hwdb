@@ -1,7 +1,7 @@
 """Terminal filters"""
 
 from .orm import Terminal
-from .idparser import TerminalSelectionParser
+from .parse import TerminalSelectionParser
 
 __all__ = ['VidFilter', 'TidFilter', 'TerminalFilter']
 
