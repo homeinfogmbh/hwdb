@@ -199,7 +199,11 @@ if __name__ == '__main__':
         chkres(options)
     if options['list'] or options['ls']:
         expr = options['<expr>']
-        if options['terminals']:
+        try:
+            terminals = options['terminals']
+        except KeyError:
+            terminals = False
+        if terminals:
             deployed = options['--deployed']
             undeployed = options['--undeployed']
             testing = options['--testing']
