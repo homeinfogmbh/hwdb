@@ -210,24 +210,13 @@ class VPN(TerminalModel):
     NETWORK = IPv4Network('10.8.0.0/16')
 
     _ipv4addr = BigIntegerField(db_column='ipv4addr')
-    vpn_key = CharField(36, null=True, default=None)
+    key = CharField(36, null=True, default=None)
 
     @classmethod
-    def add(cls, terminal, vpn_key=None, ipv4addr=None):
-        """A unique record for the terminal"""
-        try:
-            openvpn = cls.get(cls.terminal == terminal)
-        except DoesNotExist:
-            return cls._add(terminal, ipv4addr=ipv4addr, vpn_key=vpn_key)
-        else:
-            return openvpn
-
-    @classmethod
-    def _add(cls, terminal, ipv4addr=None, vpn_key=None):
+    def add(cls, key=None, ipv4addr=None):
         """Adds a record for the terminal"""
         openvpn = cls()
-        openvpn.terminal = terminal
-        openvpn.vpn_key = vpn_key
+        openvpn.key = key
         openvpn.ipv4addr = cls._gen_addr(desired=ipv4addr)
         openvpn.save()
         return openvpn
