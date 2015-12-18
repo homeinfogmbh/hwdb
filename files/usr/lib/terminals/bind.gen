@@ -2,7 +2,7 @@
 """Generate bind9 configuration for HOMEINFO's VPN networks"""
 
 from homeinfo.lib.system import run, evaluate
-from homeinfo.terminals.db import Terminal
+from homeinfo.terminals.orm import Terminal
 
 __all__ = ['DNS_TEMPLATE', 'DNS_CONFIG', 'RECORD', 'MANAGEMENT_HOSTS',
            'management_hosts', 'terminal_hosts']

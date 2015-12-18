@@ -5,7 +5,7 @@ pushs from HOMEINFO terminal records
 
 from os.path import join
 from homeinfo.lib.system import run, evaluate
-from homeinfo.terminals.db import Terminal
+from homeinfo.terminals.orm import Terminal
 from homeinfo.terminals.config import terminals_config
 
 

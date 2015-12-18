@@ -11,7 +11,7 @@ from os.path import join
 from docopt import docopt
 
 from homeinfo.lib.system import run, evaluate
-from homeinfo.terminals.db import Terminal, Class, NagiosAdmins
+from homeinfo.terminals.orm import Terminal, Class, NagiosAdmins
 from homeinfo.terminals.config import terminals_config
 
 

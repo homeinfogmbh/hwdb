@@ -15,12 +15,36 @@ from homeinfo.peewee import MySQLDatabase, create
 from homeinfo.crm import Customer, Address, Company, Employee
 
 from .config import terminals_config
-from .exceptions import TerminalConfigError, VPNUnconfiguredError
-from .lib import Rotation
 
 __all__ = ['Class', 'Domain', 'Weather', 'OS', 'VPN', 'Terminal',
            'Synchronization', 'Administrator', 'SetupOperator',
            'NagiosAdmins', 'AccessStats']
+
+
+class TerminalError(Exception):
+    """Basic exception for terminals handling"""
+
+    pass
+
+
+class TerminalConfigError(TerminalError):
+    """Exception that indicated errors in the terminal configuration"""
+
+    pass
+
+
+class VPNUnconfiguredError(TerminalConfigError):
+    """Indicated that no VPN configuration has
+    been assigned to the respective terminal
+    """
+
+    pass
+
+
+class AddressUnconfiguredError(TerminalConfigError):
+    """Indicated that no address has been configured for the terminal"""
+
+    pass
 
 
 class TerminalModel(Model):
@@ -185,8 +209,6 @@ class VPN(TerminalModel):
 
     NETWORK = IPv4Network('10.8.0.0/16')
 
-    domain = ForeignKeyField(
-        Domain, db_column='domain', related_name='terminals')
     _ipv4addr = BigIntegerField(db_column='ipv4addr')
     vpn_key = CharField(36, null=True, default=None)
 
@@ -275,6 +297,8 @@ class Terminal(TerminalModel):
     os = ForeignKeyField(OS, db_column='os', related_name='terminals')
     vpn = ForeignKeyField(
         VPN, null=True, column='vpn', related_name='terminals', default=None)
+    domain = ForeignKeyField(
+        Domain, db_column='domain', related_name='terminals')
     location = ForeignKeyField(Address, null=True, db_column='location')
     vid = IntegerField(null=True)
     weather = ForeignKeyField(
@@ -305,8 +329,9 @@ class Terminal(TerminalModel):
                 term = None
         else:
             try:
-                term = cls.get((cls.customer == cid) & (cls.tid == tid) &
-                               (cls.deleted >> None))
+                term = cls.get(
+                    (cls.customer == cid) & (cls.tid == tid) &
+                    (cls.deleted >> None))
             except DoesNotExist:
                 term = None
         return term
@@ -336,9 +361,7 @@ class Terminal(TerminalModel):
         """Yields terminals of a customer that
         run the specified virtual terminal
         """
-        return cls.select().where(
-            (cls.customer == cid) &
-            (cls.virtual_display == vid))
+        return cls.select().where((cls.customer == cid) & (cls.vid == vid))
 
     @property
     def cid(self):
@@ -363,45 +386,25 @@ class Terminal(TerminalModel):
         else:
             raise VPNUnconfiguredError()
 
-    @ipv4addr.setter
-    def ipv4addr(self, ipv4addr):
-        """Sets the IPv4 address"""
-        self._ipv4addr = int(ipv4addr)
-
     @property
     def address(self):
         location = self.location
-        try:
-            street_houseno = '{0} {1}'.format(
-                location.street, location.house_number)
-        except (TypeError, ValueError):
-            return None
-        else:
+        if location is not None:
             try:
-                zip_city = '{0} {1}'.format(location.zip_code, location.city)
+                street_houseno = '{0} {1}'.format(
+                    location.street, location.house_number)
             except (TypeError, ValueError):
                 return None
             else:
-                return '{0}, {1}'.format(street_houseno, zip_city)
-
-    @property
-    def rotation(self):
-        """Returns the rotation"""
-        if self._rotation is None:
-            return None
+                try:
+                    zip_city = '{0} {1}'.format(
+                        location.zip_code, location.city)
+                except (TypeError, ValueError):
+                    return None
+                else:
+                    return '{0}, {1}'.format(street_houseno, zip_city)
         else:
-            return Rotation(degrees=self._rotation)
-
-    @rotation.setter
-    def rotation(self, rotation):
-        """Sets the rotation"""
-        if rotation is None:
-            self._rotation = None
-        else:
-            try:
-                self._rotation = rotation.degrees
-            except AttributeError:
-                self._rotation = int(Rotation(degrees=rotation))
+            raise AddressUnconfiguredError()
 
     @property
     def operators(self):

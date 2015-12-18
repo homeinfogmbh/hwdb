@@ -21,7 +21,8 @@ from sys import stderr
 from docopt import docopt
 
 from homeinfo.lib.strf import Terminal as TerminalColor
-from homeinfo.terminals.db import Terminal
+
+from homeinfo.terminals.orm import Terminal
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.ctrl import RemoteController
 
