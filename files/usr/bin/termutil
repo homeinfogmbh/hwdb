@@ -77,7 +77,7 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
     for terminal in _filter(terminals):
         print(terminal.id, terminal.tid, terminal.customer.id, terminal.vid,
               terminal.ipv4addr, terminal.deployed, terminal.testing,
-              terminal.address, sep='\t')
+              terminal.address, terminal.annotation, sep='\t')
 
 
 def list_class():
