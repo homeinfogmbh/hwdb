@@ -450,6 +450,7 @@ class Synchronization(TerminalModel):
     force = BooleanField(null=True, default=None)
     nocheck = BooleanField(null=True, default=None)
     status = BooleanField(default=False)
+    reloaded = BooleanField(default=False)
     annotation = CharField(255, null=True, default=None)
 
     def __enter__(self):
