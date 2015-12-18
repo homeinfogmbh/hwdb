@@ -31,7 +31,7 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
     """Lists terminal records"""
 
     template = ('{id: >5.5} {tid: >5.5} {cid: >10.10} {vid: >5.5} '
-                '{ipv4addr: >12.12} {deployed: >21.21} {testing: >6.6} '
+                '{ipv4addr: <12.12} {deployed: >21.21} {testing: >6.6} '
                 '{address: >40.40} {annotation}')
 
     def _filter(terminals):
