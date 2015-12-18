@@ -214,7 +214,7 @@ def chkres(options):
     else:
         terminals = TerminalFilter(expr)
     for terminal in terminals:
-        ctrl = RemoteController('homeinfo', terminal)
+        ctrl = RemoteController('termgr', terminal)
         remote_cmd = 'export DISPLAY=:0 \; xrandr | grep " connected"'
         pr = ctrl.execute(remote_cmd)
         if pr:
