@@ -4,7 +4,7 @@
 Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
-    termutil (list | ls) terminal [<expr> [(--deployed | --undeployed)] \
+    termutil (list | ls) terminals [<expr> [(--deployed | --undeployed)] \
 [(--testing | --productive)]]
     termutil (list | ls) (class | os | domains)
     termutil (chkres) [<expr>]
@@ -199,15 +199,18 @@ if __name__ == '__main__':
         chkres(options)
     if options['list'] or options['ls']:
         expr = options['<expr>']
-        try:
-            terminals = options['terminals']
-        except KeyError:
-            terminals = False
+        terminals = options['terminals']
         if terminals:
             deployed = options['--deployed']
             undeployed = options['--undeployed']
+            if not deployed and not undeployed:
+                deployed = True
+                undeployed = True
             testing = options['--testing']
             productive = options['--productive']
+            if not testing and not productive:
+                testing = True
+                productive = True
             list_terminals(expr, deployed, undeployed, testing, productive)
         elif options['class']:
             list_class()
