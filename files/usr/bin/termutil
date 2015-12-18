@@ -79,15 +79,15 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
         terminals = Terminal.select().where(True)
     for terminal in _filter(terminals):
         print(template.format(
-            id=terminal.id,
-            tid=terminal.tid,
-            cid=terminal.customer.id,
-            vid=terminal.vid,
-            ipv4addr=terminal.ipv4addr,
-            deployed=terminal.deployed,
-            testing=terminal.testing,
-            address=terminal.address,
-            annotation=terminal.annotation))
+            id=str(terminal.id),
+            tid=str(terminal.tid),
+            cid=str(terminal.customer.id),
+            vid=str(terminal.vid),
+            ipv4addr=str(terminal.ipv4addr),
+            deployed=str(terminal.deployed),
+            testing=str(terminal.testing),
+            address=str(terminal.address),
+            annotation=str(terminal.annotation)))
 
 
 def list_class():
