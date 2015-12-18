@@ -4,8 +4,9 @@
 Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
-    termutil (list | ls) [<cid> [(--deployed | --undeployed)] \
-[(--testing | --productive)] [--expr]]
+    termutil (list | ls) terminal [<expr> [(--deployed | --undeployed)] \
+[(--testing | --productive)]]
+    termutil (list | ls) (class | os | domains)
     termutil (chkres) [<expr>]
 
 Options:
@@ -13,7 +14,6 @@ Options:
     --undeployed  Only print undeployed terminals
     --testing     Only print testing terminals
     --productive  Only print productive terminals
-    --expr        Format output as terminal selection expression
 """
 
 from sys import stderr
@@ -22,9 +22,74 @@ from docopt import docopt
 
 from homeinfo.lib.strf import Terminal as TerminalColor
 
-from homeinfo.terminals.orm import Terminal
+from homeinfo.terminals.orm import Class, Domain, OS, VPN, Terminal
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.ctrl import RemoteController
+
+
+def list_terminals(expr, deployed, undeployed, testing, productive):
+    """Lists terminal records"""
+
+    def _filter(terminals):
+        for terminal in terminals:
+            if deployed:
+                if undeployed:
+                    if testing:
+                        if productive:
+                            yield terminal
+                        else:
+                            if terminal.testing:
+                                yield terminal
+                    else:
+                        if productive:
+                            if not terminal.testing:
+                                yield terminal
+                else:
+                    if terminal.deployed is not None:
+                        if testing:
+                            if productive:
+                                yield terminal
+                            else:
+                                if terminal.testing:
+                                    yield terminal
+                        else:
+                            if productive:
+                                if not terminal.testing:
+                                    yield terminal
+            else:
+                if terminal.deployed is None:
+                    if undeployed:
+                        if testing:
+                            if productive:
+                                yield terminal
+                            else:
+                                if terminal.testing:
+                                    yield terminal
+                        else:
+                            if productive:
+                                if not terminal.testing:
+                                    yield terminal
+
+    if expr:
+        terminals = TerminalFilter(expr)
+    else:
+        terminals = Terminal.select().where(True)
+    for terminal in _filter(terminals):
+        print(terminal.id, terminal.tid, terminal.customer.id, terminal.vid,
+              terminal.ipv4addr, terminal.deployed, terminal.testing,
+              terminal.address, sep='\t')
+
+
+def list_class():
+    """Lists available classes"""
+    for cls in Class.select().where(True):
+        print(cls.id, cls.name, cls.full_name, cls.touch, sep='\t')
+
+
+def list_os():
+    """Lists available classes"""
+    for os in OS.select().where(True):
+        print(os.id, os.family, os.name, os.version, sep='\t')
 
 
 def _ls_filter(cid, deployed, testing):
@@ -63,10 +128,6 @@ def list_(options):
             print('Invalid customer ID: {0}'.format(cid), file=stderr)
             exit(3)
         else:
-            deployed = options['--deployed']
-            undeployed = options['--undeployed']
-            testing = options['--testing']
-            productive = options['--productive']
             expr = options['--expr']
             sep = ',' if expr else ' '
             end = cid if expr else ''
@@ -137,4 +198,14 @@ if __name__ == '__main__':
     if options['chkres']:
         chkres(options)
     if options['list'] or options['ls']:
-        list_(options)
+        expr = options['<expr>']
+        if options['terminals']:
+            deployed = options['--deployed']
+            undeployed = options['--undeployed']
+            testing = options['--testing']
+            productive = options['--productive']
+            list_terminals(expr, deployed, undeployed, testing, productive)
+        elif options['class']:
+            list_class()
+        elif options['os']:
+            list_os()
