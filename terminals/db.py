@@ -7,8 +7,7 @@ from hashlib import sha256
 from uuid import uuid4
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField,\
-    BigIntegerField, DoesNotExist, DateTimeField, BlobField,\
-    BooleanField, PrimaryKeyField
+    BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
 
 from homeinfo.lib.misc import classproperty
 from homeinfo.lib.system import run
@@ -16,14 +15,18 @@ from homeinfo.peewee import MySQLDatabase, create
 from homeinfo.crm import Customer, Address, Company, Employee
 
 from .config import terminals_config
+from .exceptions import TerminalConfigError, VPNUnconfiguredError
 from .lib import Rotation
 
-__all__ = ['Domain', 'Class', 'Terminal', 'Screenshot', 'ConsoleHistory',
-           'Administrator', 'SetupOperator', 'NagiosAdmins']
+__all__ = ['Class', 'Domain', 'Weather', 'OS', 'VPN', 'Terminal',
+           'Synchronization', 'Administrator', 'SetupOperator',
+           'NagiosAdmins', 'AccessStats']
 
 
-class TerminalBasicModel(Model):
+class TerminalModel(Model):
     """Terminal manager basic Model"""
+
+    id = PrimaryKeyField()
 
     class Meta:
         database = MySQLDatabase(
@@ -35,10 +38,54 @@ class TerminalBasicModel(Model):
         schema = database.database
 
 
-class TerminalModel(TerminalBasicModel):
-    """Terminal manager basic Model with ID"""
+class _User(TerminalModel):
+    """A generic abstract user"""
 
-    id = PrimaryKeyField()
+    name = CharField(64)
+    pwhash = CharField(64)
+    salt = CharField(36)
+    enabled = BooleanField()
+    annotation = CharField(255, null=True)
+    root = BooleanField(default=False)
+
+    @classmethod
+    def authenticate(cls, name, passwd):
+        """Authenticate with name and hashed password"""
+        if passwd:
+            try:
+                user = cls.get(cls.name == name)
+            except DoesNotExist:
+                return False
+            else:
+                if user.passwd and passwd:
+                    pwstr = passwd + user.salt
+                    pwhash = sha256(pwstr.encode()).hexdigest()
+                    if user.pwhash == pwhash:
+                        if user.enabled:
+                            return user
+                        else:
+                            return False
+                    else:
+                        return False
+                else:
+                    return False
+        else:
+            return False
+
+    @property
+    def passwd(self):
+        """Returns the password hash"""
+        return self.pwhash
+
+    @passwd.setter
+    def passwd(self, passwd):
+        """Creates a new password hash"""
+        salt = str(uuid4())
+        pwstr = passwd + salt
+        pwhash = sha256(pwstr.encode()).hexdigest()
+        self.salt = salt
+        self.pwhash = pwhash
+        self.save()
 
 
 @create
@@ -133,301 +180,15 @@ class OS(TerminalModel):
 
 
 @create
-class Terminal(TerminalModel):
-    """A physical terminal out in the field"""
-
-    # Ping once and wait two seconds max.
-    _CHK_CMD = '/bin/ping -c 1 -W 2 {0}'
-
-    customer = ForeignKeyField(
-        Customer, db_column='customer', related_name='terminals'
-    )
-    tid = IntegerField()    # Customer-unique terminal identifier
-    os = ForeignKeyField(OS, db_column='os', related_name='terminals')
-    class_ = ForeignKeyField(
-        Class, db_column='class', related_name='terminals')
-    domain = ForeignKeyField(
-        Domain, db_column='domain', related_name='terminals'
-    )
-    _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
-    vpn_key = CharField(36, null=True, default=None)
-    virtual_display = IntegerField(null=True)
-    location = ForeignKeyField(Address, null=True, db_column='location')
-    deleted = DateTimeField(null=True, default=None)
-    weather = ForeignKeyField(
-        Weather, null=True, db_column='weather', related_name='terminals'
-    )
-    _rotation = IntegerField(db_column='rotation')
-    last_sync = DateTimeField(null=True, default=None)
-    deployed = BooleanField(default=False)
-    testing = BooleanField(default=False)
-
-    def __str__(self):
-        """Converts the terminal to a unique string"""
-        return '.'.join([str(ident) for ident in self.idents])
-
-    @classproperty
-    @classmethod
-    def ipv4addrs(cls):
-        """Yields used IPv4 addresses"""
-        for terminal in cls.select().where(True):
-            yield terminal.ipv4addr
-
-    @classproperty
-    @classmethod
-    def hosts(cls):
-        """Yields entries for /etc/hosts"""
-        for terminal in cls.select().where(True):
-            yield '{0}\t{1}'.format(terminal.ipv4addr, terminal.hostname)
-
-    @classmethod
-    def by_ids(cls, cid, tid, deleted=False):
-        """Get a terminal by customer id and terminal id"""
-        if deleted:
-            try:
-                term = cls.get((cls.customer == cid) & (cls.tid == tid))
-            except DoesNotExist:
-                term = None
-        else:
-            try:
-                term = cls.get((cls.customer == cid) & (cls.tid == tid) &
-                               (cls.deleted >> None))
-            except DoesNotExist:
-                term = None
-        return term
-
-    @classmethod
-    def tids(cls, cid):
-        """Yields used terminal IDs for a certain customer"""
-        for terminal in cls.select().where(cls.customer == cid):
-            yield terminal.tid
-
-    @classmethod
-    def gen_ipv4addr(cls, desired=None):
-        """Generates a unique IPv4 address for the terminal"""
-        if desired is None:
-            net_base = terminals_config.net['IPV4NET']
-            ipv4addr_base = IPv4Address(net_base)
-            # Skip first 10 IP Addresses
-            ipv4addr = ipv4addr_base + 10
-            while ipv4addr in cls.ipv4addrs:
-                ipv4addr += 1
-            # TODO: Catch IP address overflow and check
-            # whether IP address is within the network
-            return ipv4addr
-        else:
-            try:
-                ipv4addr = IPv4Address(desired)
-            except AddressValueError:
-                raise ValueError('Not and IPv4 address: {0}'.format(
-                    desired)) from None
-            else:
-                if ipv4addr not in cls.ipv4addrs:
-                    return ipv4addr
-                else:
-                    return cls.gen_ip_addr(desired=None)
-
-    @classmethod
-    def gen_tid(cls, cid, desired=None):
-        """Gets a unique terminal ID for the customer"""
-        if desired is None:
-            tid = 1
-            while tid in cls.tids(cid):
-                tid += 1
-            return tid
-        else:
-            if tid in cls.tids(cid):
-                return cls.gen_tid(cid, desired=None)
-            else:
-                return tid
-
-    @classmethod
-    def by_virt(cls, cid, vid):
-        """Yields terminals of a customer that
-        run the specified virtual terminal
-        """
-        return cls.select().where(
-            (cls.customer == cid) &
-            (cls.virtual_display == vid))
-
-    @property
-    def cid(self):
-        """Returns the customer identifier"""
-        return self.customer.id
-
-    @property
-    def idents(self):
-        """Returns the terminals identifiers"""
-        return (self.tid, self.cid)
-
-    @property
-    def hostname(self):
-        """Generates and returns the terminal's host name"""
-        return '{0}.{1}.{2}'.format(self.tid, self.cid, self.domain.name)
-
-    @property
-    def ipv4addr(self):
-        """Returns an IPv4 Address"""
-        return IPv4Address(self._ipv4addr)
-
-    @ipv4addr.setter
-    def ipv4addr(self, ipv4addr):
-        """Sets the IPv4 address"""
-        self._ipv4addr = int(ipv4addr)
-
-    @property
-    def address(self):
-        location = self.location
-        try:
-            street_houseno = '{0} {1}'.format(
-                location.street, location.house_number)
-        except (TypeError, ValueError):
-            return None
-        else:
-            try:
-                zip_city = '{0} {1}'.format(location.zip_code, location.city)
-            except (TypeError, ValueError):
-                return None
-            else:
-                return '{0}, {1}'.format(street_houseno, zip_city)
-
-    @property
-    def rotation(self):
-        """Returns the rotation"""
-        if self._rotation is None:
-            return None
-        else:
-            return Rotation(degrees=self._rotation)
-
-    @rotation.setter
-    def rotation(self, rotation):
-        """Sets the rotation"""
-        if rotation is None:
-            self._rotation = None
-        else:
-            try:
-                self._rotation = rotation.degrees
-            except AttributeError:
-                self._rotation = int(Rotation(degrees=rotation))
-
-    @property
-    def operators(self):
-        """Yields the operators, which are
-        allowed to setup the terminal
-        """
-        return SetupOperatorTerminals.operators(self)
-
-    @property
-    def administrators(self):
-        """Yields the administrators, which are
-        allowed to administer the terminal
-        """
-        return chain(AdministratorTerminals.operators(self),
-                     Administrator.root)
-
-    @property
-    def status(self):
-        """Determines the status of the terminal"""
-        chk_cmd = self._CHK_CMD.format(self.hostname)
-        if run(chk_cmd, shell=True):
-            return True
-        else:
-            return False
-
-    @property
-    def productive(self):
-        """Returns whether the system has been deployed and is non-testing"""
-        return True if self.deployed and not self.testing else False
-
-    def appconf(self, checkdate=False, mouse_visible=False):
-        """Generates the content for the config.ini, respectively
-        the application.conf configuration file for the application
-        """
-        if mouse_visible is None:
-            if self.class_.touch:
-                mouse_visible = False
-            else:
-                mouse_visible = True
-        if self.rotation is None:
-            rotation = True
-            rotation_degrees = 0
-        else:
-            rot = int(self.rotation)
-            if rot == 0:
-                rotation = False
-                rotation_degrees = 0
-            else:
-                rotation = True
-                rotation_degrees = rot
-        knr = 'knr={0}'.format(self.customer.id)
-        tracking_id = self.customer.piwik_tracking_id
-        tracking_id = 'trackingid={0}'.format(
-            tracking_id if tracking_id is not None else 42)
-        mouse_visible = 'mouse_visible={0}'.format(mouse_visible).lower()
-        checkdate = 'checkdate={0}'.format(checkdate).lower()
-        rotation = 'rotation={0}'.format(rotation).lower()
-        rotation_degrees = 'rotationDegrees={0}'.format(rotation_degrees)
-        return '\n'.join([knr, tracking_id, mouse_visible, checkdate, rotation,
-                          rotation_degrees])
-
-
-# TODO: Use!
-'''
-@create
-class Synchronization(TerminalModel):
-    """Synchronization log
-
-    Recommended usage:
-        with Synchronization.start(terminal) as sync:
-            <do_sync_stuff>
-            if sync_succeded:
-                sync.status = True
-            else:
-                sync.status = False
-    """
-
-    terminal = ForeignKeyField(
-        Terminal, db_column='terminal', related_name='_synchronizations')
-    started = DateTimeField()
-    finished = DateTimeField(null=True, default=None)
-    status = BooleanField()
-    annotation = CharField(255, null=True, default=None)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *_):
-        self.stop()
-
-    @classmethod
-    def start(cls, terminal):
-        """Start a synchronization for this terminal"""
-        sync = cls()
-        sync.terminal = terminal
-        sync.started = datetime.now()
-        sync.finished = None
-        sync.status = False
-        sync.annotation = None
-        return sync
-
-    def stop(self):
-        """Stops the synchronization"""
-        self.finished = datetime.now()
-        return self.save()
-
-
-# TODO: Use!
-@create
-class OpenVPN(TerminalModel):
+class VPN(TerminalModel):
     """OpenVPN settings"""
 
     NETWORK = IPv4Network('10.8.0.0/16')
 
-    terminal = ForeignKeyField(
-        Terminal, primary_key=True, db_column='terminal',
-        related_name='_synchronizations')
+    domain = ForeignKeyField(
+        Domain, db_column='domain', related_name='terminals')
+    _ipv4addr = BigIntegerField(db_column='ipv4addr')
     vpn_key = CharField(36, null=True, default=None)
-    _ipv4addr = BigIntegerField(db_column='ipv4addr', null=True)
 
     @classmethod
     def add(cls, terminal, vpn_key=None, ipv4addr=None):
@@ -486,7 +247,7 @@ class OpenVPN(TerminalModel):
         else:
             for ipv4addr in cls.free_ipv4addrs:
                 return ipv4addr
-            raise ValueError('Network exhausted!')
+            raise TerminalConfigError('Network exhausted!')
 
     @property
     def ipv4addr(self):
@@ -497,85 +258,225 @@ class OpenVPN(TerminalModel):
     def ipv4addr(self, ipv4addr):
         """Sets the IPv4 address"""
         self._ipv4addr = int(ipv4addr)
-'''
-
-@create
-class Screenshot(TerminalModel):
-    """Terminal screenshots"""
-
-    terminal = ForeignKeyField(
-        Terminal, db_column='terminal', related_name='screenshots')
-    screenshot = BlobField()
-    thumbnail = BlobField()
-    date = DateTimeField(default=None)
 
 
 @create
-class ConsoleHistory(TerminalModel):
-    """A physical terminal's virtual console's history"""
+class Terminal(TerminalModel):
+    """A physical terminal out in the field"""
 
-    class Meta:
-        db_table = 'console_history'
+    # Ping once and wait two seconds max.
+    _CHK_CMD = '/bin/ping -c 1 -W 2 {0}'
 
-    terminal = ForeignKeyField(
-        Terminal, db_column='terminal', related_name='console_log'
-    )
-    timestamp = DateTimeField(default=datetime.now())
-    command = CharField(255)
-    stdout = BlobField()
-    stderr = BlobField()
-    exit_code = IntegerField()
+    tid = IntegerField()    # Customer-unique terminal identifier
+    customer = ForeignKeyField(
+        Customer, db_column='customer', related_name='terminals')
+    class_ = ForeignKeyField(
+        Class, db_column='class', related_name='terminals')
+    os = ForeignKeyField(OS, db_column='os', related_name='terminals')
+    vpn = ForeignKeyField(
+        VPN, null=True, column='vpn', related_name='terminals', default=None)
+    location = ForeignKeyField(Address, null=True, db_column='location')
+    vid = IntegerField(null=True)
+    weather = ForeignKeyField(
+        Weather, null=True, db_column='weather', related_name='terminals')
+    deployed = DateTimeField(null=True, default=None)
+    deleted = DateTimeField(null=True, default=None)
+    testing = BooleanField(default=False)
+    annotation = CharField(255, null=True, default=None)
 
+    def __str__(self):
+        """Converts the terminal to a unique string"""
+        return '.'.join([str(ident) for ident in self.idents])
 
-# XXX: Abstract
-class _User(TerminalModel):
-    """A generic user"""
-
-    name = CharField(64)
-    pwhash = CharField(64)
-    salt = CharField(36)
-    enabled = BooleanField()
-    annotation = CharField(255, null=True)
-    root = BooleanField(default=False)
+    @classproperty
+    @classmethod
+    def hosts(cls):
+        """Yields entries for /etc/hosts"""
+        for terminal in cls.select().where(True):
+            yield '{0}\t{1}'.format(terminal.ipv4addr, terminal.hostname)
 
     @classmethod
-    def authenticate(cls, name, passwd):
-        """Authenticate with name and hashed password"""
-        if passwd:
+    def by_ids(cls, cid, tid, deleted=False):
+        """Get a terminal by customer id and terminal id"""
+        if deleted:
             try:
-                user = cls.get(cls.name == name)
+                term = cls.get((cls.customer == cid) & (cls.tid == tid))
             except DoesNotExist:
-                return False
+                term = None
+        else:
+            try:
+                term = cls.get((cls.customer == cid) & (cls.tid == tid) &
+                               (cls.deleted >> None))
+            except DoesNotExist:
+                term = None
+        return term
+
+    @classmethod
+    def tids(cls, cid):
+        """Yields used terminal IDs for a certain customer"""
+        for terminal in cls.select().where(cls.customer == cid):
+            yield terminal.tid
+
+    @classmethod
+    def gen_tid(cls, cid, desired=None):
+        """Gets a unique terminal ID for the customer"""
+        if desired is None:
+            tid = 1
+            while tid in cls.tids(cid):
+                tid += 1
+            return tid
+        else:
+            if tid in cls.tids(cid):
+                return cls.gen_tid(cid, desired=None)
             else:
-                if user.passwd and passwd:
-                    pwstr = passwd + user.salt
-                    pwhash = sha256(pwstr.encode()).hexdigest()
-                    if user.pwhash == pwhash:
-                        if user.enabled:
-                            return user
-                        else:
-                            return False
-                    else:
-                        return False
-                else:
-                    return False
+                return tid
+
+    @classmethod
+    def by_virt(cls, cid, vid):
+        """Yields terminals of a customer that
+        run the specified virtual terminal
+        """
+        return cls.select().where(
+            (cls.customer == cid) &
+            (cls.virtual_display == vid))
+
+    @property
+    def cid(self):
+        """Returns the customer identifier"""
+        return self.customer.id
+
+    @property
+    def idents(self):
+        """Returns the terminals identifiers"""
+        return (self.tid, self.cid)
+
+    @property
+    def hostname(self):
+        """Generates and returns the terminal's host name"""
+        return '{0}.{1}.{2}'.format(self.tid, self.cid, self.domain.name)
+
+    @property
+    def ipv4addr(self):
+        """Returns an IPv4 Address"""
+        if self.vpn is not None:
+            return self.vpn.ipv4addr
+        else:
+            raise VPNUnconfiguredError()
+
+    @ipv4addr.setter
+    def ipv4addr(self, ipv4addr):
+        """Sets the IPv4 address"""
+        self._ipv4addr = int(ipv4addr)
+
+    @property
+    def address(self):
+        location = self.location
+        try:
+            street_houseno = '{0} {1}'.format(
+                location.street, location.house_number)
+        except (TypeError, ValueError):
+            return None
+        else:
+            try:
+                zip_city = '{0} {1}'.format(location.zip_code, location.city)
+            except (TypeError, ValueError):
+                return None
+            else:
+                return '{0}, {1}'.format(street_houseno, zip_city)
+
+    @property
+    def rotation(self):
+        """Returns the rotation"""
+        if self._rotation is None:
+            return None
+        else:
+            return Rotation(degrees=self._rotation)
+
+    @rotation.setter
+    def rotation(self, rotation):
+        """Sets the rotation"""
+        if rotation is None:
+            self._rotation = None
+        else:
+            try:
+                self._rotation = rotation.degrees
+            except AttributeError:
+                self._rotation = int(Rotation(degrees=rotation))
+
+    @property
+    def operators(self):
+        """Yields the operators, which are
+        allowed to setup the terminal
+        """
+        return OperatorTerminals.operators(self)
+
+    @property
+    def administrators(self):
+        """Yields the administrators, which are
+        allowed to administer the terminal
+        """
+        return chain(AdministratorTerminals.operators(self),
+                     Administrator.root)
+
+    @property
+    def status(self):
+        """Determines the status of the terminal
+
+        This may take some time, so use it carefully
+        """
+        chk_cmd = self._CHK_CMD.format(self.hostname)
+        if run(chk_cmd, shell=True):
+            return True
         else:
             return False
 
     @property
-    def passwd(self):
-        """Returns the password hash"""
-        return self.pwhash
+    def productive(self):
+        """Returns whether the system has been deployed and is non-testing"""
+        return True if self.deployed and not self.testing else False
 
-    @passwd.setter
-    def passwd(self, passwd):
-        """Creates a new password hash"""
-        salt = str(uuid4())
-        pwstr = passwd + salt
-        pwhash = sha256(pwstr.encode()).hexdigest()
-        self.salt = salt
-        self.pwhash = pwhash
-        self.save()
+
+@create
+class Synchronization(TerminalModel):
+    """Synchronization log
+
+    Recommended usage:
+        with Synchronization.start(terminal) as sync:
+            <do_sync_stuff>
+            if sync_succeded:
+                sync.status = True
+            else:
+                sync.status = False
+    """
+
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal', related_name='_synchronizations')
+    started = DateTimeField()
+    finished = DateTimeField(null=True, default=None)
+    status = BooleanField()
+    annotation = CharField(255, null=True, default=None)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.stop()
+
+    @classmethod
+    def start(cls, terminal):
+        """Start a synchronization for this terminal"""
+        sync = cls()
+        sync.terminal = terminal
+        sync.started = datetime.now()
+        sync.finished = None
+        sync.status = False
+        sync.annotation = None
+        return sync
+
+    def stop(self):
+        """Stops the synchronization"""
+        self.finished = datetime.now()
+        return self.save()
 
 
 @create
@@ -587,20 +488,19 @@ class Administrator(_User):
 
 
 @create
-class SetupOperator(_User):
+class Operator(_User):
     """A user that is allowed to setup systems by HOMEINFO"""
 
     class Meta:
-        db_table = 'setup_operator'
+        db_table = 'operator'
 
     company = ForeignKeyField(
-        Company, db_column='company', related_name='setup_operators'
-    )
+        Company, db_column='company', related_name='setup_operators')
 
     @property
     def terminals(self):
         """Yields the terminals, the operator is allowed to use"""
-        return SetupOperatorTerminals.terminals(self)
+        return OperatorTerminals.terminals(self)
 
     def authorize(self, terminal):
         """Checks whether the setup operator is
@@ -610,13 +510,13 @@ class SetupOperator(_User):
 
 
 @create
-class SetupOperatorTerminals(TerminalModel):
+class OperatorTerminals(TerminalModel):
     """Many-to-many mapping in-between setup operators and terminals"""
 
     class Meta:
         db_table = 'terminal_operators'
 
-    operator = ForeignKeyField(SetupOperator, db_column='operator')
+    operator = ForeignKeyField(Operator, db_column='operator')
     terminal = ForeignKeyField(Terminal, db_column='terminal')
 
     @classmethod
@@ -634,7 +534,7 @@ class SetupOperatorTerminals(TerminalModel):
 
 @create
 class AdministratorTerminals(TerminalModel):
-    """Many-to-many mapping in-between setup operators and terminals"""
+    """Many-to-many mapping in-between administrators and terminals"""
 
     class Meta:
         db_table = 'terminal_admins'
@@ -667,8 +567,7 @@ class NagiosAdmins(TerminalModel):
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
     class_ = ForeignKeyField(
-        Class, null=True, db_column='class', related_name='members'
-    )
+        Class, null=True, db_column='class', related_name='members')
     service_period = CharField(16, default='24x7')
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
