@@ -96,10 +96,10 @@ def list_class():
     template = '{id: >5.5} {name: >10.10} {full_name: >10.10} {touch: >5.5}'
     for cls in Class.select().where(True):
         print(template.format(
-            id=cls.id,
+            id=str(cls.id),
             name=cls.name,
             full_name=cls.full_name,
-            touch=cls.touch))
+            touch=str(cls.touch)))
 
 
 def list_os():
