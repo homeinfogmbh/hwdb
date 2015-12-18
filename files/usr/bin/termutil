@@ -209,7 +209,8 @@ def chkres(options):
     expr = options['<expr>']
     if expr is None:
         terminals = Terminal.select().where(
-            (Terminal.deployed == 1) & (Terminal.testing == 0))
+            ~(Terminal.deployed >> None) &
+            (Terminal.testing == 0))
     else:
         terminals = TerminalFilter(expr)
     for terminal in terminals:
