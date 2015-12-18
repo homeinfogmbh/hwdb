@@ -285,7 +285,8 @@ class Terminal(TerminalModel):
         Class, db_column='class', related_name='terminals')
     os = ForeignKeyField(OS, db_column='os', related_name='terminals')
     vpn = ForeignKeyField(
-        VPN, null=True, column='vpn', related_name='terminals', default=None)
+        VPN, null=True, db_column='vpn',
+        related_name='terminals', default=None)
     domain = ForeignKeyField(
         Domain, db_column='domain', related_name='terminals')
     location = ForeignKeyField(Address, null=True, db_column='location')
