@@ -5,7 +5,6 @@ Usage:
     chksync <tid> <cid>
 """
 
-from sys import stderr
 from datetime import datetime, timedelta
 
 from docopt import docopt
@@ -21,13 +20,13 @@ if __name__ == '__main__':
     try:
         tid = int(tid)
     except ValueError:
-        print('Invalid terminal ID: {0}'.format(tid), file=stderr)
+        print('Invalid terminal ID: {0}'.format(tid))
         exit(4)
     else:
         try:
             cid = int(cid)
         except ValueError:
-            print('Invalid customer ID: {0}'.format(tid), file=stderr)
+            print('Invalid customer ID: {0}'.format(tid))
             exit(5)
         else:
             try:
@@ -35,8 +34,7 @@ if __name__ == '__main__':
                     (Terminal.customer == cid) &
                     (Terminal.tid == tid))
             except DoesNotExist:
-                print('No such terminal: {0}.{1}'.format(tid, cid),
-                      file=stderr)
+                print('No such terminal: {0}.{1}'.format(tid, cid))
                 exit(6)
             else:
                 latest = None
@@ -50,7 +48,7 @@ if __name__ == '__main__':
                         if latest < sync.finished:
                             latest = sync.finished
                 if latest is None:
-                    print('Never', file=stderr)
+                    print('Never')
                     exit(2)
                 else:
                     print(latest)
