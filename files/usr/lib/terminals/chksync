@@ -53,7 +53,7 @@ if __name__ == '__main__':
                         if latest is None:
                             latest = sync.finished
                         else:
-                            if latest > sync.finished:
+                            if latest < sync.finished:
                                 latest = sync.finished
                     if latest is None:
                         print('Never', file=stderr)

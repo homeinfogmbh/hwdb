@@ -42,7 +42,7 @@ if __name__ == '__main__':
                     if latest is None:
                         latest = stat.timestamp
                     else:
-                        if latest > stat.timestamp:
+                        if latest < stat.timestamp:
                             latest = stat.timestamp
                 if latest is None:
                     print('Never', file=stderr)
