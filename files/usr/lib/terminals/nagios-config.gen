@@ -216,7 +216,7 @@ def mkservices():
     with open('/usr/share/terminals/nagios.services.temp', 'r') as temp:
         template = temp.read()
 
-    for terminal in terminals:
+    for terminal in terminals():
         conf_path = join(
              terminals_config.monitoring['CONF_DIR'],
              terminals_config.monitoring['HOST_SERVICE_FILE_NAME'].format(
