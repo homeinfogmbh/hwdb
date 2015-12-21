@@ -246,8 +246,8 @@ def mkservices():
                     notes=notes,
                     action_url=action_url,
                     icon_image=icon_image))
-        with open(conf_path, 'w') as config:
-            config.write('\n'.join(config))
+        with open(conf_path, 'w') as f:
+            f.write('\n'.join(config))
 
 
 if __name__ == '__main__':
