@@ -54,8 +54,8 @@ if __name__ == '__main__':
                     print(latest)
                     now = datetime.now()
                     if now - latest > timedelta(hours=72):
-                        exit(2)
+                        exit(2)  # critical
                     elif now - latest > timedelta(hours=24):
-                        exit(1)
+                        exit(1)  # warning
                     else:
-                        exit(0)
+                        exit(0)  # ok
