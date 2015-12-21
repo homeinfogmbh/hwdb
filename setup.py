@@ -22,6 +22,8 @@ setup(
         # Miscellaneous scripts
         ('/usr/lib/terminals',
          ['files/usr/lib/terminals/bind.gen',
+          'files/usr/lib/terminals/chkstats',
+          'files/usr/lib/terminals/chksync',
           'files/usr/lib/terminals/nagios-config.gen',
           'files/usr/lib/terminals/openvpn-client-config.gen']),
         # Template files
@@ -32,6 +34,7 @@ setup(
           'files/usr/share/terminals/nagios.contact.temp',
           'files/usr/share/terminals/nagios.contactgroup.temp',
           'files/usr/share/terminals/nagios.hostgroup.temp',
+          'files/usr/share/terminals/nagios.services.temp',
           'files/usr/share/terminals/nagios.terminal.temp']),
         # Controller script
         ('/usr/bin', ['files/usr/bin/termutil'])],

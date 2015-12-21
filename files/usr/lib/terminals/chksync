@@ -1,0 +1,71 @@
+#! /usr/bin/env python3
+"""Checks synchronization for the respective terminal
+
+Usage:
+    chksync <terminal_ident>
+"""
+
+from sys import stderr
+from datetime import datetime, timedelta
+
+from docopt import docopt
+
+from homeinfo.terminals.orm import Terminal, Synchronization
+from peewee import DoesNotExist
+
+
+if __name__ == '__main__':
+    options = docopt(__doc__)
+    terminal_ident = options['<terminal_ident>']
+    try:
+        tid, cid = terminal_ident.split('.')
+    except ValueError:
+        print('Invalid terminal identifier: {0}'.format(terminal_ident),
+              file=stderr)
+        exit(3)
+    else:
+        try:
+            tid = int(tid)
+        except ValueError:
+            print('Invalid terminal ID: {0}'.format(tid), file=stderr)
+            exit(4)
+        else:
+            try:
+                cid = int(cid)
+            except ValueError:
+                print('Invalid customer ID: {0}'.format(tid), file=stderr)
+                exit(5)
+            else:
+                try:
+                    terminal = Terminal.get(
+                        (Terminal.customer == cid) &
+                        (Terminal.tid == tid))
+                except DoesNotExist:
+                    print('No such terminal: {0}.{1}'.format(tid, cid),
+                          file=stderr)
+                    exit(6)
+                else:
+                    latest = None
+                    for sync in Synchronization.select().where(
+                            (Synchronization.terminal == terminal) & ~
+                            (Synchronization.finished >> None) &
+                            (Synchronization.result == 1)):
+                        if latest is None:
+                            latest = sync.finished
+                        else:
+                            if latest > sync.finished:
+                                latest = sync.finished
+                    if latest is None:
+                        print('Never', file=stderr)
+                        exit(2)
+                    else:
+                        now = datetime.now()
+                        if now - latest > timedelta(hours=72):
+                            print(latest, file=stderr)
+                            exit(2)
+                        elif now - latest > timedelta(hours=24):
+                            print(latest, file=stderr)
+                            exit(1)
+                        else:
+                            print(latest)
+                            exit(0)
