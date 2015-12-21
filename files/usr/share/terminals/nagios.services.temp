@@ -8,7 +8,6 @@ define service {{
     check_period                   {check_period}
     notification_interval          {notification_interval}
     notification_period            {notification_period}
-    contacts                       {contacts}
     contact_groups                 {contact_groups}
 
     notes                          {notes}
