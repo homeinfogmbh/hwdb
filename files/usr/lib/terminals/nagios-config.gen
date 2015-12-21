@@ -17,7 +17,7 @@ from homeinfo.terminals.config import terminals_config
 
 
 ICONS = {
-    'POSIX': 'logos/linux.gif',
+    'POSIX': 'logos/linux40.gif',
     'NT': 'logos/windows.gif'
 }
 
@@ -228,9 +228,8 @@ def mkservices():
                 continue
             else:
                 notes, icon_image, action_url = SERVICES[service]
-                terminal_id = '{0}.{1}'.format(
-                    terminal.tid, terminal.customer.id)
-                check_command = 'check_{0}!{1}'.format(service, terminal_id)
+                check_command = 'check_{0}!{1}!{2}'.format(
+                    service, terminal.tid, terminal.customer.id)
                 contact_groups = ['admins']
                 if terminal.class_.name == 'ddb':
                     contact_groups.append('ddb_admins')
@@ -246,7 +245,6 @@ def mkservices():
                     notification_period='24x7',
                     contact_groups=','.join(contact_groups),
                     notes=notes,
-                    action_url=action_url,
                     icon_image=icon_image))
         with open(conf_path, 'w') as f:
             f.write('\n'.join(config))

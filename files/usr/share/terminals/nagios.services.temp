@@ -11,6 +11,5 @@ define service {{
     contact_groups                 {contact_groups}
 
     notes                          {notes}
-    action_url                     {action_url}
     icon_image                     {icon_image}
 }}

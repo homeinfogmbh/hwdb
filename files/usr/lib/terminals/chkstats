@@ -2,7 +2,7 @@
 """Checks statistics for the respective terminal
 
 Usage:
-    chkstats <terminal_ident>
+    chkstats <tid> <cid>
 """
 
 from sys import stderr
@@ -15,46 +15,34 @@ from homeinfo.terminals.orm import AccessStats
 
 if __name__ == '__main__':
     options = docopt(__doc__)
-    terminal_ident = options['<terminal_ident>']
+    tid = options['<tid>']
+    cid = options['<cid>']
     try:
-        tid, cid = terminal_ident.split('.')
+        tid = int(tid)
     except ValueError:
-        print('Invalid terminal identifier: {0}'.format(terminal_ident),
-              file=stderr)
-        exit(3)
+        print('Invalid terminal ID: {0}'.format(tid), file=stderr)
+        exit(4)
     else:
         try:
-            tid = int(tid)
+            cid = int(cid)
         except ValueError:
-            print('Invalid terminal ID: {0}'.format(tid), file=stderr)
-            exit(4)
+            print('Invalid customer ID: {0}'.format(tid), file=stderr)
+            exit(5)
         else:
-            try:
-                cid = int(cid)
-            except ValueError:
-                print('Invalid customer ID: {0}'.format(tid), file=stderr)
-                exit(5)
+            stats = AccessStats.select().where(
+                (AccessStats.customer == cid) &
+                (AccessStats.tid == tid))
+            now = datetime.now()
+            last5days = timedelta(days=5)
+            last9days = timedelta(days=9)
+            if [d for d in (now - s.timestamp for s in stats) if
+                    d <= last5days]:
+                print('OK')
+                exit(0)
+            elif [d for d in (now - s.timestamp for s in stats) if
+                    d <= last9days]:
+                print('More than five days no action!', file=stderr)
+                exit(1)
             else:
-                latest = None
-                for stat in AccessStats.select().where(
-                        (AccessStats.customer == cid) &
-                        (AccessStats.tid == tid)):
-                    if latest is None:
-                        latest = stat.timestamp
-                    else:
-                        if latest < stat.timestamp:
-                            latest = stat.timestamp
-                if latest is None:
-                    print('Never', file=stderr)
-                    exit(2)
-                else:
-                    now = datetime.now()
-                    if now - latest > timedelta(hours=72):
-                        print(latest, file=stderr)
-                        exit(2)
-                    elif now - latest > timedelta(hours=24):
-                        print(latest, file=stderr)
-                        exit(1)
-                    else:
-                        print(latest)
-                        exit(0)
+                print('More than nine days no action!', file=stderr)
+                exit(2)
