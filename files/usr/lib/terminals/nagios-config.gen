@@ -34,7 +34,7 @@ def terminals():
     return Terminal.select().where(
             (Terminal.deleted >> None) &
             ~(Terminal.testing == 1) &
-            (Terminal.deployed == 1))
+            ~(Terminal.deployed >> None))
     
 
 def mkcontacts():
