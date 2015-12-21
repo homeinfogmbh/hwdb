@@ -220,7 +220,7 @@ def mkservices():
         conf_path = join(
              terminals_config.monitoring['CONF_DIR'],
              terminals_config.monitoring['HOST_SERVICE_FILE_NAME'].format(
-                repr(terminal)))
+                host=repr(terminal)))
         config = [header]
         for service in SERVICES:
             if service == 'synchronization' and terminal.os.family != 'Linux':
