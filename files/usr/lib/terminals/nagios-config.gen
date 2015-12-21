@@ -231,7 +231,7 @@ def mkservices():
                 terminal_id = '{0}.{1}'.format(
                     terminal.tid, terminal.customer.id)
                 check_command = 'check_{0}!{1}'.format(service, terminal_id)
-                contact_groups = [a.name for a in terminal.class_.members]
+                contact_groups = [terminal.class_.name]
                 config.append(template.format(
                     host_name=terminal.hostname,
                     service_description=service,
