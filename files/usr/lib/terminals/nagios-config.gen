@@ -228,12 +228,14 @@ def mkservices():
                 continue
             else:
                 notes, icon_image, action_url = SERVICES[service]
-                check_command = 'chkcmd_{0}'.format(service)
+                terminal_id = '{0}.{1}'.format(
+                    terminal.tid, terminal.customer.id)
+                check_command = 'check_{0}!{1}'.format(service, terminal_id)
                 contact_groups = [a.name for a in terminal.class_.members]
                 config.append(template.format(
                     host_name=terminal.hostname,
                     service_description=service,
-                    check_command=check_command.format(terminal.id),
+                    check_command=check_command,
                     max_check_attempts=5,
                     check_interval=5,
                     retry_interval=5,
