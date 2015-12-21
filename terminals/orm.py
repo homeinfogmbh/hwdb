@@ -272,11 +272,19 @@ class VPN(TerminalModel):
 
 
 @create
+class Connection(TerminalModel):
+    """Connection data"""
+
+    name = CharField(4)
+    timeout = IntegerField()
+
+
+@create
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
     # Ping once and wait two seconds max.
-    _CHK_CMD = '/bin/ping -c 1 -W 2 {0}'
+    _CHK_CMD = '/bin/ping -c 1 -W {timeout} {host}'
 
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
@@ -284,6 +292,8 @@ class Terminal(TerminalModel):
     class_ = ForeignKeyField(
         Class, db_column='class', related_name='terminals')
     os = ForeignKeyField(OS, db_column='os', related_name='terminals')
+    connection = ForeignKeyField(
+        Connection, db_column='connection', null=True, default=None)
     vpn = ForeignKeyField(
         VPN, null=True, db_column='vpn',
         related_name='terminals', default=None)
@@ -417,9 +427,13 @@ class Terminal(TerminalModel):
 
         This may take some time, so use it carefully
         """
-        chk_cmd = self._CHK_CMD.format(self.hostname)
-        if run(chk_cmd, shell=True):
-            return True
+        if self.connection:
+            chk_cmd = self._CHK_CMD.format(
+                timeout=self.connection.timeout, host=self.hostname)
+            if run(chk_cmd, shell=True):
+                return True
+            else:
+                return False
         else:
             return False
 
