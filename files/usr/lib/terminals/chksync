@@ -53,13 +53,11 @@ if __name__ == '__main__':
                     print('Never', file=stderr)
                     exit(2)
                 else:
+                    print(latest)
                     now = datetime.now()
                     if now - latest > timedelta(hours=72):
-                        print(latest, file=stderr)
                         exit(2)
                     elif now - latest > timedelta(hours=24):
-                        print(latest, file=stderr)
                         exit(1)
                     else:
-                        print(latest)
                         exit(0)

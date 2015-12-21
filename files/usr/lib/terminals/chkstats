@@ -41,8 +41,8 @@ if __name__ == '__main__':
                 exit(0)
             elif [d for d in (now - s.timestamp for s in stats) if
                     d <= last9days]:
-                print('More than five days no action!', file=stderr)
+                print('More than five days no action!')
                 exit(1)
             else:
-                print('More than nine days no action!', file=stderr)
+                print('More than nine days no action!')
                 exit(2)
