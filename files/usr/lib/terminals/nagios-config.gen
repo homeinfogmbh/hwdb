@@ -23,9 +23,9 @@ ICONS = {
 
 SERVICES = {
     'statistics':
-        ('Statistics evaluation', 'graph.gif', '#'),
+        ('Statistics evaluation', '../graph.gif', '#'),
     'synchronization':
-        ('Synchronization status', 'logrotate.png', '#')
+        ('Synchronization status', '../logrotate.png', '#')
 }
 
 
