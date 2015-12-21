@@ -263,10 +263,11 @@ def mkservicegroups():
          terminals_config.monitoring['CONF_DIR'],
          terminals_config.monitoring['SERVICEGROUP_FILE_NAME'])
     
+    config = [header]
+
     for service in SERVICES:
-        config = [header]
+        services = []
         for terminal in terminals():
-            services = []
             if service == 'synchronization' and terminal.os.family != 'Linux':
                 # Synchronization checks only for Linux terminals
                 continue
