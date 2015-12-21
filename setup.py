@@ -29,13 +29,14 @@ setup(
         # Template files
         ('/usr/share/terminals',
          ['files/usr/share/terminals/bind.zone.temp',
-          'files/usr/share/terminals/pacman.conf.temp',
-          'files/usr/share/terminals/openvpn.conf.temp',
           'files/usr/share/terminals/nagios.contact.temp',
           'files/usr/share/terminals/nagios.contactgroup.temp',
+          'files/usr/share/terminals/nagios.host.temp',
           'files/usr/share/terminals/nagios.hostgroup.temp',
-          'files/usr/share/terminals/nagios.services.temp',
-          'files/usr/share/terminals/nagios.terminal.temp']),
+          'files/usr/share/terminals/nagios.service.temp',
+          'files/usr/share/terminals/nagios.servicegroup.temp',
+          'files/usr/share/terminals/openvpn.conf.temp',
+          'files/usr/share/terminals/pacman.conf.temp']),
         # Controller script
         ('/usr/bin', ['files/usr/bin/termutil'])],
     license=open('LICENSE.txt').read(),
