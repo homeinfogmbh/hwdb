@@ -17,7 +17,7 @@ from homeinfo.terminals.config import terminals_config
 
 
 ICONS = {
-    'POSIX': 'logos/linux40.gif',
+    'Linux': 'logos/linux.gif',
     'NT': 'logos/windows.gif'
 }
 
