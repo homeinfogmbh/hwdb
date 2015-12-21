@@ -25,7 +25,11 @@ class RemoteController(TerminalAware):
         self._white_list = white_list
         self._black_list = bl
         self._debug = debug or 0
-        # FUrther options for SSH
+        # Further options for SSH
+        if self.terminal.connection:
+            connect_timeout = self.terminal.connection.timeout
+        else:
+            connect_timeout = terminals_config.ssh['CONNECT_TIMEOUT']
         self._SSH_OPTS = {
             # Trick SSH it into not checking the host key
             'UserKnownHostsFile':
@@ -33,7 +37,7 @@ class RemoteController(TerminalAware):
             'StrictHostKeyChecking':
                 terminals_config.ssh['STRICT_HOST_KEY_CHECKING'],
             # Set timeout to avoid blocking of rsync / ssh call
-            'ConnectTimeout': terminals_config.ssh['CONNECT_TIMEOUT']}
+            'ConnectTimeout': connect_timeout}
 
     @property
     def user(self):
