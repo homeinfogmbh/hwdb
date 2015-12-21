@@ -22,8 +22,10 @@ ICONS = {
 }
 
 SERVICES = {
+    '''
     'statistics':
         ('Statistics evaluation', '../graph.gif', '#'),
+    '''
     'synchronization':
         ('Synchronization status', '../logrotate.png', '#')
 }
