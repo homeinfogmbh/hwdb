@@ -55,7 +55,7 @@ def mkcontacts():
             host_notification_period=str(admin.host_period),
             service_notification_options=str(admin.service_options),
             host_notification_options=str(admin.host_options),
-            service_notification_commands=admin.host_command,
+            host_notification_commands=admin.host_command,
             email=str(admin.employee.email))
         return rendered
     

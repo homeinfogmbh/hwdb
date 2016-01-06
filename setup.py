@@ -18,7 +18,7 @@ setup(
         # Nagios 3 templates
         ('/etc/nagios3/conf.d',
          ['files/etc/nagios3/conf.d/homeinfo-terminal.cfg',
-          'files/etc/nagios3/conf.d/homeinfo-commands.cfg']),
+          'files/etc/nagios3/conf.d/homeinfo-terminal-commands.cfg']),
         # Miscellaneous scripts
         ('/usr/lib/terminals',
          ['files/usr/lib/terminals/bind.gen',
