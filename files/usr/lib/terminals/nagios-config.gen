@@ -129,11 +129,14 @@ def mkhosts():
     def render(template, terminal):
         """Renders the template with the respective data"""
         icon = ICONS.get(terminal.os.family)
+        location = terminal.location
         rendered = template.format(
             tid=str(terminal.tid), cid=str(terminal.cid),
             use=terminal.class_.name, host_name=terminal.hostname,
-            alias=repr(terminal.location), address=str(terminal.ipv4addr),
-            icon=icon)
+            alias=repr(location), address=str(terminal.ipv4addr),
+            notes=repr(location), street=location.street,
+            house_number=location.house_number, zip_code=location.zip_code,
+            city=location.city, icon=icon)
         return rendered
 
     conf_path = join(
