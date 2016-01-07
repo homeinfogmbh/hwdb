@@ -9,7 +9,6 @@ define service {{
     notification_interval          {notification_interval}
     notification_period            {notification_period}
     contact_groups                 {contact_groups}
-
     notes                          {notes}
     icon_image                     {icon_image}
 }}

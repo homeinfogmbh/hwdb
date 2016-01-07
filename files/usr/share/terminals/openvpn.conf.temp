@@ -1,21 +1,23 @@
-################################################
-# HOMEINFO – Digitale Informationssysteme GmbH #
-#                                              #
-#  Digital Signage Terminals OpenVPN network   #
-#                                              #
-#             CLIENT (template)                #
-#                                              #
-# This OpenVPN network configuration is        #
-# intended to gather all HOMEINFO digital      #
-# signage terminals in one central management  #
-# network for remote administration.           #
-# Placeholders in braces are to be replaced by #
-# a rendering script.                          #
-#                                              #
-# (C) 2015: HOMEINFO                           #
-#    Richard Neumann <r.neumann@homeinfo.de>   #
-#                                              #
-################################################
+#######################################################################
+#                                                                     #
+#           HOMEINFO – Digitale Informationssysteme GmbH              #
+#                                                                     #
+#             Digital Signage Terminals OpenVPN network               #
+#                                                                     #
+#                         CLIENT (template)                           #
+#                                                                     #
+#  This OpenVPN network configuration is intended to gather all       #
+#  HOMEINFO digital signage terminals in one central management       #
+#  network for remote administration.                                 #
+#                                                                     #
+#  Placeholders in braces are to be replaced by                       #
+#  python's str.format() method.                                      #
+#                                                                     #
+#  (C) 2015: HOMEINFO Digitale Informationssysteme GmbH               #
+#                                                                     #
+#  Maintainer:  Richard Neumann <r dot neumann at homeinfo period de> #
+#                                                                     #
+#######################################################################
 
 # Specify that we are a client and that we
 # will be pulling certain config file directives

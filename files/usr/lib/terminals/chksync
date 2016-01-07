@@ -1,5 +1,13 @@
 #! /usr/bin/env python3
-"""Checks synchronization for the respective terminal
+#
+#  This file is part of the python3 package "homeinfo.terminals"
+#
+#  (C) 2016: HOMEINFO - Digitale Informationssysteme GmbH
+#
+#  Maintainer: Richard Neumann <r dot neumann at homeinfo period de>
+#
+#####################################################################
+"""Checks synchronization status for the respective terminal
 
 Usage:
     chksync <tid> <cid>
