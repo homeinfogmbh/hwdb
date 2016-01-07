@@ -131,7 +131,8 @@ def mkhosts():
         icon = ICONS.get(terminal.os.family)
         location = terminal.location
         if terminal.annotation:
-            notes = '{0} {1}'.format(repr(location), terminal.annotation)
+            notes = '{0} ({1})'.format(
+                repr(location), terminal.annotation)
         else:
             notes = repr(location)
         rendered = template.format(
