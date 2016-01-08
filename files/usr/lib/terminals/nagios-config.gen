@@ -146,7 +146,7 @@ def mkhosts():
         rendered = template.format(
             tid=str(terminal.tid), cid=str(terminal.cid),
             use=terminal.class_.name, host_name=terminal.hostname,
-            alias=repr(terminal), address=str(terminal.ipv4addr),
+            alias=str(terminal), address=str(terminal.ipv4addr),
             notes=notes, street=location.street,
             house_number=location.house_number, zip_code=location.zip_code,
             city=location.city, icon=icon)
