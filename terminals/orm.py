@@ -235,7 +235,7 @@ class VPN(TerminalModel):
         used_ipv4addrs = [a for a in cls.used_ipv4addrs]
         lowest = None
         for ipv4addr in cls.NETWORK:
-            if lowest is not None:
+            if lowest is None:
                 lowest = ipv4addr + 10
             elif ipv4addr >= lowest:
                 if ipv4addr not in used_ipv4addrs:
