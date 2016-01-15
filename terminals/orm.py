@@ -320,6 +320,13 @@ class Terminal(TerminalModel):
             yield '{0}\t{1}'.format(terminal.ipv4addr, terminal.hostname)
 
     @classmethod
+    def by_cid(cls, cid):
+        """Yields terminals of a customer that
+        run the specified virtual terminal
+        """
+        return cls.select().where(cls.customer == cid).order_by(Terminal.tid)
+
+    @classmethod
     def by_ids(cls, cid, tid, deleted=False):
         """Get a terminal by customer id and terminal id"""
         if deleted:
@@ -337,9 +344,18 @@ class Terminal(TerminalModel):
         return term
 
     @classmethod
+    def by_virt(cls, cid, vid):
+        """Yields terminals of a customer that
+        run the specified virtual terminal
+        """
+        return cls.select().where(
+            (cls.customer == cid) & (cls.vid == vid)).order_by(
+                Terminal.tid)
+
+    @classmethod
     def tids(cls, cid):
         """Yields used terminal IDs for a certain customer"""
-        for terminal in cls.select().where(cls.customer == cid):
+        for terminal in cls.by_cid(cid):
             yield terminal.tid
 
     @classmethod
@@ -355,13 +371,6 @@ class Terminal(TerminalModel):
                 return cls.gen_tid(cid, desired=None)
             else:
                 return tid
-
-    @classmethod
-    def by_virt(cls, cid, vid):
-        """Yields terminals of a customer that
-        run the specified virtual terminal
-        """
-        return cls.select().where((cls.customer == cid) & (cls.vid == vid))
 
     @property
     def cid(self):

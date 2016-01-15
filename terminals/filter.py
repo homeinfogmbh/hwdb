@@ -49,8 +49,7 @@ class VidFilter(IdFilter):
         """Yields virtual IDs"""
         processed = set()
         if self.all:
-            for terminal in Terminal.select().where(
-                    Terminal.customer == self.cid):
+            for terminal in Terminal.by_cid(self.cid):
                 vid = terminal.vid
                 if vid is not None:
                     if vid not in processed:
@@ -77,8 +76,7 @@ class TidFilter(IdFilter):
     def __iter__(self):
         """Yields physical identifiers"""
         if self.all:
-            for terminal in Terminal.select().where(
-                    Terminal.customer == self.cid):
+            for terminal in Terminal.by_cid(self.cid):
                 yield terminal.tid
         else:
             processed = set()
@@ -100,8 +98,7 @@ class TerminalFilter(IdFilter):
     def __iter__(self):
         """Yields appropriate terminal records"""
         if self.all:
-            for terminal in Terminal.select().where(
-                    Terminal.customer == self.cid):
+            for terminal in Terminal.by_cid(cid):
                 yield terminal
         else:
             processed = set()
