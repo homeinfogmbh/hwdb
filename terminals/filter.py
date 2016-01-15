@@ -98,7 +98,7 @@ class TerminalFilter(IdFilter):
     def __iter__(self):
         """Yields appropriate terminal records"""
         if self.all:
-            for terminal in Terminal.by_cid(cid):
+            for terminal in Terminal.by_cid(self.cid):
                 yield terminal
         else:
             processed = set()
