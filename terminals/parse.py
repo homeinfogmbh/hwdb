@@ -31,6 +31,7 @@ class TerminalSelectionParser():
     VID_PREFIX = 'v'
     BLOCK_SEP = ','
     RANGE_SEP = '-'
+    ALL = ['', '%', '*']
 
     def __init__(self, expr):
         """Sets respective expression"""
@@ -92,19 +93,45 @@ class TerminalSelectionParser():
             try:
                 start, end = block.split(self.RANGE_SEP)
             except ValueError:
-                raise InvalidRangeError(block)
+                if block in self.ALL:
+                    start = None
+                    end = None
+                else:
+                    raise InvalidRangeError(block)
             else:
+                # Parse start
                 try:
                     start = int(start)
                 except ValueError:
-                    raise InvalidIDError(start)
-                else:
-                    try:
-                        end = int(end)
-                    except ValueError:
-                        raise InvalidIDError(start)
+                    if start == '':
+                        start = None
                     else:
-                        yield from range(start, end+1)
+                        raise InvalidIDError(start)
+                # Parse end
+                try:
+                    end = int(end)
+                except ValueError:
+                    if end == '':
+                        end = None
+                    else:
+                        raise InvalidIDError(end)
+            # Derive ranges
+            if start is None:
+                if end is None:
+                    value = 1
+                    while True:
+                        yield value
+                        value += 1
+                else:
+                    yield from range(1, end+1)
+            else:
+                if end is None:
+                    value = start
+                    while True:
+                        yield value
+                        value += 1
+                else:
+                    yield from range(start, end+1)
         else:
             try:
                 ident = int(block)
