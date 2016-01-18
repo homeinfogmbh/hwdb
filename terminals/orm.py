@@ -127,8 +127,7 @@ class Class(TerminalModel):
         try:
             new_class = cls.get(
                 (cls.name == name) &
-                (cls.touch == touch)
-            )
+                (cls.touch == touch))
         except DoesNotExist:
             new_class = cls()
             new_class.name = name
