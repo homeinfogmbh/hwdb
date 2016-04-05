@@ -26,15 +26,13 @@ from homeinfo.terminals.config import terminals_config
 
 ICONS = {
     'Linux': 'logos/linux.gif',
-    'NT': 'logos/windows.gif'
-}
+    'NT': 'logos/windows.gif'}
 
 SERVICES = {
     # 'statistics':
     #     ('Statistics evaluation', '../graph.gif', '#'),
     'synchronization':
-        ('Synchronization status', '../logrotate.png', '#')
-}
+        ('Synchronization status', '../logrotate.png', '#')}
 
 
 def terminals():
@@ -50,7 +48,7 @@ def _template(t):
     template = join(terminals_config.monitoring['TEMPLATE_DIR'], t)
     with open(template, 'r') as f:
         return f.read()
-    
+
 
 def mkcontacts():
     """Generates contact configurations"""
@@ -66,7 +64,7 @@ def mkcontacts():
             host_notification_commands=admin.host_command,
             email=str(admin.employee.email))
         return rendered
-    
+
     conf_path = join(
         terminals_config.monitoring['CONF_DIR'],
         terminals_config.monitoring['CONTACTS_FILE_NAME'])
@@ -99,8 +97,7 @@ def mkcontactgroups():
             return rendered
         else:
             return ''
-            
-    
+
     conf_path = join(
         terminals_config.monitoring['CONF_DIR'],
         terminals_config.monitoring['CONTACT_GROUPS_FILE_NAME'])
@@ -138,19 +135,30 @@ def mkhosts():
         """Renders the template with the respective data"""
         icon = ICONS.get(terminal.os.family)
         location = terminal.location
+        # Get terminal's location data
+        if location is not None:
+            street = location.street
+            house_number = location.house_number
+            zip_code = location.zip_code
+            city = location.city
+        else:
+            street = 'Unknown'
+            house_number = 'Unknown'
+            zip_code = 'Unknown'
+            city = 'Unknown'
+        # Get terminal's annotation
         if terminal.annotation:
             notes = '{0} ({1})'.format(
                 repr(location), terminal.annotation)
         else:
             notes = repr(location)
-        rendered = template.format(
+        # Render and return
+        return template.format(
             tid=str(terminal.tid), cid=str(terminal.cid),
             use=terminal.class_.name, host_name=terminal.hostname,
             alias=str(terminal), address=str(terminal.ipv4addr),
-            notes=notes, street=location.street,
-            house_number=location.house_number, zip_code=location.zip_code,
-            city=location.city, icon=icon)
-        return rendered
+            notes=notes, street=street, house_number=house_number,
+            zip_code=zip_code,city=city, icon=icon)
 
     conf_path = join(
         terminals_config.monitoring['CONF_DIR'],
