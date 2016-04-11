@@ -21,7 +21,8 @@ from docopt import docopt
 
 from homeinfo.lib.strf import Terminal as TerminalColor
 
-from homeinfo.terminals.orm import Class, Domain, OS, Terminal
+from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
+    AddressUnconfiguredError
 from homeinfo.terminals.filter import TerminalFilter
 
 
@@ -77,6 +78,10 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
     else:
         terminals = Terminal.select().where(True)
     for terminal in _filter(terminals):
+        try:
+            address_str = str(terminal.address)
+        except AddressUnconfiguredError:
+            address_str = ''
         print(template.format(
             id=str(terminal.id),
             tid=str(terminal.tid),
@@ -85,7 +90,7 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
             ipv4addr=str(terminal.ipv4addr),
             deployed=str(terminal.deployed),
             testing=str(terminal.testing),
-            address=str(terminal.location),
+            address=address_str,
             annotation=str(terminal.annotation)))
 
 
