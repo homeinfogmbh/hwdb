@@ -85,7 +85,7 @@ def list_terminals(expr, deployed, undeployed, testing, productive):
             ipv4addr=str(terminal.ipv4addr),
             deployed=str(terminal.deployed),
             testing=str(terminal.testing),
-            address=str(terminal.address),
+            address=str(terminal.location),
             annotation=str(terminal.annotation)))
 
 
