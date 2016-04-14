@@ -277,6 +277,9 @@ class Connection(TerminalModel):
     name = CharField(4)
     timeout = IntegerField()
 
+    def __str__(self):
+        return '{0} ({1})'.format(self.name, self.timeout)
+
 
 @create
 class Terminal(TerminalModel):
