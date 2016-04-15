@@ -1,4 +1,4 @@
-"""Terminal library database models"""
+"""Terminal library ORM models"""
 
 from itertools import chain
 from datetime import datetime
@@ -16,9 +16,10 @@ from homeinfo.crm import Customer, Address, Company, Employee
 
 from .config import terminals_config
 
-__all__ = ['Class', 'Domain', 'Weather', 'OS', 'VPN', 'Terminal',
-           'Synchronization', 'Administrator', 'SetupOperator',
-           'NagiosAdmins', 'AccessStats']
+__all__ = ['TerminalError', 'TerminalConfigError', 'VPNUnconfiguredError',
+           'AddressUnconfiguredError', 'Class', 'Domain', 'Weather', 'OS',
+           'VPN', 'Terminal', 'Synchronization', 'Administrator',
+           'SetupOperator', 'NagiosAdmins', 'AccessStats']
 
 
 class TerminalError(Exception):
