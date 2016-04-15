@@ -111,11 +111,11 @@ class RemoteController(TerminalAware):
                 return False
         return True
 
-    def execute(self, cmd, *args, shell=False):
+    def execute(self, cmd, *args):
         """Executes a certain command on a remote terminal"""
         if self.check_command(cmd):
             remote_cmd = self.remote(cmd, *args)
-            return run(remote_cmd, shell=shell)
+            return run(remote_cmd, shell=True)
         else:
             return ProcessResult(3, stderr=b'Command not allowed.')
 
