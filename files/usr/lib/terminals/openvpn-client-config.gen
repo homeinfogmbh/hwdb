@@ -11,10 +11,15 @@
 pushs from HOMEINFO terminal records
 """
 
-from os.path import join
+from os.path import join, basename
+from logging import INFO, getLogger, basicConfig
+
 from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.orm import Terminal
 from homeinfo.terminals.config import terminals_config
+
+
+logger = getLogger(basename(__file__))
 
 
 if __name__ == '__main__':
@@ -30,15 +35,19 @@ if __name__ == '__main__':
             '# Terminal no. {tid} for customer {customer} ({cid})\n'.format(
                 tid=terminal.tid, customer=str(terminal.customer),
                 cid=terminal.customer.id))
-        data += ' '.join(
-            ['ifconfig-push', str(terminal.ipv4addr), network])
-        data += '\n\n'
-
-        file_name = terminal.vpn.key or str(terminal)
-        file_path = join(
-            terminals_config.openvpn['CLIENTS_DIR'], file_name)
-        with open(file_path, 'w') as cfg:
-            cfg.write(data)
+        try:
+            ipv4addr = terminal.ipv4addr
+        except VPNUnconfiguredError:
+            logger.error()
+        else:
+            data += ' '.join(
+                ['ifconfig-push', str(ipv4addr), network])
+            data += '\n\n'
+            file_name = terminal.vpn.key or str(terminal)
+            file_path = join(
+                terminals_config.openvpn['CLIENTS_DIR'], file_name)
+            with open(file_path, 'w') as cfg:
+                cfg.write(data)
     
     print('Restarting OpenVPN', end='                      ')
     evaluate(run('systemctl restart openvpn@terminals.service', shell=True))
