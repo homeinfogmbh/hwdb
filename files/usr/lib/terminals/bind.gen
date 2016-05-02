@@ -45,7 +45,6 @@ def terminal_hosts():
 
     terminals = ';# Terminal network hosts\n'
     for terminal in Terminal:
-        tid, cid, ipv4addr = terminal.tid, terminal.cid, terminal.ipv4addr
         hostname = '{0}.{1}'.format(terminal.tid, terminal.cid)
         try:
             ipv4addr = terminal.ipv4addr
