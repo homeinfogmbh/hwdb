@@ -15,14 +15,19 @@ Usage:
 [--hostgroups] [--services] [--servicegroups]
 """
 
-from os.path import join
+from os.path import join, basename
+from logging import INFO, basicConfig, getLogger
 
 from docopt import docopt
 
 from homeinfo.lib.system import run, evaluate
-from homeinfo.terminals.orm import Terminal, Class, NagiosAdmins
+from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal, Class, \
+    NagiosAdmins
 from homeinfo.terminals.config import terminals_config
 
+
+__all__ = ['ICONS', 'SERVICES', 'terminals', 'mkcontacts', 'mkcontactgroups',
+           'mkhosts', 'mkhostgroups', 'mkservices', 'mkservicegroups']
 
 ICONS = {
     'Linux': 'logos/linux.gif',
@@ -34,9 +39,12 @@ SERVICES = {
     'synchronization':
         ('Synchronization status', '../logrotate.png', '#')}
 
+logger = getLogger(basename(__file__))
+
 
 def terminals():
     """Yields monitored terminals"""
+
     return Terminal.select().where(
             (Terminal.deleted >> None) &
             ~(Terminal.testing == 1) &
@@ -45,6 +53,7 @@ def terminals():
 
 def _template(t):
     """Opens template <t>"""
+
     template = join(terminals_config.monitoring['TEMPLATE_DIR'], t)
     with open(template, 'r') as f:
         return f.read()
@@ -152,13 +161,19 @@ def mkhosts():
                 repr(location), terminal.annotation)
         else:
             notes = repr(location)
-        # Render and return
-        return template.format(
-            tid=str(terminal.tid), cid=str(terminal.cid),
-            use=terminal.class_.name, host_name=terminal.hostname,
-            alias=str(terminal), address=str(terminal.ipv4addr),
-            notes=notes, street=street, house_number=house_number,
-            zip_code=zip_code,city=city, icon=icon)
+        try:
+            ipv4addr = terminal.ipv4addr
+        except VPNUnconfiguredError:
+            logger.error('Terminal {0} has no VPN configuration'.format(
+                terminal))
+        else:
+            # Render and return
+            return template.format(
+                tid=str(terminal.tid), cid=str(terminal.cid),
+                use=terminal.class_.name, host_name=terminal.hostname,
+                alias=str(terminal), address=str(ipv4addr),
+                notes=notes, street=street, house_number=house_number,
+                zip_code=zip_code,city=city, icon=icon)
 
     conf_path = join(
         terminals_config.monitoring['CONF_DIR'],
@@ -306,7 +321,10 @@ def mkservicegroups():
     with open(conf_path, 'w') as f:
         f.write('\n'.join(config))
 
+
 if __name__ == '__main__':
+    basicConfig(level=INFO)
+
     options = docopt(__doc__)
     contacts = options['--contacts']
     contactgroups = options['--contactgroups']

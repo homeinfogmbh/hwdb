@@ -9,8 +9,12 @@
 #####################################################################
 """Generates bind9 configuration for HOMEINFO's VPN networks"""
 
+from os.path import basename
+from logging import INFO, getLogger, basicConfig
+
 from homeinfo.lib.system import run, evaluate
-from homeinfo.terminals.orm import Terminal
+from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal
+
 
 __all__ = ['DNS_TEMPLATE', 'DNS_CONFIG', 'RECORD', 'MANAGEMENT_HOSTS',
            'management_hosts', 'terminal_hosts']
@@ -20,12 +24,14 @@ DNS_CONFIG = '/etc/bind/homeinfo.vpn.zone'
 RECORD = '{0}\tIN\tA\t{1}\n'
 MANAGEMENT_HOSTS = {
     'phpmyadmin': '10.9.0.1',
-    'homie': '10.9.0.1'
-}
+    'homie': '10.9.0.1'}
+
+logger = getLogger(basename(__file__))
 
 
 def management_hosts():
     """Renders management network hosts"""
+
     management = ';# Management network hosts\n'
     for management_host in MANAGEMENT_HOSTS:
         management += RECORD.format(
@@ -36,15 +42,24 @@ def management_hosts():
 
 def terminal_hosts():
     """Renders terminal network hosts"""
+
     terminals = ';# Terminal network hosts\n'
     for terminal in Terminal:
         tid, cid, ipv4addr = terminal.tid, terminal.cid, terminal.ipv4addr
-        hostname = '{0}.{1}'.format(tid, cid)
-        terminals += RECORD.format(hostname, ipv4addr)
+        hostname = '{0}.{1}'.format(terminal.tid, terminal.cid)
+        try:
+            ipv4addr = terminal.ipv4addr
+        except VPNUnconfiguredError:
+            logger.error('Terminal {0} has no VPN configuration'.format(
+                terminal))
+        else:
+            terminals += RECORD.format(hostname, ipv4addr)
     return terminals
 
 
 if __name__ == '__main__':
+    basicConfig(level=INFO)
+
     with open(DNS_TEMPLATE, 'r') as temp:
         template = temp.read()
 
