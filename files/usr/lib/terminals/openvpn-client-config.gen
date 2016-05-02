@@ -38,7 +38,8 @@ if __name__ == '__main__':
         try:
             ipv4addr = terminal.ipv4addr
         except VPNUnconfiguredError:
-            logger.error()
+            logger.error('Terminal {0} has no VPN configuration'.format(
+                terminal))
         else:
             data += ' '.join(
                 ['ifconfig-push', str(ipv4addr), network])
