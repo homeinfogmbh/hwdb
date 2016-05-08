@@ -100,5 +100,4 @@ Include = /etc/pacman.d/mirrorlist
 
 # HOMEINFO's proprietary repository with restricted access
 [homeinfo]
-SigLevel = Optional
 Server = http://{addr}:{port}/

@@ -1,5 +1,5 @@
 define servicegroup {{
-	servicegroup_name              {servicegroup_name}
+    servicegroup_name              {servicegroup_name}
     alias                          {alias}
     members                        {members}
 }}

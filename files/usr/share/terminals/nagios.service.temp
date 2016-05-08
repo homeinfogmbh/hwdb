@@ -1,5 +1,5 @@
 define service {{
-	host_name                      {host_name}
+    host_name                      {host_name}
     service_description            {service_description}
     check_command                  {check_command}
     max_check_attempts             {max_check_attempts}
