@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='homeinfo.terminals',
-    version='1.0.0-1',
+    version='1.1.0-1',
     author='Richard Neumann',
     author_email='r.neumann@homeinfo.de',
     package_dir={'homeinfo': ''},
@@ -21,11 +21,11 @@ setup(
           'files/etc/nagios3/conf.d/homeinfo-terminal-commands.cfg']),
         # Miscellaneous scripts
         ('/usr/lib/terminals',
-         ['files/usr/lib/terminals/bind.gen',
+         ['files/usr/lib/terminals/bind-gen',
           'files/usr/lib/terminals/chkstats',
           'files/usr/lib/terminals/chksync',
-          'files/usr/lib/terminals/nagios-config.gen',
-          'files/usr/lib/terminals/openvpn-client-config.gen']),
+          'files/usr/lib/terminals/nagios-gen',
+          'files/usr/lib/terminals/openvpn-gen']),
         # Template files
         ('/usr/share/terminals',
          ['files/usr/share/terminals/bind.zone.temp',
@@ -37,8 +37,7 @@ setup(
           'files/usr/share/terminals/nagios.servicegroup.temp',
           'files/usr/share/terminals/openvpn.conf.temp',
           'files/usr/share/terminals/pacman.conf.temp']),
-        # Controller script
+        # Utilty script
         ('/usr/bin', ['files/usr/bin/termutil'])],
     license=open('LICENSE.txt').read(),
-    description=('Homeinfo Terminal Libary')
-    )
+    description=("HOMEINFO's terminal libary"))
