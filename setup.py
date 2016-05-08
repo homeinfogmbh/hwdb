@@ -39,5 +39,4 @@ setup(
           'files/usr/share/terminals/pacman.conf.temp']),
         # Utilty script
         ('/usr/bin', ['files/usr/bin/termutil'])],
-    license=open('LICENSE.txt').read(),
     description=("HOMEINFO's terminal libary"))
