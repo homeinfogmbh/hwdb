@@ -790,6 +790,7 @@ class NagiosAdmins(TerminalModel):
     employee = ForeignKeyField(Employee, db_column='employee')
     class_ = ForeignKeyField(
         Class, null=True, db_column='class', related_name='members')
+    _email = CharField(255, db_column='email', null=True, default=None)
     service_period = CharField(16, default='24x7')
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
@@ -810,6 +811,14 @@ class NagiosAdmins(TerminalModel):
             return self.employee.surname
         else:
             return self._name
+
+    @property
+    def email(self):
+        """Returns the admin's email"""
+        if self._email is None:
+            return self.employee.email
+        else:
+            return self._email
 
 
 @create
