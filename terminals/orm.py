@@ -5,6 +5,7 @@ from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
 from hashlib import sha256
 from uuid import uuid4
+from logging import getLogger
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField,\
     BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
@@ -298,8 +299,9 @@ class Connection(TerminalModel):
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
-    # Ping once and wait two seconds max.
+    # Ping once
     _CHK_CMD = '/bin/ping -c 1 -W {timeout} {host}'
+    logger = getLogger('Terminal')
 
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
@@ -427,6 +429,74 @@ class Terminal(TerminalModel):
                 result = max(result, terminal.vid)
         return result
 
+    @classmethod
+    def add(cls, cid, class_id, os_id, connection_id,
+        address=None, vpn_key=None, annotation=None, tid=None):
+        """Adds a new terminal"""
+        tid = cls.gen_tid(cid, desired=tid)
+        class_ = Class.get(Class.id == class_id)
+        os = OS.get(OS.id == os_id)
+        connection = Connection.get(Connection.id == connection_id)
+        domain = Domain.get(Domain.id == int(options['--domain']))
+
+        # Retrieve or add address record
+        if address is not None:
+            try:
+                street, house_number, zip_code, city, state_iso = address
+            except ValueError:
+                try:
+                    address = Address.get(Address.id == int(address))
+                except (TypeError, ValueError, DoesNotExist):
+                    cls.logger.error(
+                        "Address is neither a valid tuple, nor a record's ID")
+                    return False
+            else:
+                if state_iso:
+                    state = State.get(State._iso == state_iso)
+                    try:
+                        address = Address.get(
+                            (Address.street == street) &
+                            (Address.house_number == house_number) &
+                            (Address.zip_code == zip_code) &
+                            (Address.city == city) &
+                            (Address.state == state))
+                    except DoesNotExist:
+                        addr = (street, house_number, zip_code)
+                        address = Address.add(city, addr=addr, state=state)
+                else:
+                    try:
+                        address = Address.get(
+                            (Address.street == street) &
+                            (Address.house_number == house_number) &
+                            (Address.zip_code == zip_code) &
+                            (Address.city == city))
+                    except DoesNotExist:
+                        addr = (street, house_number, zip_code)
+                        address = Address.add(city, addr=addr)
+        else:
+            cls.logger.warning('No address specified')
+
+        terminal = cls()
+        terminal.tid = tid
+        terminal.customer = cid
+        terminal.class_ = class_
+        terminal.os = os
+        terminal.connection = connection
+        terminal.vpn = VPN.add(key=vpn_key)
+        terminal.domain = domain
+        terminal.location = address
+        terminal.vid = None
+        terminal.deployed = None
+        terminal.deleted = None
+        terminal.testing = False
+        terminal.annotation = annotation
+        if vpn_key is not None:
+            cls.logger.warning(
+                'Divergent OpenVPN key specified: "{0}"!'.format(vpn_key))
+        terminal.vpn_key = vpn_key
+        terminal.save()
+        return terminal
+
     @property
     def cid(self):
         """Returns the customer identifier"""
@@ -473,7 +543,7 @@ class Terminal(TerminalModel):
     @property
     def operators(self):
         """Yields the operators, which are
-        allowed to setup the terminal
+        allowed to set the terminal up
         """
         return OperatorTerminals.operators(self)
 
