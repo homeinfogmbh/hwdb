@@ -16,10 +16,22 @@ from homeinfo.crm import Customer, Address, Company, Employee
 
 from .config import terminals_config
 
-__all__ = ['TerminalError', 'TerminalConfigError', 'VPNUnconfiguredError',
-           'AddressUnconfiguredError', 'Class', 'Domain', 'Weather', 'OS',
-           'VPN', 'Terminal', 'Synchronization', 'Administrator',
-           'SetupOperator', 'NagiosAdmins', 'AccessStats']
+__all__ = [
+    'TerminalError',
+    'TerminalConfigError',
+    'VPNUnconfiguredError',
+    'AddressUnconfiguredError',
+    'Class',
+    'Domain',
+    'Weather',
+    'OS',
+    'VPN',
+    'Terminal',
+    'Synchronization',
+    'Administrator',
+    'SetupOperator',
+    'NagiosAdmins',
+    'AccessStats']
 
 
 class TerminalError(Exception):
@@ -374,6 +386,46 @@ class Terminal(TerminalModel):
                 return cls.gen_tid(cid, desired=None)
             else:
                 return tid
+
+    @classmethod
+    def min_tid(cls, customer):
+        """Gets the highest TID for the respective customer"""
+        result = None
+        for terminal in cls.select().where(cls.customer == customer):
+            if result is None:
+                result = terminal.cid
+            else:
+                result = min(result, terminal.cid)
+        return result
+
+    @classmethod
+    def max_tid(cls, customer):
+        """Gets the highest TID for the respective customer"""
+        result = 0
+        for terminal in cls.select().where(cls.customer == customer):
+            result = max(result, terminal.cid)
+        return result
+
+    @classmethod
+    def min_vid(cls, customer):
+        """Gets the highest VID for the respective customer"""
+        result = None
+        for terminal in cls.select().where(cls.customer == customer):
+            if terminal.vid is not None:
+                if result is None:
+                    result = terminal.vid
+                else:
+                    result = min(result, terminal.vid)
+        return result
+
+    @classmethod
+    def max_vid(cls, customer):
+        """Gets the highest TID for the respective customer"""
+        result = 0
+        for terminal in cls.select().where(cls.customer == customer):
+            if terminal.vid is not None:
+                result = max(result, terminal.vid)
+        return result
 
     @property
     def cid(self):
