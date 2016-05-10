@@ -578,27 +578,32 @@ class Terminal(TerminalModel):
         """Returns whether the system has been deployed and is non-testing"""
         return True if self.deployed and not self.testing else False
 
-    def deploy(self):
+    def deploy(self, date_time=None, force=False):
         """Sets terminals to deployed"""
-        if self.deployed is None:
-            now = datetime.now()
+        if self.deployed is None or force:
+            deployed = datetime.now() if date_time is None else date_time
             self.logger.info(
-                'Deploying terminal {0} on {1}'.format(self, now))
-            self.deployed = now
+                'Deploying terminal {0} on {1}'.format(self, deployed))
+            self.deployed = deployed
             self.save()
+            return True
         else:
-            print('Terminal {0} has already been deployed on {1}'.format(
-                self, self.deployed))
+            self.logger.warning(
+                'Terminal {0} has already been deployed on {1}'.format(
+                    self, self.deployed))
+            return False
 
     def undeploy(self):
         """Sets terminals to NOT deployed"""
         if self.deployed is None:
-            print('Terminal {0} is not deployed'.format(self))
+            self.logger.warning('Terminal {0} is not deployed'.format(self))
+            return False
         else:
-            print('Undeploying terminal {0} from {1}'.format(
+            self.logger.info('Undeploying terminal {0} from {1}'.format(
                 self, terminal.deployed))
             self.deployed = None
             self.save()
+            return True
 
 
 @create
@@ -664,56 +669,55 @@ class Operator(_User):
     company = ForeignKeyField(
         Company, db_column='company', related_name='setup_operators')
 
-    def grant(self, terminals):
-        """Grant an operator permission to set up certain terminals"""
-        result = True
+    def grant(self, terminal):
+        """Grant an operator permission to set up a certain terminal"""
+        self.logger.info('Granting setup permission of terminal '
+              '{0} to operator {1}'.format(terminal, self))
 
-        for terminal in terminals:
-            self.logger.info('Granting setup permission of terminal '
-                  '{0} to operator {1}'.format(terminal, self))
-            try:
-                OperatorTerminals.get(
-                    (OperatorTerminals.operator == self) &
-                    (OperatorTerminals.terminal == terminal))
-            except DoesNotExist:
-                permission = OperatorTerminals()
-                permission.operator = self
-                permission.terminal = terminal
-                if permission.save():
-                    self.logger.debug('success')
-                else:
-                    result = False
-                    self.logger.error('failed')
+        try:
+            OperatorTerminals.get(
+                (OperatorTerminals.operator == self) &
+                (OperatorTerminals.terminal == terminal))
+        except DoesNotExist:
+            permission = OperatorTerminals()
+            permission.operator = self
+            permission.terminal = terminal
+            if permission.save():
+                self.logger.info('success')
+                return True
             else:
-                self.logger.warning('exists')
+                self.logger.error('failed')
+                return False
+        else:
+            self.logger.warning('exists')
+            return False
 
-        if not result:
-            self.logger.error('failed')
-        return result
 
+    def revoke(self, terminal):
+        """Revoke an operator permission to set up a certain terminal"""
+        failures = 0
 
-    def revoke(self, terminals):
-        """Revoke an operator permission to set up certain terminals"""
-        result = True
+        self.logger.info(
+            'Revoking permission to setup terminal {0} from operator'
+            ' {1}:'.format(terminal, self))
 
-        for terminal in terminals:
+        for permission in OperatorTerminals.select().where(
+                (OperatorTerminals.operator == self) &
+                (OperatorTerminals.terminal == terminal)):
             self.logger.debug(
-                'Revoking permission to setup terminal {0} from operator'
-                ' {1}:'.format(terminal, self))
-            for permission in OperatorTerminals.select().where(
-                    (OperatorTerminals.operator == self) &
-                    (OperatorTerminals.terminal == terminal)):
-                self.logger.debug(
-                    'Revoking permission {0}'.format(permission.id))
-                if permission.delete_instance():
-                    self.logger.debug('success')
-                else:
-                    result = False
-                    self.logger.debug('failed')
+                'Revoking permission {0}'.format(permission.id))
+            if permission.delete_instance():
+                self.logger.debug('success')
+            else:
+                self.logger.debug('failed')
+                failures += 1
 
-        if not result:
+        if failures:
             self.logger.error('failed')
-        return result
+            return False
+        else:
+            self.logger.info('success')
+            return True
 
     @property
     def terminals(self):
