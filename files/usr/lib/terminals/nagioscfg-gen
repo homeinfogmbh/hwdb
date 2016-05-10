@@ -46,9 +46,9 @@ def terminals():
     """Yields monitored terminals"""
 
     return Terminal.select().where(
-            (Terminal.deleted >> None) &
-            ~(Terminal.testing == 1) &
-            ~(Terminal.deployed >> None))
+            (Terminal.deleted >> None) & ~
+            (Terminal.testing == 1) & ~
+            (Terminal.deployed >> None))
 
 
 def _template(t):
@@ -71,7 +71,7 @@ def mkcontacts():
             service_notification_options=str(admin.service_options),
             host_notification_options=str(admin.host_options),
             host_notification_commands=admin.host_command,
-            email=str(admi.email))
+            email=str(admin.email))
         return rendered
 
     conf_path = join(
@@ -173,7 +173,7 @@ def mkhosts():
                 use=terminal.class_.name, host_name=terminal.hostname,
                 alias=str(terminal), address=str(ipv4addr),
                 notes=notes, street=street, house_number=house_number,
-                zip_code=zip_code,city=city, icon=icon)
+                zip_code=zip_code, city=city, icon=icon)
 
     conf_path = join(
         terminals_config.monitoring['CONF_DIR'],
