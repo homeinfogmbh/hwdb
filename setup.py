@@ -21,11 +21,11 @@ setup(
           'files/etc/nagios3/conf.d/homeinfo-terminal-commands.cfg']),
         # Miscellaneous scripts
         ('/usr/lib/terminals',
-         ['files/usr/lib/terminals/bind.gen',
+         ['files/usr/lib/terminals/bindcfg-gen',
           'files/usr/lib/terminals/chkstats',
           'files/usr/lib/terminals/chksync',
-          'files/usr/lib/terminals/nagios-config.gen',
-          'files/usr/lib/terminals/openvpn-client-config.gen']),
+          'files/usr/lib/terminals/nagioscfg-gen',
+          'files/usr/lib/terminals/openvpncfg-gen']),
         # Template files
         ('/usr/share/terminals',
          ['files/usr/share/terminals/bind.zone.temp',
