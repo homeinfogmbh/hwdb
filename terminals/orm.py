@@ -433,6 +433,7 @@ class Terminal(TerminalModel):
     def add(cls, cid, class_id, os_id, connection_id,
         address=None, vpn_key=None, annotation=None, tid=None):
         """Adds a new terminal"""
+
         tid = cls.gen_tid(cid, desired=tid)
         class_ = Class.get(Class.id == class_id)
         os = OS.get(OS.id == os_id)
@@ -495,6 +496,7 @@ class Terminal(TerminalModel):
                 'Divergent OpenVPN key specified: "{0}"!'.format(vpn_key))
         terminal.vpn_key = vpn_key
         terminal.save()
+
         return terminal
 
     @property
@@ -576,6 +578,28 @@ class Terminal(TerminalModel):
         """Returns whether the system has been deployed and is non-testing"""
         return True if self.deployed and not self.testing else False
 
+    def deploy(self):
+        """Sets terminals to deployed"""
+        if self.deployed is None:
+            now = datetime.now()
+            self.logger.info(
+                'Deploying terminal {0} on {1}'.format(self, now))
+            self.deployed = now
+            self.save()
+        else:
+            print('Terminal {0} has already been deployed on {1}'.format(
+                self, self.deployed))
+
+    def undeploy(self):
+        """Sets terminals to NOT deployed"""
+        if self.deployed is None:
+            print('Terminal {0} is not deployed'.format(self))
+        else:
+            print('Undeploying terminal {0} from {1}'.format(
+                self, terminal.deployed))
+            self.deployed = None
+            self.save()
+
 
 @create
 class Synchronization(TerminalModel):
@@ -632,11 +656,64 @@ class Administrator(_User):
 class Operator(_User):
     """A user that is allowed to setup systems by HOMEINFO"""
 
+    logger = getLogger('Operator')
+
     class Meta:
         db_table = 'operator'
 
     company = ForeignKeyField(
         Company, db_column='company', related_name='setup_operators')
+
+    def grant(self, terminals):
+        """Grant an operator permission to set up certain terminals"""
+        result = True
+
+        for terminal in terminals:
+            self.logger.info('Granting setup permission of terminal '
+                  '{0} to operator {1}'.format(terminal, self))
+            try:
+                OperatorTerminals.get(
+                    (OperatorTerminals.operator == self) &
+                    (OperatorTerminals.terminal == terminal))
+            except DoesNotExist:
+                permission = OperatorTerminals()
+                permission.operator = self
+                permission.terminal = terminal
+                if permission.save():
+                    self.logger.debug('success')
+                else:
+                    result = False
+                    self.logger.error('failed')
+            else:
+                self.logger.warning('exists')
+
+        if not result:
+            self.logger.error('failed')
+        return result
+
+
+    def revoke(self, terminals):
+        """Revoke an operator permission to set up certain terminals"""
+        result = True
+
+        for terminal in terminals:
+            self.logger.debug(
+                'Revoking permission to setup terminal {0} from operator'
+                ' {1}:'.format(terminal, self))
+            for permission in OperatorTerminals.select().where(
+                    (OperatorTerminals.operator == self) &
+                    (OperatorTerminals.terminal == terminal)):
+                self.logger.debug(
+                    'Revoking permission {0}'.format(permission.id))
+                if permission.delete_instance():
+                    self.logger.debug('success')
+                else:
+                    result = False
+                    self.logger.debug('failed')
+
+        if not result:
+            self.logger.error('failed')
+        return result
 
     @property
     def terminals(self):
