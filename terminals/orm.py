@@ -347,18 +347,12 @@ class Terminal(TerminalModel):
     def by_ids(cls, cid, tid, deleted=False):
         """Get a terminal by customer id and terminal id"""
         if deleted:
-            try:
-                term = cls.get((cls.customer == cid) & (cls.tid == tid))
-            except DoesNotExist:
-                term = None
+            return cls.get((cls.customer == cid) & (cls.tid == tid))
         else:
-            try:
-                term = cls.get(
-                    (cls.customer == cid) & (cls.tid == tid) &
-                    (cls.deleted >> None))
-            except DoesNotExist:
-                term = None
-        return term
+            return cls.get(
+                (cls.customer == cid) &
+                (cls.tid == tid) &
+                (cls.deleted >> None))
 
     @classmethod
     def by_virt(cls, cid, vid):
@@ -366,7 +360,8 @@ class Terminal(TerminalModel):
         run the specified virtual terminal
         """
         return cls.select().where(
-            (cls.customer == cid) & (cls.vid == vid)).order_by(
+            (cls.customer == cid) &
+            (cls.vid == vid)).order_by(
                 Terminal.tid)
 
     @classmethod

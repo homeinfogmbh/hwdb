@@ -118,7 +118,8 @@ class TerminalSelectionParser():
                     else:
                         raise InvalidIDError(end)
 
-                # Disallow leaving out start and range on range definition
+                # Disallow leaving out both start
+                # and range on range definition
                 if start is None and range is None:
                     raise InvalidRangeError(block)
 
@@ -133,7 +134,9 @@ class TerminalSelectionParser():
                     start = Terminal.max_vid(self.cid)
                 else:
                     start = Terminal.max_tid(self.cid)
+
             yield from range(start, end+1)
+
         else:
             try:
                 ident = int(block)
