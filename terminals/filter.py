@@ -82,11 +82,10 @@ class VidFilter(IdFilter):
 
         if self.all:
             for terminal in Terminal.by_cid(self.cid):
-                vid = terminal.vid
-                if vid is not None:
-                    if vid not in processed:
-                        processed.add(vid)
-                        yield vid
+                if terminal.vid is not None:
+                    if terminal.vid not in processed:
+                        processed.add(terminal.vid)
+                        yield terminal.vid
         else:
             for vid in self.vids:
                 if vid not in processed:
@@ -102,7 +101,7 @@ class VidFilter(IdFilter):
                     if terminal.vid is not None:
                         if terminal.vid not in processed:
                             processed.add(terminal.vid)
-                            yield vid
+                            yield terminal.vid
 
 
 class TidFilter(IdFilter):
@@ -123,9 +122,8 @@ class TidFilter(IdFilter):
 
             for vid in self.vids:
                 for terminal in Terminal.by_virt(self.cid, vid):
-                    tid = terminal.tid
-                    if tid not in processed:
-                        processed.add(tid)
+                    if terminal.tid not in processed:
+                        processed.add(terminal.tid)
                         yield terminal.tid
 
 
@@ -143,6 +141,7 @@ class TerminalFilter(IdFilter):
             for tid in self.tids:
                 if tid not in processed:
                     processed.add(tid)
+
                     try:
                         terminal = Terminal.by_ids(self.cid, tid)
                     except DoesNotExist:
@@ -152,9 +151,8 @@ class TerminalFilter(IdFilter):
 
             for vid in self.vids:
                 for terminal in Terminal.by_virt(self.cid, vid):
-                    tid = terminal.tid
-                    if tid not in processed:
-                        processed.add(tid)
+                    if terminal.tid not in processed:
+                        processed.add(terminal.tid)
                         yield terminal
 
             if nonexistant:
