@@ -595,7 +595,7 @@ class Terminal(TerminalModel):
             return False
         else:
             self.logger.info('Undeploying terminal {0} from {1}'.format(
-                self, terminal.deployed))
+                self, self.deployed))
             self.deployed = None
             self.save()
             return True
