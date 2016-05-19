@@ -490,9 +490,11 @@ class Terminal(TerminalModel):
             cls.logger.warning(
                 'Divergent OpenVPN key specified: "{0}"!'.format(vpn_key))
         terminal.vpn_key = vpn_key
-        terminal.save()
 
-        return terminal
+        if terminal.save():
+            return terminal
+        else:
+            return False
 
     @property
     def cid(self):
