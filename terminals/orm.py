@@ -590,17 +590,17 @@ class Terminal(TerminalModel):
                     self, self.deployed))
             return False
 
-    def undeploy(self):
+    def undeploy(self, force=False):
         """Sets terminals to NOT deployed"""
-        if self.deployed is None:
-            self.logger.warning('Terminal {0} is not deployed'.format(self))
-            return False
-        else:
+        if self.deployed is not None or force:
             self.logger.info('Undeploying terminal {0} from {1}'.format(
                 self, self.deployed))
             self.deployed = None
             self.save()
             return True
+        else:
+            self.logger.warning('Terminal {0} is not deployed'.format(self))
+            return False
 
 
 @create
