@@ -1,5 +1,7 @@
 """Terminal selection expression parsing"""
 
+from .orm import Terminal
+
 __all__ = ['InvalidCustomerID', 'InvalidTerminalIDs', 'InvalidRangeError',
            'InvalidIDError', 'NoSuchTerminals', 'TerminalSelectionParser']
 
@@ -31,7 +33,7 @@ class TerminalSelectionParser():
     VID_PREFIX = 'v'
     BLOCK_SEP = ','
     RANGE_SEP = '-'
-    ALL = ['', '%', '*']
+    ALL = ['*']
 
     def __init__(self, expr):
         """Sets respective expression"""
@@ -78,16 +80,16 @@ class TerminalSelectionParser():
         for block in self._blocks:
             if block.startswith(self.VID_PREFIX):
                 block = block[1:]
-                yield from self._block_range(block)
+                yield from self._block_range(block, virtual=True)
 
     @property
     def tids(self):
         """Yields physical identifiers"""
         for block in self._blocks:
             if not block.startswith(self.VID_PREFIX):
-                yield from self._block_range(block)
+                yield from self._block_range(block, virtual=False)
 
-    def _block_range(self, block):
+    def _block_range(self, block, virtual=False):
         """Yields elements of a block range or a single ID"""
         if self.RANGE_SEP in block:
             try:
@@ -115,23 +117,26 @@ class TerminalSelectionParser():
                         end = None
                     else:
                         raise InvalidIDError(end)
+
+                # Disallow leaving out both start
+                # and range on range definition
+                if start is None and range is None:
+                    raise InvalidRangeError(block)
+
             # Derive ranges
             if start is None:
-                if end is None:
-                    value = 1
-                    while True:
-                        yield value
-                        value += 1
+                if virtual:
+                    start = Terminal.min_vid(self.cid)
                 else:
-                    yield from range(1, end+1)
-            else:
-                if end is None:
-                    value = start
-                    while True:
-                        yield value
-                        value += 1
+                    start = Terminal.min_id(self.cid)
+            if end is None:
+                if virtual:
+                    start = Terminal.max_vid(self.cid)
                 else:
-                    yield from range(start, end+1)
+                    start = Terminal.max_tid(self.cid)
+
+            yield from range(start, end+1)
+
         else:
             try:
                 ident = int(block)

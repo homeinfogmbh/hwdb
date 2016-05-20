@@ -21,15 +21,18 @@ class RemoteController(TerminalAware):
         super().__init__(terminal)
         self.user = user
         self._keyfile = keyfile
+
         # Commands white and black list
         self.white_list = white_list
         self.black_list = bl
         self.debug = debug or 0
+
         # Further options for SSH
         if self.terminal.connection:
             connect_timeout = self.terminal.connection.timeout
         else:
             connect_timeout = terminals_config.ssh['CONNECT_TIMEOUT']
+
         self.SSH_OPTS = {
             # Trick SSH it into not checking the host key
             'UserKnownHostsFile':
@@ -38,6 +41,7 @@ class RemoteController(TerminalAware):
                 terminals_config.ssh['STRICT_HOST_KEY_CHECKING'],
             # Set timeout to avoid blocking of rsync / ssh call
             'ConnectTimeout': connect_timeout}
+        self.ssh_custom_opts = None
 
     @property
     def keyfile(self):
@@ -54,11 +58,31 @@ class RemoteController(TerminalAware):
     @property
     def ssh_options(self):
         """Returns options for SSH"""
+        # Yield additional custom options iff set
+        if self.ssh_custom_opts:
+            for option in self.ssh_custom_opts:
+                value = self.ssh_custom_opts[option]
+                option_value = '-o {option}={value}'.format(
+                    option=option, value=value)
+                yield option_value
+
         for option in self.SSH_OPTS:
+            # Skip options overridden by custom options
+            if self.ssh_custom_opts:
+                if option in self.ssh_custom_opts:
+                    continue
             value = self.SSH_OPTS[option]
             option_value = '-o {option}={value}'.format(
                 option=option, value=value)
             yield option_value
+
+        # Yield additional custom options iff set
+        if self.ssh_custom_opts:
+            for option in self.ssh_custom_opts:
+                value = self.ssh_custom_opts[option]
+                option_value = '-o {option}={value}'.format(
+                    option=option, value=value)
+                yield option_value
 
     @property
     def ssh_cmd(self):

@@ -5,6 +5,7 @@ from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
 from hashlib import sha256
 from uuid import uuid4
+from logging import getLogger
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField,\
     BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
@@ -16,10 +17,22 @@ from homeinfo.crm import Customer, Address, Company, Employee
 
 from .config import terminals_config
 
-__all__ = ['TerminalError', 'TerminalConfigError', 'VPNUnconfiguredError',
-           'AddressUnconfiguredError', 'Class', 'Domain', 'Weather', 'OS',
-           'VPN', 'Terminal', 'Synchronization', 'Administrator',
-           'SetupOperator', 'NagiosAdmins', 'AccessStats']
+__all__ = [
+    'TerminalError',
+    'TerminalConfigError',
+    'VPNUnconfiguredError',
+    'AddressUnconfiguredError',
+    'Class',
+    'Domain',
+    'Weather',
+    'OS',
+    'VPN',
+    'Terminal',
+    'Synchronization',
+    'Administrator',
+    'SetupOperator',
+    'NagiosAdmins',
+    'AccessStats']
 
 
 class TerminalError(Exception):
@@ -286,8 +299,9 @@ class Connection(TerminalModel):
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
-    # Ping once and wait two seconds max.
+    # Ping once
     _CHK_CMD = '/bin/ping -c 1 -W {timeout} {host}'
+    logger = getLogger('Terminal')
 
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
@@ -333,18 +347,12 @@ class Terminal(TerminalModel):
     def by_ids(cls, cid, tid, deleted=False):
         """Get a terminal by customer id and terminal id"""
         if deleted:
-            try:
-                term = cls.get((cls.customer == cid) & (cls.tid == tid))
-            except DoesNotExist:
-                term = None
+            return cls.get((cls.customer == cid) & (cls.tid == tid))
         else:
-            try:
-                term = cls.get(
-                    (cls.customer == cid) & (cls.tid == tid) &
-                    (cls.deleted >> None))
-            except DoesNotExist:
-                term = None
-        return term
+            return cls.get(
+                (cls.customer == cid) &
+                (cls.tid == tid) &
+                (cls.deleted >> None))
 
     @classmethod
     def by_virt(cls, cid, vid):
@@ -352,7 +360,8 @@ class Terminal(TerminalModel):
         run the specified virtual terminal
         """
         return cls.select().where(
-            (cls.customer == cid) & (cls.vid == vid)).order_by(
+            (cls.customer == cid) &
+            (cls.vid == vid)).order_by(
                 Terminal.tid)
 
     @classmethod
@@ -374,6 +383,118 @@ class Terminal(TerminalModel):
                 return cls.gen_tid(cid, desired=None)
             else:
                 return tid
+
+    @classmethod
+    def min_tid(cls, customer):
+        """Gets the highest TID for the respective customer"""
+        result = None
+        for terminal in cls.select().where(cls.customer == customer):
+            if result is None:
+                result = terminal.cid
+            else:
+                result = min(result, terminal.cid)
+        return result
+
+    @classmethod
+    def max_tid(cls, customer):
+        """Gets the highest TID for the respective customer"""
+        result = 0
+        for terminal in cls.select().where(cls.customer == customer):
+            result = max(result, terminal.cid)
+        return result
+
+    @classmethod
+    def min_vid(cls, customer):
+        """Gets the highest VID for the respective customer"""
+        result = None
+        for terminal in cls.select().where(cls.customer == customer):
+            if terminal.vid is not None:
+                if result is None:
+                    result = terminal.vid
+                else:
+                    result = min(result, terminal.vid)
+        return result
+
+    @classmethod
+    def max_vid(cls, customer):
+        """Gets the highest TID for the respective customer"""
+        result = 0
+        for terminal in cls.select().where(cls.customer == customer):
+            if terminal.vid is not None:
+                result = max(result, terminal.vid)
+        return result
+
+    @classmethod
+    def add(cls, cid, class_id, os_id, connection_id, domain_id,
+            address=None, vpn_key=None, annotation=None, tid=None):
+        """Adds a new terminal"""
+
+        tid = cls.gen_tid(cid, desired=tid)
+        class_ = Class.get(Class.id == class_id)
+        os = OS.get(OS.id == os_id)
+        connection = Connection.get(Connection.id == connection_id)
+        domain = Domain.get(Domain.id == domain_id)
+
+        # Retrieve or add address record
+        if address is not None:
+            try:
+                street, house_number, zip_code, city, state_iso = address
+            except ValueError:
+                try:
+                    address = Address.get(Address.id == int(address))
+                except (TypeError, ValueError, DoesNotExist):
+                    cls.logger.error(
+                        "Address is neither a valid tuple, nor a record's ID")
+                    return False
+            else:
+                if state_iso:
+                    state = State.get(State._iso == state_iso)
+                    try:
+                        address = Address.get(
+                            (Address.street == street) &
+                            (Address.house_number == house_number) &
+                            (Address.zip_code == zip_code) &
+                            (Address.city == city) &
+                            (Address.state == state))
+                    except DoesNotExist:
+                        addr = (street, house_number, zip_code)
+                        address = Address.add(city, addr=addr, state=state)
+                else:
+                    try:
+                        address = Address.get(
+                            (Address.street == street) &
+                            (Address.house_number == house_number) &
+                            (Address.zip_code == zip_code) &
+                            (Address.city == city))
+                    except DoesNotExist:
+                        addr = (street, house_number, zip_code)
+                        address = Address.add(city, addr=addr)
+        else:
+            cls.logger.warning('No address specified')
+
+        terminal = cls()
+        terminal.tid = tid
+        terminal.customer = cid
+        terminal.class_ = class_
+        terminal.os = os
+        terminal.connection = connection
+        terminal.vpn = VPN.add(key=vpn_key)
+        terminal.domain = domain
+        terminal.location = address
+        terminal.vid = None
+        terminal.deployed = None
+        terminal.deleted = None
+        terminal.testing = False
+        terminal.annotation = annotation
+        if vpn_key is not None:
+            cls.logger.warning(
+                'Divergent OpenVPN key specified: "{0}"!'.format(vpn_key))
+        terminal.vpn_key = vpn_key
+
+        if terminal.save():
+            return terminal
+        else:
+            return False
 
     @property
     def cid(self):
@@ -421,7 +542,7 @@ class Terminal(TerminalModel):
     @property
     def operators(self):
         """Yields the operators, which are
-        allowed to setup the terminal
+        allowed to set the terminal up
         """
         return OperatorTerminals.operators(self)
 
@@ -453,6 +574,33 @@ class Terminal(TerminalModel):
     def productive(self):
         """Returns whether the system has been deployed and is non-testing"""
         return True if self.deployed and not self.testing else False
+
+    def deploy(self, date_time=None, force=False):
+        """Sets terminals to deployed"""
+        if self.deployed is None or force:
+            deployed = datetime.now() if date_time is None else date_time
+            self.logger.info(
+                'Deploying terminal {0} on {1}'.format(self, deployed))
+            self.deployed = deployed
+            self.save()
+            return True
+        else:
+            self.logger.warning(
+                'Terminal {0} has already been deployed on {1}'.format(
+                    self, self.deployed))
+            return False
+
+    def undeploy(self, force=False):
+        """Sets terminals to NOT deployed"""
+        if self.deployed is not None or force:
+            self.logger.info('Undeploying terminal {0} from {1}'.format(
+                self, self.deployed))
+            self.deployed = None
+            self.save()
+            return True
+        else:
+            self.logger.warning('Terminal {0} is not deployed'.format(self))
+            return False
 
 
 @create
@@ -510,11 +658,63 @@ class Administrator(_User):
 class Operator(_User):
     """A user that is allowed to setup systems by HOMEINFO"""
 
+    logger = getLogger('Operator')
+
     class Meta:
         db_table = 'operator'
 
     company = ForeignKeyField(
         Company, db_column='company', related_name='setup_operators')
+
+    def grant(self, terminal):
+        """Grant an operator permission to set up a certain terminal"""
+        self.logger.info('Granting setup permission of terminal '
+              '{0} to operator {1}'.format(terminal, self))
+
+        try:
+            OperatorTerminals.get(
+                (OperatorTerminals.operator == self) &
+                (OperatorTerminals.terminal == terminal))
+        except DoesNotExist:
+            permission = OperatorTerminals()
+            permission.operator = self
+            permission.terminal = terminal
+            if permission.save():
+                self.logger.info('success')
+                return True
+            else:
+                self.logger.error('failed')
+                return False
+        else:
+            self.logger.warning('exists')
+            return False
+
+
+    def revoke(self, terminal):
+        """Revoke an operator permission to set up a certain terminal"""
+        failures = 0
+
+        self.logger.info(
+            'Revoking permission to setup terminal {0} from operator'
+            ' {1}:'.format(terminal, self))
+
+        for permission in OperatorTerminals.select().where(
+                (OperatorTerminals.operator == self) &
+                (OperatorTerminals.terminal == terminal)):
+            self.logger.debug(
+                'Revoking permission {0}'.format(permission.id))
+            if permission.delete_instance():
+                self.logger.debug('success')
+            else:
+                self.logger.debug('failed')
+                failures += 1
+
+        if failures:
+            self.logger.error('failed')
+            return False
+        else:
+            self.logger.info('success')
+            return True
 
     @property
     def terminals(self):
@@ -587,6 +787,7 @@ class NagiosAdmins(TerminalModel):
     employee = ForeignKeyField(Employee, db_column='employee')
     class_ = ForeignKeyField(
         Class, null=True, db_column='class', related_name='members')
+    _email = CharField(255, db_column='email', null=True, default=None)
     service_period = CharField(16, default='24x7')
     host_period = CharField(16, default='24x7')
     service_options = CharField(16, default='w,u,c,r')
@@ -607,6 +808,14 @@ class NagiosAdmins(TerminalModel):
             return self.employee.surname
         else:
             return self._name
+
+    @property
+    def email(self):
+        """Returns the admin's email"""
+        if self._email is None:
+            return self.employee.email
+        else:
+            return self._email
 
 
 @create
