@@ -29,8 +29,6 @@ __all__ = [
     'VPN',
     'Terminal',
     'Synchronization',
-    'Administrator',
-    'SetupOperator',
     'NagiosAdmins',
     'AccessStats']
 
@@ -76,57 +74,6 @@ class TerminalModel(Model):
         schema = database.database
 
 
-class _User(TerminalModel):
-    """A generic abstract user"""
-
-    name = CharField(64)
-    pwhash = CharField(64)
-    salt = CharField(36)
-    enabled = BooleanField()
-    annotation = CharField(255, null=True)
-    root = BooleanField(default=False)
-
-    @classmethod
-    def authenticate(cls, name, passwd):
-        """Authenticate with name and hashed password"""
-        if passwd:
-            try:
-                user = cls.get(cls.name == name)
-            except DoesNotExist:
-                return False
-            else:
-                if user.passwd and passwd:
-                    pwstr = passwd + user.salt
-                    pwhash = sha256(pwstr.encode()).hexdigest()
-                    if user.pwhash == pwhash:
-                        if user.enabled:
-                            return user
-                        else:
-                            return False
-                    else:
-                        return False
-                else:
-                    return False
-        else:
-            return False
-
-    @property
-    def passwd(self):
-        """Returns the password hash"""
-        return self.pwhash
-
-    @passwd.setter
-    def passwd(self, passwd):
-        """Creates a new password hash"""
-        salt = str(uuid4())
-        pwstr = passwd + salt
-        pwhash = sha256(pwstr.encode()).hexdigest()
-        self.salt = salt
-        self.pwhash = pwhash
-        self.save()
-
-
-@create
 class Class(TerminalModel):
     """Terminal classes"""
 
@@ -152,7 +99,6 @@ class Class(TerminalModel):
             return new_class
 
 
-@create
 class Domain(TerminalModel):
     """Terminal domains"""
 
@@ -190,7 +136,6 @@ class Domain(TerminalModel):
         return self._fqdn[:-1]
 
 
-@create
 class Weather(TerminalModel):
     """Weather data records"""
 
@@ -199,7 +144,6 @@ class Weather(TerminalModel):
     xml_file = CharField(128)
 
 
-@create
 class OS(TerminalModel):
     """Operating systems"""
 
@@ -216,7 +160,6 @@ class OS(TerminalModel):
         return '{0} {1}'.format(self.name, self.version)
 
 
-@create
 class VPN(TerminalModel):
     """OpenVPN settings"""
 
@@ -284,7 +227,6 @@ class VPN(TerminalModel):
         self._ipv4addr = int(ipv4addr)
 
 
-@create
 class Connection(TerminalModel):
     """Connection data"""
 
@@ -295,7 +237,47 @@ class Connection(TerminalModel):
         return '{0} ({1})'.format(self.name, self.timeout)
 
 
-@create
+class Location(TerminalModel):
+    """Location of a terminal"""
+
+    address = ForeignKeyField(Address, null=False, db_column='address')
+    annotation = CharField(255, null=True, default=None)
+
+    def __str__(self):
+        """Returns location string"""
+        result = str(self.address)
+
+        if self.annotation is not None:
+            result += ' {}'.format(self.annotation)
+
+        return result
+
+    @classmethod
+    def add(cls, address, annotation=None):
+        """Adds a unique location"""
+        if annotation is None:
+            try:
+                location = cls.get(cls.address == address)
+            except DoesNotExist:
+                location = cls()
+                location.address = address
+                location.save()
+
+            return location
+        else:
+            try:
+                location = cls.get(
+                    (cls.address == address) &
+                    (cls.annotation == annotation))
+            except DoesNotExist:
+                location = cls()
+                location.address = address
+                location.annotation = annotation
+                location.save()
+
+            return location
+
+
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
 
@@ -317,12 +299,15 @@ class Terminal(TerminalModel):
     domain = ForeignKeyField(
         Domain, db_column='domain', related_name='terminals')
     location = ForeignKeyField(Address, null=True, db_column='location')
+    location_new = ForeignKeyField(
+        Location, null=True, db_column='location_new')
     vid = IntegerField(null=True)
     weather = ForeignKeyField(
         Weather, null=True, db_column='weather', related_name='terminals')
     deployed = DateTimeField(null=True, default=None)
     deleted = DateTimeField(null=True, default=None)
     testing = BooleanField(default=False)
+    replacement = BooleanField(default=False)
     annotation = CharField(255, null=True, default=None)
 
     def __str__(self):
@@ -447,28 +432,12 @@ class Terminal(TerminalModel):
                         "Address is neither a valid tuple, nor a record's ID")
                     return False
             else:
-                if state_iso:
-                    state = State.get(State._iso == state_iso)
-                    try:
-                        address = Address.get(
-                            (Address.street == street) &
-                            (Address.house_number == house_number) &
-                            (Address.zip_code == zip_code) &
-                            (Address.city == city) &
-                            (Address.state == state))
-                    except DoesNotExist:
-                        addr = (street, house_number, zip_code)
-                        address = Address.add(city, addr=addr, state=state)
-                else:
-                    try:
-                        address = Address.get(
-                            (Address.street == street) &
-                            (Address.house_number == house_number) &
-                            (Address.zip_code == zip_code) &
-                            (Address.city == city))
-                    except DoesNotExist:
-                        addr = (street, house_number, zip_code)
-                        address = Address.add(city, addr=addr)
+                address = Address.add(
+                    city,
+                    po_box=None,
+                    addr=(street, house_number, zip_code),
+                    state=state_iso)
+                location = Location.add(address, annotation=address_annotation)
         else:
             cls.logger.warning('No address specified')
 
@@ -486,9 +455,11 @@ class Terminal(TerminalModel):
         terminal.deleted = None
         terminal.testing = False
         terminal.annotation = annotation
+
         if vpn_key is not None:
             cls.logger.warning(
                 'Divergent OpenVPN key specified: "{0}"!'.format(vpn_key))
+
         terminal.vpn_key = vpn_key
 
         if terminal.save():
@@ -603,7 +574,6 @@ class Terminal(TerminalModel):
             return False
 
 
-@create
 class Synchronization(TerminalModel):
     """Synchronization log
 
@@ -646,135 +616,6 @@ class Synchronization(TerminalModel):
         return self.save()
 
 
-@create
-class Administrator(_User):
-    """A user that is allowed to create,
-    modify and delete all terminals
-    """
-    pass
-
-
-@create
-class Operator(_User):
-    """A user that is allowed to setup systems by HOMEINFO"""
-
-    logger = getLogger('Operator')
-
-    class Meta:
-        db_table = 'operator'
-
-    company = ForeignKeyField(
-        Company, db_column='company', related_name='setup_operators')
-
-    def grant(self, terminal):
-        """Grant an operator permission to set up a certain terminal"""
-        self.logger.info('Granting setup permission of terminal '
-              '{0} to operator {1}'.format(terminal, self))
-
-        try:
-            OperatorTerminals.get(
-                (OperatorTerminals.operator == self) &
-                (OperatorTerminals.terminal == terminal))
-        except DoesNotExist:
-            permission = OperatorTerminals()
-            permission.operator = self
-            permission.terminal = terminal
-            if permission.save():
-                self.logger.info('success')
-                return True
-            else:
-                self.logger.error('failed')
-                return False
-        else:
-            self.logger.warning('exists')
-            return False
-
-
-    def revoke(self, terminal):
-        """Revoke an operator permission to set up a certain terminal"""
-        failures = 0
-
-        self.logger.info(
-            'Revoking permission to setup terminal {0} from operator'
-            ' {1}:'.format(terminal, self))
-
-        for permission in OperatorTerminals.select().where(
-                (OperatorTerminals.operator == self) &
-                (OperatorTerminals.terminal == terminal)):
-            self.logger.debug(
-                'Revoking permission {0}'.format(permission.id))
-            if permission.delete_instance():
-                self.logger.debug('success')
-            else:
-                self.logger.debug('failed')
-                failures += 1
-
-        if failures:
-            self.logger.error('failed')
-            return False
-        else:
-            self.logger.info('success')
-            return True
-
-    @property
-    def terminals(self):
-        """Yields the terminals, the operator is allowed to use"""
-        return OperatorTerminals.terminals(self)
-
-    def authorize(self, terminal):
-        """Checks whether the setup operator is
-        allowed to setup a certain terminal
-        """
-        return self.root or terminal in self.terminals
-
-
-@create
-class OperatorTerminals(TerminalModel):
-    """Many-to-many mapping in-between setup operators and terminals"""
-
-    class Meta:
-        db_table = 'terminal_operators'
-
-    operator = ForeignKeyField(Operator, db_column='operator')
-    terminal = ForeignKeyField(Terminal, db_column='terminal')
-
-    @classmethod
-    def terminals(cls, operator):
-        """Yields terminals of the specified operator"""
-        for mapping in cls.select().where(cls.operator == operator):
-            yield mapping.terminal
-
-    @classmethod
-    def operators(cls, terminal):
-        """Yields operators of the specified terminal"""
-        for mapping in cls.select().where(cls.terminal == terminal):
-            yield mapping.operator
-
-
-@create
-class AdministratorTerminals(TerminalModel):
-    """Many-to-many mapping in-between administrators and terminals"""
-
-    class Meta:
-        db_table = 'terminal_admins'
-
-    administrator = ForeignKeyField(Administrator, db_column='administrator')
-    terminal = ForeignKeyField(Terminal, db_column='terminal')
-
-    @classmethod
-    def terminals(cls, operator):
-        """Yields terminals of the specified operator"""
-        for mapping in cls.select().where(cls.operator == operator):
-            yield mapping.terminal
-
-    @classmethod
-    def operators(cls, terminal):
-        """Yields operators of the specified terminal"""
-        for mapping in cls.select().where(cls.terminal == terminal):
-            yield mapping.operator
-
-
-@create
 class NagiosAdmins(TerminalModel):
     """Many-to-many mapping in-between
     Employees and terminal classes
@@ -818,7 +659,6 @@ class NagiosAdmins(TerminalModel):
             return self._email
 
 
-@create
 class AccessStats(TerminalModel):
     """Stores application access statistics"""
 
