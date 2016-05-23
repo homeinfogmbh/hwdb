@@ -447,6 +447,7 @@ class Terminal(TerminalModel):
         terminal.deployed = None
         terminal.deleted = None
         terminal.testing = False
+        terminal.replacement = False
         terminal.annotation = annotation
 
         if vpn_key is not None:
