@@ -3,8 +3,6 @@
 from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
-from hashlib import sha256
-from uuid import uuid4
 from logging import getLogger
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField,\
