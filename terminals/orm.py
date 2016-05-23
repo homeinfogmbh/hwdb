@@ -12,7 +12,7 @@ from peewee import Model, ForeignKeyField, IntegerField, CharField,\
 
 from homeinfo.lib.misc import classproperty
 from homeinfo.lib.system import run
-from homeinfo.peewee import MySQLDatabase, create
+from homeinfo.peewee import MySQLDatabase
 from homeinfo.crm import Customer, Address, Company, Employee
 
 from .config import terminals_config
