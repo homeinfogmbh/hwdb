@@ -406,15 +406,11 @@ class Terminal(TerminalModel):
         return result
 
     @classmethod
-    def add(cls, cid, class_id, os_id, connection_id, domain_id,
-            address=None, vpn_key=None, annotation=None, tid=None):
+    def add(cls, cid, class_, os, connection, vpn, domain,
+            location=None, annotation=None, tid=None):
         """Adds a new terminal"""
 
         tid = cls.gen_tid(cid, desired=tid)
-        class_ = Class.get(Class.id == class_id)
-        os = OS.get(OS.id == os_id)
-        connection = Connection.get(Connection.id == connection_id)
-        domain = Domain.get(Domain.id == domain_id)
 
         # Retrieve or add address record
         if address is not None:
@@ -444,7 +440,7 @@ class Terminal(TerminalModel):
         terminal.class_ = class_
         terminal.os = os
         terminal.connection = connection
-        terminal.vpn = VPN.add(key=vpn_key)
+        terminal.vpn = vpn
         terminal.domain = domain
         terminal.location = location
         terminal.vid = None
