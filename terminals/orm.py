@@ -298,9 +298,7 @@ class Terminal(TerminalModel):
         related_name='terminals', default=None)
     domain = ForeignKeyField(
         Domain, db_column='domain', related_name='terminals')
-    location = ForeignKeyField(Address, null=True, db_column='location')
-    location_new = ForeignKeyField(
-        Location, null=True, db_column='location_new')
+    location = ForeignKeyField(Location, null=True, db_column='location')
     vid = IntegerField(null=True)
     weather = ForeignKeyField(
         Weather, null=True, db_column='weather', related_name='terminals')
@@ -439,7 +437,8 @@ class Terminal(TerminalModel):
                     state=state_iso)
                 location = Location.add(address, annotation=address_annotation)
         else:
-            cls.logger.warning('No address specified')
+            cls.logger.warning('No location specified')
+            location = None
 
         terminal = cls()
         terminal.tid = tid
@@ -449,7 +448,7 @@ class Terminal(TerminalModel):
         terminal.connection = connection
         terminal.vpn = VPN.add(key=vpn_key)
         terminal.domain = domain
-        terminal.location = address
+        terminal.location = location
         terminal.vid = None
         terminal.deployed = None
         terminal.deleted = None
@@ -493,16 +492,19 @@ class Terminal(TerminalModel):
     @property
     def address(self):
         location = self.location
+
         if location is not None:
+            address = location.address
+
             try:
                 street_houseno = '{0} {1}'.format(
-                    location.street, location.house_number)
+                    address.street, address.house_number)
             except (TypeError, ValueError):
                 return None
             else:
                 try:
                     zip_city = '{0} {1}'.format(
-                        location.zip_code, location.city)
+                        address.zip_code, address.city)
                 except (TypeError, ValueError):
                     return None
                 else:
