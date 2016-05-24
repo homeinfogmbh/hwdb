@@ -241,14 +241,19 @@ class Location(TerminalModel):
     address = ForeignKeyField(Address, null=False, db_column='address')
     annotation = CharField(255, null=True, default=None)
 
+    def __iter__(self):
+        """Yields location items"""
+        yield self.address.street
+        yield self.address.house_number
+        yield self.address.zip_code
+        yield self.address.city
+
+        if self.annotation:
+            yield self.annotation
+
     def __str__(self):
         """Returns location string"""
-        result = str(self.address)
-
-        if self.annotation is not None:
-            result += ' {}'.format(self.annotation)
-
-        return result
+        return '\n'.join((str(item) for item in self))
 
     @classmethod
     def add(cls, address, annotation=None):
