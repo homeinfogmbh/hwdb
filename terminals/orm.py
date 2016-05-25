@@ -412,28 +412,6 @@ class Terminal(TerminalModel):
 
         tid = cls.gen_tid(cid, desired=tid)
 
-        # Retrieve or add address record
-        if address is not None:
-            try:
-                street, house_number, zip_code, city, state_iso = address
-            except ValueError:
-                try:
-                    address = Address.get(Address.id == int(address))
-                except (TypeError, ValueError, DoesNotExist):
-                    cls.logger.error(
-                        "Address is neither a valid tuple, nor a record's ID")
-                    return False
-            else:
-                address = Address.add(
-                    city,
-                    po_box=None,
-                    addr=(street, house_number, zip_code),
-                    state=state_iso)
-                location = Location.add(address, annotation=address_annotation)
-        else:
-            cls.logger.warning('No location specified')
-            location = None
-
         terminal = cls()
         terminal.tid = tid
         terminal.customer = cid
