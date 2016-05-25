@@ -144,23 +144,23 @@ def mkhosts():
         """Renders the template with the respective data"""
         icon = ICONS.get(terminal.os.family)
         location = terminal.location
+
         # Get terminal's location data
         if location is not None:
-            street = location.street
-            house_number = location.house_number
-            zip_code = location.zip_code
-            city = location.city
+            notes = repr(location)
+            street = location.address.street
+            house_number = location.address.house_number
+            zip_code = location.address.zip_code
+            city = location.address.city
+            annotation = location.annotation
         else:
+            notes = 'Unknown'
             street = 'Unknown'
             house_number = 'Unknown'
             zip_code = 'Unknown'
             city = 'Unknown'
-        # Get terminal's annotation
-        if terminal.annotation:
-            notes = '{0} ({1})'.format(
-                repr(location), terminal.annotation)
-        else:
-            notes = repr(location)
+            annotation = None
+
         try:
             ipv4addr = terminal.ipv4addr
         except VPNUnconfiguredError:
