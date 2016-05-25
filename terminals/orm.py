@@ -433,12 +433,6 @@ class Terminal(TerminalModel):
         terminal.replacement = False
         terminal.annotation = annotation
 
-        if vpn_key is not None:
-            cls.logger.warning(
-                'Divergent OpenVPN key specified: "{0}"!'.format(vpn_key))
-
-        terminal.vpn_key = vpn_key
-
         if terminal.save():
             return terminal
         else:
