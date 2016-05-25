@@ -255,6 +255,19 @@ class Location(TerminalModel):
         """Returns location string"""
         return '\n'.join((str(item) for item in self))
 
+    def __repr__(self):
+        """Returns a unique on-liner"""
+        result = '{street}, {house_number}, {zip_code} {city}'.format(
+            street=self.address.street,
+            house_number=self.address.house_number,
+            zip_code=self.address.zip_code,
+            city=self.address.city)
+
+        if self.annotation:
+            result += ' ({})'.format(self.annotation)
+
+        return result
+
     @classmethod
     def add(cls, address, annotation=None):
         """Adds a unique location"""
