@@ -65,8 +65,9 @@ class TerminalUtil():
     def __iter__(self):
         """Filters terminals for productiveness and deployment"""
         for arg in self.args:
-            try:
-
+            # TODO: Implement
+            if False:
+                yield None
 
     def __str__(self):
         """Prints filtered terminals"""

@@ -16,16 +16,20 @@ class RemoteController(TerminalAware):
     """Controls a terminal remotely"""
 
     def __init__(self, user, terminal, keyfile=None,
-                 white_list=None, bl=None, debug=None):
+                 white_list=None, bl=None, logger=None):
         """Initializes a remote terminal controller"""
         super().__init__(terminal)
         self.user = user
-        self._keyfile = keyfile
+        self.keyfile = keyfile
 
         # Commands white and black list
         self.white_list = white_list
         self.black_list = bl
-        self.debug = debug or 0
+
+        if logger is None:
+            self.logger = getLogger(self.__class__.__name__)
+        else:
+            self.logger = logger.getChild(self.__class__.__name__)
 
         # Further options for SSH
         if self.terminal.connection:
@@ -46,7 +50,7 @@ class RemoteController(TerminalAware):
     @property
     def keyfile(self):
         """Returns the path to the SSH key file"""
-        return self._keyfile or '/home/{0}/.ssh/terminals'.format(self.user)
+        return self.keyfile or '/home/{0}/.ssh/terminals'.format(self.user)
 
     @property
     def identity(self):
@@ -64,6 +68,7 @@ class RemoteController(TerminalAware):
                 value = self.ssh_custom_opts[option]
                 option_value = '-o {option}={value}'.format(
                     option=option, value=value)
+
                 yield option_value
 
         for option in self.SSH_OPTS:
@@ -71,9 +76,11 @@ class RemoteController(TerminalAware):
             if self.ssh_custom_opts:
                 if option in self.ssh_custom_opts:
                     continue
+
             value = self.SSH_OPTS[option]
             option_value = '-o {option}={value}'.format(
                 option=option, value=value)
+
             yield option_value
 
         # Yield additional custom options iff set
@@ -82,6 +89,7 @@ class RemoteController(TerminalAware):
                 value = self.ssh_custom_opts[option]
                 option_value = '-o {option}={value}'.format(
                     option=option, value=value)
+
                 yield option_value
 
     @property
@@ -121,8 +129,9 @@ class RemoteController(TerminalAware):
             bin=terminals_config.ssh['RSYNC_BIN'],
             options=options, rsh=self.remote_shell,
             srcs=srcs, dst=dst)
-        if self.debug >= 3:
-            print(cmd)
+
+        self.logger.debug(cmd)
+
         return cmd
 
     def check_command(self, cmd):
@@ -130,9 +139,11 @@ class RemoteController(TerminalAware):
         if self.white_list is not None:
             if cmd not in self.white_list:
                 return False
+
         if self.black_list is not None:
             if cmd in self.black_list:
                 return False
+
         return True
 
     def execute(self, cmd, *args):
@@ -149,9 +160,9 @@ class RemoteController(TerminalAware):
             rsync = self.rsync(
                 tmp.name, [self.remote_file(file)], options=options)
             pr = run(rsync, shell=True)
-            if self.debug >= 1:
-                f = stdout if pr else stderr
-                print(pr, file=f)
+
+            self.logger.debug(str(pr))
+
             if pr:
                 return tmp.read()
             else:
@@ -160,9 +171,12 @@ class RemoteController(TerminalAware):
     def send(self, dst, *srcs, options=None):
         """Gets a file from a remote terminal"""
         rsync = self.rsync(self.remote_file(dst), *srcs, options=options)
-        if self.debug:
-            print('Executing:', rsync)
+
+        self.logger.debug('Executing: {}'.format(rsync))
+
         pr = run(rsync, shell=True)
-        if self.debug:
-            print('Result:', str(pr), pr.exit_code, pr.stdout, pr.stderr)
+
+        self.logger.debug('Result: {0} {1} {2} {3}'.format(
+            pr, pr.exit_code, pr.stdout, pr.stderr))
+
         return pr
