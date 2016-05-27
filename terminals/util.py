@@ -66,8 +66,7 @@ class TerminalUtil():
         """Filters terminals for productiveness and deployment"""
         for arg in self.args:
             # TODO: Implement
-            if False:
-                yield None
+            raise NotImplementedError()
 
     def __str__(self):
         """Prints filtered terminals"""

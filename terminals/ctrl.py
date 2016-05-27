@@ -20,7 +20,7 @@ class RemoteController(TerminalAware):
         """Initializes a remote terminal controller"""
         super().__init__(terminal)
         self.user = user
-        self.keyfile = keyfile
+        self.keyfile = keyfile or '/home/{0}/.ssh/terminals'.format(self.user)
 
         # Commands white and black list
         self.white_list = white_list
@@ -46,11 +46,6 @@ class RemoteController(TerminalAware):
             # Set timeout to avoid blocking of rsync / ssh call
             'ConnectTimeout': connect_timeout}
         self.ssh_custom_opts = None
-
-    @property
-    def keyfile(self):
-        """Returns the path to the SSH key file"""
-        return self.keyfile or '/home/{0}/.ssh/terminals'.format(self.user)
 
     @property
     def identity(self):
