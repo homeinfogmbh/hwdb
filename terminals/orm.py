@@ -667,6 +667,7 @@ class AccessStats(TerminalModel):
         record.vid = vid
         record.document = document
         record.timestamp = datetime.now()
+
         if record.save():
             return True
         else:
