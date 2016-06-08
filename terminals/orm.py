@@ -257,7 +257,7 @@ class Location(TerminalModel):
 
     def __repr__(self):
         """Returns a unique on-liner"""
-        result = '{street}, {house_number}, {zip_code} {city}'.format(
+        result = '{street} {house_number}, {zip_code} {city}'.format(
             street=self.address.street,
             house_number=self.address.house_number,
             zip_code=self.address.zip_code,
