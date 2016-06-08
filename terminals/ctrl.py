@@ -3,6 +3,7 @@
 from sys import stdout, stderr
 from tempfile import NamedTemporaryFile
 from itertools import chain
+from logging import getLogger
 
 from homeinfo.lib.system import run, ProcessResult
 from homeinfo.terminals.abc import TerminalAware
