@@ -289,8 +289,8 @@ def mkservices():
                 notes, icon_image, action_url = SERVICES[service]
                 check_command = 'check_{0}!{1}!{2}'.format(
                     service, terminal.tid, terminal.customer.id)
-
                 contact_groups = ['admins']
+
                 if terminal.class_.name == 'ddb':
                     contact_groups.append('ddb_admins')
 
@@ -327,10 +327,8 @@ def mkservicegroups():
     for service in SERVICES:
         services = []
         for terminal in terminals():
-            if service == 'synchronization' and terminal.os.family != 'Linux':
-                # Synchronization checks only for Linux terminals
-                continue
-            else:
+            # Synchronization checks only for Linux terminals
+            if terminal.os.family == 'Linux':
                 services.append(','.join([terminal.hostname, service]))
 
         members = ','.join(services)
