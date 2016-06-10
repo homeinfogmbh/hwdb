@@ -26,8 +26,16 @@ from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal, Class, \
 from homeinfo.terminals.config import terminals_config
 
 
-__all__ = ['ICONS', 'SERVICES', 'terminals', 'mkcontacts', 'mkcontactgroups',
-           'mkhosts', 'mkhostgroups', 'mkservices', 'mkservicegroups']
+__all__ = [
+    'ICONS',
+    'SERVICES',
+    'terminals',
+    'mkcontacts',
+    'mkcontactgroups',
+    'mkhosts',
+    'mkhostgroups',
+    'mkservices',
+    'mkservicegroups']
 
 ICONS = {
     'Linux': 'logos/linux.gif',
@@ -37,7 +45,11 @@ SERVICES = {
     # 'statistics':
     #     ('Statistics evaluation', '../graph.gif', '#'),
     'synchronization':
-        ('Synchronization status', '../logrotate.png', '#')}
+        ('Synchronization status', '../logrotate.png', '#'),
+    'kernel':
+        ('Kernel', 'logos/linux.gif', '#'),
+    'resolution':
+        ('Display resolution', 'monitor.png', '#')}
 
 logger = getLogger(basename(__file__))
 
@@ -55,6 +67,7 @@ def _template(t):
     """Opens template <t>"""
 
     template = join(terminals_config.monitoring['TEMPLATE_DIR'], t)
+
     with open(template, 'r') as f:
         return f.read()
 
@@ -97,12 +110,14 @@ def mkcontactgroups():
         """Renders a Nagios administrators for specific classes"""
         # Exclude admins
         members = [m.name for m in class_.members if not m.admin]
+
         if members:
             name = '_'.join([class_.name, 'admins'])
             rendered = template.format(
                 name=name,
                 alias=class_.full_name,
                 members=','.join(members))
+
             return rendered
         else:
             return ''
@@ -118,10 +133,12 @@ def mkcontactgroups():
 
     for class_ in Class:
         rendered = render(template, class_)
+
         if rendered:
             data += '{0}\n\n'.format(rendered)
 
     admins = []
+
     for admin in NagiosAdmins.select().where(NagiosAdmins.class_ >> None):
         admins.append(admin.name)
 
@@ -201,6 +218,7 @@ def mkhostgroups():
                 name=name,
                 alias=full_name,
                 members=','.join(memebers))
+
             return rendered
         else:
             return ''
@@ -221,9 +239,11 @@ def mkhostgroups():
             if terminal in terminals():
                 member = str(terminal.hostname)
                 members.append(member)
+
         name = class_.name
         full_name = class_.full_name
         rendered = render(template, name, full_name, members)
+
         if rendered:
             data += ''.join(['\n# ', full_name, '\n', rendered, '\n'])
 
@@ -242,6 +262,7 @@ def mkhostgroups():
         name = str(customer.id)
         full_name = customer.name
         rendered = render(template, name, full_name, members)
+
         if rendered:
             data += ''.join(['\n# ', full_name, '\n', rendered, '\n'])
 
@@ -263,16 +284,16 @@ def mkservices():
 
     for terminal in terminals():
         for service in SERVICES:
-            if service == 'synchronization' and terminal.os.family != 'Linux':
-                # Synchronization checks only for Linux terminals
-                continue
-            else:
+            # Services currently only apply tu Linux systems
+            if terminal.os.family == 'Linux':
                 notes, icon_image, action_url = SERVICES[service]
                 check_command = 'check_{0}!{1}!{2}'.format(
                     service, terminal.tid, terminal.customer.id)
+
                 contact_groups = ['admins']
                 if terminal.class_.name == 'ddb':
                     contact_groups.append('ddb_admins')
+
                 config.append(template.format(
                     host_name=terminal.hostname,
                     service_description=service,
@@ -286,6 +307,7 @@ def mkservices():
                     contact_groups=','.join(contact_groups),
                     notes=notes,
                     icon_image=icon_image))
+
     with open(conf_path, 'w') as f:
         f.write('\n'.join(config))
 
