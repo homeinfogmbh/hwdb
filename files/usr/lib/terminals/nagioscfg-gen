@@ -327,7 +327,7 @@ def mkservices():
                 service_description=service,
                 check_command=check_command,
                 max_check_attempts=5,
-                check_interval=5,
+                check_interval=15,
                 retry_interval=5,
                 check_period='24x7',
                 notification_interval=0,  # Only notify once
