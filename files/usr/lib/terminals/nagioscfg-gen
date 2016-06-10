@@ -72,6 +72,36 @@ def _template(t):
         return f.read()
 
 
+def filter_svc(services, terminal):
+    """Filters services for the provided terminal ORM"""
+
+    # Services currently only apply tu Linux systems
+    for service in services:
+        if terminal.os.family == 'Linux':
+            if service == 'resolution':
+                if terminal.class_.name == 'ddb':
+                    yield service
+                else:
+                    continue
+            else:
+                yield service
+
+
+def filter_term(terminals, service):
+    """Filters terminal ORMs for the provided service"""
+
+    # Services currently only apply tu Linux systems
+    for terminal in terminals:
+        if terminal.os.family == 'Linux':
+            if service == 'resolution':
+                if terminal.class_.name == 'ddb':
+                    yield terminal
+                else:
+                    continue
+            else:
+                yield terminal
+
+
 def mkcontacts():
     """Generates contact configurations"""
 
@@ -283,30 +313,28 @@ def mkservices():
          terminals_config.monitoring['SERVICE_FILE_NAME'])
 
     for terminal in terminals():
-        for service in SERVICES:
-            # Services currently only apply tu Linux systems
-            if terminal.os.family == 'Linux':
-                notes, icon_image, action_url = SERVICES[service]
-                check_command = 'check_{0}!{1}!{2}'.format(
-                    service, terminal.tid, terminal.customer.id)
-                contact_groups = ['admins']
+        for service in filter_svc(SERVICES, terminal):
+            notes, icon_image, action_url = SERVICES[service]
+            check_command = 'check_{0}!{1}!{2}'.format(
+                service, terminal.tid, terminal.customer.id)
+            contact_groups = ['admins']
 
-                if terminal.class_.name == 'ddb':
-                    contact_groups.append('ddb_admins')
+            if terminal.class_.name == 'ddb':
+                contact_groups.append('ddb_admins')
 
-                config.append(template.format(
-                    host_name=terminal.hostname,
-                    service_description=service,
-                    check_command=check_command,
-                    max_check_attempts=5,
-                    check_interval=5,
-                    retry_interval=5,
-                    check_period='24x7',
-                    notification_interval=0,  # Only notify once
-                    notification_period='24x7',
-                    contact_groups=','.join(contact_groups),
-                    notes=notes,
-                    icon_image=icon_image))
+            config.append(template.format(
+                host_name=terminal.hostname,
+                service_description=service,
+                check_command=check_command,
+                max_check_attempts=5,
+                check_interval=5,
+                retry_interval=5,
+                check_period='24x7',
+                notification_interval=0,  # Only notify once
+                notification_period='24x7',
+                contact_groups=','.join(contact_groups),
+                notes=notes,
+                icon_image=icon_image))
 
     with open(conf_path, 'w') as f:
         f.write('\n'.join(config))
@@ -326,10 +354,9 @@ def mkservicegroups():
 
     for service in SERVICES:
         services = []
-        for terminal in terminals():
-            # Synchronization checks only for Linux terminals
-            if terminal.os.family == 'Linux':
-                services.append(','.join([terminal.hostname, service]))
+
+        for terminal in filter_term(terminals(), service):
+            services.append(','.join((terminal.hostname, service)))
 
         members = ','.join(services)
         cfg = template.format(
@@ -352,6 +379,7 @@ if __name__ == '__main__':
     hostgroups = options['--hostgroups']
     services = options['--services']
     servicegroups = options['--servicegroups']
+
     # Assume all options are wanted if none is selected
     all = not (contacts or contactgroups or hosts or
                hostgroups or services or servicegroups)
