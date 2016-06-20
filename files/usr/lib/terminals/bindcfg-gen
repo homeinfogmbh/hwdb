@@ -24,7 +24,8 @@ DNS_CONFIG = '/etc/bind/homeinfo.vpn.zone'
 RECORD = '{0}\tIN\tA\t{1}\n'
 MANAGEMENT_HOSTS = {
     'phpmyadmin': '10.9.0.1',
-    'homie': '10.9.0.1'}
+    'homie': '10.9.0.1',
+    'wiki': '10.9.0.1'}
 
 logger = getLogger(basename(__file__))
 
@@ -37,6 +38,7 @@ def management_hosts():
         management += RECORD.format(
             management_host,
             MANAGEMENT_HOSTS[management_host])
+
     return management
 
 
