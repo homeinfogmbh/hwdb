@@ -165,7 +165,7 @@ class RemoteController(TerminalAware):
                 return pr
 
     def send(self, dst, *srcs, options=None):
-        """Gets a file from a remote terminal"""
+        """Sends files to a remote terminal"""
         rsync = self.rsync(self.remote_file(dst), *srcs, options=options)
 
         self.logger.debug('Executing: {}'.format(rsync))
