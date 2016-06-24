@@ -328,6 +328,10 @@ class Terminal(TerminalModel):
         """Converts the terminal to a unique string"""
         return '.'.join([str(ident) for ident in self.idents])
 
+    def __hash__(self):
+        """Returns a hash value for this terminal"""
+        return hash(str(self))
+
     @classproperty
     @classmethod
     def hosts(cls):
