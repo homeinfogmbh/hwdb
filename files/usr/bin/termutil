@@ -14,12 +14,7 @@ Options:
     --testing     Only print testing terminals
     --productive  Only print productive terminals
 """
-
-from sys import stderr
-
 from docopt import docopt
-
-from homeinfo.lib.strf import Terminal as TerminalColor
 
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
     AddressUnconfiguredError

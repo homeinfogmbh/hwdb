@@ -1,8 +1,5 @@
 """Terminal query utilities"""
 
-
-from homeinfo.lib.strf import Terminal as TerminalColor
-
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
     AddressUnconfiguredError
