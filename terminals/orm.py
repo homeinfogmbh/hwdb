@@ -20,6 +20,7 @@ __all__ = [
     'TerminalConfigError',
     'VPNUnconfiguredError',
     'AddressUnconfiguredError',
+    'ResultNotSet',
     'Class',
     'Domain',
     'Weather',
@@ -53,6 +54,12 @@ class VPNUnconfiguredError(TerminalConfigError):
 
 class AddressUnconfiguredError(TerminalConfigError):
     """Indicated that no address has been configured for the terminal"""
+
+    pass
+
+
+class ResultNotSet(Exception):
+    """Indicates that a synchronization was closed without a result set"""
 
     pass
 
@@ -604,7 +611,12 @@ class Synchronization(TerminalModel):
     def stop(self):
         """Stops the synchronization"""
         self.finished = datetime.now()
-        return self.save()
+        ident = self.save()
+
+        if self.result is None:
+            raise ResultNotSet()
+        else:
+            return ident
 
 
 class NagiosAdmins(TerminalModel):
