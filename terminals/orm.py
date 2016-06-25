@@ -20,7 +20,6 @@ __all__ = [
     'TerminalConfigError',
     'VPNUnconfiguredError',
     'AddressUnconfiguredError',
-    'ResultNotSet',
     'Class',
     'Domain',
     'Weather',
@@ -54,12 +53,6 @@ class VPNUnconfiguredError(TerminalConfigError):
 
 class AddressUnconfiguredError(TerminalConfigError):
     """Indicated that no address has been configured for the terminal"""
-
-    pass
-
-
-class ResultNotSet(Exception):
-    """Indicates that a synchronization was closed without a result set"""
 
     pass
 
@@ -608,11 +601,9 @@ class Synchronization(TerminalModel):
         sync.started = datetime.now()
         return sync
 
-    def stop(self):
+    def stop(self, force=False):
         """Stops the synchronization"""
-        if self.result is None:
-            raise ResultNotSet()
-        else:
+        if force or self.result is not None:
             self.finished = datetime.now()
             return self.save()
 
