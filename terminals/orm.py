@@ -610,13 +610,11 @@ class Synchronization(TerminalModel):
 
     def stop(self):
         """Stops the synchronization"""
-        self.finished = datetime.now()
-        ident = self.save()
-
         if self.result is None:
             raise ResultNotSet()
         else:
-            return ident
+            self.finished = datetime.now()
+            return self.save()
 
 
 class NagiosAdmins(TerminalModel):
