@@ -18,164 +18,10 @@ Options:
     --index=<n>                 On ambiguous results, use the nth.
     --annotation=<annotation>   Consider the respective location annotation.
 """
-from sys import stderr
 
 from docopt import docopt
 
-from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
-    AddressUnconfiguredError
-from homeinfo.terminals.filter import TerminalFilter
-
-
-def list_terminals(expr, deployed, undeployed, testing, productive):
-    """Lists terminal records"""
-
-    template = ('{id: >5.5} {tid: >5.5} {cid: >10.10} {vid: >5.5} '
-                '{ipv4addr: >12.12} {deployed: >21.21} {testing: >6.6}  '
-                '{address: <50.50} {annotation}')
-
-    def _filter(terminals):
-        for terminal in terminals:
-            if deployed:
-                if undeployed:
-                    if testing:
-                        if productive:
-                            yield terminal
-                        else:
-                            if terminal.testing:
-                                yield terminal
-                    else:
-                        if productive:
-                            if not terminal.testing:
-                                yield terminal
-                else:
-                    if terminal.deployed is not None:
-                        if testing:
-                            if productive:
-                                yield terminal
-                            else:
-                                if terminal.testing:
-                                    yield terminal
-                        else:
-                            if productive:
-                                if not terminal.testing:
-                                    yield terminal
-            else:
-                if terminal.deployed is None:
-                    if undeployed:
-                        if testing:
-                            if productive:
-                                yield terminal
-                            else:
-                                if terminal.testing:
-                                    yield terminal
-                        else:
-                            if productive:
-                                if not terminal.testing:
-                                    yield terminal
-
-    if expr:
-        terminals = TerminalFilter(expr)
-    else:
-        terminals = Terminal.select().where(True)
-    for terminal in _filter(terminals):
-        try:
-            address_str = str(terminal.address)
-        except AddressUnconfiguredError:
-            address_str = 'N/A'
-        print(template.format(
-            id=str(terminal.id),
-            tid=str(terminal.tid),
-            cid=str(terminal.customer.id),
-            vid=str(terminal.vid),
-            ipv4addr=str(terminal.ipv4addr),
-            deployed=str(terminal.deployed),
-            testing=str(terminal.testing),
-            address=address_str,
-            annotation=str(terminal.annotation)))
-
-
-def list_class():
-    """Lists available classes"""
-
-    template = ('{id: >5.5}  {name: <10.10}  '
-                '{full_name: <10.10}  {touch: <5.5}')
-    for cls in Class.select().where(True):
-        print(template.format(
-            id=str(cls.id),
-            name=cls.name,
-            full_name=cls.full_name,
-            touch=str(cls.touch)))
-
-
-def list_os():
-    """Lists available operating systems"""
-
-    template = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
-    for os in OS.select().where(True):
-        print(template.format(
-            id=str(os.id),
-            family=os.family,
-            name=os.name,
-            version=os.version))
-
-
-def list_domains():
-    """Lists available domains"""
-
-    template = '{id: >5.5}  {fqdn}'
-    for domain in Domain.select().where(True):
-        print(template.format(
-            id=str(domain.id),
-            fqdn=domain.fqdn))
-
-
-def find_terminals(street, house_number, annotation=None):
-    """Finds terminals bathing the specified location"""
-
-    for terminal in Terminal.select().where(
-            ~ (Terminal.location >> None)):
-        address = terminal.location.address
-        house_number_ = address.house_number.replace(' ', '')
-        annotation_ = terminal.location.annotation
-
-        if street.lower() in address.street.lower():
-            if house_number.lower() == house_number_.lower():
-                if annotation is not None:
-                    if (annotation.lower() in annotation_.lower()):
-                        yield terminal
-                else:
-                    yield terminal
-
-
-def find_terminal(street, house_number, annotation=None, index=None):
-    """Finds a terminal by its location"""
-
-    def _print(terminal):
-        print(repr(terminal.location), file=stderr)
-        print(str(terminal))
-        return True
-
-    terminals = [t for t in find_terminals(
-        street, house_number, annotation=None)]
-
-    if not terminals:
-        print('No terminal matching query.', file=stderr)
-    elif len(terminals) == 1:
-        terminal = terminals[0]
-        return _print(terminal)
-    elif index is not None:
-        try:
-            terminal = terminals[index]
-        except IndexError:
-            print('No {index}th terminal available ({n}).'.format(
-                index=index, n=len(terminals)), file=stderr)
-            return False
-        else:
-            return _print(terminal)
-    else:
-        print('Ambiguous terminals:', terminals, file=stderr)
-        return False
+from homeinfo.terminals.util import TerminalUtil, ClassUtil, OSUtil, DomainUtil
 
 
 if __name__ == '__main__':
@@ -200,15 +46,19 @@ if __name__ == '__main__':
                 testing = True
                 productive = True
 
-            list_terminals(expr, deployed, undeployed, testing, productive)
+            utl = TerminalUtil(expr, deployed, undeployed, testing, productive)
+            print(str(utl))
         elif options['class']:
-            list_class()
+            utl = ClassUtil()
+            print(str(utl))
         elif options['os']:
-            list_os()
+            utl = OSUtil()
+            print(str(utl))
         elif options['domains']:
-            list_domains()
+            utl = DomainUtil()
+            print(str(utl))
     elif options['find']:
-        if find_terminal(
+        if TerminalUtil.find(
                 options['<street>'],
                 options['<house_number>'],
                 options['--annotation']):
