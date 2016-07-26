@@ -153,7 +153,7 @@ def find_terminal(street, house_number, annotation=None, index=None):
 
     def _print(terminal):
         print(repr(terminal.location), file=stderr)
-        print(repr(terminal))
+        print(str(terminal))
         return True
 
     terminals = [t for t in find_terminals(
