@@ -218,3 +218,6 @@ if __name__ == '__main__':
             else:
                 print(3)
                 exit(1)
+        else:
+            print('Invalid mode.', file=stderr)
+            exit(1)
