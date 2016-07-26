@@ -208,10 +208,13 @@ if __name__ == '__main__':
         elif options['domains']:
             list_domains()
         elif options['find']:
+            print(1)
             if find_terminal(
                     options['<street>'],
                     options['<house_number>'],
                     options['--annotation']):
+                print(2)
                 exit(0)
             else:
+                print(3)
                 exit(1)
