@@ -58,7 +58,7 @@ if __name__ == '__main__':
             utl = DomainUtil()
             print(str(utl))
     elif options['find']:
-        if TerminalUtil.find(
+        if TerminalUtil.get(
                 options['<street>'],
                 options['<house_number>'],
                 options['--annotation']):
