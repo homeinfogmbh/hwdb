@@ -158,8 +158,6 @@ def find_terminal(street, house_number, annotation=None, index=None):
     terminals = [t for t in find_terminals(
         street, house_number, annotation=None)]
 
-    print(terminals)
-
     if not terminals:
         print('No terminal matching query.', file=stderr)
     elif len(terminals) == 1:
