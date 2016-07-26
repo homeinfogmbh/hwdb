@@ -136,12 +136,13 @@ def find_terminals(street, house_number, annotation=None):
     for terminal in Terminal.select().where(
             ~ (Terminal.location >> None)):
         address = terminal.location.address
+        house_number_ = address.house_number.replace(' ', '')
+        annotation_ = terminal.location.annotation
 
         if street.lower() in address.street.lower():
-            if house_number.lower() == address.house_number.lower():
+            if house_number.lower() == house_number_.lower():
                 if annotation is not None:
-                    if (annotation.lower() in
-                            terminal.location.annotation.lower()):
+                    if (annotation.lower() in annotation_.lower()):
                         yield terminal
                 else:
                     yield terminal
