@@ -18,7 +18,6 @@ Options:
     --index=<n>                 On ambiguous results, use the nth.
     --annotation=<annotation>   Consider the respective location annotation.
 """
-
 from docopt import docopt
 
 from homeinfo.terminals.util import TerminalUtil, ClassUtil, OSUtil, DomainUtil
