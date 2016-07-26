@@ -138,7 +138,7 @@ def find_terminals(street, house_number, annotation=None):
         address = terminal.location.address
 
         if street.lower() in address.street.lower():
-            if house_number.lower() in address.house_number.lower():
+            if house_number.lower() == address.house_number.lower():
                 if annotation is not None:
                     if (annotation.lower() in
                             terminal.location.annotation.lower()):
