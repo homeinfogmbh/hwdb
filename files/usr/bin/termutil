@@ -7,13 +7,19 @@ Usage:
     termutil (list | ls) terminals [<expr> [(--deployed | --undeployed)] \
 [(--testing | --productive)]]
     termutil (list | ls) (class | os | domains)
+    termutil find <street> <house_number> [--annotation=<annotation>] \
+[--index=<n>]
 
 Options:
-    --deployed    Only print deployed terminals
-    --undeployed  Only print undeployed terminals
-    --testing     Only print testing terminals
-    --productive  Only print productive terminals
+    --deployed                  Only print deployed terminals.
+    --undeployed                Only print undeployed terminals.
+    --testing                   Only print testing terminals.
+    --productive                Only print productive terminals.
+    --index=<n>                 On ambiguous results, use the nth.
+    --annotation=<annotation>   Consider the respective location annotation.
 """
+from sys import stderr
+
 from docopt import docopt
 
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
@@ -124,6 +130,53 @@ def list_domains():
             fqdn=domain.fqdn))
 
 
+def find_terminals(street, house_number, annotation=None):
+    """Finds terminals bathing the specified location"""
+
+    for terminal in Terminal.select().where(
+            ~ (Terminal.location >> None)):
+        address = terminal.location.address
+
+        if street.lower() in address.street.lower():
+            if house_number.lower() in address.house_number.lower():
+                if annotation is not None:
+                    if (annotation.lower() in
+                            terminal.location.annotation.lower()):
+                        yield terminal
+                else:
+                    yield terminal
+
+
+def find_terminal(street, house_number, annotation=None, index=None):
+    """Finds a terminal by its location"""
+
+    def _print(terminal):
+        print(repr(terminal.location), file=stderr)
+        print(repr(terminal))
+        return True
+
+    terminals = [t for t in find_terminals(
+        street, house_number, annotation=None)]
+
+    if not terminals:
+        print('No terminal matching query.', file=stderr)
+    elif len(terminals) == 1:
+        terminal = terminals[0]
+        return _print(terminal)
+    elif index is not None:
+        try:
+            terminal = terminals[index]
+        except IndexError:
+            print('No {index}th terminal available ({n}).'.format(
+                index=index, n=len(terminals)), file=stderr)
+            return False
+        else:
+            return _print(terminal)
+    else:
+        print('Ambiguous terminals:', terminals, file=stderr)
+        return False
+
+
 if __name__ == '__main__':
     options = docopt(__doc__)
 
@@ -133,14 +186,18 @@ if __name__ == '__main__':
         if terminals:
             deployed = options['--deployed']
             undeployed = options['--undeployed']
+
             if not deployed and not undeployed:
                 deployed = True
                 undeployed = True
+
             testing = options['--testing']
             productive = options['--productive']
+
             if not testing and not productive:
                 testing = True
                 productive = True
+
             list_terminals(expr, deployed, undeployed, testing, productive)
         elif options['class']:
             list_class()
@@ -148,3 +205,12 @@ if __name__ == '__main__':
             list_os()
         elif options['domains']:
             list_domains()
+        elif options['find']:
+            street = options['<street>']
+            house_number = options['<house_number>']
+            annotation = options['--annotation']
+
+            if find_terminal(street, house_number, annotation):
+                exit(0)
+            else:
+                exit(1)
