@@ -185,6 +185,7 @@ if __name__ == '__main__':
     if options['list'] or options['ls']:
         expr = options['<expr>']
         terminals = options['terminals']
+
         if terminals:
             deployed = options['--deployed']
             undeployed = options['--undeployed']
@@ -207,17 +208,11 @@ if __name__ == '__main__':
             list_os()
         elif options['domains']:
             list_domains()
-        elif options['find']:
-            print(1)
-            if find_terminal(
-                    options['<street>'],
-                    options['<house_number>'],
-                    options['--annotation']):
-                print(2)
-                exit(0)
-            else:
-                print(3)
-                exit(1)
+    elif options['find']:
+        if find_terminal(
+                options['<street>'],
+                options['<house_number>'],
+                options['--annotation']):
+            exit(0)
         else:
-            print('Invalid mode.', file=stderr)
             exit(1)
