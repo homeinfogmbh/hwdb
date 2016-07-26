@@ -206,11 +206,10 @@ if __name__ == '__main__':
         elif options['domains']:
             list_domains()
         elif options['find']:
-            street = options['<street>']
-            house_number = options['<house_number>']
-            annotation = options['--annotation']
-
-            if find_terminal(street, house_number, annotation):
+            if find_terminal(
+                    options['<street>'],
+                    options['<house_number>'],
+                    options['--annotation']):
                 exit(0)
             else:
                 exit(1)
