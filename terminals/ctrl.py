@@ -8,7 +8,7 @@ from logging import getLogger
 from homeinfo.lib.system import run, ProcessResult
 from homeinfo.terminals.abc import TerminalAware
 
-from .config import terminals_config
+from .config import terminals_config as config
 
 __all__ = ['RemoteController']
 
@@ -36,14 +36,12 @@ class RemoteController(TerminalAware):
         if self.terminal.connection:
             connect_timeout = self.terminal.connection.timeout
         else:
-            connect_timeout = terminals_config.ssh['CONNECT_TIMEOUT']
+            connect_timeout = config.ssh['CONNECT_TIMEOUT']
 
         self.SSH_OPTS = {
             # Trick SSH it into not checking the host key
-            'UserKnownHostsFile':
-                terminals_config.ssh['USER_KNOWN_HOSTS_FILE'],
-            'StrictHostKeyChecking':
-                terminals_config.ssh['STRICT_HOST_KEY_CHECKING'],
+            'UserKnownHostsFile': config.ssh['USER_KNOWN_HOSTS_FILE'],
+            'StrictHostKeyChecking': config.ssh['STRICT_HOST_KEY_CHECKING'],
             # Set timeout to avoid blocking of rsync / ssh call
             'ConnectTimeout': connect_timeout}
         self.ssh_custom_opts = None
@@ -93,7 +91,7 @@ class RemoteController(TerminalAware):
         """Returns the SSH basic command line"""
         options = ' '.join(self.ssh_options)
         return '{bin} {identity} {options}'.format(
-            bin=terminals_config.ssh['SSH_BIN'],
+            bin=config.ssh['SSH_BIN'],
             identity=self.identity,
             options=options)
 
@@ -122,7 +120,7 @@ class RemoteController(TerminalAware):
         srcs = ' '.join("'{0}'".format(src) for src in srcs)
         options = '' if options is None else options
         cmd = '{bin} {options} {rsh} {srcs} {dst}'.format(
-            bin=terminals_config.ssh['RSYNC_BIN'],
+            bin=config.ssh['RSYNC_BIN'],
             options=options, rsh=self.remote_shell,
             srcs=srcs, dst=dst)
 

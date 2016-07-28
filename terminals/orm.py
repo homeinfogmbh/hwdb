@@ -361,7 +361,7 @@ class Terminal(TerminalModel):
         return cls.select().where(
             (cls.customer == cid) &
             (cls.vid == vid)).order_by(
-                Terminal.tid)
+            Terminal.tid)
 
     @classmethod
     def tids(cls, cid):

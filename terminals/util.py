@@ -15,6 +15,7 @@ __all__ = [
     'OSUtil',
     'DomainUtil']
 
+
 class DeploymentFilter():
     """Filters terminals for their deployment state"""
 
