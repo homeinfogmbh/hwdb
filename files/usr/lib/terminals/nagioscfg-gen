@@ -49,7 +49,9 @@ SERVICES = {
     'kernel':
         ('Kernel', 'logos/linux.gif', '#'),
     'resolution':
-        ('Display resolution', 'monitor.png', '#')}
+        ('Display resolution', 'monitor.png', '#'),
+    'last-boot':
+        ('Last boot', 'monitor.png', '#')}
 
 logger = getLogger(basename(__file__))
 

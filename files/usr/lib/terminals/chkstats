@@ -10,7 +10,11 @@
 """Checks statistics for the respective terminal
 
 Usage:
-    chkstats <tid> <cid>
+    chkstats <tid> <cid> [options]
+
+Options:
+    --warning=<days>        Warning time period in days [default: 5]
+    --critical=<days>       Critical time period in days [default: 9]
 """
 
 from datetime import datetime, timedelta
@@ -24,32 +28,50 @@ if __name__ == '__main__':
     options = docopt(__doc__)
     tid = options['<tid>']
     cid = options['<cid>']
+    warning = options['--warning']
+    critical = options['--critical']
+
     try:
         tid = int(tid)
     except ValueError:
-        print('Invalid terminal ID: {0}'.format(tid))
+        print('Invalid terminal ID: {}'.format(tid))
         exit(4)
+
+    try:
+        cid = int(cid)
+    except ValueError:
+        print('Invalid customer ID: {}'.format(tid))
+        exit(5)
+
+    try:
+        warning = int(warning)
+    except ValueError:
+        print('Invalid amout of warning days: {}'.format(warning))
+        exit(6)
     else:
-        try:
-            cid = int(cid)
-        except ValueError:
-            print('Invalid customer ID: {0}'.format(tid))
-            exit(5)
-        else:
-            stats = AccessStats.select().where(
-                (AccessStats.customer == cid) &
-                (AccessStats.tid == tid))
-            now = datetime.now()
-            last5days = timedelta(days=5)
-            last9days = timedelta(days=9)
-            if [d for d in (now - s.timestamp for s in stats) if
-                    d <= last5days]:
-                print('OK')
-                exit(0)  # ok
-            elif [d for d in (now - s.timestamp for s in stats) if
-                    d <= last9days]:
-                print('More than five days no action!')
-                exit(1)  # warning
-            else:
-                print('More than nine days no action!')
-                exit(2)  # critical
+        warning_delta = timedelta(days=warning)
+
+    try:
+        critical = int(critical)
+    except ValueError:
+        print('Invalid amout of critical days: {}'.format(critical))
+        exit(7)
+    else:
+        critical_delta = timedelta(days=critical)
+
+    stats = AccessStats.select().where(
+        (AccessStats.customer == cid) &
+        (AccessStats.tid == tid))
+    now = datetime.now()
+
+    if [d for d in (now - s.timestamp for s in stats) if
+            d <= warning_delta]:
+        print('OK')
+        exit(0)  # ok
+    elif [d for d in (now - s.timestamp for s in stats) if
+            d <= critical_delta]:
+        print('More than {} days no action!'.format(warning))
+        exit(1)  # warning
+    else:
+        print('More than {} days no action!'.format(critical))
+        exit(2)  # critical
