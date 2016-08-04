@@ -8,7 +8,7 @@ from logging import getLogger
 from homeinfo.lib.system import run, ProcessResult
 from homeinfo.terminals.abc import TerminalAware
 
-from .config import terminals_config as config
+from .config import config
 
 __all__ = ['RemoteController']
 

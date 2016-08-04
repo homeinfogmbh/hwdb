@@ -2,7 +2,7 @@
 
 from homeinfo.lib.config import Configuration
 
-__all__ = ['terminals_config']
+__all__ = ['config']
 
 
 class TerminalsConfiguration(Configuration):
@@ -39,4 +39,4 @@ class TerminalsConfiguration(Configuration):
         return self['ssh']
 
 
-terminals_config = TerminalsConfiguration('/etc/terminals.conf')
+config = TerminalsConfiguration('/etc/terminals.conf')

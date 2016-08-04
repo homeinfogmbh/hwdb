@@ -13,7 +13,7 @@ from homeinfo.lib.system import run
 from homeinfo.peewee import MySQLDatabase
 from homeinfo.crm import Customer, Address, Company, Employee
 
-from .config import terminals_config
+from .config import config
 
 __all__ = [
     'TerminalError',
@@ -64,10 +64,10 @@ class TerminalModel(Model):
 
     class Meta:
         database = MySQLDatabase(
-            terminals_config.db['db'],
-            host=terminals_config.db['host'],
-            user=terminals_config.db['user'],
-            passwd=terminals_config.db['passwd'],
+            config.db['db'],
+            host=config.db['host'],
+            user=config.db['user'],
+            passwd=config.db['passwd'],
             closing=True)
         schema = database.database
 
@@ -81,20 +81,29 @@ class Class(TerminalModel):
     touch = BooleanField()
 
     @classmethod
+    def _add(cls, name, full_name=None, touch=False):
+        """Forcibly adds a new class"""
+        class_ = cls()
+        class_.name = name
+
+        if full_name is None:
+            class_.full_name = name
+        else:
+            class_.full_name = full_name
+
+        class_.touch = True if touch else False
+        class_.save()
+        return class_
+
+    @classmethod
     def add(cls, name, full_name=None, touch=False):
         """Adds a terminal class"""
         try:
-            new_class = cls.get(
+            return cls.get(
                 (cls.name == name) &
                 (cls.touch == touch))
         except DoesNotExist:
-            new_class = cls()
-            new_class.name = name
-            new_class.full_name = full_name
-            new_class.touch = True if touch else False
-            new_class.save()
-        finally:
-            return new_class
+            return cls._add(name, full_name=None, touch=False)
 
 
 class Domain(TerminalModel):
@@ -107,12 +116,11 @@ class Domain(TerminalModel):
     def add(cls, fqdn):
         """Adds a domain with a certain FQDN"""
         try:
-            domain = cls.get(cls._fqdn == fqdn)
+            return cls.get(cls._fqdn == fqdn)
         except DoesNotExist:
             domain = cls()
             domain.fqdn = fqdn
             domain.save()
-        finally:
             return domain
 
     @property
@@ -155,13 +163,16 @@ class OS(TerminalModel):
 
     def __repr__(self):
         """Returns the OS name and version"""
-        return '{0} {1}'.format(self.name, self.version)
+        return '{name} {version}'.format(name=self.name, version=self.version)
 
 
 class VPN(TerminalModel):
     """OpenVPN settings"""
 
-    NETWORK = IPv4Network('10.8.0.0/16')
+    NETWORK = IPv4Network(
+        '/'.join(
+            (config.net['IPV4NET'],
+             config.net['IPV4MASK'])))
 
     _ipv4addr = BigIntegerField(db_column='ipv4addr')
     key = CharField(36, null=True, default=None)
@@ -269,29 +280,31 @@ class Location(TerminalModel):
         return result
 
     @classmethod
+    def _add(cls, address, annotation=None):
+        """Forcibly adds a location record"""
+        location = cls()
+        location.address = address
+        location.annotation = annotation
+        location.save()
+        return location
+
+    @classmethod
     def add(cls, address, annotation=None):
         """Adds a unique location"""
         if annotation is None:
             try:
-                location = cls.get(cls.address == address)
+                return cls.get(
+                    (cls.address == address) &
+                    (cls.annotation >> None))
             except DoesNotExist:
-                location = cls()
-                location.address = address
-                location.save()
-
-            return location
+                return cls._add(address, location=location)
         else:
             try:
-                location = cls.get(
+                return cls.get(
                     (cls.address == address) &
                     (cls.annotation == annotation))
             except DoesNotExist:
-                location = cls()
-                location.address = address
-                location.annotation = annotation
-                location.save()
-
-            return location
+                return cls._add(address, location=location)
 
 
 class Terminal(TerminalModel):
@@ -333,7 +346,9 @@ class Terminal(TerminalModel):
     def hosts(cls):
         """Yields entries for /etc/hosts"""
         for terminal in cls.select().where(True):
-            yield '{0}\t{1}'.format(terminal.ipv4addr, terminal.hostname)
+            yield '{ipv4addr}\t{hostname}'.format(
+                ipv4addr=terminal.ipv4addr,
+                hostname=terminal.hostname)
 
     @classmethod
     def by_cid(cls, cid):
@@ -374,64 +389,71 @@ class Terminal(TerminalModel):
         """Gets a unique terminal ID for the customer"""
         if desired is None:
             tid = 1
+
             while tid in cls.tids(cid):
                 tid += 1
+
             return tid
         else:
-            if tid in cls.tids(cid):
+            if desired in cls.tids(cid):
                 return cls.gen_tid(cid, desired=None)
             else:
-                return tid
+                return desired
 
     @classmethod
     def min_tid(cls, customer):
-        """Gets the highest TID for the respective customer"""
+        """Gets the lowest TID for the respective customer"""
         result = None
+
         for terminal in cls.select().where(cls.customer == customer):
             if result is None:
-                result = terminal.cid
+                result = terminal.tid
             else:
-                result = min(result, terminal.cid)
+                result = min(result, terminal.tid)
+
         return result
 
     @classmethod
     def max_tid(cls, customer):
         """Gets the highest TID for the respective customer"""
         result = 0
+
         for terminal in cls.select().where(cls.customer == customer):
-            result = max(result, terminal.cid)
+            result = max(result, terminal.tid)
+
         return result
 
     @classmethod
     def min_vid(cls, customer):
         """Gets the highest VID for the respective customer"""
         result = None
+
         for terminal in cls.select().where(cls.customer == customer):
             if terminal.vid is not None:
                 if result is None:
                     result = terminal.vid
                 else:
                     result = min(result, terminal.vid)
+
         return result
 
     @classmethod
     def max_vid(cls, customer):
         """Gets the highest TID for the respective customer"""
         result = 0
+
         for terminal in cls.select().where(cls.customer == customer):
             if terminal.vid is not None:
                 result = max(result, terminal.vid)
+
         return result
 
     @classmethod
     def add(cls, cid, class_, os, connection, vpn, domain,
             location=None, annotation=None, tid=None):
         """Adds a new terminal"""
-
-        tid = cls.gen_tid(cid, desired=tid)
-
         terminal = cls()
-        terminal.tid = tid
+        terminal.tid = cls.gen_tid(cid, desired=tid)
         terminal.customer = cid
         terminal.class_ = class_
         terminal.os = os
@@ -464,7 +486,10 @@ class Terminal(TerminalModel):
     @property
     def hostname(self):
         """Generates and returns the terminal's host name"""
-        return '{0}.{1}.{2}'.format(self.tid, self.cid, self.domain.name)
+        return '{tid}.{cid}.{domain}'.format(
+            tid=self.tid,
+            cid=self.cid,
+            domain=self.domain.name)
 
     @property
     def ipv4addr(self):
@@ -482,18 +507,22 @@ class Terminal(TerminalModel):
             address = location.address
 
             try:
-                street_houseno = '{0} {1}'.format(
-                    address.street, address.house_number)
+                street_houseno = '{street} {house_number}'.format(
+                    street=address.street,
+                    house_number=address.house_number)
             except (TypeError, ValueError):
                 return None
             else:
                 try:
-                    zip_city = '{0} {1}'.format(
-                        address.zip_code, address.city)
+                    zip_city = '{zip_code} {city}'.format(
+                        zip_code=address.zip_code,
+                        city=address.city)
                 except (TypeError, ValueError):
                     return None
                 else:
-                    return '{0}, {1}'.format(street_houseno, zip_city)
+                    return '{street_houseno}, {zip_city}'.format(
+                        street_houseno=street_houseno,
+                        zip_city=zip_city)
         else:
             raise AddressUnconfiguredError()
 
@@ -509,8 +538,9 @@ class Terminal(TerminalModel):
         """Yields the administrators, which are
         allowed to administer the terminal
         """
-        return chain(AdministratorTerminals.operators(self),
-                     Administrator.root)
+        return chain(
+            Administrator.root,
+            AdministratorTerminals.operators(self))
 
     @property
     def status(self):
@@ -520,7 +550,9 @@ class Terminal(TerminalModel):
         """
         if self.connection:
             chk_cmd = self._CHK_CMD.format(
-                timeout=self.connection.timeout, host=self.hostname)
+                timeout=self.connection.timeout,
+                host=self.hostname)
+
             if run(chk_cmd, shell=True):
                 return True
             else:
@@ -538,26 +570,28 @@ class Terminal(TerminalModel):
         if self.deployed is None or force:
             deployed = datetime.now() if date_time is None else date_time
             self.logger.info(
-                'Deploying terminal {0} on {1}'.format(self, deployed))
+                'Deploying {terminal} on {date}'.format(
+                    terminal=self, date=deployed))
             self.deployed = deployed
             self.save()
             return True
         else:
             self.logger.warning(
-                'Terminal {0} has already been deployed on {1}'.format(
-                    self, self.deployed))
+                '{terminal} has already been deployed on {date}'.format(
+                    terminal=self, date=self.deployed))
             return False
 
     def undeploy(self, force=False):
         """Sets terminals to NOT deployed"""
         if self.deployed is not None or force:
-            self.logger.info('Undeploying terminal {0} from {1}'.format(
-                self, self.deployed))
+            self.logger.info('Undeploying {terminal} from {date}'.format(
+                terminal=self, date=self.deployed))
             self.deployed = None
             self.save()
             return True
         else:
-            self.logger.warning('Terminal {0} is not deployed'.format(self))
+            self.logger.warning('{terminal} is not deployed'.format(
+                terminal=self))
             return False
 
 
@@ -565,8 +599,10 @@ class Synchronization(TerminalModel):
     """Synchronization log
 
     Recommended usage:
+
         with Synchronization.start(terminal) as sync:
             <do_sync_stuff>
+
             if sync_succeded:
                 sync.status = True
             else:
