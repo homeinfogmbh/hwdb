@@ -161,7 +161,7 @@ class TerminalUtil():
             annotation=str(terminal.annotation))
 
     @classmethod
-    def find(cls, street, house_number, annotation=None):
+    def find(cls, street, house_number=None, annotation=None):
         """Finds terminals bathing the specified location"""
 
         for terminal in Terminal.select().where(
@@ -171,7 +171,14 @@ class TerminalUtil():
             annotation_ = terminal.location.annotation
 
             if street.lower() in address.street.lower():
-                if house_number.lower() == house_number_.lower():
+                if house_number is not None:
+                    if house_number.lower() == house_number_.lower():
+                        if annotation is not None:
+                            if (annotation.lower() in annotation_.lower()):
+                                yield terminal
+                        else:
+                            yield terminal
+                else:
                     if annotation is not None:
                         if (annotation.lower() in annotation_.lower()):
                             yield terminal
@@ -179,22 +186,22 @@ class TerminalUtil():
                         yield terminal
 
     @classmethod
-    def get(cls, street, house_number, annotation=None, index=None):
+    def get(cls, street, house_number=None, annotation=None, index=None):
         """Finds a terminal by its location"""
 
         def _print(terminal):
             print(repr(terminal.location), file=stderr)
             print(str(terminal))
-            return True
 
-        terminals = [t for t in cls.find(
-            street, house_number, annotation=None)]
+        terminals = list(cls.find(
+            street, house_number=house_number, annotation=annotation))
 
         if not terminals:
             print('No terminal matching query.', file=stderr)
         elif len(terminals) == 1:
             terminal = terminals[0]
-            return _print(terminal)
+            _print(terminal)
+            return True
         elif index is not None:
             try:
                 terminal = terminals[index]
@@ -203,7 +210,8 @@ class TerminalUtil():
                     index=index, n=len(terminals)), file=stderr)
                 return False
             else:
-                return _print(terminal)
+                _print(terminal)
+                return True
         else:
             print('Ambiguous terminals:', terminals, file=stderr)
             return False

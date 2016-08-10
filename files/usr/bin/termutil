@@ -7,7 +7,7 @@ Usage:
     termutil (list | ls) terminals [<expr> [(--deployed | --undeployed)] \
 [(--testing | --productive)]]
     termutil (list | ls) (class | os | domains)
-    termutil find <street> <house_number> [--annotation=<annotation>] \
+    termutil find <street> [<house_number>] [--annotation=<annotation>] \
 [--index=<n>]
 
 Options:
