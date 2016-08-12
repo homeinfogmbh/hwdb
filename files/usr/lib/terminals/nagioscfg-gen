@@ -51,7 +51,7 @@ SERVICES = {
     'resolution':
         ('Display resolution', 'monitor.png', '#'),
     'last-boot':
-        ('Last boot', 'monitor.png', '#')}
+        ('Last boot', 'logos/turbolinux.gif', '#')}
 
 logger = getLogger(basename(__file__))
 
