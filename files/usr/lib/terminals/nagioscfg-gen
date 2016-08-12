@@ -321,9 +321,6 @@ def mkservices():
                 service, terminal.tid, terminal.customer.id)
             contact_groups = ['admins']
 
-            if terminal.class_.name == 'ddb':
-                contact_groups.append('ddb_admins')
-
             lines.append(template.format(
                 host_name=terminal.hostname,
                 service_description=service,
