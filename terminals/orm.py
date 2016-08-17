@@ -22,7 +22,6 @@ __all__ = [
     'AddressUnconfiguredError',
     'Class',
     'Domain',
-    'Weather',
     'OS',
     'VPN',
     'Terminal',
@@ -140,14 +139,6 @@ class Domain(TerminalModel):
     def name(self):
         """Returns the domain name without trailing '.'"""
         return self._fqdn[:-1]
-
-
-class Weather(TerminalModel):
-    """Weather data records"""
-
-    name = CharField(16)  # The location name
-    # The absolute path to the respective XML file
-    xml_file = CharField(128)
 
 
 class OS(TerminalModel):
@@ -329,8 +320,7 @@ class Terminal(TerminalModel):
         Domain, db_column='domain', related_name='terminals')
     location = ForeignKeyField(Location, null=True, db_column='location')
     vid = IntegerField(null=True)
-    weather = ForeignKeyField(
-        Weather, null=True, db_column='weather', related_name='terminals')
+    weather = CharField(16, null=True)
     deployed = DateTimeField(null=True, default=None)
     deleted = DateTimeField(null=True, default=None)
     testing = BooleanField(default=False)
