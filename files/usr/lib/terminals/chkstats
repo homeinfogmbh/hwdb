@@ -21,7 +21,8 @@ from datetime import datetime, timedelta
 
 from docopt import docopt
 
-from homeinfo.terminals.orm import AccessStats
+# from homeinfo.terminals.orm import AccessStats
+from homeinfo.dscms3 import Statistics as AccessStats
 
 
 if __name__ == '__main__':
