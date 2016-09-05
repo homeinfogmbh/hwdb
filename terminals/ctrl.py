@@ -21,7 +21,7 @@ class RemoteController(TerminalAware):
         """Initializes a remote terminal controller"""
         super().__init__(terminal)
         self.user = user
-        self.keyfile = keyfile or '/home/{0}/.ssh/terminals'.format(self.user)
+        self.keyfile = keyfile or '/home/{}/.ssh/terminals'.format(self.user)
 
         # Commands white and black list
         self.white_list = white_list
@@ -117,7 +117,7 @@ class RemoteController(TerminalAware):
         """Returns an rsync command line to retrieve
         src file from terminal to local file dst
         """
-        srcs = ' '.join("'{0}'".format(src) for src in srcs)
+        srcs = ' '.join("'{}'".format(src) for src in srcs)
         options = '' if options is None else options
         cmd = '{bin} {options} {rsh} {srcs} {dst}'.format(
             bin=config.ssh['RSYNC_BIN'],
@@ -170,7 +170,7 @@ class RemoteController(TerminalAware):
 
         pr = run(rsync, shell=True)
 
-        self.logger.debug('Result: {0} {1} {2} {3}'.format(
-            pr, pr.exit_code, pr.stdout, pr.stderr))
+        self.logger.debug(
+            'Result: {pr} {pr.exit_code} {pr.stdout} {pr.stderr}'.format(pr))
 
         return pr
