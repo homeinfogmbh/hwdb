@@ -64,15 +64,12 @@ if __name__ == '__main__':
         (AccessStats.customer == cid) &
         (AccessStats.tid == tid))
     now = datetime.now()
+    last = max(s.timestamp for s in stats)
+    print(last)
 
-    if [d for d in (now - s.timestamp for s in stats) if
-            d <= warning_delta]:
-        print('OK')
+    if now - last <= warning_delta:
         exit(0)  # ok
-    elif [d for d in (now - s.timestamp for s in stats) if
-            d <= critical_delta]:
-        print('More than {} days no action!'.format(warning))
+    elif now - last <= critical_delta:
         exit(1)  # warning
     else:
-        print('More than {} days no action!'.format(critical))
         exit(2)  # critical
