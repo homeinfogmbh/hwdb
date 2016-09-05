@@ -171,6 +171,7 @@ class RemoteController(TerminalAware):
         pr = run(rsync, shell=True)
 
         self.logger.debug(
-            'Result: {pr} {pr.exit_code} {pr.stdout} {pr.stderr}'.format(pr))
+            'Result: {pr} {pr.exit_code} {pr.stdout} {pr.stderr}'.format(
+                pr=pr))
 
         return pr
