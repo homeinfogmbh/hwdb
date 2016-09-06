@@ -643,11 +643,34 @@ class NagiosAdmins(TerminalModel):
     class_ = ForeignKeyField(
         Class, null=True, db_column='class', related_name='members')
     _email = CharField(255, db_column='email', null=True, default=None)
-    service_period = CharField(16, default='24x7')
-    host_period = CharField(16, default='24x7')
-    service_options = CharField(16, default='w,u,c,r')
-    host_options = CharField(16, default='d,r')
-    host_command = CharField(64, default='notify-terminal-by-email-with-id')
+    service_notification_period = CharField(16, default='24x7')
+    host_notification_period = CharField(16, default='24x7')
+    service_notification_options = CharField(16, default='w,u,c,r')
+    host_notification_options = CharField(16, default='d,r')
+    service_notification_commands = CharField(
+        64, default='notify-service-by-email')
+    host_notification_commands = CharField(
+        64, default='notify-terminal-by-email-with-id')
+
+    def render(self):
+        """Yields config file lines"""
+        yield 'define contact {{'
+        yield '    contact_name                   {}'.format(self.name)
+        yield '    alias                          {}'.format(self.employee)
+        yield '    service_notification_period    {}'.format(
+            self.service_notification_period)
+        yield '    host_notification_period       {}'.format(
+            self.host_notification_period)
+        yield '    service_notification_options   {}'.format(
+            self.service_notification_options)
+        yield '    host_notification_options      {}'.format(
+            self.host_notification_options)
+        yield '    service_notification_commands  {}'.format(
+            self.service_notification_commands)
+        yield '    host_notification_commands     {}'.format(
+            self.host_notification_commands)
+        yield '    email                          {}'.format(self.email)
+        yield '}}'
 
     @property
     def admin(self):
@@ -671,6 +694,84 @@ class NagiosAdmins(TerminalModel):
             return self.employee.email
         else:
             return self._email
+
+
+class NagiosService(TerminalModel):
+    """Represents a nagios service"""
+
+    CHECK_COMMAND = 'check_{}!{{terminal.tid}}!{{terminal.customer.id}}'
+
+    class Meta:
+        db_table = 'nagios_service'
+
+    name = CharField(16)
+    description = CharField(255, null=True, default=None)
+    symbol = CharField(255, null=True, default=None)
+    url = CharField(255, null=True, default=None)
+    max_check_attempts = IntegerField(default=5)
+    check_interval = IntegerField(default=15)
+    retry_interval = IntegerField(default=5)
+    check_period = CharField(8, default='24x7')
+    notification_interval = IntegerField(default=0)
+    notification_period = CharField(8, default='24x7')
+    icon_image = CharField(255, null=True, default=None)
+
+    def render(self, terminal, contacts, contact_groups):
+        """Render the service for the respective
+        terminal, contacts and contact groups
+        """
+        if terminal is None:
+            raise ValueError('No terminal provided')
+
+        if contacts is not None:
+            contacts = list(contacts)
+
+        if contact_groups is not None:
+            contact_groups = list(contact_groups)
+
+        yield 'define service {{'
+        yield '    host_name              {}'.format(terminal.hostname)
+
+        if self.description:
+            yield '    service_description    {}'.format(self.description)
+
+        yield '    check_command          {}'.format(
+            self.check_command.format(terminal=terminal))
+        yield '    max_check_attempts     {}'.format(self.max_check_attempts)
+        yield '    check_interval         {}'.format(self.check_interval)
+        yield '    retry_interval         {}'.format(self.retry_interval)
+        yield '    check_period           {}'.format(self.check_period)
+        yield '    notification_interval  {}'.format(
+            self.notification_interval)
+        yield '    notification_period    {}'.format(self.notification_period)
+
+        if contacts:
+            yield '    contact_contacts       {}'.format(','.join(
+                contact.name for contact in contacts))
+
+        if contact_groups:
+            yield '    contact_groups         {}'.format(','.join(
+                contact_group.name for contact_group in contact_groups))
+
+        yield '    notes                  {}'.format(terminal.location)
+
+        if self.icon_image:
+            yield '    icon_image             {}'.format(self.icon_image)
+
+        yield '}}'
+
+    @property
+    def template(self):
+        """Loads the respective template file"""
+        template = join(config.monitoring['TEMPLATE_DIR'], self.name)
+
+        with open(template, 'r') as f:
+            return f.read()
+
+    @property
+    def check_command(self):
+        """Returns the check command template"""
+        return self.CHECK_COMMAND.format(self.name)
 
 
 class AccessStats(TerminalModel):
