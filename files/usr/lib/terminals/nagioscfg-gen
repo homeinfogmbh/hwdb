@@ -136,8 +136,6 @@ def mkcontactgroups():
 
     # Create contact groups for terminal classes
     for class_ in Class:
-        name = class_.name
-        alias = class_.full_name
         members = []
 
         for admin in NagiosAdmin.sieve(class_=class_):
@@ -146,8 +144,8 @@ def mkcontactgroups():
 
         if members:
             rendered = template.format(
-                name='admins',
-                alias='Global terminal administrators',
+                name=class_.name,
+                alias=class_.full_name,
                 members=','.join(members))
             data += '{}\n\n'.format(rendered)
 
