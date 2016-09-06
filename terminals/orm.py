@@ -663,7 +663,7 @@ class NagiosAdmin(TerminalModel):
         """Sieves out stakeholders among admins
         for the respective class and service
         """
-        for admin_class_service in AdminClassService.find(
+        for admin_class_service in AdminClassService.sieve(
                 class_=class_, service=service):
             yield admin_class_service.admin
 
