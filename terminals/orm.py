@@ -839,7 +839,7 @@ class TerminalService(TerminalModel):
             return cls
         elif class_ is None:
             return cls.select().where(cls.os == os)
-        elif service is None:
+        elif os is None:
             return cls.select().where(cls.class_ == class_)
         else:
             return cls.select().where(
