@@ -140,11 +140,8 @@ def mkcontactgroups():
         alias = class_.full_name
         members = []
 
-        for acs in AdminClassService.sieve(class_=class_):
-            admin = acs.admin
-
-            # Skip admins
-            if admin.root != 1:
+        for admin in NagiosAdmin.sieve(class_=class_):
+            if admin.root != 1:  # Skip root admins
                 members.append(admin)
 
         if members:
