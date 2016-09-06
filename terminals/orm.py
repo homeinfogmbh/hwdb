@@ -640,8 +640,6 @@ class NagiosAdmins(TerminalModel):
 
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
-    class_ = ForeignKeyField(
-        Class, null=True, db_column='class', related_name='members')
     _email = CharField(255, db_column='email', null=True, default=None)
     service_notification_period = CharField(16, default='24x7')
     host_notification_period = CharField(16, default='24x7')
@@ -769,6 +767,14 @@ class NagiosService(TerminalModel):
 
         yield '}}'
 
+    @classmethod
+    def applicable(cls, terminal):
+        """Yields services applicable for the respective terminal"""
+        for terminal_service in TerminalService.sieve(
+                class_=terminal.class_, os=terminal.os):
+            yield terminal_service.service
+
+
     @property
     def template(self):
         """Loads the respective template file"""
@@ -806,6 +812,32 @@ class AdminClassService(TerminalModel):
         else:
             return cls.select().where(
                 (cls.service == service) &
+                (cls.class_ == class_))
+
+
+class TerminalService(TerminalModel):
+    """Many-to-many mapping for terminal services"""
+
+    class Meta:
+        db_table = 'terminal_service'
+
+    servie = ForeignKeyField(Service)
+    os = ForeignKeyField(OS, null=True, default=None)
+    class_ = ForeignKeyField(Class, null=True, default=None)
+
+
+    @classmethod
+    def sieve(cls, class_=None, os=None):
+        """Sieves for classes and OSs"""
+        if class_ is None and os is None:
+            return cls
+        elif class_ is None:
+            return cls.select().where(cls.os == os)
+        elif service is None:
+            return cls.select().where(cls.class_ == class_)
+        else:
+            return cls.select().where(
+                (cls.os == os) &
                 (cls.class_ == class_))
 
 
