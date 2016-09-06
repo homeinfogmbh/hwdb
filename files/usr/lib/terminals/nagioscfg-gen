@@ -136,11 +136,11 @@ def mkcontactgroups():
 
     # Create contact groups for terminal classes
     for class_ in Class:
-        members = []
+        members = set()
 
         for admin in NagiosAdmin.sieve(class_=class_):
             if admin.root != 1:  # Skip root admins
-                members.append(admin.name)
+                members.add(admin.name)
 
         if members:
             rendered = template.format(
