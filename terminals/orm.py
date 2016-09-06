@@ -26,10 +26,7 @@ __all__ = [
     'VPN',
     'Terminal',
     'Synchronization',
-    'NagiosAdmin',
-    'NagiosService',
-    'AdminClassService',
-    'TerminalService',
+    'Admin',
     'AccessStats']
 
 
@@ -633,76 +630,18 @@ class Synchronization(TerminalModel):
             return self.save()
 
 
-class NagiosAdmin(TerminalModel):
+class Admin(TerminalModel):
     """Many-to-many mapping in-between
     Employees and terminal classes
     """
 
     class Meta:
-        db_table = 'nagios_admin'
+        db_table = 'admin'
 
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
     _email = CharField(255, db_column='email', null=True, default=None)
     root = BooleanField(default=False)
-    service_notification_period = CharField(16, default='24x7')
-    host_notification_period = CharField(16, default='24x7')
-    service_notification_options = CharField(16, default='w,u,c,r')
-    host_notification_options = CharField(16, default='d,r')
-    service_notification_commands = CharField(
-        64, default='notify-service-by-email')
-    host_notification_commands = CharField(
-        64, default='notify-terminal-by-email-with-id')
-
-    def __str__(self):
-        """Returns the respective nagios configuration as a string"""
-        return '\n'.join(self.render())
-
-    @classmethod
-    def applicable(cls, class_, service=None):
-        """Sieves out stakeholders among admins
-        for the respective class and service
-        """
-        for admin_class_service in AdminClassService:
-            if admin_class_service.class_ is None:
-                if admin_class_service.service is None:
-                    yield admin_class_service.admin
-                elif service is not None:
-                    if admin_class_service.service == service:
-                        yield admin_class_service.admin
-            elif admin_class_service.class_ == class_:
-                if admin_class_service.service is None:
-                    yield admin_class_service.admin
-                elif service is not None:
-                    if admin_class_service.service == service:
-                        yield admin_class_service.admin
-
-    def render(self):
-        """Yields config file lines"""
-        yield 'define contact {'
-        yield '    contact_name                   {}'.format(self.name)
-        yield '    alias                          {}'.format(self.employee)
-        yield '    service_notification_period    {}'.format(
-            self.service_notification_period)
-        yield '    host_notification_period       {}'.format(
-            self.host_notification_period)
-        yield '    service_notification_options   {}'.format(
-            self.service_notification_options)
-        yield '    host_notification_options      {}'.format(
-            self.host_notification_options)
-        yield '    service_notification_commands  {}'.format(
-            self.service_notification_commands)
-        yield '    host_notification_commands     {}'.format(
-            self.host_notification_commands)
-        yield '    email                          {}'.format(self.email)
-        yield '}'
-
-    @property
-    def admin(self):
-        """Determines whether the Nagios
-        admin is a global terminal admin
-        """
-        return self.class_ is None
 
     @property
     def name(self):
@@ -719,149 +658,6 @@ class NagiosAdmin(TerminalModel):
             return self.employee.email
         else:
             return self._email
-
-
-class NagiosService(TerminalModel):
-    """Represents a nagios service"""
-
-    CHECK_COMMAND = 'check_{}!{{terminal.tid}}!{{terminal.customer.id}}'
-
-    class Meta:
-        db_table = 'nagios_service'
-
-    name = CharField(16)
-    description = CharField(255, null=True, default=None)
-    url = CharField(255, null=True, default=None)
-    max_check_attempts = IntegerField(default=5)
-    check_interval = IntegerField(default=15)
-    retry_interval = IntegerField(default=5)
-    check_period = CharField(8, default='24x7')
-    notification_interval = IntegerField(default=0)
-    notification_period = CharField(8, default='24x7')
-    icon_image = CharField(255, null=True, default=None)
-
-    @classmethod
-    def applicable(cls, terminal):
-        """Yields services applicable for the respective terminal"""
-        for terminal_service in TerminalService:
-            if terminal_service.os is None:
-                if terminal_service.class_ is None:
-                    yield terminal_service.service
-                elif terminal_service.class_ == terminal.class_:
-                    yield terminal_service.service
-            elif terminal_service.os == terminal.os:
-                if terminal_service.class_ is None:
-                    yield terminal_service.service
-                elif terminal_service.class_ == terminal.class_:
-                    yield terminal_service.service
-
-    def render(self, terminal, contacts, contact_groups):
-        """Render the service for the respective
-        terminal, contacts and contact groups
-        """
-        if terminal is None:
-            raise ValueError('No terminal provided')
-
-        if contacts is not None:
-            contacts = list(contacts)
-
-        if contact_groups is not None:
-            contact_groups = list(contact_groups)
-
-        yield 'define service {'
-        yield '    host_name              {}'.format(terminal.hostname)
-
-        if self.description:
-            yield '    service_description    {}'.format(self.description)
-
-        yield '    check_command          {}'.format(
-            self.check_command.format(terminal=terminal))
-        yield '    max_check_attempts     {}'.format(self.max_check_attempts)
-        yield '    check_interval         {}'.format(self.check_interval)
-        yield '    retry_interval         {}'.format(self.retry_interval)
-        yield '    check_period           {}'.format(self.check_period)
-        yield '    notification_interval  {}'.format(
-            self.notification_interval)
-        yield '    notification_period    {}'.format(self.notification_period)
-
-        if contacts:
-            yield '    contacts               {}'.format(
-                ','.join(contact.name for contact in contacts))
-
-        if contact_groups:
-            yield '    contact_groups         {}'.format(
-                ','.join(contact_groups))
-
-        yield '    notes                  {}'.format(repr(terminal.location))
-
-        if self.icon_image:
-            yield '    icon_image             {}'.format(self.icon_image)
-
-        yield '}'
-
-    @property
-    def template(self):
-        """Loads the respective template file"""
-        template = join(config.monitoring['TEMPLATE_DIR'], self.name)
-
-        with open(template, 'r') as f:
-            return f.read()
-
-    @property
-    def check_command(self):
-        """Returns the check command template"""
-        return self.CHECK_COMMAND.format(self.name)
-
-
-class AdminClassService(TerminalModel):
-    """Many-to-many mapping between admins, terminals and services"""
-
-    class Meta:
-        db_table = 'admin_class_service'
-
-    admin = ForeignKeyField(NagiosAdmin, db_column='admin')
-    class_ = ForeignKeyField(Class, db_column='class', null=True, default=None)
-    service = ForeignKeyField(
-        NagiosService, db_column='service', null=True, default=None)
-
-    @classmethod
-    def sieve(cls, class_=None, service=None):
-        """Sieves for classes and services"""
-        if class_ is None and service is None:
-            return cls
-        elif class_ is None:
-            return cls.select().where(cls.service == service)
-        elif service is None:
-            return cls.select().where(cls.class_ == class_)
-        else:
-            return cls.select().where(
-                (cls.service == service) &
-                (cls.class_ == class_))
-
-
-class TerminalService(TerminalModel):
-    """Many-to-many mapping for terminal services"""
-
-    class Meta:
-        db_table = 'terminal_service'
-
-    service = ForeignKeyField(NagiosService, db_column='service')
-    os = ForeignKeyField(OS, db_column='os', null=True, default=None)
-    class_ = ForeignKeyField(Class, db_column='class', null=True, default=None)
-
-    @classmethod
-    def sieve(cls, class_=None, os=None):
-        """Sieves for classes and OSs"""
-        if class_ is None and os is None:
-            return cls
-        elif class_ is None:
-            return cls.select().where(cls.os == os)
-        elif os is None:
-            return cls.select().where(cls.class_ == class_)
-        else:
-            return cls.select().where(
-                (cls.os == os) &
-                (cls.class_ == class_))
 
 
 class AccessStats(TerminalModel):
