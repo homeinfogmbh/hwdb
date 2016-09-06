@@ -644,6 +644,7 @@ class NagiosAdmin(TerminalModel):
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
     _email = CharField(255, db_column='email', null=True, default=None)
+    root = BooleanField()
     service_notification_period = CharField(16, default='24x7')
     host_notification_period = CharField(16, default='24x7')
     service_notification_options = CharField(16, default='w,u,c,r')
