@@ -721,7 +721,6 @@ class NagiosService(TerminalModel):
 
     name = CharField(16)
     description = CharField(255, null=True, default=None)
-    symbol = CharField(255, null=True, default=None)
     url = CharField(255, null=True, default=None)
     max_check_attempts = IntegerField(default=5)
     check_interval = IntegerField(default=15)
