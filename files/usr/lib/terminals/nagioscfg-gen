@@ -352,9 +352,9 @@ if __name__ == '__main__':
         print('Generating services')
         mkservices()
 
-    if servicegroups or all:
-        print('Generating service groups')
-        mkservicegroups()
+    # if servicegroups or all:
+    #     print('Generating service groups')
+    #     mkservicegroups()
 
     print('Restarting nagios3 service', end='              ')
     evaluate(run('systemctl restart nagios3.service', shell=True))
