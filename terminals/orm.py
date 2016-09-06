@@ -777,9 +777,17 @@ class NagiosService(TerminalModel):
     @classmethod
     def applicable(cls, terminal):
         """Yields services applicable for the respective terminal"""
-        for terminal_service in TerminalService.sieve(
-                class_=terminal.class_, os=terminal.os):
-            yield terminal_service.service
+        for terminal_service in TerminalService.sieve():
+            if terminal_service.os is None:
+                if terminal_service.class_ is None:
+                    yield terminal_service.service
+                elif terminal_service.class_ == terminal.class_:
+                    yield terminal_service.service
+            elif terminal_service.os == terminal.os:
+                if terminal_service.class_ is None:
+                    yield terminal_service.service
+                elif terminal_service.class_ == terminal.class_:
+                    yield terminal_service.service
 
     @property
     def template(self):
