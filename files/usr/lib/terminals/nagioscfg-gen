@@ -195,7 +195,7 @@ def mkhosts():
         try:
             ipv4addr = terminal.ipv4addr
         except VPNUnconfiguredError:
-            logger.error('Terminal {0} has no VPN configuration'.format(
+            logger.error('Terminal {} has no VPN configuration'.format(
                 terminal))
         else:
             # Render and return
