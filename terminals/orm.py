@@ -26,7 +26,10 @@ __all__ = [
     'VPN',
     'Terminal',
     'Synchronization',
-    'NagiosAdmins',
+    'NagiosAdmin',
+    'NagiosService',
+    'AdminClassService',
+    'TerminalService',
     'AccessStats']
 
 
@@ -630,7 +633,7 @@ class Synchronization(TerminalModel):
             return self.save()
 
 
-class NagiosAdmins(TerminalModel):
+class NagiosAdmin(TerminalModel):
     """Many-to-many mapping in-between
     Employees and terminal classes
     """
@@ -649,6 +652,10 @@ class NagiosAdmins(TerminalModel):
         64, default='notify-service-by-email')
     host_notification_commands = CharField(
         64, default='notify-terminal-by-email-with-id')
+
+    def __str__(self):
+        """Returns the respective nagios configuration as a string"""
+        return '\n'.join(self.render())
 
     @classmethod
     def sieve(cls, class_=None, service=None):
