@@ -639,7 +639,7 @@ class NagiosAdmin(TerminalModel):
     """
 
     class Meta:
-        db_table = 'nagios_admins'
+        db_table = 'nagios_admin'
 
     _name = CharField(16, db_column='name', null=True, default=None)
     employee = ForeignKeyField(Employee, db_column='employee')
