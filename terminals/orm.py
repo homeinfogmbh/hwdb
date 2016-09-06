@@ -785,7 +785,7 @@ class NagiosService(TerminalModel):
         yield '    notification_period    {}'.format(self.notification_period)
 
         if contacts:
-            yield '    contact_contacts       {}'.format(
+            yield '    contacts               {}'.format(
                 ','.join(contact.name for contact in contacts))
 
         if contact_groups:
