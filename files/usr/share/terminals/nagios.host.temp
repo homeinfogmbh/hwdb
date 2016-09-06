@@ -1,15 +1,17 @@
 define host {{
-    use         {use}
-    host_name   {host_name}
-    alias       {alias}
-    address     {address}
-    parents     srv
+    use             {use}
+    host_name       {host_name}
+    alias           {alias}
+    address         {address}
+    contacts        {contacts}
+    contact_groups  {contact_groups}
+    parents         srv
 }}
 
 define hostextinfo {{
-    host_name   {host_name}
-    notes       {notes}
-    notes_url   https://www.google.de/maps/place/{street}+{house_number}+{zip_code}+{city}
-    action_url  https://tls.homeinfo.de/termgr/mgr?cid={cid}&tid={tid}%&action=details
-    icon_image  {icon}
+    host_name       {host_name}
+    notes           {notes}
+    notes_url       https://www.google.de/maps/place/{street}+{house_number}+{zip_code}+{city}
+    action_url      https://tls.homeinfo.de/termgr/mgr?cid={cid}&tid={tid}%&action=details
+    icon_image      {icon}
 }}

@@ -176,11 +176,13 @@ def mkhosts():
             logger.error('Terminal {} has no VPN configuration'.format(
                 terminal))
         else:
+            contacts = ','.join(NagiosAdmin.applicable(terminal.class_))
             # Render and return
             return template.format(
                 tid=str(terminal.tid), cid=str(terminal.cid),
                 use=terminal.class_.name, host_name=terminal.hostname,
                 alias=str(terminal), address=str(ipv4addr),
+                contacts=contacts, contact_groups='admins',
                 notes=notes, street=street, house_number=house_number,
                 zip_code=zip_code, city=city, icon=icon)
 
