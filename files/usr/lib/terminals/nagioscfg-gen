@@ -22,7 +22,7 @@ from docopt import docopt
 
 from homeinfo.lib.system import run, evaluate
 from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal, Class, \
-    NagiosAdmins
+    NagiosAdmin, NagiosService
 from homeinfo.terminals.config import config
 
 
@@ -43,17 +43,27 @@ ICONS = {
     'Linux': 'logos/linux.gif',
     'NT': 'logos/windows.gif'}
 
+
+class NagisService():
+    """Nagios service data"""
+
+    def __init__(self, name, description, symbol=None,
+                 url=None, admins=None, admin_groups=None):
+        """Sets service config data"""
+
+
 SERVICES = {
     'statistics':
-        ('Statistics evaluation', '../graph.gif', '#', ['ddb_admins']),
+        ('Statistics evaluation', '../graph.gif', '#',
+         {'ddb': ['ddb_admins']}),
     'synchronization':
-        ('Synchronization status', '../logrotate.png', '#', []),
+        ('Synchronization status', '../logrotate.png', '#', None),
     'kernel':
-        ('Kernel', 'logos/linux.gif', '#', []),
+        ('Kernel', 'logos/linux.gif', '#', None),
     'resolution':
-        ('Display resolution', 'monitor.png', '#', []),
+        ('Display resolution', 'monitor.png', '#', None),
     'last-boot':
-        ('Last boot', 'logos/turbolinux.gif', '#', [])}
+        ('Last boot', 'logos/turbolinux.gif', '#', None)}
 
 logger = getLogger(basename(__file__))
 
@@ -65,15 +75,6 @@ def terminals():
             (Terminal.deleted >> None) & ~
             (Terminal.testing == 1) & ~
             (Terminal.deployed >> None))
-
-
-def _template(t):
-    """Opens template <t>"""
-
-    template = join(config.monitoring['TEMPLATE_DIR'], t)
-
-    with open(template, 'r') as f:
-        return f.read()
 
 
 def filter_svc(services, terminal):
@@ -89,21 +90,6 @@ def filter_svc(services, terminal):
                     continue
             else:
                 yield service
-
-
-def filter_term(terminals, service):
-    """Filters terminal ORMs for the provided service"""
-
-    # Services currently only apply tu Linux systems
-    for terminal in terminals:
-        if terminal.os.family == 'Linux':
-            if service == 'resolution':
-                if terminal.class_.name == 'ddb':
-                    yield terminal
-                else:
-                    continue
-            else:
-                yield terminal
 
 
 def header(generator=None):
@@ -145,22 +131,6 @@ def mkcontacts():
 def mkcontactgroups():
     """Generates contact group configurations"""
 
-    def render(template, class_):
-        """Renders a Nagios administrators for specific classes"""
-        # Exclude admins
-        members = [m.name for m in class_.members if not m.admin]
-
-        if members:
-            name = '_'.join([class_.name, 'admins'])
-            rendered = template.format(
-                name=name,
-                alias=class_.full_name,
-                members=','.join(members))
-
-            return rendered
-        else:
-            return ''
-
     conf_path = join(
         config.monitoring['CONF_DIR'],
         config.monitoring['CONTACT_GROUPS_FILE_NAME'])
@@ -168,12 +138,6 @@ def mkcontactgroups():
     template = _template('nagios.contactgroup.temp')
 
     data = header()
-
-    for class_ in Class:
-        rendered = render(template, class_)
-
-        if rendered:
-            data += '{}\n\n'.format(rendered)
 
     admins = []
 
@@ -309,9 +273,7 @@ def mkhostgroups():
 def mkservices():
     """Generates host services"""
 
-    header = header()
-
-    lines = [header]
+    lines = [header()]
 
     template = _template('nagios.service.temp')
     conf_path = join(
@@ -319,25 +281,13 @@ def mkservices():
          config.monitoring['SERVICE_FILE_NAME'])
 
     for terminal in terminals():
-        for service in filter_svc(SERVICES, terminal):
-            notes, icon_image, action_url, contact_groups = SERVICES[service]
-            check_command = 'check_{0}!{1}!{2}'.format(
-                service, terminal.tid, terminal.customer.id)
-            contact_groups += ['admins']
+        for service in NagiosService.applicable(terminal):
+            contacts = NagiosAdmin.sieve(terminal, service)
+            service = service.render(terminal, contacts, ['admins'])
 
-            lines.append(template.format(
-                host_name=terminal.hostname,
-                service_description=service,
-                check_command=check_command,
-                max_check_attempts=5,
-                check_interval=15,
-                retry_interval=5,
-                check_period='24x7',
-                notification_interval=0,  # Only notify once
-                notification_period='24x7',
-                contact_groups=','.join(contact_groups),
-                notes=notes,
-                icon_image=icon_image))
+            lines.append('')
+            lines += list(service)
+            lines.append('')
 
     with open(conf_path, 'w') as f:
         f.write('\n'.join(lines))
