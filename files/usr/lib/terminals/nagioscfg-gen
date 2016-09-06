@@ -142,7 +142,7 @@ def mkcontactgroups():
 
         for admin in NagiosAdmin.sieve(class_=class_):
             if admin.root != 1:  # Skip root admins
-                members.append(admin)
+                members.append(admin.name)
 
         if members:
             rendered = template.format(
