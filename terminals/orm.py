@@ -652,6 +652,15 @@ class NagiosAdmins(TerminalModel):
     host_notification_commands = CharField(
         64, default='notify-terminal-by-email-with-id')
 
+    @classmethod
+    def sieve(cls, class_=None, service=None):
+        """Sieves out stakeholders among admins
+        for the respective class and service
+        """
+        for admin_class_service in AdminClassService.find(
+                class_=class_, service=service):
+            yield admin_class_service.admin
+
     def render(self):
         """Yields config file lines"""
         yield 'define contact {{'
@@ -772,6 +781,32 @@ class NagiosService(TerminalModel):
     def check_command(self):
         """Returns the check command template"""
         return self.CHECK_COMMAND.format(self.name)
+
+
+class AdminClassService(TerminalModel):
+    """Many-to-many mapping between admins, terminals and services"""
+
+    class Meta:
+        db_table = 'admin_class_service'
+
+    admin = ForeignKeyField(NagiosAdmin, db_column='admin')
+    class_ = ForeignKeyField(Class, db_column='class', null=True, default=None)
+    service = ForeignKeyField(
+        NagiosService, db_column='service', null=True, default=None)
+
+    @classmethod
+    def sieve(cls, class_=None, service=None):
+        """Sieves for classes and services"""
+        if class_ is None and service is None:
+            return cls
+        elif class_ is None:
+            return cls.select().where(cls.service == service)
+        elif service is None:
+            return cls.select().where(cls.class_ == class_)
+        else:
+            return cls.select().where(
+                (cls.service == service) &
+                (cls.class_ == class_))
 
 
 class AccessStats(TerminalModel):
