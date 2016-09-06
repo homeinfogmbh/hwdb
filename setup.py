@@ -15,28 +15,12 @@ setup(
     data_files=[
         # Main configuration
         ('/etc', ['files/etc/terminals.conf']),
-        # Nagios 3 templates
-        ('/etc/nagios3/conf.d',
-         ['files/etc/nagios3/conf.d/homeinfo-terminal.cfg',
-          'files/etc/nagios3/conf.d/homeinfo-terminal-commands.cfg']),
         # Miscellaneous scripts
         ('/usr/lib/terminals',
          ['files/usr/lib/terminals/bindcfg-gen',
           'files/usr/lib/terminals/chkstats',
           'files/usr/lib/terminals/chksync',
-          'files/usr/lib/terminals/nagioscfg-gen',
           'files/usr/lib/terminals/openvpncfg-gen']),
-        # Template files
-        ('/usr/share/terminals',
-         ['files/usr/share/terminals/bind.zone.temp',
-          'files/usr/share/terminals/nagios.contact.temp',
-          'files/usr/share/terminals/nagios.contactgroup.temp',
-          'files/usr/share/terminals/nagios.host.temp',
-          'files/usr/share/terminals/nagios.hostgroup.temp',
-          'files/usr/share/terminals/nagios.service.temp',
-          'files/usr/share/terminals/nagios.servicegroup.temp',
-          'files/usr/share/terminals/openvpn.conf.temp',
-          'files/usr/share/terminals/pacman.conf.temp']),
         # Utilty script
         ('/usr/bin', ['files/usr/bin/termutil'])],
     description=("HOMEINFO's terminal libary"))
