@@ -766,7 +766,7 @@ class NagiosService(TerminalModel):
             yield '    contact_groups         {}'.format(
                 ','.join(contact_groups))
 
-        yield '    notes                  {}'.format(terminal.location)
+        yield '    notes                  {}'.format(repr(terminal.location))
 
         if self.icon_image:
             yield '    icon_image             {}'.format(self.icon_image)
