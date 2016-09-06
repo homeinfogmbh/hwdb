@@ -827,9 +827,9 @@ class TerminalService(TerminalModel):
     class Meta:
         db_table = 'terminal_service'
 
-    servie = ForeignKeyField(Service)
-    os = ForeignKeyField(OS, null=True, default=None)
-    class_ = ForeignKeyField(Class, null=True, default=None)
+    service = ForeignKeyField(NagiosService, db_column='service')
+    os = ForeignKeyField(OS, db_column='os', null=True, default=None)
+    class_ = ForeignKeyField(Class, db_column='class', null=True, default=None)
 
     @classmethod
     def sieve(cls, class_=None, os=None):
