@@ -659,7 +659,7 @@ class NagiosAdmin(TerminalModel):
         return '\n'.join(self.render())
 
     @classmethod
-    def applicable(cls, class_, service):
+    def applicable(cls, class_, service=None):
         """Sieves out stakeholders among admins
         for the respective class and service
         """
@@ -667,13 +667,15 @@ class NagiosAdmin(TerminalModel):
             if admin_class_service.class_ is None:
                 if admin_class_service.service is None:
                     yield admin_class_service.admin
-                elif admin_class_service.service == service:
-                    yield admin_class_service.admin
+                elif service is not None:
+                    admin_class_service.service == service:
+                        yield admin_class_service.admin
             elif admin_class_service.class_ == class_:
                 if admin_class_service.service is None:
                     yield admin_class_service.admin
-                elif admin_class_service.service == service:
-                    yield admin_class_service.admin
+                elif service is not None:
+                    admin_class_service.service == service:
+                        yield admin_class_service.admin
 
     def render(self):
         """Yields config file lines"""

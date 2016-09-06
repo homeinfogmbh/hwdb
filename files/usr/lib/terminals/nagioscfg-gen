@@ -138,7 +138,7 @@ def mkcontactgroups():
     for class_ in Class:
         members = set()
 
-        for admin in NagiosAdmin.sieve(class_=class_):
+        for admin in NagiosAdmin.applicable(class_):
             if admin.root != 1:  # Skip root admins
                 members.add(admin.name)
 
@@ -294,7 +294,7 @@ def mkservices():
 
     for terminal in terminals():
         for service in NagiosService.applicable(terminal):
-            contacts = NagiosAdmin.applicable(terminal.class_, service)
+            contacts = NagiosAdmin.applicable(terminal.class_, service=service)
             service = service.render(terminal, contacts, ['admins'])
 
             lines.append('')
