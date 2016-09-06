@@ -294,7 +294,7 @@ def mkservices():
 
     for terminal in terminals():
         for service in NagiosService.applicable(terminal):
-            contacts = NagiosAdmin.sieve(terminal, service)
+            contacts = NagiosAdmin.applicable(terminal.class_, service)
             service = service.render(terminal, contacts, ['admins'])
 
             lines.append('')

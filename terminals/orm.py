@@ -659,13 +659,21 @@ class NagiosAdmin(TerminalModel):
         return '\n'.join(self.render())
 
     @classmethod
-    def sieve(cls, class_=None, service=None):
+    def applicable(cls, class_, service):
         """Sieves out stakeholders among admins
         for the respective class and service
         """
-        for admin_class_service in AdminClassService.sieve(
-                class_=class_, service=service):
-            yield admin_class_service.admin
+        for admin_class_service in AdminClassService:
+            if admin_class_service.class_ is None:
+                if admin_class_service.service is None:
+                    yield admin_class_service.admin
+                elif admin_class_service.service == service:
+                    yield admin_class_service.admin
+            elif admin_class_service.class_ == class_:
+                if admin_class_service.service is None:
+                    yield admin_class_service.admin
+                elif admin_class_service.service == service:
+                    yield admin_class_service.admin
 
     def render(self):
         """Yields config file lines"""
@@ -730,6 +738,21 @@ class NagiosService(TerminalModel):
     notification_period = CharField(8, default='24x7')
     icon_image = CharField(255, null=True, default=None)
 
+    @classmethod
+    def applicable(cls, terminal):
+        """Yields services applicable for the respective terminal"""
+        for terminal_service in TerminalService:
+            if terminal_service.os is None:
+                if terminal_service.class_ is None:
+                    yield terminal_service.service
+                elif terminal_service.class_ == terminal.class_:
+                    yield terminal_service.service
+            elif terminal_service.os == terminal.os:
+                if terminal_service.class_ is None:
+                    yield terminal_service.service
+                elif terminal_service.class_ == terminal.class_:
+                    yield terminal_service.service
+
     def render(self, terminal, contacts, contact_groups):
         """Render the service for the respective
         terminal, contacts and contact groups
@@ -772,21 +795,6 @@ class NagiosService(TerminalModel):
             yield '    icon_image             {}'.format(self.icon_image)
 
         yield '}'
-
-    @classmethod
-    def applicable(cls, terminal):
-        """Yields services applicable for the respective terminal"""
-        for terminal_service in TerminalService.sieve():
-            if terminal_service.os is None:
-                if terminal_service.class_ is None:
-                    yield terminal_service.service
-                elif terminal_service.class_ == terminal.class_:
-                    yield terminal_service.service
-            elif terminal_service.os == terminal.os:
-                if terminal_service.class_ is None:
-                    yield terminal_service.service
-                elif terminal_service.class_ == terminal.class_:
-                    yield terminal_service.service
 
     @property
     def template(self):
