@@ -101,18 +101,6 @@ def header(generator=None):
 def mkcontacts():
     """Generates contact configurations"""
 
-    def render(template, admin):
-        """Renders a Nagios administrator"""
-        rendered = template.format(
-            name=admin.name, alias=str(admin.employee),
-            service_notification_period=str(admin.service_period),
-            host_notification_period=str(admin.host_period),
-            service_notification_options=str(admin.service_options),
-            host_notification_options=str(admin.host_options),
-            host_notification_commands=admin.host_command,
-            email=str(admin.email))
-        return rendered
-
     conf_path = join(
         config.monitoring['CONF_DIR'],
         config.monitoring['CONTACTS_FILE_NAME'])
@@ -122,7 +110,7 @@ def mkcontacts():
     template = _template('nagios.contact.temp')
 
     for admin in NagiosAdmins:
-        data += '{}\n\n'.format(render(template, admin))
+        data += '{}\n\n'.format(str(admin))
 
     with open(conf_path, 'w') as cfg:
         cfg.write(data)
