@@ -781,7 +781,6 @@ class NagiosService(TerminalModel):
                 class_=terminal.class_, os=terminal.os):
             yield terminal_service.service
 
-
     @property
     def template(self):
         """Loads the respective template file"""
@@ -831,7 +830,6 @@ class TerminalService(TerminalModel):
     servie = ForeignKeyField(Service)
     os = ForeignKeyField(OS, null=True, default=None)
     class_ = ForeignKeyField(Class, null=True, default=None)
-
 
     @classmethod
     def sieve(cls, class_=None, os=None):
