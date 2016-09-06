@@ -669,7 +669,7 @@ class NagiosAdmin(TerminalModel):
 
     def render(self):
         """Yields config file lines"""
-        yield 'define contact {{'
+        yield 'define contact {'
         yield '    contact_name                   {}'.format(self.name)
         yield '    alias                          {}'.format(self.employee)
         yield '    service_notification_period    {}'.format(
@@ -685,7 +685,7 @@ class NagiosAdmin(TerminalModel):
         yield '    host_notification_commands     {}'.format(
             self.host_notification_commands)
         yield '    email                          {}'.format(self.email)
-        yield '}}'
+        yield '}'
 
     @property
     def admin(self):
@@ -743,7 +743,7 @@ class NagiosService(TerminalModel):
         if contact_groups is not None:
             contact_groups = list(contact_groups)
 
-        yield 'define service {{'
+        yield 'define service {'
         yield '    host_name              {}'.format(terminal.hostname)
 
         if self.description:
@@ -772,7 +772,7 @@ class NagiosService(TerminalModel):
         if self.icon_image:
             yield '    icon_image             {}'.format(self.icon_image)
 
-        yield '}}'
+        yield '}'
 
     @classmethod
     def applicable(cls, terminal):
