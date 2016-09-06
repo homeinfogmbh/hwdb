@@ -118,7 +118,7 @@ def mkcontacts():
 
     template = _template('nagios.contact.temp')
 
-    for admin in NagiosAdmins:
+    for admin in NagiosAdmin:
         data += '{}\n\n'.format(str(admin))
 
     with open(conf_path, 'w') as cfg:
@@ -138,7 +138,7 @@ def mkcontactgroups():
 
     admins = []
 
-    for admin in NagiosAdmins.select().where(NagiosAdmins.class_ >> None):
+    for admin in NagiosAdmin.select().where(NagiosAdmin.class_ >> None):
         admins.append(admin.name)
 
     if admins:
