@@ -131,11 +131,30 @@ def mkcontactgroups():
     conf_path = join(
         config.monitoring['CONF_DIR'],
         config.monitoring['CONTACT_GROUPS_FILE_NAME'])
-
     template = _template('nagios.contactgroup.temp')
-
     data = header()
 
+    # Create contact groups for terminal classes
+    for class_ in Class:
+        name = class_.name
+        alias = class_.full_name
+        members = []
+
+        for acs in AdminClassService.sieve(class_=class_):
+            admin = acs.admin
+
+            # Skip admins
+            if admin.root != 1:
+                members.append(admin)
+
+        if members:
+            rendered = template.format(
+                name='admins',
+                alias='Global terminal administrators',
+                members=','.join(members))
+            data += '{}\n\n'.format(rendered)
+
+    # Create admin group
     admins = []
 
     for admin in NagiosAdmin.select().where(NagiosAdmin.root == 1):
@@ -149,6 +168,7 @@ def mkcontactgroups():
             members=','.join(admins))
         data += '{}\n\n'.format(rendered)
 
+    # Write config file
     with open(conf_path, 'w') as cfg:
         cfg.write(data)
 
