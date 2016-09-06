@@ -68,6 +68,16 @@ SERVICES = {
 logger = getLogger(basename(__file__))
 
 
+def _template(name):
+    """Returns the content of the respective template file"""
+
+    file_name = '{}.temp'.format(name)
+    path = join(config.monitoring['TEMPLATE_DIR'], file_name)
+
+    with open(path, 'r') as template:
+        return template.read()
+
+
 def terminals():
     """Yields monitored terminals"""
 
