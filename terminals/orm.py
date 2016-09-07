@@ -288,7 +288,7 @@ class Location(TerminalModel):
                     (cls.address == address) &
                     (cls.annotation >> None))
             except DoesNotExist:
-                return cls._add(address, location=location)
+                return cls._add(address)
         else:
             try:
                 return cls.get(
