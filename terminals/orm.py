@@ -321,10 +321,12 @@ class Terminal(TerminalModel):
     location = ForeignKeyField(Location, null=True, db_column='location')
     vid = IntegerField(null=True)
     weather = CharField(16, null=True)
+    scheduled = DateTimeField(null=True, default=None)
     deployed = DateTimeField(null=True, default=None)
     deleted = DateTimeField(null=True, default=None)
     testing = BooleanField(default=False)
     replacement = BooleanField(default=False)
+    tainted = BooleanField(default=False)
     annotation = CharField(255, null=True, default=None)
 
     def __str__(self):
@@ -518,26 +520,10 @@ class Terminal(TerminalModel):
             raise AddressUnconfiguredError()
 
     @property
-    def operators(self):
-        """Yields the operators, which are
-        allowed to set the terminal up
-        """
-        return OperatorTerminals.operators(self)
+    def online(self):
+        """Determines whether the terminal is online
 
-    @property
-    def administrators(self):
-        """Yields the administrators, which are
-        allowed to administer the terminal
-        """
-        return chain(
-            Administrator.root,
-            AdministratorTerminals.operators(self))
-
-    @property
-    def status(self):
-        """Determines the status of the terminal
-
-        This may take some time, so use it carefully
+        XXX: This may take some time, so use it carefully.
         """
         if self.connection:
             chk_cmd = self._CHK_CMD.format(
@@ -546,15 +532,39 @@ class Terminal(TerminalModel):
 
             if run(chk_cmd, shell=True):
                 return True
-            else:
-                return False
+
+        return False
+
+    @property
+    def status(self):
+        """Determines the status of the terminal"""
+        if not self.tainted:
+            return self.online
         else:
             return False
 
     @property
+    def due(self):
+        """Determines whether the terminal is due for deployment"""
+        if self.scheduled is not None:
+            if self.scheduled <= datetime.now():
+                return True
+
+        return False
+
+    @property
+    def isdeployed(self):
+        """Determines whether the terminal is deployed"""
+        if self.deployed is not None:
+            if self.deployed <= datetime.now():
+                return True
+
+        return False
+
+    @property
     def productive(self):
         """Returns whether the system has been deployed and is non-testing"""
-        return True if self.deployed and not self.testing else False
+        return True if self.isdeployed and not self.testing else False
 
     def deploy(self, date_time=None, force=False):
         """Sets terminals to deployed"""
