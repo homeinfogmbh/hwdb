@@ -26,8 +26,7 @@ __all__ = [
     'VPN',
     'Terminal',
     'Synchronization',
-    'Admin',
-    'AccessStats']
+    'Admin']
 
 
 class TerminalError(Exception):
@@ -669,31 +668,3 @@ class Admin(TerminalModel):
             return self.employee.email
         else:
             return self._email
-
-
-class AccessStats(TerminalModel):
-    """Stores application access statistics"""
-
-    class Meta:
-        db_table = 'access_stats'
-
-    customer = ForeignKeyField(Customer, db_column='customer')
-    tid = IntegerField(null=True, default=None)
-    vid = IntegerField()
-    document = CharField(255)
-    timestamp = DateTimeField()
-
-    @classmethod
-    def add(cls, cid, vid, document, tid=None):
-        """Creates a new record"""
-        record = cls()
-        record.customer = cid
-        record.tid = tid
-        record.vid = vid
-        record.document = document
-        record.timestamp = datetime.now()
-
-        if record.save():
-            return True
-        else:
-            return False
