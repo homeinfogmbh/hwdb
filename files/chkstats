@@ -85,12 +85,17 @@ if __name__ == '__main__':
         (Statistics.customer == cid) &
         (Statistics.tid == tid))
     now = datetime.now()
-    last = max(s.timestamp for s in stats)
-    print(last)
 
-    if now - last <= warning_delta:
-        exit(0)  # ok
-    elif now - last <= critical_delta:
-        exit(1)  # warning
+    try:
+        last = max(s.timestamp for s in stats)
+    except ValueError:
+        print('never')
     else:
-        exit(2)  # critical
+        print(last)
+
+        if now - last <= warning_delta:
+            exit(0)  # ok
+        elif now - last <= critical_delta:
+            exit(1)  # warning
+        else:
+            exit(2)  # critical
