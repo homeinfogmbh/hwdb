@@ -19,13 +19,34 @@ Options:
 
 from datetime import datetime, timedelta
 
-from docopt import docopt
+from peewee import Model, PrimaryKeyField, IntegerField, CharField, \
+    DateTimeField
 
-# from homeinfo.terminals.orm import AccessStats
-from homeinfo.dscms3 import Statistics as AccessStats
+from homeinfo.peewee import MySQLDatabase
+
+
+class Statistics(Model):
+    """Stores application access statistics"""
+
+    class Meta:
+        database = MySQLDatabase(
+            'application',
+            host='localhost',
+            user='application',
+            passwd='gQWl5rUGdN6v2CNP',
+            closing=True)
+
+    id = PrimaryKeyField()
+    customer = IntegerField()
+    tid = IntegerField(null=True, default=None)
+    vid = IntegerField()
+    document = CharField(255)
+    timestamp = DateTimeField()
 
 
 if __name__ == '__main__':
+    from docopt import docopt
+
     options = docopt(__doc__)
     tid = options['<tid>']
     cid = options['<cid>']
@@ -60,9 +81,9 @@ if __name__ == '__main__':
     else:
         critical_delta = timedelta(days=critical)
 
-    stats = AccessStats.select().where(
-        (AccessStats.customer == cid) &
-        (AccessStats.tid == tid))
+    stats = Statistics.select().where(
+        (Statistics.customer == cid) &
+        (Statistics.tid == tid))
     now = datetime.now()
     last = max(s.timestamp for s in stats)
     print(last)
