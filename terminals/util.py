@@ -2,6 +2,8 @@
 
 from sys import stdout, stderr
 
+from homeinfo.lib.strf import Shell
+
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
     AddressUnconfiguredError
@@ -213,7 +215,7 @@ class TerminalUtil():
                 _print(terminal)
                 return True
         else:
-            print('Ambiguous terminals:', file=stderr)
+            print(Shell.bold('Ambiguous terminals:'), file=stderr)
 
             for terminal in terminals:
                 _print(terminal, file=stderr)
