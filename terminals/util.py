@@ -1,6 +1,6 @@
 """Terminal query utilities"""
 
-from sys import stderr
+from sys import stdout, stderr
 
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
@@ -162,7 +162,7 @@ class TerminalUtil():
 
     @classmethod
     def find(cls, street, house_number=None, annotation=None):
-        """Finds terminals bathing the specified location"""
+        """Finds terminals in the specified location"""
 
         for terminal in Terminal.select().where(
                 ~ (Terminal.location >> None)):
@@ -189,9 +189,9 @@ class TerminalUtil():
     def get(cls, street, house_number=None, annotation=None, index=None):
         """Finds a terminal by its location"""
 
-        def _print(terminal):
+        def _print(terminal, file=stdout):
             print(repr(terminal.location), file=stderr)
-            print(str(terminal))
+            print(str(terminal), file=file)
 
         terminals = list(cls.find(
             street, house_number=house_number, annotation=annotation))
@@ -213,7 +213,11 @@ class TerminalUtil():
                 _print(terminal)
                 return True
         else:
-            print('Ambiguous terminals:', terminals, file=stderr)
+            print('Ambiguous terminals:', file=stderr)
+
+            for terminal in terminals:
+                _print(terminal, file=stderr)
+
             return False
 
 
