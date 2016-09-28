@@ -57,10 +57,16 @@ if __name__ == '__main__':
             utl = DomainUtil()
             print(str(utl))
     elif options['find']:
+        if options['--index'] is None:
+            index = None
+        else:
+            index = int(options['--index'])
+
         if TerminalUtil.get(
                 options['<street>'],
                 options['<house_number>'],
-                options['--annotation']):
+                options['--annotation'],
+                index=index):
             exit(0)
         else:
             exit(1)
