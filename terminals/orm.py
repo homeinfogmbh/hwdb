@@ -1,6 +1,5 @@
 """Terminal library ORM models"""
 
-from itertools import chain
 from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
 from logging import getLogger
@@ -11,7 +10,7 @@ from peewee import Model, ForeignKeyField, IntegerField, CharField,\
 from homeinfo.lib.misc import classproperty
 from homeinfo.lib.system import run
 from homeinfo.peewee import MySQLDatabase
-from homeinfo.crm import Customer, Address, Company, Employee
+from homeinfo.crm import Customer, Address, Employee
 
 from .config import config
 

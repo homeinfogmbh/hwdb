@@ -2,8 +2,12 @@
 
 from .orm import Terminal
 
-__all__ = ['InvalidCustomerID', 'InvalidTerminalIDs', 'InvalidRangeError',
-           'InvalidIDError', 'NoSuchTerminals', 'TerminalSelectionParser']
+__all__ = [
+    'InvalidCustomerID',
+    'InvalidTerminalIDs',
+    'InvalidRangeError',
+    'InvalidIDError',
+    'TerminalSelectionParser']
 
 
 class InvalidCustomerID(Exception):

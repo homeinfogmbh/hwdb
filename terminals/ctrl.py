@@ -1,6 +1,5 @@
 """Library for terminal remote control"""
 
-from sys import stdout, stderr
 from tempfile import NamedTemporaryFile
 from itertools import chain
 from logging import getLogger

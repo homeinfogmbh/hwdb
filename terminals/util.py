@@ -31,7 +31,7 @@ class DeploymentFilter():
         for terminal in self.terminals:
             if terminal.deployed is not None:
                 if self.deployed:
-                    yield terminals
+                    yield terminal
             else:
                 if self.undeployed:
                     yield terminal
@@ -71,25 +71,6 @@ class TerminalUtil():
         self.undeployed = undeployed
         self.testing = testing
         self.productive = productive
-
-    def __str__(self):
-        """Filters terminals for productiveness and deployment"""
-        for terminal in self.filter(terminals):
-            try:
-                address_str = str(terminal.address)
-            except AddressUnconfiguredError:
-                address_str = 'N/A'
-
-            print(template.format(
-                id=str(terminal.id),
-                tid=str(terminal.tid),
-                cid=str(terminal.customer.id),
-                vid=str(terminal.vid),
-                ipv4addr=str(terminal.ipv4addr),
-                deployed=str(terminal.deployed),
-                testing=str(terminal.testing),
-                address=address_str,
-                annotation=str(terminal.annotation)))
 
     def __str__(self):
         """Prints filtered terminals"""
