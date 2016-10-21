@@ -50,7 +50,7 @@ class RemoteController(TerminalAware):
         """Returns the SSH identity file argument
         with the respective identity file's path
         """
-        return '-i {0}'.format(self.keyfile)
+        return '-i {}'.format(self.keyfile)
 
     @property
     def ssh_options(self):
@@ -110,7 +110,7 @@ class RemoteController(TerminalAware):
 
     def remote_file(self, src):
         """Returns a remote file path"""
-        return "{0}:'{1}'".format(self.user_host, src)
+        return "{user_host}:'{src}'".format(user_host=self.user_host, src=src)
 
     def rsync(self, dst, *srcs, options=None):
         """Returns an rsync command line to retrieve
