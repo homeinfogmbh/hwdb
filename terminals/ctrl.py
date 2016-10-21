@@ -141,6 +141,8 @@ class RemoteController(TerminalAware):
 
     def execute(self, cmd, *args):
         """Executes a certain command on a remote terminal"""
+        self.logger.debug('Executing: {}'.format(' '.join(chain([cmd], args))))
+
         if self.check_command(cmd):
             remote_cmd = self.remote(cmd, *args)
             return run(remote_cmd, shell=True)
