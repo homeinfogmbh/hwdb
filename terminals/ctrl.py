@@ -9,7 +9,26 @@ from homeinfo.terminals.abc import TerminalAware
 
 from .config import config
 
-__all__ = ['RemoteController']
+__all__ = ['CustomSSHOptions', 'RemoteController']
+
+
+class CustomSSHOptions():
+    """Sets custom SSH options"""
+
+    def __init__(self, options, remote_controller):
+        """Sets the custom SSH options"""
+        self.options = options
+        self.remote_controller = remote_controller
+        self.previous_options = None
+
+    def __enter__(self):
+        """Spplies the custom SSH options"""
+        self.previous_options = self.remote_controller.ssh_custom_opts
+        self.remote_controller.ssh_custom_opts = self.options
+
+    def __exit__(self, *_):
+        """Resets the custom SSH options"""
+        self.remote_controller.ssh_custom_opts = self.previous_options
 
 
 class RemoteController(TerminalAware):
