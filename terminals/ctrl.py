@@ -74,35 +74,20 @@ class RemoteController(TerminalAware):
     @property
     def ssh_options(self):
         """Returns options for SSH"""
-        # Yield additional custom options iff set
-        if self.ssh_custom_opts:
-            for option in self.ssh_custom_opts:
-                value = self.ssh_custom_opts[option]
-                option_value = '-o {option}={value}'.format(
-                    option=option, value=value)
-
-                yield option_value
-
-        for option in self.SSH_OPTS:
+        for option, value in self.SSH_OPTS.items():
             # Skip options overridden by custom options
             if self.ssh_custom_opts:
                 if option in self.ssh_custom_opts:
                     continue
 
-            value = self.SSH_OPTS[option]
-            option_value = '-o {option}={value}'.format(
+            yield '-o {option}={value}'.format(
                 option=option, value=value)
-
-            yield option_value
 
         # Yield additional custom options iff set
         if self.ssh_custom_opts:
-            for option in self.ssh_custom_opts:
-                value = self.ssh_custom_opts[option]
-                option_value = '-o {option}={value}'.format(
+            for option, value in self.ssh_custom_opts.items():
+                yield '-o {option}={value}'.format(
                     option=option, value=value)
-
-                yield option_value
 
     @property
     def ssh_cmd(self):
