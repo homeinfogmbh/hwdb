@@ -129,16 +129,16 @@ class TerminalUtil():
     def header(self):
         """Returns the format-string header"""
         return self.TEMP.format(
-            id='Record ID',
-            tid='Terminal ID',
-            cid='Customer ID',
-            vid='Virtual Display',
-            ipv4addr='IPv4 Address',
-            deployed='Deployed',
-            testing='Testing',
-            address='Address',
-            address_annotation='Address annotation',
-            annotation='Annotation')
+            id=Shell.bold('Record ID'),
+            tid=Shell.bold('Terminal ID'),
+            cid=Shell.bold('Customer ID'),
+            vid=Shell.bold('Virtual Display'),
+            ipv4addr=Shell.bold('IPv4 Address'),
+            deployed=Shell.bold('Deployed'),
+            testing=Shell.bold('Testing'),
+            address=Shell.bold('Address'),
+            address_annotation=Shell.bold('Address annotation'),
+            annotation=Shell.bold('Annotation'))
 
     def format(self, terminal):
         """Formats the terminal with the template string"""
