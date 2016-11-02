@@ -132,7 +132,7 @@ class TerminalUtil():
     @property
     def header(self):
         """Returns the format-string header"""
-        return self.TEMP.format(
+        return self.TEMP_HEAD.format(
             id=Shell.bold('Record ID'),
             tid=Shell.bold('Terminal ID'),
             cid=Shell.bold('Customer ID'),
