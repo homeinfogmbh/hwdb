@@ -4,9 +4,11 @@
 Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
-    termutil (list | ls) terminals [<expr> [(--deployed | --undeployed)] \
+    termutil (list-terminals | ls) [<expr> [(--deployed | --undeployed)] \
 [(--testing | --productive)]]
-    termutil (list | ls) (class | os | domains)
+    termutil list-class
+    termutil list-os
+    termutil list-domains
     termutil find <street> [<house_number>] [--annotation=<annotation>] \
 [--index=<n>]
 
@@ -26,36 +28,33 @@ from homeinfo.terminals.util import TerminalUtil, ClassUtil, OSUtil, DomainUtil
 if __name__ == '__main__':
     options = docopt(__doc__)
 
-    if options['list'] or options['ls']:
+    if options['list-terminals'] or options['ls']:
         expr = options['<expr>']
-        terminals = options['terminals']
+        deployed = options['--deployed']
+        undeployed = options['--undeployed']
 
-        if terminals:
-            deployed = options['--deployed']
-            undeployed = options['--undeployed']
+        if not deployed and not undeployed:
+            deployed = True
+            undeployed = True
 
-            if not deployed and not undeployed:
-                deployed = True
-                undeployed = True
+        testing = options['--testing']
+        productive = options['--productive']
 
-            testing = options['--testing']
-            productive = options['--productive']
+        if not testing and not productive:
+            testing = True
+            productive = True
 
-            if not testing and not productive:
-                testing = True
-                productive = True
-
-            utl = TerminalUtil(expr, deployed, undeployed, testing, productive)
-            print(str(utl))
-        elif options['class']:
-            utl = ClassUtil()
-            print(str(utl))
-        elif options['os']:
-            utl = OSUtil()
-            print(str(utl))
-        elif options['domains']:
-            utl = DomainUtil()
-            print(str(utl))
+        utl = TerminalUtil(expr, deployed, undeployed, testing, productive)
+        print(str(utl))
+    elif options['list-class']:
+        utl = ClassUtil()
+        print(str(utl))
+    elif options['list-os']:
+        utl = OSUtil()
+        print(str(utl))
+    elif options['list-domains']:
+        utl = DomainUtil()
+        print(str(utl))
     elif options['find']:
         if options['--index'] is None:
             index = None
