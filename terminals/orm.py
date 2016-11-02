@@ -632,8 +632,7 @@ class Terminal(TerminalModel):
             'tid': self.tid,
             'class': self.class_.to_dict(),
             'os': self.os.to_dict(),
-            'domain': self.domain.to_dict()
-        }
+            'domain': self.domain.to_dict()}
 
         if self.connection is not None:
             dictionary['connection'] = self.connection.to_dict()
