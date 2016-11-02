@@ -64,8 +64,8 @@ class TerminalUtil():
             '{address: <40.40} {address_annotation: >24.24} {annotation}')
 
     TEMP_HEAD = ('{id} {tid} {cid} {vid} {ipv4addr} {deployed: >29.29} '
-            '{testing} {address: <48.48} {address_annotation: >24.24} '
-            '{annotation}')
+                 '{testing} {address: <48.48} {address_annotation: >24.24} '
+                 '{annotation}')
 
     def __init__(self, expr,
                  deployed=None, undeployed=None,
