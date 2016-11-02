@@ -5,7 +5,7 @@ Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
     termutil (list-terminals | ls) [<expr> [(--deployed | --undeployed)] \
-[(--testing | --productive)]]
+[(--testing | --productive)]] [--omit-header]
     termutil list-class
     termutil list-os
     termutil list-domains
@@ -17,6 +17,7 @@ Options:
     --undeployed                Only print undeployed terminals.
     --testing                   Only print testing terminals.
     --productive                Only print productive terminals.
+    --omit-header               Do not print the column header.
     --index=<n>                 On ambiguous results, use the nth.
     --annotation=<annotation>   Consider the respective location annotation.
 """
@@ -39,12 +40,17 @@ if __name__ == '__main__':
 
         testing = options['--testing']
         productive = options['--productive']
+        omit_header = options['--omit-header']
 
         if not testing and not productive:
             testing = True
             productive = True
 
         utl = TerminalUtil(expr, deployed, undeployed, testing, productive)
+
+        if not omit_header:
+            print(utl.header)
+
         print(str(utl))
     elif options['list-class']:
         utl = ClassUtil()
