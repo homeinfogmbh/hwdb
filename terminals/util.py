@@ -63,6 +63,10 @@ class TerminalUtil():
             '{ipv4addr: >12.12} {deployed: >21.21} {testing: >7.7}  '
             '{address: <40.40} {address_annotation: >24.24} {annotation}')
 
+    TEMP_HEAD = ('{id} {tid} {cid} {vid} {ipv4addr} {deployed: >21.21} '
+            '{testing} {address: <40.40} {address_annotation: >24.24} '
+            '{annotation}')
+
     def __init__(self, expr,
                  deployed=None, undeployed=None,
                  testing=None, productive=None):
@@ -129,16 +133,16 @@ class TerminalUtil():
     def header(self):
         """Returns the format-string header"""
         return self.TEMP.format(
-            id='Record ID',
-            tid='Terminal ID',
-            cid='Customer ID',
-            vid='Virtual Display',
-            ipv4addr='IPv4 Address',
-            deployed='Deployed',
-            testing='Testing',
-            address='Address',
-            address_annotation='Address annotation',
-            annotation='Annotation')
+            id=Shell.bold('Record ID'),
+            tid=Shell.bold('Terminal ID'),
+            cid=Shell.bold('Customer ID'),
+            vid=Shell.bold('Virtual Display'),
+            ipv4addr=Shell.bold('IPv4 Address'),
+            deployed=Shell.bold('Deployed'),
+            testing=Shell.bold('Testing'),
+            address=Shell.bold('Address'),
+            address_annotation=Shell.bold('Address annotation'),
+            annotation=Shell.bold('Annotation'))
 
     def format(self, terminal):
         """Formats the terminal with the template string"""
