@@ -61,7 +61,7 @@ class TerminalUtil():
 
     TEMP = ('{id: >5.5} {tid: >5.5} {cid: >10.10} {vid: >5.5} '
             '{ipv4addr: >12.12} {deployed: >21.21} {testing: >6.6}  '
-            '{address: <50.50} {annotation}')
+            '{address: <50.50} {address_annotation: >24.24} {annotation}')
 
     def __init__(self, expr,
                  deployed=None, undeployed=None,
@@ -125,6 +125,21 @@ class TerminalUtil():
         else:
             return Terminal.select().where(True)
 
+    @property
+    def header(self):
+        """Returns the format-string header"""
+        return self.TEMP.format(
+            id='Database ID',
+            tid='Terminal ID',
+            cid='Customer ID',
+            vid='Virtual Display ID',
+            ipv4addr='IPv4 Address',
+            deployed='Deployed',
+            testing='Testing',
+            address='Address',
+            address_annotation='Address annotation',
+            annotation='Annotation')
+
     def format(self, terminal):
         """Formats the terminal with the template string"""
         try:
@@ -141,6 +156,7 @@ class TerminalUtil():
             deployed=str(terminal.deployed),
             testing=str(terminal.testing),
             address=address_str,
+            address_annotation=terminal.location.annotation,
             annotation=str(terminal.annotation))
 
     @classmethod
