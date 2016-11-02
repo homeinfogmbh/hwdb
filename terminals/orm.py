@@ -102,6 +102,13 @@ class Class(TerminalModel):
         except DoesNotExist:
             return cls._add(name, full_name=None, touch=False)
 
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return {
+            'token': self.name,
+            'name': self.full_name,
+            'touch': self.touch}
+
 
 class Domain(TerminalModel):
     """Terminal domains"""
@@ -138,6 +145,10 @@ class Domain(TerminalModel):
         """Returns the domain name without trailing '.'"""
         return self._fqdn[:-1]
 
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return self.fqdn
+
 
 class OS(TerminalModel):
     """Operating systems"""
@@ -153,6 +164,13 @@ class OS(TerminalModel):
     def __repr__(self):
         """Returns the OS name and version"""
         return '{name} {version}'.format(name=self.name, version=self.version)
+
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return {
+            'family': self.family,
+            'name': self.name,
+            'version': self.version}
 
 
 class VPN(TerminalModel):
@@ -224,6 +242,10 @@ class VPN(TerminalModel):
         """Sets the IPv4 address"""
         self._ipv4addr = int(ipv4addr)
 
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return {'ipv4addr': str(self.ipv4addr), 'key': self.key}
+
 
 class Connection(TerminalModel):
     """Connection data"""
@@ -233,6 +255,10 @@ class Connection(TerminalModel):
 
     def __str__(self):
         return '{0} ({1})'.format(self.name, self.timeout)
+
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return {'name': self.name, 'timeout': self.timeout}
 
 
 class Location(TerminalModel):
@@ -295,6 +321,12 @@ class Location(TerminalModel):
             except DoesNotExist:
                 return cls._add(address, annotation=annotation)
 
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return {
+            'address': self.address.to_dict(),
+            'annotation': self.annotation}
+
 
 class Terminal(TerminalModel):
     """A physical terminal out in the field"""
@@ -317,7 +349,7 @@ class Terminal(TerminalModel):
     domain = ForeignKeyField(
         Domain, db_column='domain', related_name='terminals')
     location = ForeignKeyField(Location, null=True, db_column='location')
-    vid = IntegerField(null=True)
+    vid = IntegerField(null=True, default=None)
     weather = CharField(16, null=True)
     scheduled = DateTimeField(null=True, default=None)
     deployed = DateTimeField(null=True, default=None)
@@ -593,6 +625,54 @@ class Terminal(TerminalModel):
                 terminal=self))
             return False
 
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        dictionary = {
+            'customer': self.customer.id,
+            'tid': self.tid,
+            'class': self.class_.to_dict(),
+            'os': self.os.to_dict(),
+            'domain': self.domain.to_dict()
+        }
+
+        if self.connection is not None:
+            dictionary['connection'] = self.connection.to_dict()
+
+        if self.vpn is not None:
+            dictionary['vpn'] = self.vpn.to_dict()
+
+        if self.location is not None:
+            dictionary['location'] = self.location.to_dict()
+
+        if self.vid is not None:
+            dictionary['vid'] = self.vid
+
+        if self.weather is not None:
+            dictionary['weather'] = self.weather
+
+        if self.scheduled is not None:
+            dictionary['scheduled'] = str(self.scheduled)
+
+        if self.deployed is not None:
+            dictionary['deployed'] = str(self.deployed)
+
+        if self.deleted is not None:
+            dictionary['deleted'] = str(self.deleted)
+
+        if self.testing is not None:
+            dictionary['testing'] = self.testing
+
+        if self.replacement is not None:
+            dictionary['replacement'] = self.replacement
+
+        if self.tainted is not None:
+            dictionary['tainted'] = self.tainted
+
+        if self.annotation is not None:
+            dictionary['annotation'] = self.annotation
+
+        return dictionary
+
 
 class Synchronization(TerminalModel):
     """Synchronization log
@@ -638,6 +718,32 @@ class Synchronization(TerminalModel):
             self.finished = datetime.now()
             return self.save()
 
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        dictionary = {
+            'terminal': self.terminal.id,
+            'started': str(self.started)}
+
+        if self.finished is not None:
+            dictionary['finished'] = str(self.finished)
+
+        if self.reload is not None:
+            dictionary['reload'] = self.reload
+
+        if self.force is not None:
+            dictionary['force'] = self.force
+
+        if self.nocheck is not None:
+            dictionary['nocheck'] = self.nocheck
+
+        if self.result is not None:
+            dictionary['result'] = self.result
+
+        if self.annotation is not None:
+            dictionary['annotation'] = self.annotation
+
+        return dictionary
+
 
 class Admin(TerminalModel):
     """Many-to-many mapping in-between
@@ -667,3 +773,10 @@ class Admin(TerminalModel):
             return self.employee.email
         else:
             return self._email
+
+    def to_dict(self):
+        """Returns a JSON-like dictionary"""
+        return {
+            'name': self.name,
+            'email': self.email,
+            'root': self.root}
