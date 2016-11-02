@@ -59,9 +59,9 @@ class TestingFilter():
 class TerminalUtil():
     """Terminals query utility"""
 
-    TEMP = ('{id: >5.5} {tid: >5.5} {cid: >10.10} {vid: >5.5} '
-            '{ipv4addr: >12.12} {deployed: >21.21} {testing: >6.6}  '
-            '{address: <50.50} {address_annotation: >24.24} {annotation}')
+    TEMP = ('{id: >9.9} {tid: >11.11} {cid: >11.11} {vid: >15.15} '
+            '{ipv4addr: >12.12} {deployed: >21.21} {testing: >7.7}  '
+            '{address: <40.40} {address_annotation: >24.24} {annotation}')
 
     def __init__(self, expr,
                  deployed=None, undeployed=None,
@@ -129,10 +129,10 @@ class TerminalUtil():
     def header(self):
         """Returns the format-string header"""
         return self.TEMP.format(
-            id='Database ID',
+            id='Record ID',
             tid='Terminal ID',
             cid='Customer ID',
-            vid='Virtual Display ID',
+            vid='Virtual Display',
             ipv4addr='IPv4 Address',
             deployed='Deployed',
             testing='Testing',
