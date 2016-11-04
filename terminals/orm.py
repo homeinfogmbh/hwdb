@@ -2,11 +2,11 @@
 
 from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
-from logging import getLogger
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField,\
     BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
 
+from homeinfo.lib.log import Logger
 from homeinfo.lib.misc import classproperty
 from homeinfo.lib.system import run
 from homeinfo.peewee import MySQLDatabase
@@ -333,7 +333,7 @@ class Terminal(TerminalModel):
 
     # Ping once
     _CHK_CMD = '/bin/ping -c 1 -W {timeout} {host}'
-    logger = getLogger('Terminal')
+    logger = Logger('Terminal')
 
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
