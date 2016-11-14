@@ -151,6 +151,11 @@ class TerminalUtil():
         except AddressUnconfiguredError:
             address_str = 'N/A'
 
+        if terminal.location is not None:
+            address_annotation = str(terminal.location.annotation)
+        else:
+            address_annotation = str(None)
+
         return self.TEMP.format(
             id=str(terminal.id),
             tid=str(terminal.tid),
@@ -160,7 +165,7 @@ class TerminalUtil():
             deployed=str(terminal.deployed),
             testing=str(terminal.testing),
             address=address_str,
-            address_annotation=str(terminal.location.annotation),
+            address_annotation=address_annotation,
             annotation=str(terminal.annotation))
 
     @classmethod
