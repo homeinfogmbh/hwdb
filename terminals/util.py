@@ -160,7 +160,7 @@ class TerminalUtil():
             deployed=str(terminal.deployed),
             testing=str(terminal.testing),
             address=address_str,
-            address_annotation=terminal.location.annotation,
+            address_annotation=str(terminal.location.annotation),
             annotation=str(terminal.annotation))
 
     @classmethod
