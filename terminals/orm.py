@@ -472,7 +472,8 @@ class Terminal(TerminalModel):
 
     @classmethod
     def add(cls, cid, class_, os, connection, vpn, domain,
-            location=None, weather=None, annotation=None, tid=None):
+            location=None, weather=None, scheduled=None,
+            annotation=None, tid=None):
         """Adds a new terminal"""
         terminal = cls()
         terminal.tid = cls.gen_tid(cid, desired=tid)
@@ -485,6 +486,7 @@ class Terminal(TerminalModel):
         terminal.location = location
         terminal.vid = None
         terminal.weather = weather
+        terminal.scheduled = scheduled
         terminal.deployed = None
         terminal.deleted = None
         terminal.testing = False
