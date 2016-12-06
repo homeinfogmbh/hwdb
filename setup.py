@@ -17,7 +17,6 @@ setup(
         ('/etc', ['files/terminals.conf']),
         # Template files
         ('/usr/share/terminals',
-         ['files/bind.zone.temp',
           'files/openvpn.conf.temp',
           'files/pacman.conf.temp']),
         # Executables

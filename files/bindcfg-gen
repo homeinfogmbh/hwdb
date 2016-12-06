@@ -24,7 +24,7 @@ __all__ = [
     'management_hosts',
     'terminal_hosts']
 
-DNS_TEMPLATE = '/usr/share/terminals/bind.zone.temp'
+DNS_TEMPLATE = '/etc/bind/homeinfo.intranet.temp'
 LOCAL_HOSTS_LIST = '/usr/local/etc/local_hosts'
 DNS_CONFIG = '/etc/bind/homeinfo.vpn.zone'
 RECORD = '{0}\tIN\tA\t{1}\n'
