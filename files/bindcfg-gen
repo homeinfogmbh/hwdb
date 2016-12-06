@@ -26,7 +26,7 @@ __all__ = [
 
 DNS_TEMPLATE = '/usr/local/etc/homeinfo.intranet.zone.temp'
 LOCAL_HOSTS_LIST = '/usr/local/etc/local_hosts'
-DNS_CONFIG = '/etc/bind/homeinfo.vpn.zone'
+DNS_CONFIG = '/etc/bind/homeinfo.intranet.zone'
 RECORD = '{0}\tIN\tA\t{1}\n'
 
 logger = getLogger(basename(__file__))
