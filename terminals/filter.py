@@ -18,13 +18,9 @@ __all__ = [
 class NoSuchTerminals(Exception):
     """Indicates nonexistant terminals"""
 
-    def __init__(self, cid, tids):
+    def __init__(self, cids):
         """Sets nonexistant terminals"""
-        self.cid = cid
-        self.tids = tids
-        super().__init__(
-            '.'.join([','.join([str(tid) for tid in self.tids]),
-                      str(self.cid)]))
+        self.cids = cids
 
 
 def parse(*expressions, fltr=None):
@@ -32,12 +28,26 @@ def parse(*expressions, fltr=None):
 
     fltr = TerminalFilter if fltr is None else fltr
     processed = set()
+    missing = {}
 
     for expression in expressions:
-        for result in fltr(expression):
-            if result not in processed:
-                processed.add(result)
-                yield result
+        try:
+            for result in fltr(expression):
+                if result not in processed:
+                    processed.add(result)
+                    yield result
+        except NoSuchTerminals as e:
+            for cid in e.cids:
+                try:
+                    tids_ = missing[cid]
+                except KeyError:
+                    missing[cid] = e.cids[cid]
+                else:
+                    for tid in e.cids[cid]:
+                        tids_.append(tid)
+
+    if missing:
+        raise NoSuchTerminals(missing)
 
 
 class IdFilter():
@@ -174,4 +184,4 @@ class TerminalFilter(IdFilter):
                         yield terminal
 
             if nonexistant:
-                raise NoSuchTerminals(self.cid, nonexistant)
+                raise NoSuchTerminals({self.cid: nonexistant})
