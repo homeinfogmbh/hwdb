@@ -5,7 +5,7 @@ from itertools import chain
 from peewee import DoesNotExist
 
 from .orm import Terminal
-from .parse import TerminalSelection
+from .parse import TerminalSelectionParser
 
 __all__ = [
     'NoSuchTerminals',
