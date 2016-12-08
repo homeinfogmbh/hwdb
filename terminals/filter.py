@@ -5,9 +5,15 @@ from itertools import chain
 from peewee import DoesNotExist
 
 from .orm import Terminal
-from .parse import TerminalSelectionParser
+from .parse import TerminalSelection
 
 __all__ = ['VidFilter', 'TidFilter', 'TerminalFilter']
+
+
+def parse(*expressions, filter):
+    """Parses terminals from one or more expressions"""
+
+
 
 
 class NoSuchTerminals(Exception):

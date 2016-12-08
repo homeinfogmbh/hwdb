@@ -62,6 +62,7 @@ class TerminalSelectionParser():
     def _ident_str(self):
         """Returns the respective ID expressions"""
         ids_c = len(self._ids_cid)
+
         if ids_c == 1:
             return None
         elif ids_c == 2:
@@ -73,6 +74,7 @@ class TerminalSelectionParser():
     def _blocks(self):
         """Yields identifier blocks"""
         ident_str = self._ident_str
+
         if ident_str is not None:
             for block in ident_str.split(self.BLOCK_SEP):
                 if block:
@@ -83,8 +85,7 @@ class TerminalSelectionParser():
         """Yields virtual identifiers"""
         for block in self._blocks:
             if block.startswith(self.VID_PREFIX):
-                block = block[1:]
-                yield from self._block_range(block, virtual=True)
+                yield from self._block_range(block[1:], virtual=True)
 
     @property
     def tids(self):
@@ -113,6 +114,7 @@ class TerminalSelectionParser():
                         start = None
                     else:
                         raise InvalidIDError(start)
+
                 # Parse end
                 try:
                     end = int(end)
@@ -140,7 +142,6 @@ class TerminalSelectionParser():
                     start = Terminal.max_tid(self.cid)
 
             yield from range(start, end+1)
-
         else:
             try:
                 ident = int(block)
