@@ -7,13 +7,12 @@ from peewee import DoesNotExist
 from .orm import Terminal
 from .parse import TerminalSelection
 
-__all__ = ['VidFilter', 'TidFilter', 'TerminalFilter']
-
-
-def parse(*expressions, filter):
-    """Parses terminals from one or more expressions"""
-
-
+__all__ = [
+    'NoSuchTerminals',
+    'parse',
+    'VidFilter',
+    'TidFilter',
+    'TerminalFilter']
 
 
 class NoSuchTerminals(Exception):
@@ -26,6 +25,19 @@ class NoSuchTerminals(Exception):
         super().__init__(
             '.'.join([','.join([str(tid) for tid in self.tids]),
                       str(self.cid)]))
+
+
+def parse(*expressions, fltr=None):
+    """Yields parsers from expressions"""
+
+    fltr = TerminalFilter if fltr is None else fltr
+    processed = set()
+
+    for expression in expressions:
+        for result in fltr(expression):
+            if result not in processed:
+                processed.add(result)
+                yield result
 
 
 class IdFilter():
