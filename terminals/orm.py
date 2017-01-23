@@ -631,10 +631,7 @@ class Terminal(TerminalModel):
         """Returns a JSON-like dictionary"""
         dictionary = {
             'customer': self.customer.id,
-            'tid': self.tid,
-            'class': self.class_.to_dict(),
-            'os': self.os.to_dict(),
-            'domain': self.domain.to_dict()}
+            'tid': self.tid}
 
         if self.location is not None:
             dictionary['location'] = self.location.to_dict()
@@ -646,6 +643,10 @@ class Terminal(TerminalModel):
             dictionary['deployed'] = str(self.deployed)
 
         if not short:
+            dictionary['class'] = self.class_.to_dict()
+            dictionary['os'] = self.os.to_dict()
+            dictionary['domain'] = self.domain.to_dict()
+
             if self.connection is not None:
                 dictionary['connection'] = self.connection.to_dict()
 
