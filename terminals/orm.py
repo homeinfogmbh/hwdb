@@ -627,7 +627,7 @@ class Terminal(TerminalModel):
                 terminal=self))
             return False
 
-    def to_dict(self):
+    def to_dict(self, short=False):
         """Returns a JSON-like dictionary"""
         dictionary = {
             'customer': self.customer.id,
@@ -636,20 +636,8 @@ class Terminal(TerminalModel):
             'os': self.os.to_dict(),
             'domain': self.domain.to_dict()}
 
-        if self.connection is not None:
-            dictionary['connection'] = self.connection.to_dict()
-
-        if self.vpn is not None:
-            dictionary['vpn'] = self.vpn.to_dict()
-
         if self.location is not None:
             dictionary['location'] = self.location.to_dict()
-
-        if self.vid is not None:
-            dictionary['vid'] = self.vid
-
-        if self.weather is not None:
-            dictionary['weather'] = self.weather
 
         if self.scheduled is not None:
             dictionary['scheduled'] = str(self.scheduled)
@@ -657,20 +645,33 @@ class Terminal(TerminalModel):
         if self.deployed is not None:
             dictionary['deployed'] = str(self.deployed)
 
-        if self.deleted is not None:
-            dictionary['deleted'] = str(self.deleted)
+        if not short:
+            if self.connection is not None:
+                dictionary['connection'] = self.connection.to_dict()
 
-        if self.testing is not None:
-            dictionary['testing'] = self.testing
+            if self.vpn is not None:
+                dictionary['vpn'] = self.vpn.to_dict()
 
-        if self.replacement is not None:
-            dictionary['replacement'] = self.replacement
+            if self.vid is not None:
+                dictionary['vid'] = self.vid
 
-        if self.tainted is not None:
-            dictionary['tainted'] = self.tainted
+            if self.weather is not None:
+                dictionary['weather'] = self.weather
 
-        if self.annotation is not None:
-            dictionary['annotation'] = self.annotation
+            if self.deleted is not None:
+                dictionary['deleted'] = str(self.deleted)
+
+            if self.testing is not None:
+                dictionary['testing'] = self.testing
+
+            if self.replacement is not None:
+                dictionary['replacement'] = self.replacement
+
+            if self.tainted is not None:
+                dictionary['tainted'] = self.tainted
+
+            if self.annotation is not None:
+                dictionary['annotation'] = self.annotation
 
         return dictionary
 
