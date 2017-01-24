@@ -82,7 +82,7 @@ class TerminalUtil():
         testing = self.testing is None
 
         for terminal in self.terminals:
-            if ((deployed or terminal.deployed == self.deployed) and
+            if ((deployed or terminal.isdeployed == self.deployed) and
                     (testing or terminal.testing == self.testing)):
                 yield terminal
 
