@@ -83,43 +83,14 @@ class TerminalUtil():
     def __iter__(self):
         """Filters the terminals by the respective settings"""
         for terminal in self.terminals:
-            if self.deployed:
-                if self.undeployed:
-                    if self.testing:
-                        if self.productive:
-                            yield terminal
-                        else:
-                            if terminal.testing:
-                                yield terminal
-                    else:
-                        if self.productive:
-                            if not terminal.testing:
-                                yield terminal
-                else:
-                    if terminal.deployed is not None:
-                        if self.testing:
-                            if self.productive:
-                                yield terminal
-                            else:
-                                if terminal.testing:
-                                    yield terminal
-                        else:
-                            if self.productive:
-                                if not terminal.testing:
-                                    yield terminal
-            else:
-                if terminal.deployed is None:
-                    if self.undeployed:
-                        if self.testing:
-                            if self.productive:
-                                yield terminal
-                            else:
-                                if terminal.testing:
-                                    yield terminal
-                        else:
-                            if self.productive:
-                                if not terminal.testing:
-                                    yield terminal
+            matches = (
+                self.deployed is None or terminal.deployed == self.deployed,
+                self.undeployed is None or terminal.deployed != self.deployed,
+                self.testing is None or terminal.testing == self.testing,
+                self.productive is None or terminal.testing != self.testing)
+
+            if all(matches):
+                yield terminal
 
     @property
     def terminals(self):
@@ -172,8 +143,7 @@ class TerminalUtil():
     def find(cls, street, house_number=None, annotation=None):
         """Finds terminals in the specified location"""
 
-        for terminal in Terminal.select().where(
-                ~ (Terminal.location >> None)):
+        for terminal in Terminal.select().where(~ (Terminal.location >> None)):
             address = terminal.location.address
             house_number_ = address.house_number.replace(' ', '')
             annotation_ = terminal.location.annotation
