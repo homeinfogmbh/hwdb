@@ -580,25 +580,17 @@ class Terminal(TerminalModel):
     @property
     def due(self):
         """Determines whether the terminal is due for deployment"""
-        if self.scheduled is not None:
-            if self.scheduled <= datetime.now():
-                return True
-
-        return False
+        return self.scheduled is not None and self.scheduled <= datetime.now()
 
     @property
     def isdeployed(self):
         """Determines whether the terminal is deployed"""
-        if self.deployed is not None:
-            if self.deployed <= datetime.now():
-                return True
-
-        return False
+        return self.deployed is not None and self.deployed <= datetime.now()
 
     @property
     def productive(self):
         """Returns whether the system has been deployed and is non-testing"""
-        return True if self.isdeployed and not self.testing else False
+        return self.isdeployed and not self.testing
 
     def deploy(self, date_time=None, force=False):
         """Sets terminals to deployed"""
