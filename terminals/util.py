@@ -82,14 +82,17 @@ class TerminalUtil():
 
     def __iter__(self):
         """Filters the terminals by the respective settings"""
-        for terminal in self.terminals:
-            matches = (
-                self.deployed is None or terminal.deployed == self.deployed,
-                self.undeployed is None or terminal.deployed != self.deployed,
-                self.testing is None or terminal.testing == self.testing,
-                self.productive is None or terminal.testing != self.testing)
+        deployed = self.deployed is None
+        undeployed = self.undeployed is None
+        testing = self.testing is None
+        productive = self.productive is None
 
-            if all(matches):
+        for terminal in self.terminals:
+            if all((
+                    deployed or terminal.deployed == self.deployed,
+                    undeployed or terminal.deployed != self.deployed,
+                    testing or terminal.testing == self.testing,
+                    productive or terminal.testing != self.testing)):
                 yield terminal
 
     @property
