@@ -1,23 +1,21 @@
-#######################################################################
-#                                                                     #
-#           HOMEINFO – Digitale Informationssysteme GmbH              #
-#                                                                     #
-#             Digital Signage Terminals OpenVPN network               #
-#                                                                     #
-#                         CLIENT (template)                           #
-#                                                                     #
-#  This OpenVPN network configuration is intended to gather all       #
-#  HOMEINFO digital signage terminals in one central management       #
-#  network for remote administration.                                 #
-#                                                                     #
-#  Placeholders in braces are to be replaced by                       #
-#  python's str.format() method.                                      #
-#                                                                     #
-#  (C) 2015: HOMEINFO Digitale Informationssysteme GmbH               #
-#                                                                     #
-#  Maintainer:  Richard Neumann <r dot neumann at homeinfo period de> #
-#                                                                     #
-#######################################################################
+################################################
+# HOMEINFO – Digitale Informationssysteme GmbH #
+#                                              #
+#  Digital Signage Terminals OpenVPN network   #
+#                                              #
+#             CLIENT (template)                #
+#                                              #
+# This OpenVPN network configuration is        #
+# intended to gather all HOMEINFO digital      #
+# signage terminals in one central management  #
+# network for remote administration.           #
+# Placeholders in braces are to be replaced by #
+# a rendering script.                          #
+#                                              #
+# (C) 2015: HOMEINFO                           #
+#    Richard Neumann <r.neumann@homeinfo.de>   #
+#                                              #
+################################################
 
 # Specify that we are a client and that we
 # will be pulling certain config file directives
@@ -31,7 +29,7 @@ client
 # the firewall for the TUN/TAP interface.
 ;dev tap
 dev tun
-
+{mtu}
 # Windows needs the TAP-Windows adapter name
 # from the Network Connections panel
 # if you have more than one.  On XP SP2,
@@ -48,7 +46,9 @@ proto udp
 # The hostname/IP and port of the server.
 # You can have multiple remote entries
 # to load balance between the servers.
-{servers}
+remote openvpn.homeinfo.de 1194
+remote srv.homeinfo.de 1194
+remote 91.213.21.17 1194
 
 # Choose a random host from the remote
 # list for load-balancing.  Otherwise
@@ -93,9 +93,9 @@ persist-tun
 # a separate .crt/.key file pair
 # for each client.  A single ca
 # file can be used for all clients.
-ca {ca}
-cert {cert}
-key {key}
+ca ca.crt
+cert {crtfile}
+key {keyfile}
 
 # Verify server certificate by checking
 # that the certicate has the nsCertType
@@ -116,8 +116,8 @@ ns-cert-type server
 # Select a cryptographic cipher.
 # If the cipher option is used on the server
 # then you must also specify it here.
-cipher {cipher}
-auth {auth}
+cipher CAMELLIA-256-CBC
+auth SHA512
 
 # Enable compression on the VPN link.
 # Don't enable this unless it is also
