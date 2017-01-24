@@ -138,7 +138,7 @@ class Domain(TerminalModel):
         if fqdn.endswith('.') and not fqdn.startswith('.'):
             self._fqdn = fqdn
         else:
-            raise ValueError('Not a FQDN: {0}'.format(fqdn))
+            raise ValueError('Not a FQDN: {}'.format(fqdn))
 
     @property
     def name(self):
@@ -222,13 +222,13 @@ class VPN(TerminalModel):
             try:
                 ipv4addr = IPv4Address(desired)
             except AddressValueError:
-                raise ValueError('Not an IPv4 address: {0}'.format(ipv4addr))
+                raise ValueError('Not an IPv4 address: {}'.format(ipv4addr))
             else:
                 if ipv4addr in cls.free_ipv4addrs:
                     return ipv4addr
                 else:
                     raise ValueError(
-                        'IPv4 address {0} is already in use'.format(ipv4addr))
+                        'IPv4 address {} is already in use'.format(ipv4addr))
         else:
             for ipv4addr in cls.free_ipv4addrs:
                 return ipv4addr
