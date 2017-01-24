@@ -572,10 +572,7 @@ class Terminal(TerminalModel):
     @property
     def status(self):
         """Determines the status of the terminal"""
-        if not self.tainted:
-            return self.online
-        else:
-            return False
+        return False if self.tainted else self.online
 
     @property
     def due(self):
