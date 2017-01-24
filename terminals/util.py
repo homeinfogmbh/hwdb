@@ -99,9 +99,9 @@ class TerminalUtil():
     def terminals(self):
         """Yields terminals selected by self.expr"""
         if self.expr:
-            return TerminalFilter(self.expr)
+            yield from TerminalFilter(self.expr)
         else:
-            return Terminal.select().where(True)
+            yield from Terminal
 
     @property
     def header(self):
@@ -213,7 +213,7 @@ class ClassUtil():
 
     def __iter__(self):
         """Lists available classes"""
-        return Class.select().where(True)
+        yield from Class
 
     def __str__(self):
         """Prints available terminal classes"""
@@ -238,7 +238,7 @@ class OSUtil():
 
     def __iter__(self):
         """Lists available OSs"""
-        return OS.select().where(True)
+        yield from OS
 
     def __str__(self):
         """Lists available operating systems"""
@@ -262,7 +262,7 @@ class DomainUtil():
         pass
 
     def __iter__(self):
-        return Domain.select().where(True)
+        yield from Domain
 
     def __str__(self):
         """Lists available domains"""
