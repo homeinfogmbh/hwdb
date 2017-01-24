@@ -67,14 +67,10 @@ class TerminalUtil():
                  '{testing}  {address: >48.48}  {address_annotation: >32.32}  '
                  '{annotation}')
 
-    def __init__(self, expr,
-                 deployed=None, undeployed=None,
-                 testing=None, productive=None):
+    def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
         self.deployed = deployed
-        self.undeployed = undeployed
         self.testing = testing
-        self.productive = productive
 
     def __str__(self):
         """Prints filtered terminals"""
@@ -83,15 +79,11 @@ class TerminalUtil():
     def __iter__(self):
         """Filters the terminals by the respective settings"""
         deployed = self.deployed is None
-        undeployed = self.undeployed is None
         testing = self.testing is None
-        productive = self.productive is None
 
         for terminal in self.terminals:
-            if all((deployed or terminal.deployed == self.deployed,
-                    undeployed or terminal.deployed != self.deployed,
-                    testing or terminal.testing == self.testing,
-                    productive or terminal.testing != self.testing)):
+            if ((deployed or terminal.deployed == self.deployed) and
+                    (testing or terminal.testing == self.testing)):
                 yield terminal
 
     @property

@@ -31,22 +31,27 @@ if __name__ == '__main__':
 
     if options['list-terminals'] or options['ls']:
         expr = options['<expr>']
-        deployed = options['--deployed']
-        undeployed = options['--undeployed']
 
-        if not deployed and not undeployed:
+        if options['--deployed'] and options['--undeployed']:
+            deployed = None
+        elif options['--deployed']:
             deployed = True
-            undeployed = True
+        elif options['--undeployed']:
+            deployed = False
+        else:
+            deployed = None
 
-        testing = options['--testing']
-        productive = options['--productive']
-        omit_header = options['--omit-header']
-
-        if not testing and not productive:
+        if options['--testing'] and options['--productive']:
+            testing = None
+        elif options['--testing']:
             testing = True
-            productive = True
+        elif options['--productive']:
+            testing = False
+        else:
+            testing = None
 
-        utl = TerminalUtil(expr, deployed, undeployed, testing, productive)
+        omit_header = options['--omit-header']
+        utl = TerminalUtil(expr, deployed, testing)
 
         if not omit_header:
             print(utl.header)
