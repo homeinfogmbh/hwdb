@@ -88,8 +88,7 @@ class TerminalUtil():
         productive = self.productive is None
 
         for terminal in self.terminals:
-            if all((
-                    deployed or terminal.deployed == self.deployed,
+            if all((deployed or terminal.deployed == self.deployed,
                     undeployed or terminal.deployed != self.deployed,
                     testing or terminal.testing == self.testing,
                     productive or terminal.testing != self.testing)):
