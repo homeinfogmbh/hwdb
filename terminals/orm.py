@@ -183,13 +183,15 @@ class VPN(TerminalModel):
 
     _ipv4addr = BigIntegerField(db_column='ipv4addr')
     key = CharField(36, null=True, default=None)
+    mtu = IntegerField(null=True, default=None)
 
     @classmethod
-    def add(cls, key=None, ipv4addr=None):
+    def add(cls, ipv4addr=None, key=None, mtu=None):
         """Adds a record for the terminal"""
         openvpn = cls()
-        openvpn.key = key
         openvpn.ipv4addr = cls._gen_addr(desired=ipv4addr)
+        openvpn.key = key
+        openvpn.mtu = mtu
         openvpn.save()
         return openvpn
 
