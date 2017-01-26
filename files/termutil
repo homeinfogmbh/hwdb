@@ -56,7 +56,8 @@ if __name__ == '__main__':
         if not omit_header:
             print(utl.header)
 
-        print(str(utl))
+        for terminal in utl:
+            print(utl.format(terminal))
     elif options['list-class']:
         utl = ClassUtil()
         print(str(utl))
