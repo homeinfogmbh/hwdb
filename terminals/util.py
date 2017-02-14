@@ -1,6 +1,6 @@
 """Terminal query utilities"""
 
-from sys import stdout, stderr
+from sys import stderr
 
 from homeinfo.lib.strf import Shell
 
@@ -161,9 +161,9 @@ class TerminalUtil():
     def get(cls, street, house_number=None, annotation=None, index=None):
         """Finds a terminal by its location"""
 
-        def _print(terminal, file=stdout):
+        def _print(terminal):
             print(repr(terminal.location), file=stderr)
-            print(str(terminal), file=file)
+            print(str(terminal))
 
         terminals = list(cls.find(
             street, house_number=house_number, annotation=annotation))
@@ -188,7 +188,7 @@ class TerminalUtil():
             print(Shell.bold('Ambiguous terminals:'), file=stderr)
 
             for terminal in terminals:
-                _print(terminal, file=stderr)
+                _print(terminal)
 
             return False
 
