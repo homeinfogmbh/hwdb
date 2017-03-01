@@ -88,7 +88,8 @@ class TerminalUtil():
 
         def format(self, terminal):
             """Formats the respective terminal"""
-            return self.template.format(str(self.getattr(terminal)))
+            value = self.getattr(terminal)
+            return self.template.format('–' if value is None else str(value))
 
     class IdField(TerminalField):
         """Field to access the target's ID"""
@@ -124,7 +125,7 @@ class TerminalUtil():
             if location is not None and location.annotation:
                 return str(location.annotation)
             else:
-                return str('–')
+                return '–'
 
     FIELDS = {
         'id': TerminalField('id', 9, 'Record ID'),
