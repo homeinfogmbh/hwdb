@@ -86,10 +86,22 @@ class TerminalUtil():
             """Returns the terminal's field's value"""
             return getattr(terminal, self.name)
 
+        def strval(self, terminal):
+            """Returns the string representation of the value"""
+            value = self.getattr(terminal)
+
+            if value is None:
+                return '–'
+            elif value is True:
+                return '✓'
+            elif value is False:
+                return '✗'
+            else:
+                return str(value)
+
         def format(self, terminal):
             """Formats the respective terminal"""
-            value = self.getattr(terminal)
-            return self.template.format('–' if value is None else str(value))
+            return self.template.format(self.strval(terminal))
 
     class IdField(TerminalField):
         """Field to access the target's ID"""
@@ -101,17 +113,17 @@ class TerminalUtil():
     class OSField(IdField):
         """Field to access the target's ID"""
 
-        def getattr(self, terminal):
+        def strval(self, terminal):
             """Returns the terminal's field's value"""
-            return '🐧' if super().getattr(terminal) == 1 else '⧉'
+            return '🐧' if self.getattr(terminal) == 1 else '⧉'
 
     class AddressField(TerminalField):
         """Field to access the terminal's address"""
 
-        def getattr(self, terminal):
+        def strval(self, terminal):
             """Returns the terminal's field's value"""
             try:
-                return str(super().getattr(terminal))
+                return super().strval(terminal)
             except AddressUnconfiguredError:
                 return 'N/A'
 
@@ -122,10 +134,8 @@ class TerminalUtil():
             """Returns the terminal's field's value"""
             location = super().getattr(terminal)
 
-            if location is not None and location.annotation:
-                return str(location.annotation)
-            else:
-                return '–'
+            if location is not None:
+                return location.annotation
 
     FIELDS = {
         'id': TerminalField('id', 9, 'Record ID'),
