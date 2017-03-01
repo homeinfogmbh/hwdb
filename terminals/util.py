@@ -129,9 +129,9 @@ class TerminalUtil():
     FIELDS = {
         'id': TerminalField('id', 9, 'Record ID'),
         'tid': TerminalField('tid', 11, 'Terminal ID'),
-        'cid': IdField('cid', 11, 'Customer ID'),
+        'cid': IdField('customer', 11, 'Customer ID'),
         'vid': TerminalField('vid', 15, 'Virtual ID'),
-        'os': OSField('vid', 15, 'Virtual ID'),
+        'os': OSField('os', 15, 'Virtual ID'),
         'ipv4addr': TerminalField('ipv4addr', 15, 'IPv4 Address'),
         'deployed': TerminalField('deployed', 21, 'IPv4 Address'),
         'testing': TerminalField('testing', 7, 'Testing'),
