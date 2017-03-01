@@ -65,7 +65,7 @@ class TerminalUtil():
         '{address: >40.40}  {address_annotation: >24.24}  {annotation}')
 
     TEMP_HEAD = (
-        '{id}  {tid}  {cid}  {vid}  {os}  {ipv4addr: >15.15}  '
+        '{id}  {tid}  {cid}  {vid}  {os}  {ipv4addr: <15.15}  '
         '{deployed: >29.29}  {testing}  {address: >48.48}  '
         '{address_annotation: >32.32}  {annotation}')
 
