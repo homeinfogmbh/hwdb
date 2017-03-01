@@ -138,7 +138,7 @@ class TerminalUtil():
         'address': AddressField('address', 40, 'Address'),
         'address-annotation': LocationAnnotationField(
             'location', 24, 'Address annotation'),
-        'annotation': TerminalField('annotation', 24, 'Annotation')}
+        'annotation': TerminalField('annotation', 24, 'Comment')}
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
