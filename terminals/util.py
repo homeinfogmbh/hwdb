@@ -137,7 +137,7 @@ class TerminalUtil():
         'testing': TerminalField('testing', 7, 'Testing'),
         'address': AddressField('address', 40, 'Address'),
         'address-annotation': LocationAnnotationField(
-            'address', 24, 'Address annotation'),
+            'location', 24, 'Address annotation'),
         'annotation': TerminalField('annotation', 24, 'Annotation')}
 
     def __init__(self, expr, deployed=None, testing=None):
