@@ -231,10 +231,10 @@ class TerminalUtil():
         fields = [self.FIELDS[field] for field in fields]
 
         if header:
-            yield ' '.join(str(field) for field in fields)
+            yield '  '.join(str(field) for field in fields)
 
         for terminal in self:
-            yield ' '.join(field.format(terminal) for field in fields)
+            yield '  '.join(field.format(terminal) for field in fields)
 
 
 class ClassUtil():
