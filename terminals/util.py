@@ -68,10 +68,6 @@ class TerminalUtil():
             self.size = size
             self.caption = caption
 
-        def __call__(self, terminal):
-            """Returns the terminal's field's value"""
-            return getattr(terminal, self.name)
-
         def __str__(self):
             """Returns the formatted caption"""
             return Shell.bold(self.template.format(self.caption))
@@ -86,40 +82,44 @@ class TerminalUtil():
             """Returns the formatting string"""
             return '{{0: >{0}.{0}}}'.format(self.spacing)
 
+        def getattr(self, terminal):
+            """Returns the terminal's field's value"""
+            return getattr(terminal, self.name)
+
         def format(self, terminal):
             """Formats the respective terminal"""
-            return self.template.format(self(terminal))
+            return self.template.format(str(self.getattr(terminal)))
 
     class IdField(TerminalField):
         """Field to access the target's ID"""
 
-        def __call__(self, terminal):
+        def getattr(self, terminal):
             """Returns the terminal's field's value"""
-            return super().__call__(terminal).id
+            return super().getattr(terminal).id
 
     class OSField(IdField):
         """Field to access the target's ID"""
 
-        def __call__(self, terminal):
+        def getattr(self, terminal):
             """Returns the terminal's field's value"""
-            return '🐧' if super().__call__(terminal) == 1 else '⧉'
+            return '🐧' if super().getattr(terminal) == 1 else '⧉'
 
     class AddressField(TerminalField):
         """Field to access the terminal's address"""
 
-        def __call__(self, terminal):
+        def getattr(self, terminal):
             """Returns the terminal's field's value"""
             try:
-                return str(super().__call__(terminal))
+                return str(super().getattr(terminal))
             except AddressUnconfiguredError:
                 return 'N/A'
 
     class LocationAnnotationField(TerminalField):
         """Field to access the terminal's location annotation"""
 
-        def __call__(self, terminal):
+        def getattr(self, terminal):
             """Returns the terminal's field's value"""
-            location = super().__call__(terminal)
+            location = super().getattr(terminal)
 
             if location is not None:
                 return str(location.annotation)
