@@ -62,11 +62,11 @@ class TerminalUtil():
     class TerminalField():
         """Wrapper to access terminal properties"""
 
-        def __init__(self, name, size, caption):
+        def __init__(self, name, caption, size=0):
             """Sets the field's name"""
             self.name = name
-            self.size = size
             self.caption = caption
+            self.size = size
 
         def __str__(self):
             """Returns the formatted caption"""
@@ -138,18 +138,19 @@ class TerminalUtil():
                 return location.annotation
 
     FIELDS = {
-        'id': TerminalField('id', 9, 'Record ID'),
-        'tid': TerminalField('tid', 11, 'Terminal ID'),
-        'cid': IdField('customer', 11, 'Customer ID'),
-        'vid': TerminalField('vid', 15, 'Virtual ID'),
-        'os': OSField('os', 3, 'OS'),
-        'ipv4addr': TerminalField('ipv4addr', 14, 'IPv4 Address'),
-        'deployed': TerminalField('deployed', 21, 'Deployed'),
-        'testing': TerminalField('testing', 7, 'Testing'),
-        'address': AddressField('address', 40, 'Address'),
+        'id': TerminalField('id', 'Record ID'),
+        'tid': TerminalField('tid', 'Terminal ID'),
+        'cid': IdField('customer', 'Customer ID'),
+        'vid': TerminalField('vid', 'Virtual ID'),
+        'os': OSField('os', 'OS', size=3),
+        'ipv4addr': TerminalField('ipv4addr', 'IPv4 Address', size=14),
+        'deployed': TerminalField('deployed', 'Deployed', size=21),
+        'testing': TerminalField('testing', 'Testing'),
+        'tainted': TerminalField('tainted', 'Tainted'),
+        'address': AddressField('address', 'Address', size=40),
         'address-annotation': LocationAnnotationField(
-            'location', 24, 'Annotation'),
-        'annotation': TerminalField('annotation', 24, 'Comment')}
+            'location', 'Annotation', size=24),
+        'annotation': TerminalField('annotation', 'Comment', size=24)}
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
@@ -236,8 +237,10 @@ class TerminalUtil():
     def print(self, header=True, fields=None):
         """Yields formatted terminals for console outoput"""
         if fields is None:
-            fields = ('id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
-                      'testing', 'address', 'address-annotation', 'annotation')
+            fields = (
+                'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
+                'testing', 'tainted', 'address', 'address-annotation',
+                'annotation')
 
         fields = [self.FIELDS[field] for field in fields]
 
