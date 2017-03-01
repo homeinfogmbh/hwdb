@@ -223,7 +223,7 @@ class TerminalUtil():
             return False
 
     def print(self, header=True, fields=None):
-        """Formats the terminal with the template string"""
+        """Yields formatted terminals for console outoput"""
         if fields is None:
             fields = ('id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
                       'testing', 'address', 'address-annotation', 'annotation')
@@ -243,24 +243,18 @@ class ClassUtil():
     TEMP = ('{id: >5.5}  {name: <10.10}  '
             '{full_name: <10.10}  {touch: <5.5}')
 
-    def __init__(self):
-        pass
-
     def __iter__(self):
-        """Lists available classes"""
+        """Yields available classes"""
         yield from Class
 
-    def __str__(self):
-        """Prints available terminal classes"""
-        return '\n'.join(self.format(class_) for class_ in self)
-
     def format(self, class_):
-        """Formats the class with the template string"""
-        return self.TEMP.format(
-            id=str(class_.id),
-            name=class_.name,
-            full_name=class_.full_name,
-            touch=str(class_.touch))
+        """Yields formatted classes for console outoput"""
+        for class_ in self:
+            yield self.TEMP.format(
+                id=str(class_.id),
+                name=class_.name,
+                full_name=class_.full_name,
+                touch=str(class_.touch))
 
 
 class OSUtil():
@@ -268,24 +262,18 @@ class OSUtil():
 
     TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 
-    def __init__(self):
-        pass
-
     def __iter__(self):
-        """Lists available OSs"""
+        """Yields available OSs"""
         yield from OS
 
-    def __str__(self):
-        """Lists available operating systems"""
-        return '\n'.join((self.format(os) for os in self))
-
-    def format(self, os):
-        """Formats the OS with the template string"""
-        return self.TEMP.format(
-            id=str(os.id),
-            family=os.family,
-            name=os.name,
-            version=os.version)
+    def print(self):
+        """Yields formatted OSs for console outoput"""
+        for os in self:
+            yield self.TEMP.format(
+                id=str(os.id),
+                family=os.family,
+                name=os.name,
+                version=os.version)
 
 
 class DomainUtil():
@@ -293,17 +281,11 @@ class DomainUtil():
 
     TEMP = '{id: >5.5}  {fqdn}'
 
-    def __init__(self):
-        pass
-
     def __iter__(self):
+        """Yields available domains"""
         yield from Domain
 
-    def __str__(self):
-        """Lists available domains"""
-        return '\n'.join((self.format(domain) for domain in self))
-
-    def format(self, domain):
-        return self.TEMP.format(
-            id=str(domain.id),
-            fqdn=domain.fqdn)
+    def print(self):
+        """Yields formatted domains for console outoput"""
+        for domain in self:
+            yield self.TEMP.format(id=str(domain.id), fqdn=domain.fqdn)

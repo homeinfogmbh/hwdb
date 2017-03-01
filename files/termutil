@@ -57,13 +57,19 @@ if __name__ == '__main__':
             print(line, flush=True)
     elif options['list-class']:
         utl = ClassUtil()
-        print(str(utl))
+
+        for class_ in utl.print():
+            print(class_, flush=True)
     elif options['list-os']:
         utl = OSUtil()
-        print(str(utl))
+
+        for os in utl.print():
+            print(os, flush=True)
     elif options['list-domains']:
         utl = DomainUtil()
-        print(str(utl))
+
+        for domain in utl.print():
+            print(domain, flush=True)
     elif options['find']:
         if options['--index'] is None:
             index = None
