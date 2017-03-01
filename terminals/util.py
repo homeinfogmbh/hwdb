@@ -29,7 +29,7 @@ class DeploymentFilter():
     def __iter__(self):
         """Yields appropriate terminals"""
         for terminal in self.terminals:
-            if terminal.deployed is not None:
+            if terminal.isdeployed:
                 if self.deployed:
                     yield terminal
             else:
