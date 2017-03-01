@@ -131,7 +131,7 @@ class TerminalUtil():
         'tid': TerminalField('tid', 11, 'Terminal ID'),
         'cid': IdField('customer', 11, 'Customer ID'),
         'vid': TerminalField('vid', 15, 'Virtual ID'),
-        'os': OSField('os', 15, 'OS'),
+        'os': OSField('os', 3, 'OS'),
         'ipv4addr': TerminalField('ipv4addr', 15, 'IPv4 Address'),
         'deployed': TerminalField('deployed', 21, 'Deployed'),
         'testing': TerminalField('testing', 7, 'Testing'),
