@@ -59,13 +59,15 @@ class TestingFilter():
 class TerminalUtil():
     """Terminals query utility"""
 
-    TEMP = ('{id: >9.9}  {tid: >11.11}  {cid: >11.11}  {vid: >15.15}  '
-            '{ipv4addr: >12.12}  {deployed: >21.21}  {testing: >7.7}  '
-            '{address: >40.40}  {address_annotation: >24.24}  {annotation}')
+    TEMP = (
+        '{id: >9.9}  {tid: >11.11}  {cid: >11.11}  {vid: >15.15}  '
+        '{os: >2.2}  {ipv4addr: >12.12}  {deployed: >21.21}  {testing: >7.7}  '
+        '{address: >40.40}  {address_annotation: >24.24}  {annotation}')
 
-    TEMP_HEAD = ('{id}  {tid}  {cid}  {vid}  {ipv4addr}  {deployed: >29.29}  '
-                 '{testing}  {address: >48.48}  {address_annotation: >32.32}  '
-                 '{annotation}')
+    TEMP_HEAD = (
+        '{id}  {tid}  {cid}  {vid}  {os}  {ipv4addr}  {deployed: >29.29}  '
+        '{testing}  {address: >48.48}  {address_annotation: >32.32}  '
+        '{annotation}')
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
@@ -102,6 +104,7 @@ class TerminalUtil():
             tid=Shell.bold('Terminal ID'),
             cid=Shell.bold('Customer ID'),
             vid=Shell.bold('Virtual Display'),
+            os=Shell.bold('OS'),
             ipv4addr=Shell.bold('IPv4 Address'),
             deployed=Shell.bold('Deployed'),
             testing=Shell.bold('Testing'),
@@ -126,6 +129,7 @@ class TerminalUtil():
             tid=str(terminal.tid),
             cid=str(terminal.customer.id),
             vid=str(terminal.vid),
+            os=('🐧' if terminal.os == 1 else '⧉'),
             ipv4addr=str(terminal.ipv4addr),
             deployed=str(terminal.deployed),
             testing=str(terminal.testing),
