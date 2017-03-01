@@ -121,7 +121,7 @@ class TerminalUtil():
             """Returns the terminal's field's value"""
             location = super().getattr(terminal)
 
-            if location is not None:
+            if location is not None and location.annotation:
                 return str(location.annotation)
             else:
                 return str('–')
