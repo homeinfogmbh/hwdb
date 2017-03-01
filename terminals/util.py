@@ -59,24 +59,91 @@ class TestingFilter():
 class TerminalUtil():
     """Terminals query utility"""
 
-    TEMP = (
-        '{id: >9.9}  {tid: >11.11}  {cid: >11.11}  {vid: >15.15}  '
-        '{os: >2.2}  {ipv4addr: >15.15}  {deployed: >21.21}  {testing: >7.7}  '
-        '{address: >40.40}  {address_annotation: >24.24}  {annotation}')
+    class TerminalField():
+        """Wrapper to access terminal properties"""
 
-    TEMP_HEAD = (
-        '{id}  {tid}  {cid}  {vid}  {os}      {ipv4addr}  '
-        '{deployed: >29.29}  {testing}  {address: >48.48}  '
-        '{address_annotation: >32.32}  {annotation}')
+        def __init__(self, name, size, caption):
+            """Sets the field's name"""
+            self.name = name
+            self.size = size
+            self.caption = caption
+
+        def __call__(self, terminal):
+            """Returns the terminal's field's value"""
+            return getattr(terminal, self.name)
+
+        def __str__(self):
+            """Returns the formatted caption"""
+            return Shell.bold(self.template.format(self.caption))
+
+        @property
+        def spacing(self):
+            """Returns the required spacing"""
+            return max(self.size, len(self.caption))
+
+        @property
+        def template(self):
+            """Returns the formatting string"""
+            return '{{0: >{0}.{0}}}'.format(self.spacing)
+
+        def format(self, terminal):
+            """Formats the respective terminal"""
+            return self.template.format(self(terminal))
+
+    class IdField(TerminalField):
+        """Field to access the target's ID"""
+
+        def __call__(self, terminal):
+            """Returns the terminal's field's value"""
+            return super().__call__(terminal).id
+
+    class OSField(IdField):
+        """Field to access the target's ID"""
+
+        def __call__(self, terminal):
+            """Returns the terminal's field's value"""
+            return '🐧' if super().__call__(terminal) == 1 else '⧉'
+
+    class AddressField(TerminalField):
+        """Field to access the terminal's address"""
+
+        def __call__(self, terminal):
+            """Returns the terminal's field's value"""
+            try:
+                return str(super().__call__(terminal))
+            except AddressUnconfiguredError:
+                return 'N/A'
+
+    class LocationAnnotationField(TerminalField):
+        """Field to access the terminal's location annotation"""
+
+        def __call__(self, terminal):
+            """Returns the terminal's field's value"""
+            location = super().__call__(terminal)
+
+            if location is not None:
+                return str(location.annotation)
+            else:
+                return str('–')
+
+    FIELDS = {
+        'id': TerminalField('id', 9, 'Record ID'),
+        'tid': TerminalField('tid', 11, 'Terminal ID'),
+        'cid': IdField('cid', 11, 'Customer ID'),
+        'vid': TerminalField('vid', 15, 'Virtual ID'),
+        'os': OSField('vid', 15, 'Virtual ID'),
+        'ipaddr': TerminalField('ipv4addr', 15, 'IPv4 Address'),
+        'deployed': TerminalField('deployed', 21, 'IPv4 Address'),
+        'testing': TerminalField('testing', 7, 'Testing'),
+        'address': AddressField('address', 40, 'Address'),
+        'address-annotation': LocationAnnotationField(
+            'address', 24, 'Address annotation'),
+        'annotation': TerminalField('annotation', 24, 'Annotation')}
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
         self.deployed = deployed
         self.testing = testing
-
-    def __str__(self):
-        """Prints filtered terminals"""
-        return '\n'.join(self.format(terminal) for terminal in self)
 
     def __iter__(self):
         """Filters the terminals by the respective settings"""
@@ -95,47 +162,6 @@ class TerminalUtil():
             yield from TerminalFilter(self.expr)
         else:
             yield from Terminal
-
-    @property
-    def header(self):
-        """Returns the format-string header"""
-        return self.TEMP_HEAD.format(
-            id=Shell.bold('Record ID'),
-            tid=Shell.bold('Terminal ID'),
-            cid=Shell.bold('Customer ID'),
-            vid=Shell.bold('Virtual Display'),
-            os=Shell.bold('OS'),
-            ipv4addr=Shell.bold('IPv4 Address'),
-            deployed=Shell.bold('Deployed'),
-            testing=Shell.bold('Testing'),
-            address=Shell.bold('Address'),
-            address_annotation=Shell.bold('Address annotation'),
-            annotation=Shell.bold('Annotation'))
-
-    def format(self, terminal):
-        """Formats the terminal with the template string"""
-        try:
-            address_str = str(terminal.address)
-        except AddressUnconfiguredError:
-            address_str = 'N/A'
-
-        if terminal.location is not None:
-            address_annotation = str(terminal.location.annotation)
-        else:
-            address_annotation = str(None)
-
-        return self.TEMP.format(
-            id=str(terminal.id),
-            tid=str(terminal.tid),
-            cid=str(terminal.customer.id),
-            vid=str(terminal.vid),
-            os=('🐧' if terminal.os.id == 1 else '⧉'),
-            ipv4addr=str(terminal.ipv4addr),
-            deployed=str(terminal.deployed),
-            testing=str(terminal.testing),
-            address=address_str,
-            address_annotation=address_annotation,
-            annotation=str(terminal.annotation))
 
     @classmethod
     def find(cls, street, house_number=None, annotation=None):
@@ -195,6 +221,20 @@ class TerminalUtil():
                 _print(terminal)
 
             return False
+
+    def print(self, header=True, fields=None):
+        """Formats the terminal with the template string"""
+        if fields is None:
+            fields = ('id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
+                      'testing', 'address', 'address-annotation', 'annotation')
+
+        fields = [self.FIELDS[field] for field in fields]
+
+        if header:
+            yield ' '.join(str(field) for field in fields)
+
+        for terminal in self:
+            yield ' '.join(field.format(terminal) for field in fields)
 
 
 class ClassUtil():

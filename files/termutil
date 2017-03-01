@@ -50,14 +50,11 @@ if __name__ == '__main__':
         else:
             testing = None
 
-        omit_header = options['--omit-header']
+        header = not options['--omit-header']
         utl = TerminalUtil(expr, deployed, testing)
 
-        if not omit_header:
-            print(utl.header)
-
-        for terminal in utl:
-            print(utl.format(terminal))
+        for line in utl.print(terminal, header=header):
+            print(line, flush=True)
     elif options['list-class']:
         utl = ClassUtil()
         print(str(utl))
