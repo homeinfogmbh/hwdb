@@ -73,7 +73,7 @@ class TerminalUtil():
 
         def __str__(self):
             """Returns the formatted caption"""
-            return Shell.bold(self.template(offset=True).format(self.caption))
+            return Shell.bold(self.template().format(self.caption))
 
         @property
         def spacing(self):
@@ -83,7 +83,7 @@ class TerminalUtil():
         def template(self, offset=False):
             """Returns the formatting string"""
             if offset:
-                return self.TEMPLATE.format(self.spacing + self.offset)
+                return self.TEMPLATE.format(self.spacing + offset)
             else:
                 return self.TEMPLATE.format(self.spacing)
 
@@ -104,7 +104,7 @@ class TerminalUtil():
             else:
                 return str(value)
 
-        def format(self, terminal, offset=False):
+        def format(self, terminal, offset=True):
             """Formats the respective terminal"""
             return self.template(offset=offset).format(self.strval(terminal))
 
