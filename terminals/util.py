@@ -62,25 +62,30 @@ class TerminalUtil():
     class TerminalField():
         """Wrapper to access terminal properties"""
 
-        def __init__(self, name, caption, size=0):
+        TEMPLATE = '{{0: >{0}.{0}}}'
+
+        def __init__(self, name, caption, size=0, offset=0):
             """Sets the field's name"""
             self.name = name
             self.caption = caption
             self.size = size
+            self.offset = offset
 
         def __str__(self):
             """Returns the formatted caption"""
-            return Shell.bold(self.template.format(self.caption))
+            return Shell.bold(self.template(offset=True).format(self.caption))
 
         @property
         def spacing(self):
             """Returns the required spacing"""
             return max(self.size, len(self.caption))
 
-        @property
-        def template(self):
+        def template(self, offset=False):
             """Returns the formatting string"""
-            return '{{0: >{0}.{0}}}'.format(self.spacing)
+            if offset:
+                return self.TEMPLATE.format(self.spacing + self.offset)
+            else:
+                return self.TEMPLATE.format(self.spacing)
 
         def getattr(self, terminal):
             """Returns the terminal's field's value"""
@@ -99,9 +104,9 @@ class TerminalUtil():
             else:
                 return str(value)
 
-        def format(self, terminal):
+        def format(self, terminal, offset=False):
             """Formats the respective terminal"""
-            return self.template.format(self.strval(terminal))
+            return self.template(offset=offset).format(self.strval(terminal))
 
     class IdField(TerminalField):
         """Field to access the target's ID"""
@@ -143,7 +148,8 @@ class TerminalUtil():
         'cid': IdField('customer', 'Customer ID'),
         'vid': TerminalField('vid', 'Virtual ID'),
         'os': OSField('os', 'OS', size=3),
-        'ipv4addr': TerminalField('ipv4addr', 'IPv4 Address', size=14),
+        'ipv4addr': TerminalField(
+            'ipv4addr', 'IPv4 Address', size=14, offset=-1),
         'deployed': TerminalField('deployed', 'Deployed', size=21),
         'testing': TerminalField('testing', 'Testing'),
         'tainted': TerminalField('tainted', 'Tainted'),
