@@ -83,7 +83,7 @@ class TerminalUtil():
         def template(self, offset=False):
             """Returns the formatting string"""
             if offset:
-                return self.TEMPLATE.format(self.spacing + offset)
+                return self.TEMPLATE.format(self.spacing + self.offset)
             else:
                 return self.TEMPLATE.format(self.spacing)
 
