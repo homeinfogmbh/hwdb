@@ -323,6 +323,16 @@ class Location(TerminalModel):
             except DoesNotExist:
                 return cls._add(address, annotation=annotation)
 
+    @property
+    def shortinfo(self):
+        """Returns a short information e.g. for Nagios"""
+        result = ' '.join((self.address.street self.address.house_number))
+
+        if self.annotation:
+            result = ' - '.join((result self.annotation))
+
+        return result
+
     def to_dict(self):
         """Returns a JSON-like dictionary"""
         dictionary = {'address': self.address.to_dict()}
