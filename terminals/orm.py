@@ -326,10 +326,10 @@ class Location(TerminalModel):
     @property
     def shortinfo(self):
         """Returns a short information e.g. for Nagios"""
-        result = ' '.join((self.address.street self.address.house_number))
+        result = ' '.join((self.address.street, self.address.house_number))
 
         if self.annotation:
-            result = ' - '.join((result self.annotation))
+            result = ' - '.join((result, self.annotation))
 
         return result
 
