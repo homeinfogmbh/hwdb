@@ -138,7 +138,7 @@ class Domain(TerminalModel):
         if fqdn.endswith('.') and not fqdn.startswith('.'):
             self._fqdn = fqdn
         else:
-            raise ValueError('Not a FQDN: {}'.format(fqdn))
+            raise ValueError('Not a FQDN: "{}".'.format(fqdn))
 
     @property
     def name(self):
@@ -163,7 +163,7 @@ class OS(TerminalModel):
 
     def __repr__(self):
         """Returns the OS name and version"""
-        return '{name} {version}'.format(name=self.name, version=self.version)
+        return '{} {}'.format(self.name, self.version)
 
     def to_dict(self):
         """Returns a JSON-like dictionary"""
@@ -222,13 +222,13 @@ class VPN(TerminalModel):
             try:
                 ipv4addr = IPv4Address(desired)
             except AddressValueError:
-                raise ValueError('Not an IPv4 address: {}'.format(ipv4addr))
+                raise ValueError('Not an IPv4 address: {}.'.format(ipv4addr))
             else:
                 if ipv4addr in cls.free_ipv4addrs:
                     return ipv4addr
                 else:
                     raise ValueError(
-                        'IPv4 address {} is already in use'.format(ipv4addr))
+                        'IPv4 address {} is already in use.'.format(ipv4addr))
         else:
             for ipv4addr in cls.free_ipv4addrs:
                 return ipv4addr
@@ -256,7 +256,7 @@ class Connection(TerminalModel):
     timeout = IntegerField()
 
     def __str__(self):
-        return '{0} ({1})'.format(self.name, self.timeout)
+        return '{} ({})'.format(self.name, self.timeout)
 
     def to_dict(self):
         """Returns a JSON-like dictionary"""
@@ -285,11 +285,9 @@ class Location(TerminalModel):
 
     def __repr__(self):
         """Returns a unique on-liner"""
-        result = '{street} {house_number}, {zip_code} {city}'.format(
-            street=self.address.street,
-            house_number=self.address.house_number,
-            zip_code=self.address.zip_code,
-            city=self.address.city)
+        result = '{} {}, {} {}'.format(
+            self.address.street, self.address.house_number,
+            self.address.zip_code, self.address.city)
 
         if self.annotation:
             result += ' ({})'.format(self.annotation)
@@ -383,9 +381,7 @@ class Terminal(TerminalModel):
     def hosts(cls):
         """Yields entries for /etc/hosts"""
         for terminal in cls.select().where(True):
-            yield '{ipv4addr}\t{hostname}'.format(
-                ipv4addr=terminal.ipv4addr,
-                hostname=terminal.hostname)
+            yield '{}\t{}'.format(terminal.ipv4addr, terminal.hostname)
 
     @classmethod
     def by_cid(cls, cid):
@@ -526,10 +522,7 @@ class Terminal(TerminalModel):
     @property
     def hostname(self):
         """Generates and returns the terminal's host name"""
-        return '{tid}.{cid}.{domain}'.format(
-            tid=self.tid,
-            cid=self.cid,
-            domain=self.domain.name)
+        return '{}.{}.{}'.format(self.tid, self.cid, self.domain.name)
 
     @property
     def ipv4addr(self):
@@ -547,22 +540,17 @@ class Terminal(TerminalModel):
             address = location.address
 
             try:
-                street_houseno = '{street} {house_number}'.format(
-                    street=address.street,
-                    house_number=address.house_number)
+                street_houseno = '{} {}'.format(
+                    address.street, address.house_number)
             except (TypeError, ValueError):
                 return None
             else:
                 try:
-                    zip_city = '{zip_code} {city}'.format(
-                        zip_code=address.zip_code,
-                        city=address.city)
+                    zip_city = '{} {}'.format(address.zip_code, address.city)
                 except (TypeError, ValueError):
                     return None
                 else:
-                    return '{street_houseno}, {zip_city}'.format(
-                        street_houseno=street_houseno,
-                        zip_city=zip_city)
+                    return '{}, {}'.format(street_houseno, zip_city)
         else:
             raise AddressUnconfiguredError()
 
@@ -606,28 +594,25 @@ class Terminal(TerminalModel):
         """Sets terminals to deployed"""
         if self.deployed is None or force:
             deployed = datetime.now() if date_time is None else date_time
-            self.logger.success('Deploying {terminal} on {date}'.format(
-                terminal=self, date=deployed))
+            self.logger.success('Deploying {} on {}.'.format(self, deployed))
             self.deployed = deployed
             self.save()
             return True
         else:
-            self.logger.warning(
-                '{terminal} has already been deployed on {date}'.format(
-                    terminal=self, date=self.deployed))
+            self.logger.warning('{} has already been deployed on {}.'.format(
+                self, self.deployed))
             return False
 
     def undeploy(self, force=False):
         """Sets terminals to NOT deployed"""
         if self.deployed is not None or force:
-            self.logger.info('Undeploying {terminal} from {date}'.format(
-                terminal=self, date=self.deployed))
+            self.logger.info('Undeploying {} from {}.'.format(
+                self, self.deployed))
             self.deployed = None
             self.save()
             return True
         else:
-            self.logger.warning('{terminal} is not deployed'.format(
-                terminal=self))
+            self.logger.warning('{} is not deployed.'.format(self))
             return False
 
     def to_dict(self, short=False):
