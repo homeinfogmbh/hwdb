@@ -606,9 +606,8 @@ class Terminal(TerminalModel):
         """Sets terminals to deployed"""
         if self.deployed is None or force:
             deployed = datetime.now() if date_time is None else date_time
-            self.logger.info(
-                'Deploying {terminal} on {date}'.format(
-                    terminal=self, date=deployed))
+            self.logger.success('Deploying {terminal} on {date}'.format(
+                terminal=self, date=deployed))
             self.deployed = deployed
             self.save()
             return True
