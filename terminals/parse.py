@@ -125,8 +125,8 @@ class TerminalSelectionParser():
                         raise InvalidIDError(end)
 
                 # Disallow leaving out both start
-                # and range on range definition
-                if start is None and range is None:
+                # and end on range definition
+                if start is None and end is None:
                     raise InvalidRangeError(block)
 
             # Derive ranges
