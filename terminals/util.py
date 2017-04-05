@@ -62,7 +62,7 @@ class TerminalUtil():
     class TerminalField():
         """Wrapper to access terminal properties"""
 
-        TEMPLATE = '{{0: >{0}.{0}}}'
+        TEMPLATE = '{{: >{}.{}}}'
 
         def __init__(self, name, caption, size=0, offset=0):
             """Sets the field's name"""
@@ -226,8 +226,8 @@ class TerminalUtil():
             try:
                 terminal = terminals[index]
             except IndexError:
-                print('No {index}th terminal available ({n}).'.format(
-                    index=index, n=len(terminals)), file=stderr)
+                print('No {}th terminal available ({}).'.format(
+                    index, len(terminals)), file=stderr)
                 return False
             else:
                 _print(terminal)
