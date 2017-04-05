@@ -2,7 +2,6 @@
 
 from tempfile import NamedTemporaryFile
 from itertools import chain
-from logging import getLogger
 
 from homeinfo.lib.system import run, ProcessResult
 from homeinfo.terminals.abc import TerminalAware
@@ -35,20 +34,15 @@ class RemoteController(TerminalAware):
     """Controls a terminal remotely"""
 
     def __init__(self, user, terminal, keyfile=None,
-                 white_list=None, bl=None, logger=None):
+                 white_list=None, bl=None, logger=None, debug=False):
         """Initializes a remote terminal controller"""
-        super().__init__(terminal)
+        super().__init__(terminal, logger=logger, debug=debug)
         self.user = user
         self.keyfile = keyfile or '/home/{}/.ssh/terminals'.format(self.user)
 
         # Commands white and black list
         self.white_list = white_list
         self.black_list = bl
-
-        if logger is None:
-            self.logger = getLogger(self.__class__.__name__)
-        else:
-            self.logger = logger.getChild(self.__class__.__name__)
 
         # Further options for SSH
         if self.terminal.connection:

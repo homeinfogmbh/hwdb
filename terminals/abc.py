@@ -1,13 +1,16 @@
 """Abstract base classes for the terminal management"""
 
+from homeinfo.lib.log import LoggingClass
+
 __all__ = ['TerminalAware']
 
 
-class TerminalAware():
+class TerminalAware(LoggingClass):
     """Manages terminals"""
 
-    def __init__(self, terminal):
+    def __init__(self, terminal, logger=None, debug=False):
         """Sets user name and password"""
+        super().__init__(logger=logger, debug=debug)
         self._terminal = terminal
 
     @property
