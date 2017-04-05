@@ -96,56 +96,51 @@ class TerminalSelectionParser():
 
     def _block_range(self, block, virtual=False):
         """Yields elements of a block range or a single ID"""
-        if self.RANGE_SEP in block:
-            try:
-                start, end = block.split(self.RANGE_SEP)
-            except ValueError:
-                if block in self.ALL:
-                    start = None
-                    end = None
-                else:
-                    raise InvalidRangeError(block)
-            else:
-                # Parse start
+        try:
+            yield int(block)
+        except ValueError:
+            if block in self.ALL:
+                start = None
+                end = None
+            elif self.RANGE_SEP in block:
                 try:
-                    start = int(start)
+                    start, end = block.split(self.RANGE_SEP)
                 except ValueError:
+                    raise InvalidRangeError(block) from None
+                else:
                     if start == '':
                         start = None
                     else:
-                        raise InvalidIDError(start)
+                        try:
+                            start = int(start)
+                        except ValueError:
+                            raise InvalidIDError(start) from None
 
-                # Parse end
-                try:
-                    end = int(end)
-                except ValueError:
                     if end == '':
                         end = None
                     else:
-                        raise InvalidIDError(end)
+                        try:
+                            end = int(end)
+                        except ValueError:
+                            raise InvalidIDError(end) from None
 
                 # Disallow leaving out both start
-                # and end on range definition
+                # and end on range definition using "-"
                 if start is None and end is None:
-                    raise InvalidRangeError(block)
+                    raise InvalidRangeError(block) from None
+            else:
+                raise InvalidRangeError(block) from None
 
-            # Derive ranges
             if start is None:
                 if virtual:
                     start = Terminal.min_vid(self.cid)
                 else:
                     start = Terminal.min_id(self.cid)
+
             if end is None:
                 if virtual:
-                    start = Terminal.max_vid(self.cid)
+                    end = Terminal.max_vid(self.cid)
                 else:
-                    start = Terminal.max_tid(self.cid)
+                    end = Terminal.max_tid(self.cid)
 
             yield from range(start, end+1)
-        else:
-            try:
-                ident = int(block)
-            except ValueError:
-                raise InvalidIDError(block)
-            else:
-                yield ident
