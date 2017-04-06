@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 from peewee import Model, PrimaryKeyField, IntegerField, CharField, \
     DateTimeField
 
-from homeinfo.peewee import MySQLDatabase
+from peeweeplus import MySQLDatabase
 
 
 class Statistics(Model):
