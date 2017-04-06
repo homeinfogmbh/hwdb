@@ -14,7 +14,8 @@ pushs from HOMEINFO terminal records
 from os.path import join, basename
 from logging import INFO, getLogger, basicConfig
 
-from homeinfo.lib.system import run, evaluate
+from syslib import run, evaluate
+
 from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal
 from homeinfo.terminals.config import config
 

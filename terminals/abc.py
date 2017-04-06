@@ -1,6 +1,6 @@
 """Abstract base classes for the terminal management"""
 
-from homeinfo.lib.log import LoggingClass
+from fancylog import LoggingClass
 
 __all__ = ['TerminalAware']
 

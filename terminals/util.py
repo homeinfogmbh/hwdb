@@ -2,7 +2,7 @@
 
 from sys import stderr
 
-from homeinfo.lib.strf import Shell
+from strflib import Shell
 
 from homeinfo.terminals.filter import TerminalFilter
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\

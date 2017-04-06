@@ -6,10 +6,11 @@ from ipaddress import IPv4Network, IPv4Address, AddressValueError
 from peewee import Model, ForeignKeyField, IntegerField, CharField,\
     BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
 
-from homeinfo.lib.log import Logger
-from homeinfo.lib.misc import classproperty
-from homeinfo.lib.system import run
-from homeinfo.peewee import MySQLDatabase
+from peeweeplus import MySQLDatabase
+from syslib import run
+from fancylog import Logger
+
+from homeinfo.misc import classproperty
 from homeinfo.crm import Customer, Address, Employee
 
 from .config import config

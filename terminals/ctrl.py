@@ -3,7 +3,8 @@
 from tempfile import NamedTemporaryFile
 from itertools import chain
 
-from homeinfo.lib.system import run, ProcessResult
+from syslib import run, ProcessResult
+
 from homeinfo.terminals.abc import TerminalAware
 
 from .config import config

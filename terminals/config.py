@@ -1,11 +1,11 @@
 """Terminal setup configuration"""
 
-from homeinfo.lib.config import Configuration
+from configparserplus import ConfigParserPlus
 
 __all__ = ['config']
 
 
-class TerminalsConfiguration(Configuration):
+class TerminalsConfiguration(ConfigParserPlus):
     """Main terminals configuration class"""
 
     @property
