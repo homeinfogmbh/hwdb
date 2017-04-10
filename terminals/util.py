@@ -62,7 +62,7 @@ class TerminalUtil():
     class TerminalField():
         """Wrapper to access terminal properties"""
 
-        TEMPLATE = '{{: >{}.{}}}'
+        TEMPLATE = '{{: >{0}.{0}}}'
 
         def __init__(self, name, caption, size=0, offset=0):
             """Sets the field's name"""
