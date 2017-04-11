@@ -98,7 +98,7 @@ if __name__ == '__main__':
         else:
             if terminal.deployed is None:
                 print('Terminal is not deployed.')
-                exit(2)
+                exit(1)
             else:
                 last = terminal.deployed
                 print('never')
