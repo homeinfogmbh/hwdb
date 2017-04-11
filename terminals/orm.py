@@ -63,7 +63,7 @@ class TerminalModel(Model):
 
     class Meta:
         database = MySQLDatabase(
-            config.db['db'],
+            config.db['database'],
             host=config.db['host'],
             user=config.db['user'],
             passwd=config.db['passwd'],
