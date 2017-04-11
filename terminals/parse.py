@@ -1,6 +1,6 @@
 """Terminal selection expression parsing"""
 
-from .orm import Terminal
+from homeinfo.terminals.orm import Terminal
 
 __all__ = [
     'InvalidCustomerID',

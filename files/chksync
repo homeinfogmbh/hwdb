@@ -19,13 +19,14 @@ Options:
 
 from datetime import datetime, timedelta
 
-from docopt import docopt
+from peewee import DoesNotExist
 
 from homeinfo.terminals.orm import Terminal, Synchronization
-from peewee import DoesNotExist
 
 
 if __name__ == '__main__':
+    from docopt import docopt
+
     options = docopt(__doc__)
     tid = options['<tid>']
     cid = options['<cid>']

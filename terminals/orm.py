@@ -13,7 +13,7 @@ from fancylog import Logger
 from homeinfo.misc import classproperty
 from homeinfo.crm import Customer, Address, Employee
 
-from .config import config
+from homeinfo.terminals.config import config
 
 __all__ = [
     'TerminalError',
@@ -63,10 +63,10 @@ class TerminalModel(Model):
 
     class Meta:
         database = MySQLDatabase(
-            config.db['database'],
-            host=config.db['host'],
-            user=config.db['user'],
-            passwd=config.db['passwd'],
+            config['terminals']['database'],
+            host=config['terminals']['host'],
+            user=config['terminals']['user'],
+            passwd=config['terminals']['passwd'],
             closing=True)
         schema = database.database
 
@@ -178,10 +178,9 @@ class OS(TerminalModel):
 class VPN(TerminalModel):
     """OpenVPN settings"""
 
-    NETWORK = IPv4Network(
-        '/'.join(
-            (config.net['IPV4NET'],
-             config.net['IPV4MASK'])))
+    NETWORK = IPv4Network('{}/{}'.format(
+        config['net']['IPV4NET'],
+        config['net']['IPV4MASK']))
 
     _ipv4addr = BigIntegerField(db_column='ipv4addr')
     key = CharField(36, null=True, default=None)

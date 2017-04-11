@@ -4,8 +4,8 @@ from itertools import chain
 
 from peewee import DoesNotExist
 
-from .orm import Terminal
-from .parse import TerminalSelectionParser
+from homeinfo.terminals.orm import Terminal
+from homeinfo.terminals.parse import TerminalSelectionParser
 
 __all__ = [
     'NoSuchTerminals',
