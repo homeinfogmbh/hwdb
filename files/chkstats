@@ -19,10 +19,11 @@ Options:
 
 from datetime import datetime, timedelta
 
-from peewee import Model, PrimaryKeyField, IntegerField, CharField, \
-    DateTimeField
-
+from peewee import DoesNotExist, Model, PrimaryKeyField, IntegerField, \
+    CharField, DateTimeField
 from peeweeplus import MySQLDatabase
+
+from homeinfo.terminals.orm import Terminal
 
 
 class Statistics(Model):
@@ -89,13 +90,24 @@ if __name__ == '__main__':
     try:
         last = max(s.timestamp for s in stats)
     except ValueError:
-        print('never')
+        try:
+            terminal = Terminal.by_ids(cid, tid)
+        except DoesNotExist:
+            print('No such terminal.')
+            exit(2)
+        else:
+            if terminal.deployed is None:
+                print('Terminal is not deployed.')
+                exit(2)
+            else:
+                last = terminal.deployed
+                print('never')
     else:
         print(last)
 
-        if now - last <= warning_delta:
-            exit(0)  # ok
-        elif now - last <= critical_delta:
-            exit(1)  # warning
-        else:
-            exit(2)  # critical
+    if now - last <= warning_delta:
+        exit(0)  # ok
+    elif now - last <= critical_delta:
+        exit(1)  # warning
+    else:
+        exit(2)  # critical
