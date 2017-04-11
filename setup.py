@@ -9,8 +9,6 @@ setup(
     package_dir={'homeinfo': ''},
     packages=['homeinfo.terminals'],
     data_files=[
-        # Main configuration
-        ('/etc', ['files/terminals.conf']),
         # Template files
         ('/usr/share/terminals',
          ['files/openvpn.conf.temp',
