@@ -13,8 +13,8 @@ Usage:
     chkstats <tid> <cid> [options]
 
 Options:
-    --warning=<days>, -w    Warning time period in days [default: 5]
-    --critical=<days>, -c   Critical time period in days [default: 9]
+    --warning=<days>, -w    Warning time period in days [default: 5].
+    --critical=<days>, -c   Critical time period in days [default: 9].
 """
 
 from datetime import datetime, timedelta
