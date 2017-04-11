@@ -26,7 +26,8 @@ __all__ = [
     'VPN',
     'Terminal',
     'Synchronization',
-    'Admin']
+    'Admin',
+    'Statistics']
 
 
 class TerminalError(Exception):
@@ -772,3 +773,23 @@ class Admin(TerminalModel):
             'name': self.name,
             'email': self.email,
             'root': self.root}
+
+
+class Statistics(Model):
+    """Stores application access statistics"""
+
+    class Meta:
+        database = MySQLDatabase(
+            config['statistics']['database'],
+            host=config['statistics']['host'],
+            user=config['statistics']['user'],
+            passwd=config['statistics']['passwd'],
+            closing=True)
+        schema = database.database
+
+    id = PrimaryKeyField()
+    customer = IntegerField()
+    tid = IntegerField(null=True, default=None)
+    vid = IntegerField()
+    document = CharField(255)
+    timestamp = DateTimeField()

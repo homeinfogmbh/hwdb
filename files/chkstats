@@ -19,30 +19,9 @@ Options:
 
 from datetime import datetime, timedelta
 
-from peewee import DoesNotExist, Model, PrimaryKeyField, IntegerField, \
-    CharField, DateTimeField
-from peeweeplus import MySQLDatabase
+from peewee import DoesNotExist
 
-from homeinfo.terminals.orm import Terminal
-
-
-class Statistics(Model):
-    """Stores application access statistics"""
-
-    class Meta:
-        database = MySQLDatabase(
-            'application',
-            host='localhost',
-            user='application',
-            passwd='gQWl5rUGdN6v2CNP',
-            closing=True)
-
-    id = PrimaryKeyField()
-    customer = IntegerField()
-    tid = IntegerField(null=True, default=None)
-    vid = IntegerField()
-    document = CharField(255)
-    timestamp = DateTimeField()
+from homeinfo.terminals.orm import Terminal, Statistics
 
 
 if __name__ == '__main__':
