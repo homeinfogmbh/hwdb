@@ -16,7 +16,6 @@ Options:
     --warning=<days>, -w    Warning time period in days [default: 5].
     --critical=<days>, -c   Critical time period in days [default: 9].
 """
-from gc import collect
 from datetime import datetime, timedelta
 
 from peewee import DoesNotExist
@@ -63,18 +62,10 @@ if __name__ == '__main__':
 
     latest = None
 
-    for stat in Statistics.select().where(
-            (Statistics.customer == cid) &
-            (Statistics.tid == tid)):
-        print('debug')
-
-        if latest is None:
-            latest = stat.timestamp
-        else:
-            if stat.timestamp > latest:
-                latest = stat.timestamp
-
-        collect()
+    for stat in Statistics.select().limit(1).where(
+            (Statistics.customer == cid) & (Statistics.tid == tid)).order_by(
+            Statistics.timestamp.desc()):
+        latest = stat
 
     now = datetime.now()
 
