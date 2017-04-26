@@ -61,14 +61,20 @@ if __name__ == '__main__':
     else:
         critical_delta = timedelta(days=critical)
 
-    stats = Statistics.select().where(
-        (Statistics.customer == cid) &
-        (Statistics.tid == tid))
+    latest = None
+
+    for stat in Statistics.select().where(
+            (Statistics.customer == cid) &
+            (Statistics.tid == tid)):
+        if latest is None:
+            latest = stat
+        else:
+            if stat > latest:
+                latest = stat
+
     now = datetime.now()
 
-    try:
-        last = max(s.timestamp for s in stats)
-    except ValueError:
+    if latest is None:
         try:
             terminal = Terminal.by_ids(cid, tid)
         except DoesNotExist:
