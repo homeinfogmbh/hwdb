@@ -64,12 +64,11 @@ class TerminalUtil():
 
         TEMPLATE = '{{: >{0}.{0}}}'
 
-        def __init__(self, name, caption, size=0, offset=0):
+        def __init__(self, name, caption, size=0):
             """Sets the field's name"""
             self.name = name
             self.caption = caption
             self.size = size
-            self.offset = offset
 
         def __str__(self):
             """Returns the formatted caption"""
@@ -80,12 +79,13 @@ class TerminalUtil():
             """Returns the required spacing"""
             return max(self.size, len(self.caption))
 
-        def template(self, offset=False):
+        def template(self, terminal):
             """Returns the formatting string"""
-            if offset:
-                return self.TEMPLATE.format(self.spacing + self.offset)
-            else:
-                return self.TEMPLATE.format(self.spacing)
+            return self.TEMPLATE.format(self.spacing - self.offset(terminal))
+
+        def offset(self, terminal):
+            """Returns the default offset"""
+            return 0
 
         def getattr(self, terminal):
             """Returns the terminal's field's value"""
@@ -104,9 +104,9 @@ class TerminalUtil():
             else:
                 return str(value)
 
-        def format(self, terminal, offset=True):
+        def format(self, terminal):
             """Formats the respective terminal"""
-            return self.template(offset=offset).format(self.strval(terminal))
+            return self.template(terminal).format(self.strval(terminal))
 
     class IdField(TerminalField):
         """Field to access the target's ID"""
@@ -117,6 +117,10 @@ class TerminalUtil():
 
     class OSField(IdField):
         """Field to access the target's ID"""
+
+        def offset(self, terminal):
+            """Returns the appropriate offset"""
+            return 1 if self.getattr(terminal) == 1 else 0
 
         def strval(self, terminal):
             """Returns the terminal's field's value"""
@@ -148,8 +152,7 @@ class TerminalUtil():
         'cid': IdField('customer', 'Customer ID'),
         'vid': TerminalField('vid', 'Virtual ID'),
         'os': OSField('os', 'OS', size=3),
-        'ipv4addr': TerminalField(
-            'ipv4addr', 'IPv4 Address', size=14, offset=-1),
+        'ipv4addr': TerminalField('ipv4addr', 'IPv4 Address', size=14),
         'deployed': TerminalField('deployed', 'Deployed', size=21),
         'testing': TerminalField('testing', 'Testing'),
         'tainted': TerminalField('tainted', 'Tainted'),
