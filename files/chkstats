@@ -60,16 +60,20 @@ if __name__ == '__main__':
     else:
         critical_delta = timedelta(days=critical)
 
-    latest = None
-
-    for stat in Statistics.select().limit(1).where(
-            (Statistics.customer == cid) & (Statistics.tid == tid)).order_by(
-            Statistics.timestamp.desc()):
-        latest = stat
-
     now = datetime.now()
 
-    if latest is None:
+    for last in Statistics.select().limit(1).where(
+            (Statistics.customer == cid) & (Statistics.tid == tid)).order_by(
+            Statistics.timestamp.desc()):
+        print(last.timestamp)
+
+        if now - last.timestamp <= warning_delta:
+            exit(0)  # ok
+        elif now - last.timestamp <= critical_delta:
+            exit(1)  # warning
+        else:
+            exit(2)  # critical
+    else:
         try:
             terminal = Terminal.by_ids(cid, tid)
         except DoesNotExist:
@@ -82,12 +86,3 @@ if __name__ == '__main__':
             else:
                 last = terminal.deployed
                 print('never')
-    else:
-        print(last)
-
-    if now - last <= warning_delta:
-        exit(0)  # ok
-    elif now - last <= critical_delta:
-        exit(1)  # warning
-    else:
-        exit(2)  # critical
