@@ -79,7 +79,7 @@ class TerminalUtil():
             """Returns the required spacing"""
             return max(self.size, len(self.caption))
 
-        def template(self, terminal):
+        def template(self, terminal=None):
             """Returns the formatting string"""
             return self.TEMPLATE.format(self.spacing - self.offset(terminal))
 
