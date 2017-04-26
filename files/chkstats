@@ -66,6 +66,8 @@ if __name__ == '__main__':
     for stat in Statistics.select().where(
             (Statistics.customer == cid) &
             (Statistics.tid == tid)):
+        print('debug')
+
         if latest is None:
             latest = stat.timestamp
         else:
