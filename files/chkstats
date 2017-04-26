@@ -67,10 +67,10 @@ if __name__ == '__main__':
             (Statistics.customer == cid) &
             (Statistics.tid == tid)):
         if latest is None:
-            latest = stat
+            latest = stat.timestamp
         else:
-            if stat > latest:
-                latest = stat
+            if stat.timestamp > latest:
+                latest = stat.timestamp
 
     now = datetime.now()
 
