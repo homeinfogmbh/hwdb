@@ -16,7 +16,7 @@ Options:
     --warning=<days>, -w    Warning time period in days [default: 5].
     --critical=<days>, -c   Critical time period in days [default: 9].
 """
-
+from gc import collect
 from datetime import datetime, timedelta
 
 from peewee import DoesNotExist
@@ -71,6 +71,8 @@ if __name__ == '__main__':
         else:
             if stat.timestamp > latest:
                 latest = stat.timestamp
+
+        collect()
 
     now = datetime.now()
 
