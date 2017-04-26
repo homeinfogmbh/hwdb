@@ -120,7 +120,7 @@ class TerminalUtil():
 
         def strval(self, terminal):
             """Returns the terminal's field's value"""
-            return '🐧' if self.getattr(terminal) == 1 else '⧉ '
+            return '🐧' if self.getattr(terminal) == 1 else ' ⧉'
 
     class AddressField(TerminalField):
         """Field to access the terminal's address"""
