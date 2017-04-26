@@ -120,7 +120,10 @@ class TerminalUtil():
 
         def offset(self, terminal):
             """Returns the appropriate offset"""
-            return 1 if self.getattr(terminal) == 1 else 0
+            if terminal is not None:
+                return 1 if self.getattr(terminal) == 1 else 0
+            else:
+                return 0
 
         def strval(self, terminal):
             """Returns the terminal's field's value"""
