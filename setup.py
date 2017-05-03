@@ -20,7 +20,7 @@ setup(
           'files/chkstats',
           'files/chksync',
           'files/openvpncfg-gen',
-          'files/refresh-termstats'])
+          'files/refresh-termstats']),
         # Systemd units
         ('/usr/lib/systemd/system',
          ['files/refresh-termstats.service',
