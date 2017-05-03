@@ -66,19 +66,17 @@ if __name__ == '__main__':
         print('No such terminal.')
         exit(2)
 
-    if terminal.deployed is None:
-        print('Terminal is not deployed.')
-        exit(1)
-    else:
-        last = terminal.deployed
-        print('never')
-
     now = datetime.now()
 
     try:
         latest = LatestStats.get(LatestStats.terminal == terminal)
     except DoesNotExist:
-        print('never')
+        if terminal.deployed is None:
+            print('Terminal is not deployed.')
+            exit(1)
+        else:
+            last = terminal.deployed
+            print('never')
     else:
         last = latest.statistics.timestamp
         print(last)
