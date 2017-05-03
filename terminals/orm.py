@@ -814,9 +814,12 @@ class LatestStats(TerminalModel):
     statistics = ForeignKeyField(Statistics, db_column='statistics', null=True)
 
     @classmethod
-    def refresh(cls):
+    def refresh(cls, terminal=None):
         """Refreshes the stats for the respective terminal"""
-        for terminal in Terminal:
+        if terminal is None:
+            for terminal in Terminal:
+                cls.refresh(terminal=terminal)
+        else:
             try:
                 current = cls.get(cls.terminal == terminal)
             except DoesNotExist:
