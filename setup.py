@@ -19,5 +19,10 @@ setup(
           'files/bindcfg-gen',
           'files/chkstats',
           'files/chksync',
-          'files/openvpncfg-gen'])],
+          'files/openvpncfg-gen',
+          'files/refresh-termstats'])
+        # Systemd units
+        ('/usr/lib/systemd/system',
+         ['files/refresh-termstats.service',
+          'files/refresh-termstats.timer'])],
     description=("HOMEINFO's terminal libary"))

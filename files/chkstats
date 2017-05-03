@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 
 from peewee import DoesNotExist
 
-from homeinfo.terminals.orm import Terminal, Statistics
+from homeinfo.terminals.orm import Terminal, LatestStats
 
 
 if __name__ == '__main__':
@@ -60,29 +60,32 @@ if __name__ == '__main__':
     else:
         critical_delta = timedelta(days=critical)
 
+    try:
+        terminal = Terminal.by_ids(cid, tid)
+    except DoesNotExist:
+        print('No such terminal.')
+        exit(2)
+
+    if terminal.deployed is None:
+        print('Terminal is not deployed.')
+        exit(1)
+    else:
+        last = terminal.deployed
+        print('never')
+
     now = datetime.now()
 
-    for last in Statistics.select().limit(1).where(
-            (Statistics.customer == cid) & (Statistics.tid == tid)).order_by(
-            Statistics.timestamp.desc()):
-        print(last.timestamp)
-
-        if now - last.timestamp <= warning_delta:
-            exit(0)  # ok
-        elif now - last.timestamp <= critical_delta:
-            exit(1)  # warning
-        else:
-            exit(2)  # critical
+    try:
+        latest = LatestStats.get(LatestStats.terminal == terminal)
+    except DoesNotExist:
+        print('never')
     else:
-        try:
-            terminal = Terminal.by_ids(cid, tid)
-        except DoesNotExist:
-            print('No such terminal.')
-            exit(2)
-        else:
-            if terminal.deployed is None:
-                print('Terminal is not deployed.')
-                exit(1)
-            else:
-                last = terminal.deployed
-                print('never')
+        last = latest.statistics.timestamp
+        print(last)
+
+    if now - last <= warning_delta:
+        exit(0)  # ok
+    elif now - last <= critical_delta:
+        exit(1)  # warning
+    else:
+        exit(2)  # critical
