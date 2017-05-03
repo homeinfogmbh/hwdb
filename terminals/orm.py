@@ -823,5 +823,5 @@ class LatestStats(TerminalModel):
                 current = cls()
                 current.terminal = terminal
 
-            current.statistics = Statistics.last(terminal)
+            current.statistics = Statistics.latest(terminal)
             current.save()
