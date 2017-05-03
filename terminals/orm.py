@@ -27,7 +27,8 @@ __all__ = [
     'Terminal',
     'Synchronization',
     'Admin',
-    'Statistics']
+    'Statistics',
+    'LatestStats']
 
 
 class TerminalError(Exception):
@@ -792,3 +793,35 @@ class Statistics(Model):
     vid = IntegerField()
     document = CharField(255)
     timestamp = DateTimeField()
+
+    @classmethod
+    def latest(cls, terminal):
+        """Returns the latest statistics record for the respective terminal"""
+        for statistics in cls.select().limit(1).where(
+                (cls.customer == terminal.cid) &
+                (cls.tid == terminal.tid)).order_by(
+                cls.timestamp.desc()):
+            return statistics
+
+
+class LatestStats(TerminalModel):
+    """Stores the last statistics of the respective terminal"""
+
+    class Meta:
+        db_table = 'latest_stats'
+
+    terminal = ForeignKeyField(Terminal, db_column='terminal')
+    statistics = ForeignKeyField(Statistics, db_column='statistics', null=True)
+
+    @classmethod
+    def refresh(cls):
+        """Refreshes the stats for the respective terminal"""
+        for terminal in Terminal:
+            try:
+                current = cls.get(cls.terminal == terminal)
+            except DoesNotExist:
+                current = cls()
+                current.terminal = terminal
+
+            current.statistics = Statistics.last(terminal)
+            current.save()
