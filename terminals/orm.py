@@ -3,7 +3,7 @@
 from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
 
-from peewee import Model, ForeignKeyField, IntegerField, CharField,\
+from peewee import Model, ForeignKeyField, IntegerField, CharField, \
     BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
 
 from peeweeplus import MySQLDatabase
