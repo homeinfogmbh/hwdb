@@ -577,8 +577,7 @@ class Terminal(TerminalModel):
         """Determines whether the terminal
         can be synchronized by HIPSTER
         """
-        # XXX: For now only Linux terminals are considered syncable
-        return self.os == 1     # 1 == HIDSL == Linux
+        return self.os.family == 'Linux'
 
     @property
     def status(self):
