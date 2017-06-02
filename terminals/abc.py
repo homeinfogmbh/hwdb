@@ -11,12 +11,7 @@ class TerminalAware(LoggingClass):
     def __init__(self, terminal, logger=None, debug=False):
         """Sets user name and password"""
         super().__init__(logger=logger, debug=debug)
-        self._terminal = terminal
-
-    @property
-    def terminal(self):
-        """Returns the terminal"""
-        return self._terminal
+        self.terminal = terminal
 
     @property
     def idstr(self):
