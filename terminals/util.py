@@ -273,7 +273,7 @@ class ClassUtil():
         """Yields available classes"""
         yield from Class
 
-    def format(self, class_):
+    def print(self):
         """Yields formatted classes for console outoput"""
         for class_ in self:
             yield self.TEMP.format(
