@@ -505,11 +505,8 @@ class Terminal(TerminalModel):
         terminal.testing = False
         terminal.replacement = False
         terminal.annotation = annotation
-
-        if terminal.save():
-            return terminal
-        else:
-            return False
+        terminal.save()
+        return terminal
 
     @property
     def cid(self):
@@ -716,7 +713,8 @@ class Synchronization(TerminalModel):
         """Stops the synchronization"""
         if force or self.result is not None:
             self.finished = datetime.now()
-            return self.save()
+            self.save()
+            return True
 
     def to_dict(self):
         """Returns a JSON-like dictionary"""
