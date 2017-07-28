@@ -14,13 +14,14 @@ setup(
          ['files/openvpn.conf.temp',
           'files/pacman.conf.temp']),
         # Executables
-        ('/usr/bin',
+        ('/usr/local/bin',
          ['files/termutil',
-          'files/bindcfg-gen',
           'files/chkstats',
           'files/chksync',
-          'files/openvpncfg-gen',
           'files/refresh-termstats']),
+        ('/usr/local/sbin',
+         ['files/bindcfg-gen',
+          'files/openvpncfg-gen',]),
         # Systemd units
         ('/usr/lib/systemd/system',
          ['files/refresh-termstats.service',
