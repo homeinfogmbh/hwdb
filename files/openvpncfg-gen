@@ -28,7 +28,7 @@ from homeinfo.terminals.config import config
 from syslib import run, evaluate
 
 
-RESTART_CMD = 'systemctl restart openvpn@terminals.service'
+RESTART_CMD = 'systemctl restart openvpn-server@terminals.service'
 
 
 def configuration_lines(terminal, script_name='openvpncfg-gen'):
