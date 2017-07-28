@@ -21,7 +21,7 @@ Options:
 
 from os.path import join, basename
 
-from doctopt import docopt
+from docopt import docopt
 from fancylog import Logger
 from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal
 from homeinfo.terminals.config import config
