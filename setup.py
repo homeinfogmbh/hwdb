@@ -21,7 +21,7 @@ setup(
           'files/refresh-termstats']),
         ('/usr/local/sbin',
          ['files/bindcfg-gen',
-          'files/openvpncfg-gen',]),
+          'files/openvpncfg-gen']),
         # Systemd units
         ('/usr/lib/systemd/system',
          ['files/refresh-termstats.service',
