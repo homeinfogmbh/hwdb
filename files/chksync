@@ -36,13 +36,13 @@ if __name__ == '__main__':
     try:
         tid = int(tid)
     except ValueError:
-        print('Invalid terminal ID: {0}'.format(tid))
+        print('Invalid terminal ID: {}'.format(tid))
         exit(4)
 
     try:
         cid = int(cid)
     except ValueError:
-        print('Invalid customer ID: {0}'.format(cid))
+        print('Invalid customer ID: {}'.format(cid))
         exit(5)
 
     try:
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             (Terminal.customer == cid) &
             (Terminal.tid == tid))
     except DoesNotExist:
-        print('No such terminal: {0}.{1}'.format(tid, cid))
+        print('No such terminal: {}.{}'.format(tid, cid))
         exit(8)
 
     latest = None
