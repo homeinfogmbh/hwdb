@@ -5,7 +5,7 @@ Description=Refresh latest terminal statistics
 Type=oneshot
 User=terminals
 Group=terminals
-ExecStart=/usr/bin/refresh-termstats
+ExecStart=/usr/local/bin/refresh-termstats
 
 [Install]
 WantedBy=multi-user.target
