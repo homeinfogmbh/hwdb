@@ -41,6 +41,7 @@ def configuration_lines(terminal, script_name='openvpncfg-gen'):
         terminal.tid, str(terminal.customer), terminal.customer.id)
     yield 'ifconfig-push {} {}'.format(
         terminal.ipv4addr, config['net']['IPV4MASK'])
+    yield ''    # Mandatory empty line at end of file
 
 
 def configuration(terminal, script_name='openvpncfg-gen'):
