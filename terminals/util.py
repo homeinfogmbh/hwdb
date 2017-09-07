@@ -168,7 +168,7 @@ class TerminalUtil():
         if fields is None:
             fields = (
                 'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
-                'testing', 'tainted', 'address', 'annotation', 'comment')
+                'testing', 'tainted', 'address', 'annotation')
 
         fields = tuple(self.FIELDS[field] for field in fields)
 
