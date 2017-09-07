@@ -3,7 +3,12 @@
 from strflib import Shell
 from homeinfo.terminals.orm import AddressUnconfiguredError
 
-__all__ = ['get_annotation', 'get_address', 'stringify', 'TerminalField']
+__all__ = [
+    'get_annotation',
+    'get_address',
+    'stringify',
+    'justify',
+    'TerminalField']
 
 
 def get_annotation(terminal):
@@ -39,10 +44,17 @@ def stringify(value):
     return str(value)
 
 
+def justify(string, spacing, leftbound=False):
+    """Justifies the string."""
+
+    if leftbound:
+        return string.ljust(spacing)
+
+    return string.rjust(spacing)
+
+
 class TerminalField():
     """Wrapper to access terminal properties."""
-
-    TEMPLATE = '{{: {1}{0}.{0}}}'
 
     def __init__(self, getter, caption, size=0, leftbound=False):
         """Sets the field's name"""
@@ -53,19 +65,19 @@ class TerminalField():
 
     def __str__(self):
         """Returns the formatted caption."""
-        return Shell.bold(self.template.format(self.caption))
+        return Shell.bold(repr(self))
+
+    def __repr__(self):
+        """Returns the justified caption."""
+        return justify(self.caption, self.spacing, leftbound=self.leftbound)
 
     def __call__(self, terminal):
         """Handles the given value."""
-        return self.template.format(stringify(self.getter(terminal)))
+        value = self.getter(terminal)
+        string = stringify(value)
+        return justify(string, self.spacing, leftbound=self.leftbound)
 
     @property
     def spacing(self):
         """Returns the required spacing."""
         return max(self.size, len(self.caption))
-
-    @property
-    def template(self):
-        """Returns the pre-formatted template."""
-        return self.TEMPLATE.format(
-            self.spacing, '<' if self.leftbound else '>')
