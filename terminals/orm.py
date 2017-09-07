@@ -13,7 +13,7 @@ from fancylog import Logger
 from homeinfo.misc import classproperty
 from homeinfo.crm import Customer, Address, Employee
 
-from .config import config
+from .config import CONFIG
 
 __all__ = [
     'TerminalError',
@@ -64,10 +64,10 @@ class TerminalModel(Model):
 
     class Meta:
         database = MySQLDatabase(
-            config['terminals']['database'],
-            host=config['terminals']['host'],
-            user=config['terminals']['user'],
-            passwd=config['terminals']['passwd'],
+            CONFIG['terminals']['database'],
+            host=CONFIG['terminals']['host'],
+            user=CONFIG['terminals']['user'],
+            passwd=CONFIG['terminals']['passwd'],
             closing=True)
         schema = database.database
 
@@ -180,8 +180,8 @@ class VPN(TerminalModel):
     """OpenVPN settings"""
 
     NETWORK = IPv4Network('{}/{}'.format(
-        config['net']['IPV4NET'],
-        config['net']['IPV4MASK']))
+        CONFIG['net']['IPV4NET'],
+        CONFIG['net']['IPV4MASK']))
 
     _ipv4addr = BigIntegerField(db_column='ipv4addr')
     key = CharField(36, null=True, default=None)
@@ -785,10 +785,10 @@ class Statistics(Model):
 
     class Meta:
         database = MySQLDatabase(
-            config['statistics']['database'],
-            host=config['statistics']['host'],
-            user=config['statistics']['user'],
-            passwd=config['statistics']['passwd'],
+            CONFIG['statistics']['database'],
+            host=CONFIG['statistics']['host'],
+            user=CONFIG['statistics']['user'],
+            passwd=CONFIG['statistics']['passwd'],
             closing=True)
         schema = database.database
 
