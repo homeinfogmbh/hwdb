@@ -174,7 +174,7 @@ class TerminalUtil():
             yield '  '.join(str(field) for field in fields)
 
         for terminal in self:
-            yield '  '.join(field.format(terminal) for field in fields)
+            yield '  '.join(field(terminal) for field in fields)
 
 
 class ClassUtil():
