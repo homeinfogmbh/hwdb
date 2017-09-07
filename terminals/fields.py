@@ -44,13 +44,13 @@ def stringify(value):
     return str(value)
 
 
-def justify(string, spacing, leftbound=False):
+def justify(string, size, leftbound=False):
     """Justifies the string."""
 
     if leftbound:
-        return string[0:space].ljust(spacing)
+        return string[0:size].ljust(size)
 
-    return string[0:space].rjust(spacing)
+    return string[0:size].rjust(size)
 
 
 class TerminalField():
@@ -60,7 +60,7 @@ class TerminalField():
         """Sets the field's name"""
         self.getter = getter
         self.caption = caption
-        self.size = size
+        self._size = size
         self.leftbound = leftbound
 
     def __str__(self):
@@ -78,6 +78,6 @@ class TerminalField():
         return justify(string, self.spacing, leftbound=self.leftbound)
 
     @property
-    def spacing(self):
+    def size(self):
         """Returns the required spacing."""
-        return max(self.size, len(self.caption))
+        return max(self._size, len(self.caption))
