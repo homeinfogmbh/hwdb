@@ -5,7 +5,7 @@ from sys import stderr
 from strflib import Shell
 
 from .fields import get_address, get_annotation, TerminalField
-from .filter import parse
+from .filter import parse, PrintMissing
 from .orm import Class, Domain, OS, Terminal
 
 
@@ -100,7 +100,8 @@ class TerminalUtil():
     def terminals(self):
         """Yields terminals selected by self.expr"""
         if self.expr:
-            yield from parse(self.expr)
+            with PrintMissing():
+                yield from parse(self.expr)
         else:
             yield from Terminal
 
