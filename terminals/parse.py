@@ -90,7 +90,7 @@ def parse_block(block, sep='-'):
         else:
             return Identifier.from_string(block)
     else:
-        start = Identifier.from_string(block)
+        start = Identifier.from_string(start)
         end = Identifier.from_string(end)
 
         if int(start) < int(end):
