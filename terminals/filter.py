@@ -1,13 +1,14 @@
 """Terminal filters"""
 
 from contextlib import suppress
+from sys import stderr
 
 from peewee import DoesNotExist
 
 from .orm import Terminal
 from .parse import MissingTerminals, TerminalSelection
 
-__all__ = ['NoSuchTerminals', 'parse', 'terminals']
+__all__ = ['NoSuchTerminals', 'PrintMissing', 'parse', 'terminals']
 
 
 class NoSuchTerminals(Exception):
