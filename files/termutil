@@ -111,8 +111,8 @@ def main(options):
     """Runs the terminal utility."""
 
     if options['list'] or options['ls']:
-        if sum(options['--terminals'], options['--classes'],
-               options['--os'], options['--domains']) != 1:
+        if sum((options['--terminals'], options['--classes'],
+                options['--os'], options['--domains'])) != 1:
             print('Must specify exactly one list option.')
             return 1
         elif options['--terminals']:
