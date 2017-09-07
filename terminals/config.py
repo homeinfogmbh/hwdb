@@ -2,6 +2,6 @@
 
 from configparserplus import ConfigParserPlus
 
-__all__ = ['config']
+__all__ = ['CONFIG']
 
-config = ConfigParserPlus('/etc/terminals.conf')
+CONFIG = ConfigParserPlus('/etc/terminals.conf')

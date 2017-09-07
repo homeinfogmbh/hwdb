@@ -4,10 +4,9 @@ from sys import stderr
 
 from strflib import Shell
 
-from homeinfo.terminals.fields import get_address, get_annotation, \
-    TerminalField
-from homeinfo.terminals.filter import parse
-from homeinfo.terminals.orm import Class, Domain, OS, Terminal
+from .fields import get_address, get_annotation, TerminalField
+from .filter import parse
+from .orm import Class, Domain, OS, Terminal
 
 
 __all__ = [

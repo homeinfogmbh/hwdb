@@ -13,7 +13,7 @@ from fancylog import Logger
 from homeinfo.misc import classproperty
 from homeinfo.crm import Customer, Address, Employee
 
-from homeinfo.terminals.config import config
+from .config import config
 
 __all__ = [
     'TerminalError',

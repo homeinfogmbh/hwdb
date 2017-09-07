@@ -24,7 +24,7 @@ from os.path import join, basename
 from docopt import docopt
 from fancylog import Logger
 from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal
-from homeinfo.terminals.config import config
+from homeinfo.terminals.config import CONFIG
 from syslib import run, evaluate
 
 
@@ -40,7 +40,7 @@ def configuration_lines(terminal, script_name='openvpncfg-gen'):
     yield '# Terminal no. {} for customer {} ({})'.format(
         terminal.tid, str(terminal.customer), terminal.customer.id)
     yield 'ifconfig-push {} {}'.format(
-        terminal.ipv4addr, config['net']['IPV4MASK'])
+        terminal.ipv4addr, CONFIG['net']['IPV4MASK'])
     yield ''    # Mandatory empty line at end of file
 
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
                 terminal))
         else:
             file_name = terminal.vpn.key or str(terminal)
-            file_path = join(config['openvpn']['CLIENTS_DIR'], file_name)
+            file_path = join(CONFIG['openvpn']['CLIENTS_DIR'], file_name)
 
             with open(file_path, 'w') as cfg:
                 cfg.write(config_text)

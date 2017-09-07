@@ -5,14 +5,18 @@ from peewee import DoesNotExist
 from .orm import Terminal
 
 __all__ = [
+    'VID_PREFIX',
     'InvalidExpression',
     'InvalidBlock',
     'InvalidIdentifier',
     'InvalidCustomerID',
-    'NoSuchTerminals',
+    'MissingTerminals',
     'Identifier',
     'IdentifierList',
     'TerminalSelection']
+
+
+VID_PREFIX = 'v'
 
 
 class InvalidExpression(ValueError):
@@ -53,7 +57,7 @@ class InvalidCustomerID(ValueError):
         self.cid = cid
 
 
-class NoSuchTerminals(ValueError):
+class MissingTerminals(ValueError):
     """indicates that the respective terminals were missing."""
 
     def __init__(self, cid, identifiers):
@@ -116,7 +120,7 @@ class Identifier:
 
     def __str__(self):
         """Returns the integer value as string."""
-        return str(self.value)
+        return '{}{}'.format(VID_PREFIX if self.virtual else '', self.value)
 
     def __int__(self):
         """Returns the value."""
@@ -132,9 +136,9 @@ class Identifier:
         return hash((self.value, self.virtual))
 
     @classmethod
-    def from_string(cls, string, vid_prefix='v'):
+    def from_string(cls, string):
         """Sets the ID from from the provided string."""
-        if string.startswith(vid_prefix):
+        if string.startswith(VID_PREFIX):
             virtual = True
             string = string[1:]
         else:
@@ -227,7 +231,7 @@ class TerminalSelection:
                         missing.add(identifier)
 
             if missing:
-                raise NoSuchTerminals(self.cid, identifiers)
+                raise MissingTerminals(self.cid, identifiers)
 
     @property
     def expression(self):

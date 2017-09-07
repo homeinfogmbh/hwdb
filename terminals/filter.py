@@ -4,18 +4,52 @@ from contextlib import suppress
 
 from peewee import DoesNotExist
 
-from homeinfo.terminals.orm import Terminal
-from homeinfo.terminals.parse import TerminalSelection
+from .orm import Terminal
+from .parse import MissingTerminals, TerminalSelection
 
-__all__ = ['parse', 'terminals']
+__all__ = ['NoSuchTerminals', 'parse', 'terminals']
+
+
+class NoSuchTerminals(Exception):
+    """Idicates that the respective terminals are missing."""
+
+    def __init__(self, missing):
+        """Sets the missing terminals dictionary."""
+        super().__init__(missing)
+        self.missing = missing
+
+    def __str__(self):
+        """Prints the missing terminal IDs."""
+        return '\n'.join(
+            'Missing terminal: {}.'.format(terminal)
+            for terminal in self.terminals)
+
+    @property
+    def terminals(self):
+        """Yields the missing terminal IDs."""
+        for cid, identifiers in self.missing.items():
+            for identifier in identifiers:
+                yield '{}.{}'.format(cid, identifier)
 
 
 def parse(*expressions):
     """Yields parsers from expressions"""
 
+    missing = {}
+
     for expression in expressions:
-        for terminal in TerminalSelection(expression):
-            yield terminal
+        try:
+            for terminal in TerminalSelection(expression):
+                yield terminal
+        except MissingTerminals as missing_terminals:
+            try:
+                missing[missing_terminals.cid].update(
+                    missing_terminals.identifiers)
+            except KeyError:
+                missing[missing_terminals.cid] = missing_terminals.identifiers
+
+    if missing:
+        raise NoSuchTerminals(missing)
 
 
 def terminals(customer, vids=None, tids=None):
