@@ -204,9 +204,7 @@ class TerminalSelection:
                         (Terminal.customer == self.cid) &
                         (Terminal.tid == tid))
         else:
-            for terminal in Terminal.select().where(
-                    Terminal.customer == self.customer):
-                yield terminal
+            yield from Terminal.select().where(Terminal.customer == self.cid)
 
     def __contains__(self, _):
         """Overrides inherited containment check, to fall back to __iter__."""
