@@ -55,6 +55,8 @@ class InvalidCustomerID(ValueError):
 def split_cid(expression, sep='.'):
     """Splits IDs and customer ID."""
 
+    print('Expression:', expression)
+
     try:
         identifiers, cid = expression.split(sep)
     except ValueError:
@@ -69,12 +71,16 @@ def split_cid(expression, sep='.'):
 def split_blocks(identifiers, sep=','):
     """Splits TID / VID ID blocks."""
 
+    print('Identifiers:', identifiers)
+
     for block in identifiers.split(sep):
         yield block.strip()
 
 
 def parse_block(block, sep='-'):
     """Yields the block's values."""
+
+    print('Block:', block)
 
     try:
         start, end = block.split(sep)
