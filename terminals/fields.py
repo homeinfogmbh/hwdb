@@ -69,15 +69,15 @@ class TerminalField():
 
     def __repr__(self):
         """Returns the justified caption."""
-        return justify(self.caption, self.spacing, leftbound=self.leftbound)
+        return justify(self.caption, self.size, leftbound=self.leftbound)
 
     def __call__(self, terminal):
         """Handles the given value."""
         value = self.getter(terminal)
         string = stringify(value)
-        return justify(string, self.spacing, leftbound=self.leftbound)
+        return justify(string, self.size, leftbound=self.leftbound)
 
     @property
     def size(self):
-        """Returns the required spacing."""
+        """Returns the desired size."""
         return max(self._size, len(self.caption))
