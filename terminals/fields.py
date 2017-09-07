@@ -48,9 +48,9 @@ def justify(string, spacing, leftbound=False):
     """Justifies the string."""
 
     if leftbound:
-        return string.ljust(spacing)
+        return string[0:space].ljust(spacing)
 
-    return string.rjust(spacing)
+    return string[0:space].rjust(spacing)
 
 
 class TerminalField():
