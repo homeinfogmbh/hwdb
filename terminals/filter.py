@@ -94,3 +94,4 @@ class PrintMissing:
         """Checks for NoSuchTerminals exception."""
         if typ is NoSuchTerminals:
             print(value, file=self.file, flush=True)
+            return True
