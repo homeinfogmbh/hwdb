@@ -169,7 +169,7 @@ class IdentifierList:
         for block in self.blocks:
             try:
                 start, end = block
-            except ValueError:
+            except TypeError:
                 yield block
             else:
                 yield start
