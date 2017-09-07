@@ -56,104 +56,105 @@ class TestingFilter():
                     yield terminal
 
 
+class TerminalField():
+    """Wrapper to access terminal properties"""
+
+    TEMPLATE = '{{: >{0}.{0}}}'
+
+    def __init__(self, name, caption, size=0):
+        """Sets the field's name"""
+        self.name = name
+        self.caption = caption
+        self.size = size
+
+    def __str__(self):
+        """Returns the formatted caption"""
+        return Shell.bold(self.template().format(self.caption))
+
+    @property
+    def spacing(self):
+        """Returns the required spacing"""
+        return max(self.size, len(self.caption))
+
+    def template(self, terminal=None):
+        """Returns the formatting string"""
+        return self.TEMPLATE.format(self.spacing - self.offset(terminal))
+
+    def offset(self, _):
+        """Returns the default offset"""
+        return 0
+
+    def getattr(self, terminal):
+        """Returns the terminal's field's value"""
+        return getattr(terminal, self.name)
+
+    def strval(self, terminal):
+        """Returns the string representation of the value"""
+        value = self.getattr(terminal)
+
+        if value is None:
+            return '–'
+        elif value is True:
+            return '✓'
+        elif value is False:
+            return '✗'
+
+        return str(value)
+
+    def format(self, terminal):
+        """Formats the respective terminal"""
+        return self.template(terminal).format(self.strval(terminal))
+
+class IdField(TerminalField):
+    """Field to access the target's ID"""
+
+    def getattr(self, terminal):
+        """Returns the terminal's field's value"""
+        return super().getattr(terminal).id
+
+class OSField(IdField):
+    """Field to access the target's ID"""
+
+    def offset(self, terminal):
+        """Returns the appropriate offset"""
+        if terminal is not None:
+            return 1 if self.getattr(terminal) == 1 else 0
+
+        return 0
+
+    def strval(self, terminal):
+        """Returns the terminal's field's value"""
+        return '🐧' if self.getattr(terminal) == 1 else '⧉'
+
+class AddressField(TerminalField):
+    """Field to access the terminal's address"""
+
+    def strval(self, terminal):
+        """Returns the terminal's field's value"""
+        try:
+            return super().strval(terminal)
+        except AddressUnconfiguredError:
+            return 'N/A'
+
+class LocationAnnotationField(TerminalField):
+    """Field to access the terminal's location annotation"""
+
+    def getattr(self, terminal):
+        """Returns the terminal's field's value"""
+        location = super().getattr(terminal)
+
+        if location is not None:
+            return location.annotation
+
+
 class TerminalUtil():
     """Terminals query utility"""
 
-    class TerminalField():
-        """Wrapper to access terminal properties"""
-
-        TEMPLATE = '{{: >{0}.{0}}}'
-
-        def __init__(self, name, caption, size=0):
-            """Sets the field's name"""
-            self.name = name
-            self.caption = caption
-            self.size = size
-
-        def __str__(self):
-            """Returns the formatted caption"""
-            return Shell.bold(self.template().format(self.caption))
-
-        @property
-        def spacing(self):
-            """Returns the required spacing"""
-            return max(self.size, len(self.caption))
-
-        def template(self, terminal=None):
-            """Returns the formatting string"""
-            return self.TEMPLATE.format(self.spacing - self.offset(terminal))
-
-        def offset(self, terminal):
-            """Returns the default offset"""
-            return 0
-
-        def getattr(self, terminal):
-            """Returns the terminal's field's value"""
-            return getattr(terminal, self.name)
-
-        def strval(self, terminal):
-            """Returns the string representation of the value"""
-            value = self.getattr(terminal)
-
-            if value is None:
-                return '–'
-            elif value is True:
-                return '✓'
-            elif value is False:
-                return '✗'
-            else:
-                return str(value)
-
-        def format(self, terminal):
-            """Formats the respective terminal"""
-            return self.template(terminal).format(self.strval(terminal))
-
-    class IdField(TerminalField):
-        """Field to access the target's ID"""
-
-        def getattr(self, terminal):
-            """Returns the terminal's field's value"""
-            return super().getattr(terminal).id
-
-    class OSField(IdField):
-        """Field to access the target's ID"""
-
-        def offset(self, terminal):
-            """Returns the appropriate offset"""
-            if terminal is not None:
-                return 1 if self.getattr(terminal) == 1 else 0
-            else:
-                return 0
-
-        def strval(self, terminal):
-            """Returns the terminal's field's value"""
-            return '🐧' if self.getattr(terminal) == 1 else '⧉'
-
-    class AddressField(TerminalField):
-        """Field to access the terminal's address"""
-
-        def strval(self, terminal):
-            """Returns the terminal's field's value"""
-            try:
-                return super().strval(terminal)
-            except AddressUnconfiguredError:
-                return 'N/A'
-
-    class LocationAnnotationField(TerminalField):
-        """Field to access the terminal's location annotation"""
-
-        def getattr(self, terminal):
-            """Returns the terminal's field's value"""
-            location = super().getattr(terminal)
-
-            if location is not None:
-                return location.annotation
-
     FIELDS = {
-        'id': TerminalField('id', 'Record ID'),
-        'tid': TerminalField('tid', 'Terminal ID'),
-        'cid': IdField('customer', 'Customer ID'),
-        'vid': TerminalField('vid', 'Virtual ID'),
+        'id': TerminalField('id', 'ID', size=4),
+        'tid': TerminalField('tid', 'TID', size=3),
+        'cid': IdField('customer', 'CID', size=10),
+        'vid': TerminalField('vid', 'VID', size=3),
         'os': OSField('os', 'OS', size=3),
         'ipv4addr': TerminalField('ipv4addr', 'IPv4 Address', size=14),
         'deployed': TerminalField('deployed', 'Deployed', size=21),
@@ -190,7 +191,6 @@ class TerminalUtil():
     @classmethod
     def find(cls, street, house_number=None, annotation=None):
         """Finds terminals in the specified location"""
-
         for terminal in Terminal.select().where(~ (Terminal.location >> None)):
             address = terminal.location.address
             house_number_ = address.house_number.replace(' ', '')
@@ -200,13 +200,13 @@ class TerminalUtil():
                 if house_number is not None:
                     if house_number.lower() == house_number_.lower():
                         if annotation is not None:
-                            if (annotation.lower() in annotation_.lower()):
+                            if annotation.lower() in annotation_.lower():
                                 yield terminal
                         else:
                             yield terminal
                 else:
                     if annotation is not None:
-                        if (annotation.lower() in annotation_.lower()):
+                        if annotation.lower() in annotation_.lower():
                             yield terminal
                     else:
                         yield terminal
@@ -294,12 +294,12 @@ class OSUtil():
 
     def print(self):
         """Yields formatted OSs for console outoput"""
-        for os in self:
+        for operating_system in self:
             yield self.TEMP.format(
-                id=str(os.id),
-                family=os.family,
-                name=os.name,
-                version=os.version)
+                id=str(operating_system.id),
+                family=operating_system.family,
+                name=operating_system.name,
+                version=operating_system.version)
 
 
 class DomainUtil():
