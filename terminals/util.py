@@ -164,7 +164,7 @@ class TerminalUtil():
 
             return False
 
-    def print(self, header=True, fields=None):
+    def print(self, header=True, fields=None, sep='  '):
         """Yields formatted terminals for console outoput"""
         if fields is None:
             fields = (
@@ -174,10 +174,10 @@ class TerminalUtil():
         fields = tuple(self.FIELDS[field] for field in fields)
 
         if header:
-            yield '  '.join(str(field) for field in fields)
+            yield sep.join(str(field) for field in fields)
 
         for terminal in self:
-            yield '  '.join(field(terminal) for field in fields)
+            yield sep.join(field(terminal) for field in fields)
 
 
 class ClassUtil():

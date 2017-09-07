@@ -4,83 +4,131 @@
 Maintainer: Richard Neumann <r.neumann@homeinfo.de>
 
 Usage:
-    termutil (list-terminals | ls) [<expr> [(--deployed | --undeployed)] \
-[(--testing | --productive)]] [--omit-header]
-    termutil list-class
-    termutil list-os
-    termutil list-domains
-    termutil find <street> [<house_number>] [--annotation=<annotation>] \
-[--index=<n>]
+    termutil (list | ls) [<expr>] [options]
+    termutil find <street> [<house_number>] [options]
 
 Options:
-    --deployed                  Only print deployed terminals.
-    --undeployed                Only print undeployed terminals.
-    --testing                   Only print testing terminals.
-    --productive                Only print productive terminals.
-    --omit-header               Do not print the column header.
-    --index=<n>                 On ambiguous results, use the nth.
-    --annotation=<annotation>   Consider the respective location annotation.
+    --terminals, -T                 List terminals.
+    --classes, -C                   List terminal classes.
+    --os, -O                        List operating systems.
+    --domains, -D                   List domains.
+    --deployed, -d                  Only print deployed terminals.
+    --undeployed, -u                Only print undeployed terminals.
+    --testing, -t                   Only print testing terminals.
+    --productive, -p                Only print productive terminals.
+    --omit-header, -h               Do not print the column header.
+    --separator=<separator>, -s     Specifies the column separator.
+    --fields=<fields>, -f           Comma-separated list of fields to display.
+    --index=<n>, -i                 On ambiguous results, use the nth.
+    --annotation=<annotation>, -a   Consider the specified location annotation.
 """
+from sys import exit as exit_
+
 from docopt import docopt
 
 from homeinfo.terminals.util import TerminalUtil, ClassUtil, OSUtil, DomainUtil
 
 
-if __name__ == '__main__':
-    options = docopt(__doc__)
+def list_terminals(options):
+    """Lists terminals."""
 
-    if options['list-terminals'] or options['ls']:
-        expr = options['<expr>']
+    expr = options['<expr>']
 
-        if options['--deployed'] and options['--undeployed']:
-            deployed = None
-        elif options['--deployed']:
-            deployed = True
-        elif options['--undeployed']:
-            deployed = False
-        else:
-            deployed = None
+    if options['--deployed'] and options['--undeployed']:
+        deployed = None
+    elif options['--deployed']:
+        deployed = True
+    elif options['--undeployed']:
+        deployed = False
+    else:
+        deployed = None
 
-        if options['--testing'] and options['--productive']:
-            testing = None
-        elif options['--testing']:
-            testing = True
-        elif options['--productive']:
-            testing = False
-        else:
-            testing = None
+    if options['--testing'] and options['--productive']:
+        testing = None
+    elif options['--testing']:
+        testing = True
+    elif options['--productive']:
+        testing = False
+    else:
+        testing = None
 
-        header = not options['--omit-header']
-        utl = TerminalUtil(expr, deployed, testing)
+    header = not options['--omit-header']
+    separator = options['--separator'] or '  '
+    fields = options['--fields'] or None
 
-        for line in utl.print(header=header):
-            print(line, flush=True)
-    elif options['list-class']:
-        utl = ClassUtil()
+    if fields:
+        fields = [field.lower() for field in fields.split() if field]
 
-        for class_ in utl.print():
-            print(class_, flush=True)
-    elif options['list-os']:
-        utl = OSUtil()
+    utl = TerminalUtil(expr, deployed, testing)
 
-        for os in utl.print():
-            print(os, flush=True)
-    elif options['list-domains']:
-        utl = DomainUtil()
+    for line in utl.print(header=header, fields=fields, sep=separator):
+        print(line, flush=True)
 
-        for domain in utl.print():
-            print(domain, flush=True)
+
+def list_classes(_):
+    """Lists available classes."""
+
+    utl = ClassUtil()
+
+    for class_ in utl.print():
+        print(class_, flush=True)
+
+
+def list_os(_):
+    """Lists available operating systems."""
+
+    utl = OSUtil()
+
+    for operating_system in utl.print():
+        print(operating_system, flush=True)
+
+
+def list_domains(_):
+    """Lists available domains."""
+
+    utl = DomainUtil()
+
+    for domain in utl.print():
+        print(domain, flush=True)
+
+
+def find_terminal(options):
+    """Finds a terminal."""
+
+    if options['--index']:
+        index = int(options['--index'])
+    else:
+        index = None
+
+    return TerminalUtil.get(
+        options['<street>'],
+        options['<house_number>'],
+        options['--annotation'],
+        index=index)
+
+
+def main(options):
+    """Runs the terminal utility."""
+
+    if options['list'] or options['ls']:
+        if sum(options['--terminals'], options['--classes'],
+               options['--os'], options['--domains']) != 1:
+            print('Must specify exactly one list option.')
+            return 1
+        elif options['--terminals']:
+            list_terminals(options)
+        elif options['--classes']:
+            list_classes(options)
+        elif options['--os']:
+            list_os(options)
+        elif options['--domains']:
+            list_domains(options)
     elif options['find']:
-        if options['--index'] is None:
-            index = None
-        else:
-            index = int(options['--index'])
+        if not find_terminal(options):
+            return 2
 
-        if TerminalUtil.get(
-                options['<street>'],
-                options['<house_number>'],
-                options['--annotation'],
-                index=index):
-            exit(0)
-        else:
-            exit(1)
+    return 0
+
+
+if __name__ == '__main__':
+    exit_(main(docopt(__doc__)))
