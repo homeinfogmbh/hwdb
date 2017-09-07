@@ -42,13 +42,14 @@ def stringify(value):
 class TerminalField():
     """Wrapper to access terminal properties."""
 
-    TEMPLATE = '{{: >{0}.{0}}}'
+    TEMPLATE = '{{: {1}{0}.{0}}}'
 
-    def __init__(self, getter, caption, size=0):
+    def __init__(self, getter, caption, size=0, leftbound=False):
         """Sets the field's name"""
         self.getter = getter
         self.caption = caption
         self.size = size
+        self.leftbound = leftbound
 
     def __str__(self):
         """Returns the formatted caption."""
@@ -66,4 +67,5 @@ class TerminalField():
     @property
     def template(self):
         """Returns the pre-formatted template."""
-        return self.TEMPLATE.format(self.spacing)
+        return self.TEMPLATE.format(
+            self.spacing, '<' if self.leftbound else '>')
