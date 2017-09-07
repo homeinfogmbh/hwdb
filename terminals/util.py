@@ -4,9 +4,10 @@ from sys import stderr
 
 from strflib import Shell
 
+from homeinfo.terminals.fields import get_address, get_annotation, \
+    TerminalField
 from homeinfo.terminals.filter import TerminalFilter
-from homeinfo.terminals.orm import Class, Domain, OS, Terminal,\
-    AddressUnconfiguredError
+from homeinfo.terminals.orm import Class, Domain, OS, Terminal
 
 
 __all__ = [
@@ -19,7 +20,7 @@ __all__ = [
 
 
 class DeploymentFilter():
-    """Filters terminals for their deployment state"""
+    """Filters terminals for their deployment state."""
 
     def __init__(self, terminals, deployed=True, undeployed=True):
         self.terminals = terminals
@@ -27,7 +28,7 @@ class DeploymentFilter():
         self.undeployed = undeployed
 
     def __iter__(self):
-        """Yields appropriate terminals"""
+        """Yields appropriate terminals."""
         for terminal in self.terminals:
             if terminal.isdeployed:
                 if self.deployed:
@@ -38,7 +39,7 @@ class DeploymentFilter():
 
 
 class TestingFilter():
-    """Filters terminals for their testing state"""
+    """Filters terminals for their testing state."""
 
     def __init__(self, terminals, testing=True, productive=True):
         self.terminals = terminals
@@ -46,7 +47,7 @@ class TestingFilter():
         self.productive = productive
 
     def __iter__(self):
-        """Yields appropriate terminals"""
+        """Yields appropriate terminals."""
         for terminal in self.terminals:
             if terminal.testing:
                 if self.testing:
@@ -56,114 +57,28 @@ class TestingFilter():
                     yield terminal
 
 
-class TerminalField():
-    """Wrapper to access terminal properties"""
-
-    TEMPLATE = '{{: >{0}.{0}}}'
-
-    def __init__(self, name, caption, size=0):
-        """Sets the field's name"""
-        self.name = name
-        self.caption = caption
-        self.size = size
-
-    def __str__(self):
-        """Returns the formatted caption"""
-        return Shell.bold(self.template().format(self.caption))
-
-    @property
-    def spacing(self):
-        """Returns the required spacing"""
-        return max(self.size, len(self.caption))
-
-    def template(self, terminal=None):
-        """Returns the formatting string"""
-        return self.TEMPLATE.format(self.spacing - self.offset(terminal))
-
-    def offset(self, _):
-        """Returns the default offset"""
-        return 0
-
-    def getattr(self, terminal):
-        """Returns the terminal's field's value"""
-        return getattr(terminal, self.name)
-
-    def strval(self, terminal):
-        """Returns the string representation of the value"""
-        value = self.getattr(terminal)
-
-        if value is None:
-            return '–'
-        elif value is True:
-            return '✓'
-        elif value is False:
-            return '✗'
-
-        return str(value)
-
-    def format(self, terminal):
-        """Formats the respective terminal"""
-        return self.template(terminal).format(self.strval(terminal))
-
-class IdField(TerminalField):
-    """Field to access the target's ID"""
-
-    def getattr(self, terminal):
-        """Returns the terminal's field's value"""
-        return super().getattr(terminal).id
-
-class OSField(IdField):
-    """Field to access the target's ID"""
-
-    def offset(self, terminal):
-        """Returns the appropriate offset"""
-        if terminal is not None:
-            return 1 if self.getattr(terminal) == 1 else 0
-
-        return 0
-
-    def strval(self, terminal):
-        """Returns the terminal's field's value"""
-        return '🐧' if self.getattr(terminal) == 1 else '⧉'
-
-class AddressField(TerminalField):
-    """Field to access the terminal's address"""
-
-    def strval(self, terminal):
-        """Returns the terminal's field's value"""
-        try:
-            return super().strval(terminal)
-        except AddressUnconfiguredError:
-            return 'N/A'
-
-class LocationAnnotationField(TerminalField):
-    """Field to access the terminal's location annotation"""
-
-    def getattr(self, terminal):
-        """Returns the terminal's field's value"""
-        location = super().getattr(terminal)
-
-        if location is not None:
-            return location.annotation
-
-
 class TerminalUtil():
     """Terminals query utility"""
 
     FIELDS = {
-        'id': TerminalField('id', 'ID', size=4),
-        'tid': TerminalField('tid', 'TID', size=3),
-        'cid': IdField('customer', 'CID', size=10),
-        'vid': TerminalField('vid', 'VID', size=3),
-        'os': OSField('os', 'OS', size=3),
-        'ipv4addr': TerminalField('ipv4addr', 'IPv4 Address', size=14),
-        'deployed': TerminalField('deployed', 'Deployed', size=21),
-        'testing': TerminalField('testing', 'Testing'),
-        'tainted': TerminalField('tainted', 'Tainted'),
-        'address': AddressField('address', 'Address', size=40),
-        'address-annotation': LocationAnnotationField(
-            'location', 'Annotation', size=24),
-        'annotation': TerminalField('annotation', 'Comment', size=24)}
+        'id': TerminalField(lambda terminal: terminal.id, 'ID', size=4),
+        'tid': TerminalField(lambda terminal: terminal.tid, 'TID', size=3),
+        'cid': TerminalField(
+            lambda terminal: terminal.customer.id, 'CID', size=10),
+        'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
+        'os': TerminalField(
+            lambda terminal: '🐧' if terminal.os.id == 1 else '⧉',
+            'OS', size=3),
+        'ipv4addr': TerminalField(
+            lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
+        'deployed': TerminalField(
+            lambda terminal: terminal.deployed, 'Deployed', size=21),
+        'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
+        'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
+        'address': TerminalField(get_address, 'address', 'Address', size=40),
+        'annotation': TerminalField(get_annotation, 'Annotation', size=24),
+        'comment': TerminalField(
+            lambda terminal: terminal.annotation, 'Comment', size=24)}
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
@@ -251,10 +166,9 @@ class TerminalUtil():
         if fields is None:
             fields = (
                 'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
-                'testing', 'tainted', 'address', 'address-annotation',
-                'annotation')
+                'testing', 'tainted', 'address', 'annotation', 'comment')
 
-        fields = [self.FIELDS[field] for field in fields]
+        fields = tuple(self.FIELDS[field] for field in fields)
 
         if header:
             yield '  '.join(str(field) for field in fields)
