@@ -32,7 +32,25 @@ class NoSuchTerminals(Exception):
                 yield '{}.{}'.format(cid, identifier)
 
 
-def parse(*expressions):
+class PrintMissing:
+    """Context to print out missing terminals."""
+
+    def __init__(self, template='Missing terminal: {}.', file=stderr):
+        """Sets the output file."""
+        self.template = template
+        self.file = file
+
+    def __enter__(self):
+        """Returns itself."""
+        return self
+
+    def __exit__(self, typ, value, _):
+        """Checks for NoSuchTerminals exception."""
+        if typ is NoSuchTerminals:
+            print(value, file=self.file, flush=True)
+
+
+def parse(*expressions, quiet=False):
     """Yields parsers from expressions"""
 
     missing = {}
@@ -48,7 +66,7 @@ def parse(*expressions):
             except KeyError:
                 missing[missing_terminals.cid] = missing_terminals.identifiers
 
-    if missing:
+    if not quiet and missing:
         raise NoSuchTerminals(missing)
 
 
