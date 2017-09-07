@@ -8,7 +8,7 @@ from peewee import DoesNotExist
 from .orm import Terminal
 from .parse import MissingTerminals, TerminalSelection
 
-__all__ = ['NoSuchTerminals', 'PrintMissing', 'parse', 'terminals']
+__all__ = ['NoSuchTerminals', 'parse', 'terminals', 'PrintMissing']
 
 
 class NoSuchTerminals(Exception):
@@ -31,24 +31,6 @@ class NoSuchTerminals(Exception):
         for cid, identifiers in self.missing.items():
             for identifier in identifiers:
                 yield '{}.{}'.format(cid, identifier)
-
-
-class PrintMissing:
-    """Context to print out missing terminals."""
-
-    def __init__(self, template='Missing terminal: {}.', file=stderr):
-        """Sets the output file."""
-        self.template = template
-        self.file = file
-
-    def __enter__(self):
-        """Returns itself."""
-        return self
-
-    def __exit__(self, typ, value, _):
-        """Checks for NoSuchTerminals exception."""
-        if typ is NoSuchTerminals:
-            print(value, file=self.file, flush=True)
 
 
 def parse(*expressions, quiet=False):
@@ -94,3 +76,21 @@ def terminals(customer, vids=None, tids=None):
                 yield Terminal.get(
                     (Terminal.customer == customer) &
                     (Terminal.tid == tid))
+
+
+class PrintMissing:
+    """Context to print out missing terminals."""
+
+    def __init__(self, template='Missing terminal: {}.', file=stderr):
+        """Sets the output file."""
+        self.template = template
+        self.file = file
+
+    def __enter__(self):
+        """Returns itself."""
+        return self
+
+    def __exit__(self, typ, value, _):
+        """Checks for NoSuchTerminals exception."""
+        if typ is NoSuchTerminals:
+            print(value, file=self.file, flush=True)
