@@ -30,7 +30,7 @@ class NoSuchTerminals(Exception):
         """Yields the missing terminal IDs."""
         for cid, identifiers in self.missing.items():
             for identifier in identifiers:
-                yield '{}.{}'.format(cid, identifier)
+                yield '{}.{}'.format(identifier, cid)
 
 
 def parse(*expressions, quiet=False):
@@ -93,8 +93,5 @@ class PrintMissing:
     def __exit__(self, typ, value, _):
         """Checks for NoSuchTerminals exception."""
         if typ is NoSuchTerminals:
-            print(type(value))
-            print(str(value))
-            print(value.missing)
             print(value, file=self.file, flush=True)
             return True
