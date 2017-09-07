@@ -231,7 +231,7 @@ class TerminalSelection:
                         missing.add(identifier)
 
             if missing:
-                raise MissingTerminals(self.cid, identifiers)
+                raise MissingTerminals(self.cid, missing)
 
     @property
     def expression(self):
