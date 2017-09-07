@@ -68,17 +68,20 @@ class TerminalUtil():
         'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
         'os': TerminalField(
             lambda terminal: 'Linux' if terminal.os.id == 1 else 'Windows',
-            'OS', size=7),
+            'OS', size=7, leftbound=True),
         'ipv4addr': TerminalField(
             lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
         'deployed': TerminalField(
             lambda terminal: terminal.deployed, 'Deployed', size=21),
         'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
         'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
-        'address': TerminalField(get_address, 'Address', size=40),
-        'annotation': TerminalField(get_annotation, 'Annotation', size=32),
+        'address': TerminalField(
+            get_address, 'Address', size=40, leftbound=True),
+        'annotation': TerminalField(
+            get_annotation, 'Annotation', size=32, leftbound=True),
         'comment': TerminalField(
-            lambda terminal: terminal.annotation, 'Comment', size=24)}
+            lambda terminal: terminal.annotation, 'Comment',
+            size=24, leftbound=True)}
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
