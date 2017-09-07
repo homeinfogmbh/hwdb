@@ -67,8 +67,7 @@ class TerminalUtil():
             lambda terminal: terminal.customer.id, 'CID', size=10),
         'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
         'os': TerminalField(
-            lambda terminal: 'Linux' if terminal.os.id == 1 else 'Windows',
-            'OS', size=7, leftbound=True),
+            lambda terminal: repr(terminal.os), 'OS', size=19, leftbound=True),
         'ipv4addr': TerminalField(
             lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
         'deployed': TerminalField(

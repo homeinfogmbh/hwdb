@@ -1,146 +1,212 @@
 """Terminal selection expression parsing"""
 
-from homeinfo.terminals.orm import Terminal
+from contextlib import suppress
+
+from peewee import DoesNotExist
+
+from .orm import Terminal
 
 __all__ = [
+    'InvalidExpression',
+    'InvalidBlock',
+    'InvalidIdentifier',
     'InvalidCustomerID',
-    'InvalidTerminalIDs',
-    'InvalidRangeError',
-    'InvalidIDError',
-    'TerminalSelectionParser']
+    'TerminalSelection']
 
 
-class InvalidCustomerID(Exception):
-    """Indicates an invalid customer ID"""
-    pass
+class InvalidExpression(ValueError):
+    """Indicates that an invalid expression was specified."""
+
+    def __init__(self, expression):
+        """Sets the invalid expression."""
+        super().__init__(expression)
+        self.expression = expression
 
 
-class InvalidTerminalIDs(Exception):
-    """Indicates invalid terminal identifiers"""
-    pass
+class InvalidBlock(ValueError):
+    """Indicates that an invalid identifier block was specified."""
+
+    def __init__(self, block):
+        """Sets the invalid block."""
+        super().__init__(block)
+        self.block = block
 
 
-class InvalidRangeError(Exception):
-    """Indicates an invalid ID range definition"""
-    pass
+class InvalidIdentifier(ValueError):
+    """Indicates that an invalid identifier (VID/TID)
+    has been specified.
+    """
+
+    def __init__(self, identifier):
+        """Sets the invalid identifier."""
+        super().__init__(identifier)
+        self.identifier = identifier
 
 
-class InvalidIDError(Exception):
-    """Indicates an invalid ID"""
-    pass
+class InvalidCustomerID(ValueError):
+    """Indicates that an invalid customer ID has been specified."""
+
+    def __init__(self, cid):
+        """Sets the invalid cid."""
+        super().__init__(cid)
+        self.cid = cid
 
 
-class TerminalSelectionParser():
-    """Parses terminal selection expressions"""
+def split_cid(expression, sep='.'):
+    """Splits IDs and customer ID."""
 
-    IDENT_SEP = '.'
-    VID_PREFIX = 'v'
-    BLOCK_SEP = ','
-    RANGE_SEP = '-'
-    ALL = ['*']
+    try:
+        identifiers, cid = expression.split(sep)
+    except ValueError:
+        if sep in expression:
+            raise InvalidExpression(expression) from None
+        else:
+            return (None, expression)
+    else:
+        return (identifiers, cid)
 
-    def __init__(self, expr):
-        """Sets respective expression"""
-        self._ids_cid = expr.split(self.IDENT_SEP)
 
-    @property
-    def _cid_str(self):
-        """Returns the raw customer ID string"""
-        return self._ids_cid[-1]
+def split_blocks(identifiers, sep=','):
+    """Splits TID / VID ID blocks."""
 
-    @property
-    def cid(self):
-        """Returns the customer ID"""
+    for block in identifiers.split(sep):
+        yield block.strip()
+
+
+def parse_block(block, sep='-'):
+    """Yields the block's values."""
+
+    try:
+        start, end = block.split(sep)
+    except ValueError:
+        if sep in block:
+            raise InvalidBlock(block) from None
+        else:
+            return Identifier.from_string(block)
+    else:
+        start = Identifier.from_string(block)
+        end = Identifier.from_string(end)
+
+        if int(start) < int(end):
+            return (start, end)
+        else:
+            raise ValueError(
+                'Invalid range {}→{}. Start must be smaller than end.'.format(
+                    start, end))
+
+
+class Identifier:
+    """Represents VIDs and TIDs."""
+
+    def __init__(self, value, virtual):
+        """Sets value and virtual flag."""
+        self.value = value
+        self.virtual = virtual
+
+    def __str__(self):
+        """Returns the integer value as string."""
+        return str(self.value)
+
+    def __int__(self):
+        """Returns the value."""
+        return self.value
+
+    @classmethod
+    def from_string(cls, string, vid_prefix='v'):
+        """Sets the ID from from the provided string."""
+        if string.startswith(vid_prefix):
+            virtual = True
+            string = string[1:]
+        else:
+            virtual = False
+
         try:
-            cid = int(self._cid_str)
+            value = int(string)
         except ValueError:
-            raise InvalidCustomerID(self._cid_str)
+            raise InvalidIdentifier(string) from None
         else:
-            return cid
+            return cls(value, virtual)
 
     @property
-    def _ident_str(self):
-        """Returns the respective ID expressions"""
-        ids_c = len(self._ids_cid)
+    def physical(self):
+        """Determines whether this is a physical ID."""
+        return not self.virtual
 
-        if ids_c == 1:
-            return None
-        elif ids_c == 2:
-            return self._ids_cid[0]
-        else:
-            raise InvalidTerminalIDs()
+
+class IdentifierList:
+    """Represents list of identifiers."""
+
+    def __init__(self, blocks):
+        """Sets the blocks."""
+        self.blocks = blocks
+
+    def __contains__(self, identifier):
+        """Determines whether the block is
+        contained within this blocks reange.
+        """
+        if identifier.virtual:
+            return identifier.value in self.vids
+
+        return identifier.value in self.tids
 
     @property
-    def _blocks(self):
-        """Yields identifier blocks"""
-        ident_str = self._ident_str
-
-        if ident_str is not None:
-            for block in ident_str.split(self.BLOCK_SEP):
-                if block:
-                    yield block
+    def identifiers(self):
+        """Yields all identifiers."""
+        for block in self.blocks:
+            try:
+                start, end = block
+            except ValueError:
+                yield block
+            else:
+                for value in range(start.value, end.value + 1):
+                    yield Identifier(value, start.virtual)
 
     @property
     def vids(self):
-        """Yields virtual identifiers"""
-        for block in self._blocks:
-            if block.startswith(self.VID_PREFIX):
-                yield from self._block_range(block[1:], virtual=True)
+        """Yields VIDs."""
+        for identifier in self.identifiers:
+            if identifier.virtual:
+                yield identifier.value
 
     @property
     def tids(self):
-        """Yields physical identifiers"""
-        for block in self._blocks:
-            if not block.startswith(self.VID_PREFIX):
-                yield from self._block_range(block, virtual=False)
+        """Yields TIDs."""
+        for identifier in self.identifiers:
+            if identifier.physical:
+                yield identifier.value
 
-    def _block_range(self, block, virtual=False):
-        """Yields elements of a block range or a single ID"""
+
+class TerminalSelection(IdentifierList):
+    """Parses terminal selection expressions."""
+
+    def __init__(self, expression):
+        """Sets respective expression."""
+        identifiers, self._cid = split_cid(expression)
+        super().__init__(tuple(
+            parse_block(block) for block in split_blocks(identifiers)))
+
+    def __iter__(self):
+        """Yields the selected terminals."""
+        for vid in self.vids:
+            with suppress(DoesNotExist):
+                yield Terminal.get(
+                    (Terminal.customer == self.cid) &
+                    (Terminal.vid == vid))
+
+        for tid in self.tids:
+            with suppress(DoesNotExist):
+                yield Terminal.get(
+                    (Terminal.customer == self.cid) &
+                    (Terminal.tid == tid))
+
+    def __contains__(self, _):
+        """Overrides inherited containment check, to fall back to __iter__."""
+        return NotImplemented
+
+    @property
+    def cid(self):
+        """Returns the customer ID."""
         try:
-            yield int(block)
+            return int(self._cid)
         except ValueError:
-            if block in self.ALL:
-                start = None
-                end = None
-            elif self.RANGE_SEP in block:
-                try:
-                    start, end = block.split(self.RANGE_SEP)
-                except ValueError:
-                    raise InvalidRangeError(block) from None
-                else:
-                    if start == '':
-                        start = None
-                    else:
-                        try:
-                            start = int(start)
-                        except ValueError:
-                            raise InvalidIDError(start) from None
-
-                    if end == '':
-                        end = None
-                    else:
-                        try:
-                            end = int(end)
-                        except ValueError:
-                            raise InvalidIDError(end) from None
-
-                # Disallow leaving out both start
-                # and end on range definition using "-"
-                if start is None and end is None:
-                    raise InvalidRangeError(block) from None
-            else:
-                raise InvalidRangeError(block) from None
-
-            if start is None:
-                if virtual:
-                    start = Terminal.min_vid(self.cid)
-                else:
-                    start = Terminal.min_id(self.cid)
-
-            if end is None:
-                if virtual:
-                    end = Terminal.max_vid(self.cid)
-                else:
-                    end = Terminal.max_tid(self.cid)
-
-            yield from range(start, end+1)
+            raise InvalidCustomerID(self._cid)
