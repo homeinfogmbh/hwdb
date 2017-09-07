@@ -76,7 +76,7 @@ class TerminalUtil():
         'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
         'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
         'address': TerminalField(get_address, 'Address', size=40),
-        'annotation': TerminalField(get_annotation, 'Annotation', size=24),
+        'annotation': TerminalField(get_annotation, 'Annotation', size=32),
         'comment': TerminalField(
             lambda terminal: terminal.annotation, 'Comment', size=24)}
 
