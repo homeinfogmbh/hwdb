@@ -93,5 +93,7 @@ class PrintMissing:
     def __exit__(self, typ, value, _):
         """Checks for NoSuchTerminals exception."""
         if typ is NoSuchTerminals:
+            print(type(value))
+            print(str(value))
             print(value, file=self.file, flush=True)
             return True
