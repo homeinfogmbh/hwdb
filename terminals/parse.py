@@ -1,6 +1,4 @@
-"""Terminal selection expression parsing"""
-
-from contextlib import suppress
+"""Terminal selection expression parsing."""
 
 from peewee import DoesNotExist
 
@@ -11,6 +9,9 @@ __all__ = [
     'InvalidBlock',
     'InvalidIdentifier',
     'InvalidCustomerID',
+    'NoSuchTerminals',
+    'Identifier',
+    'IdentifierList',
     'TerminalSelection']
 
 
@@ -50,6 +51,16 @@ class InvalidCustomerID(ValueError):
         """Sets the invalid cid."""
         super().__init__(cid)
         self.cid = cid
+
+
+class NoSuchTerminals(ValueError):
+    """indicates that the respective terminals were missing."""
+
+    def __init__(self, cid, identifiers):
+        """Sets the customer ID and identifiers."""
+        super().__init__((cid, identifiers))
+        self.cid = cid
+        self.identifiers = identifiers
 
 
 def split_cid(expression, sep='.'):
@@ -111,6 +122,15 @@ class Identifier:
         """Returns the value."""
         return self.value
 
+    def __eq__(self, other):
+        """Compares the identifier to another."""
+        if isinstance(other, self.__class__):
+            return self.value == other.value and self.virtual == other.virtual
+
+    def __hash__(self):
+        """Hashes the identifier."""
+        return hash((self.value, self.virtual))
+
     @classmethod
     def from_string(cls, string, vid_prefix='v'):
         """Sets the ID from from the provided string."""
@@ -140,38 +160,32 @@ class IdentifierList:
         """Sets the blocks."""
         self.blocks = blocks
 
-    def __contains__(self, identifier):
-        """Determines whether the block is
-        contained within this blocks reange.
-        """
-        if identifier.virtual:
-            return identifier.value in self.vids
-
-        return identifier.value in self.tids
-
-    @property
-    def identifiers(self):
-        """Yields all identifiers."""
+    def __iter__(self):
+        """Yields the respective identifiers."""
         for block in self.blocks:
             try:
                 start, end = block
             except ValueError:
                 yield block
             else:
-                for value in range(start.value, end.value + 1):
+                yield start
+
+                for value in range(start.value + 1, end.value):
                     yield Identifier(value, start.virtual)
+
+                yield end
 
     @property
     def vids(self):
         """Yields VIDs."""
-        for identifier in self.identifiers:
+        for identifier in self:
             if identifier.virtual:
                 yield identifier.value
 
     @property
     def tids(self):
         """Yields TIDs."""
-        for identifier in self.identifiers:
+        for identifier in self:
             if identifier.physical:
                 yield identifier.value
 
@@ -181,31 +195,62 @@ class TerminalSelection:
 
     def __init__(self, expression):
         """Sets respective expression."""
-        blocks, self.cid = split_cid(expression)
+        self.expression = expression
 
-        if blocks:
-            self.identifier_list = IdentifierList(tuple(
-                parse_block(block) for block in split_blocks(blocks)))
-        else:
-            self.identifier_list = None
+    def __str__(self):
+        """Returns the expression."""
+        return self.expression
 
     def __iter__(self):
         """Yields the selected terminals."""
-        if self.identifier_list is not None:
-            for vid in self.identifier_list.vids:
-                with suppress(DoesNotExist):
-                    yield Terminal.get(
-                        (Terminal.customer == self.cid) &
-                        (Terminal.vid == vid))
+        identifiers = self.identifiers
 
-            for tid in self.identifier_list.tids:
-                with suppress(DoesNotExist):
-                    yield Terminal.get(
-                        (Terminal.customer == self.cid) &
-                        (Terminal.tid == tid))
-        else:
+        if identifiers is None:
             yield from Terminal.select().where(Terminal.customer == self.cid)
+        else:
+            missing = set()
 
-    def __contains__(self, _):
-        """Overrides inherited containment check, to fall back to __iter__."""
-        return NotImplemented
+            for identifier in identifiers:
+                if identifier.virtual:
+                    try:
+                        yield Terminal.get(
+                            (Terminal.customer == self.cid) &
+                            (Terminal.vid == identifier.value))
+                    except DoesNotExist:
+                        missing.add(identifier)
+                else:
+                    try:
+                        yield Terminal.get(
+                            (Terminal.customer == self.cid) &
+                            (Terminal.tid == identifier.value))
+                    except DoesNotExist:
+                        missing.add(identifier)
+
+            if missing:
+                raise NoSuchTerminals(self.cid, identifiers)
+
+    @property
+    def expression(self):
+        """Returns the expression."""
+        return self._expression
+
+    @expression.setter
+    def expression(self, expression):
+        """Sets the expression."""
+        self._expression = expression
+        self._blocks, self.cid = split_cid(expression)
+
+    @property
+    def blocks(self):
+        """Returns the parsed blocks."""
+        if self._blocks is not None:
+            for block in split_blocks(self._blocks):
+                yield parse_block(block)
+
+    @property
+    def identifiers(self):
+        """Returns the selected identifiers."""
+        blocks = tuple(self.blocks)
+
+        if blocks:
+            return IdentifierList(self.blocks)
