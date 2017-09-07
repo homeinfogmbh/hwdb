@@ -16,7 +16,7 @@ Options:
     --undeployed, -u                Only print undeployed terminals.
     --testing, -t                   Only print testing terminals.
     --productive, -p                Only print productive terminals.
-    --omit-header, -h               Do not print the column header.
+    --omit-header, -o               Do not print the column header.
     --separator=<separator>, -s     Specifies the column separator.
     --fields=<fields>, -f           Comma-separated list of fields to display.
     --index=<n>, -i                 On ambiguous results, use the nth.
