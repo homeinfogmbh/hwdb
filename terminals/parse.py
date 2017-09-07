@@ -176,37 +176,38 @@ class IdentifierList:
                 yield identifier.value
 
 
-class TerminalSelection(IdentifierList):
+class TerminalSelection:
     """Parses terminal selection expressions."""
 
     def __init__(self, expression):
         """Sets respective expression."""
-        identifiers, self._cid = split_cid(expression)
-        super().__init__(tuple(
-            parse_block(block) for block in split_blocks(identifiers)))
+        blocks, self.cid = split_cid(expression)
+
+        if blocks:
+            self.identifier_list = IdentifierList(tuple(
+                parse_block(block) for block in split_blocks(blocks)))
+        else:
+            self.identifier_list = None
 
     def __iter__(self):
         """Yields the selected terminals."""
-        for vid in self.vids:
-            with suppress(DoesNotExist):
-                yield Terminal.get(
-                    (Terminal.customer == self.cid) &
-                    (Terminal.vid == vid))
+        if self.identifier_list is not None:
+            for vid in self.identifier_list.vids:
+                with suppress(DoesNotExist):
+                    yield Terminal.get(
+                        (Terminal.customer == self.cid) &
+                        (Terminal.vid == vid))
 
-        for tid in self.tids:
-            with suppress(DoesNotExist):
-                yield Terminal.get(
-                    (Terminal.customer == self.cid) &
-                    (Terminal.tid == tid))
+            for tid in self.identifier_list.tids:
+                with suppress(DoesNotExist):
+                    yield Terminal.get(
+                        (Terminal.customer == self.cid) &
+                        (Terminal.tid == tid))
+        else:
+            for terminal in Terminal.select().where(
+                    Terminal.customer == self.customer):
+                yield terminal
 
     def __contains__(self, _):
         """Overrides inherited containment check, to fall back to __iter__."""
         return NotImplemented
-
-    @property
-    def cid(self):
-        """Returns the customer ID."""
-        try:
-            return int(self._cid)
-        except ValueError:
-            raise InvalidCustomerID(self._cid)
