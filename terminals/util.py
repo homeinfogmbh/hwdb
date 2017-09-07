@@ -6,7 +6,7 @@ from strflib import Shell
 
 from homeinfo.terminals.fields import get_address, get_annotation, \
     TerminalField
-from homeinfo.terminals.filter import TerminalFilter
+from homeinfo.terminals.filter import parse
 from homeinfo.terminals.orm import Class, Domain, OS, Terminal
 
 
@@ -101,7 +101,7 @@ class TerminalUtil():
     def terminals(self):
         """Yields terminals selected by self.expr"""
         if self.expr:
-            yield from TerminalFilter(self.expr)
+            yield from parse(self.expr)
         else:
             yield from Terminal
 
