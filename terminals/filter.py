@@ -95,5 +95,6 @@ class PrintMissing:
         if typ is NoSuchTerminals:
             print(type(value))
             print(str(value))
+            print(value.missing)
             print(value, file=self.file, flush=True)
             return True
