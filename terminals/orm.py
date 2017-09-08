@@ -335,12 +335,9 @@ class Location(TerminalModel):
 
     def to_dict(self):
         """Returns a JSON-like dictionary"""
-        dictionary = {'address': self.address.to_dict()}
-
-        if self.annotation is not None:
-            dictionary['annotation'] = self.annotation
-
-        return dictionary
+        dictionary = {
+            'address': self.address.to_dict(),
+            'annotation': self.annotation}
 
 
 class Terminal(TerminalModel):
