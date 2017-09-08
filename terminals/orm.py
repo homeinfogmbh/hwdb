@@ -335,7 +335,7 @@ class Location(TerminalModel):
 
     def to_dict(self):
         """Returns a JSON-like dictionary"""
-        dictionary = {
+        return {
             'address': self.address.to_dict(),
             'annotation': self.annotation}
 
