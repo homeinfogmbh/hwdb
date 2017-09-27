@@ -110,6 +110,12 @@ class RemoteController(TerminalAware):
         """Returns a remote file path"""
         return "{user_host}:'{src}'".format(user_host=self.user_host, src=src)
 
+    def extra_options(self, options):
+        """Returns an CustomSSHOptions context
+        manager for this terminal controller.
+        """
+        return CustomSSHOptions(self, options)
+
     def rsync(self, dst, *srcs, options=None):
         """Returns an rsync command line to retrieve
         src file from terminal to local file dst
@@ -161,7 +167,7 @@ class RemoteController(TerminalAware):
                 return pr
 
     def send(self, dst, *srcs, options=None):
-        """Sends files to a remote terminal"""
+        """Sends files to a remote terminal."""
         rsync = self.rsync(self.remote_file(dst), *srcs, options=options)
 
         self.logger.debug('Executing: {}'.format(rsync))
@@ -174,8 +180,9 @@ class RemoteController(TerminalAware):
 
         return pr
 
-    def extra_options(self, options):
-        """Returns an CustomSSHOptions context
-        manager for this terminal controller
-        """
-        return CustomSSHOptions(self, options)
+    def mkdir(self, directory, parents=False, binary='/usr/bin/mkdir'):
+        """Creates a remote directory."""
+        if parents:
+            return self.execute(binary, '-p', str(directory))
+
+        return self.execute(binary, str(directory))
