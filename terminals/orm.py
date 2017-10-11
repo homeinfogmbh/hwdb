@@ -699,11 +699,12 @@ class Synchronization(TerminalModel):
         self.stop()
 
     @classmethod
-    def start(cls, terminal):
+    def start(cls, terminal, result=None):
         """Start a synchronization for this terminal"""
         sync = cls()
         sync.terminal = terminal
         sync.started = datetime.now()
+        sync.result = result
         return sync
 
     def stop(self, force=False):
