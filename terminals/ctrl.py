@@ -146,8 +146,7 @@ class RemoteController(TerminalAware):
         rsync = self.rsync(self.remote_file(dst), *srcs, options=options)
         self.logger.debug('Executing: {}'.format(rsync))
         result = run(rsync, shell=True)
-        self.logger.debug(
-            'Result: {0} {0.exit_code} {0.stdout} {0.stderr}'.format(result))
+        self.logger.debug(str(result))
         return result
 
     def mkdir(self, directory, parents=False, binary='/usr/bin/mkdir'):
