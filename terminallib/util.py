@@ -18,7 +18,7 @@ __all__ = [
     'DomainUtil']
 
 
-class DeploymentFilter():
+class DeploymentFilter:
     """Filters terminals for their deployment state."""
 
     def __init__(self, terminals, deployed=True, undeployed=True):
@@ -37,7 +37,7 @@ class DeploymentFilter():
                     yield terminal
 
 
-class TestingFilter():
+class TestingFilter:
     """Filters terminals for their testing state."""
 
     def __init__(self, terminals, testing=True, productive=True):
@@ -56,7 +56,7 @@ class TestingFilter():
                     yield terminal
 
 
-class TerminalUtil():
+class TerminalUtil:
     """Terminals query utility"""
 
     FIELDS = {
@@ -179,7 +179,7 @@ class TerminalUtil():
             yield sep.join(field(terminal) for field in fields)
 
 
-class ClassUtil():
+class ClassUtil:
     """Terminal classes query utility"""
 
     TEMP = ('{id: >5.5}  {name: <10.10}  '
@@ -199,7 +199,7 @@ class ClassUtil():
                 touch=str(class_.touch))
 
 
-class OSUtil():
+class OSUtil:
     """Terminal OS query utility"""
 
     TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
@@ -218,7 +218,7 @@ class OSUtil():
                 version=operating_system.version)
 
 
-class DomainUtil():
+class DomainUtil:
     """Terminal domains query utility"""
 
     TEMP = '{id: >5.5}  {fqdn}'

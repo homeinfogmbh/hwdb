@@ -1,20 +1,11 @@
 #! /usr/bin/env python3
-#
-#  This file is part of the python3 package "homeinfo.terminals"
-#
-#  (C) 2016: HOMEINFO - Digitale Informationssysteme GmbH
-#
-#  Maintainer: Richard Neumann <r dot neumann at homeinfo period de>
-#
-#####################################################################
-"""Generates bind9 configuration for HOMEINFO's VPN networks"""
+"""Generates bind9 configuration for HOMEINFO's VPN networks."""
 
-from os.path import basename
-from logging import INFO, getLogger, basicConfig
+from subprocess import CalledProcessError, check_call
+from sys import stderr, exit as exit_
 
-from syslib import run, evaluate
-
-from homeinfo.terminals.orm import VPNUnconfiguredError, Terminal
+from fancylog import TTYAnimation
+from terminallib import VPNUnconfiguredError, Terminal
 
 
 __all__ = [
@@ -25,57 +16,64 @@ __all__ = [
     'management_hosts',
     'terminal_hosts']
 
+SYSTEMCTL = '/bin/systemctl'
 DNS_TEMPLATE = '/usr/local/etc/homeinfo.intranet.zone.temp'
 LOCAL_HOSTS_LIST = '/usr/local/etc/local_hosts'
 DNS_CONFIG = '/etc/bind/homeinfo.intranet.zone'
-RECORD = '{0}\tIN\tA\t{1}\n'
-
-logger = getLogger(basename(__file__))
+RECORD = '{}\tIN\tA\t{}\n'
 
 
 def management_hosts():
-    """Renders management network hosts"""
+    """Renders management network hosts."""
 
-    management = ';# Management network hosts\n'
+    yield ';# Management network hosts\n'
 
-    with open(LOCAL_HOSTS_LIST, 'r') as lhl:
-        for record in lhl:
+    with open(LOCAL_HOSTS_LIST, 'r') as local_hosts_list:
+        for record in local_hosts_list:
             if record.strip() and not record.startswith('#'):
-                hostname, ipv4addr = record.split()
-                management += RECORD.format(hostname, ipv4addr)
-
-    return management
+                yield RECORD.format(*record.split())
 
 
 def terminal_hosts():
-    """Renders terminal network hosts"""
+    """Renders terminal network hosts."""
 
-    terminals = ';# Terminal network hosts\n'
+    yield ';# Terminal network hosts\n'
+
     for terminal in Terminal:
-        hostname = '{0}.{1}'.format(terminal.tid, terminal.cid)
+        hostname = '{}.{}'.format(terminal.tid, terminal.cid)
+
         try:
             ipv4addr = terminal.ipv4addr
         except VPNUnconfiguredError:
-            logger.error('Terminal {0} has no VPN configuration'.format(
-                terminal))
+            print('Terminal {} has no VPN configuration.'.format(terminal),
+                  file=stderr)
         else:
-            terminals += RECORD.format(hostname, ipv4addr)
-    return terminals
+            yield RECORD.format(hostname, ipv4addr)
 
 
-if __name__ == '__main__':
-    basicConfig(level=INFO)
+def main():
+    """Runs generates the confi files."""
 
     with open(DNS_TEMPLATE, 'r') as temp:
         template = temp.read()
 
     config = template.format(
-        file=__file__,
-        management=management_hosts(),
-        terminals=terminal_hosts())
+        file=__file__, management='\n'.join(management_hosts()),
+        terminals='\n'.join(terminal_hosts()))
 
     with open(DNS_CONFIG, 'w') as dns_cfg:
         dns_cfg.write(config)
 
-    print('Restarting bind9 service', end='              ')
-    evaluate(run('systemctl restart bind9.service', shell=True))
+    with TTYAnimation('Restarting bind9 service') as anim:
+        try:
+            check_call([SYSTEMCTL, 'restart', 'bind9.service'])
+        except CalledProcessError:
+            anim.result = False
+            return 1
+        else:
+            anim.result = True
+            return 0
+
+
+if __name__ == '__main__':
+    exit_(main())

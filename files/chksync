@@ -1,13 +1,7 @@
 #! /usr/bin/env python3
-#
-#  This file is part of the python3 package "homeinfo.terminals"
-#
-#  (C) 2016: HOMEINFO - Digitale Informationssysteme GmbH
-#
-#  Maintainer: Richard Neumann <r dot neumann at homeinfo period de>
-#
-#####################################################################
-"""Checks synchronization status for the respective terminal
+"""chksync.
+
+    Checks synchronization status for the respective terminal.
 
 Usage:
     chksync <tid> <cid> [options]
@@ -16,81 +10,86 @@ Options:
     --warning=<hours>       Warning period in hours [default: 24]
     --critical=<hours>      Critical period in hours [default: 72]
 """
-
 from datetime import datetime, timedelta
+from sys import stderr, exit as exit_
 
 from peewee import DoesNotExist
 
-from homeinfo.terminals.orm import Terminal, Synchronization
+from terminallib import Terminal, Synchronization
 
 
-if __name__ == '__main__':
-    from docopt import docopt
-
-    options = docopt(__doc__)
-    tid = options['<tid>']
-    cid = options['<cid>']
-    warning = options['--warning']
-    critical = options['--critical']
+def parse_options(options):
+    """Parses the provided options."""
 
     try:
-        tid = int(tid)
+        tid = int(options['<tid>'])
     except ValueError:
-        print('Invalid terminal ID: {}'.format(tid))
-        exit(4)
+        print('Invalid terminal ID: {}.'.format(tid), file=stderr)
+        exit_(4)
 
     try:
-        cid = int(cid)
+        cid = int(options['<cid>'])
     except ValueError:
-        print('Invalid customer ID: {}'.format(cid))
-        exit(5)
+        print('Invalid customer ID: {}.'.format(cid), file=stderr)
+        exit_(5)
 
     try:
-        warning = int(warning)
+        warning = int(options['--warning'])
     except ValueError:
-        print('Invalid amout of hours for warning: {}'.format(warning))
-        exit(6)
+        print('Invalid amout of hours for warning: {}.'.format(warning),
+              file=stderr)
+        exit_(6)
     else:
-        warning_delta = timedelta(hours=warning)
+        warning = timedelta(hours=warning)
 
     try:
-        critical = int(critical)
+        critical = int(options['--critical'])
     except ValueError:
-        print('Invalid amout of hours for critical: {}'.format(critical))
-        exit(7)
+        print('Invalid amout of hours for critical: {}.'.format(critical),
+              file=stderr)
+        exit_(7)
     else:
-        critical_delta = timedelta(hours=critical)
+        critical = timedelta(hours=critical)
 
     try:
         terminal = Terminal.get(
             (Terminal.customer == cid) &
             (Terminal.tid == tid))
     except DoesNotExist:
-        print('No such terminal: {}.{}'.format(tid, cid))
-        exit(8)
+        print('No such terminal.', file=stderr)
+        exit_(8)
 
+    return (terminal, warning, critical)
+
+
+def main(options):
+    """Runs the sync check."""
+
+    terminal, warning, critical = parse_options(options)
     latest = None
 
-    for sync in Synchronization.select().where(
-            (Synchronization.terminal == terminal) & ~
-            (Synchronization.finished >> None) &
-            (Synchronization.result == 1)):
-        if latest is None:
-            latest = sync.finished
-        else:
-            if latest < sync.finished:
-                latest = sync.finished
+    for synchronization in Synchronization.select().where(
+            (Synchronization.terminal == terminal) &
+            ~ (Synchronization.finished >> None) &
+            (Synchronization.result == 1)).order_by(
+                Synchronization.finished.desc()).limit(1):
+        latest = synchronization.finished
 
     if latest is None:
-        print('Never')
-        exit(2)  # critical
-    else:
-        print(latest)
-        now = datetime.now()
+        print('Never.')
+        return 2  # critical
 
-        if now - latest > critical_delta:
-            exit(2)  # critical
-        elif now - latest > warning_delta:
-            exit(1)  # warning
-        else:
-            exit(0)  # ok
+    print(latest)
+    now = datetime.now()
+
+    if now - latest > critical:
+        return 2  # critical
+    elif now - latest > warning:
+        return 1  # warning
+
+    return 0  # ok
+
+
+if __name__ == '__main__':
+    from docopt import docopt
+    exit_(main(docopt(__doc__)))

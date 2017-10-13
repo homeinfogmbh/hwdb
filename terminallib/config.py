@@ -1,4 +1,4 @@
-"""Terminal setup configuration"""
+"""Terminal setup configuration."""
 
 from configlib import INIParser
 

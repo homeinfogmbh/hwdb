@@ -1,13 +1,7 @@
 #! /usr/bin/env python3
-#
-#  This file is part of the python3 package "homeinfo.terminals"
-#
-#  (C) 2016: HOMEINFO - Digitale Informationssysteme GmbH
-#
-#  Maintainer: Richard Neumann <r dot neumann at homeinfo period de>
-#
-#####################################################################
-"""Checks statistics for the respective terminal
+"""chkstats.
+
+    Checks statistics for the respective terminal.
 
 Usage:
     chkstats <tid> <cid> [options]
@@ -17,77 +11,86 @@ Options:
     --critical=<days>, -c   Critical time period in days [default: 9].
 """
 from datetime import datetime, timedelta
+from sys import stderr, exit as exit_
 
 from peewee import DoesNotExist
 
-from homeinfo.terminals.orm import Terminal, LatestStats
+from terminallib import Terminal, LatestStats
 
 
-if __name__ == '__main__':
-    from docopt import docopt
-
-    options = docopt(__doc__)
-    tid = options['<tid>']
-    cid = options['<cid>']
-    warning = options['--warning']
-    critical = options['--critical']
+def parse_options(options):
+    """Parses the options."""
 
     try:
-        tid = int(tid)
+        tid = int(options['<tid>'])
     except ValueError:
-        print('Invalid terminal ID: {}'.format(tid))
-        exit(4)
+        print('Invalid terminal ID: {}.'.format(tid), file=stderr)
+        exit_(4)
 
     try:
-        cid = int(cid)
+        cid = int(options['<cid>'])
     except ValueError:
-        print('Invalid customer ID: {}'.format(tid))
-        exit(5)
+        print('Invalid customer ID: {}.'.format(tid))
+        exit_(5)
 
     try:
-        warning = int(warning)
+        warning = int(options['--warning'])
     except ValueError:
-        print('Invalid amout of warning days: {}'.format(warning))
-        exit(6)
+        print('Invalid amout of warning days: {}.'.format(warning),
+              file=stderr)
+        exit_(6)
     else:
-        warning_delta = timedelta(days=warning)
+        warning = timedelta(days=warning)
 
     try:
-        critical = int(critical)
+        critical = int(options['--critical'])
     except ValueError:
-        print('Invalid amout of critical days: {}'.format(critical))
-        exit(7)
+        print('Invalid amout of critical days: {}.'.format(critical),
+              file=stderr)
+        exit_(7)
     else:
-        critical_delta = timedelta(days=critical)
+        critical = timedelta(days=critical)
 
     try:
         terminal = Terminal.by_ids(cid, tid)
     except DoesNotExist:
-        print('No such terminal.')
-        exit(2)
+        print('No such terminal.', file=stderr)
+        exit_(8)
     else:
         if terminal.deployed is None:
-            print('Terminal is not deployed.')
-            exit(1)
+            print('Terminal is not deployed.', file=stderr)
+            exit(9)
 
+    return (terminal, warning, critical)
+
+
+def main(options):
+    """Checks the terminal's stats."""
+
+    terminal, warning, critical = parse_options(options)
     now = datetime.now()
 
     try:
         latest = LatestStats.get(LatestStats.terminal == terminal)
     except DoesNotExist:
         last = terminal.deployed
-        print('never')
+        print('Never.')
     else:
         if latest.statistics is None:
             last = terminal.deployed
-            print('never')
+            print('Never.')
         else:
             last = latest.statistics.timestamp
             print(last)
 
-    if now - last <= warning_delta:
-        exit(0)  # ok
-    elif now - last <= critical_delta:
-        exit(1)  # warning
-    else:
-        exit(2)  # critical
+    if now - last <= warning:
+        return 0  # ok
+    elif now - last <= critical:
+        return 1  # warning
+
+    return 2  # critical
+
+
+if __name__ == '__main__':
+    from docopt import docopt
+    exit_(main(docopt(__doc__)))

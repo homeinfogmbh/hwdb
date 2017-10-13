@@ -1,4 +1,4 @@
-"""Terminal library ORM models"""
+"""Terminal library ORM models."""
 
 from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address, AddressValueError
@@ -32,33 +32,33 @@ __all__ = [
 
 
 class TerminalError(Exception):
-    """Basic exception for terminals handling"""
+    """Basic exception for terminals handling."""
 
     pass
 
 
 class TerminalConfigError(TerminalError):
-    """Exception that indicated errors in the terminal configuration"""
+    """Exception that indicated errors in the terminal configuration."""
 
     pass
 
 
 class VPNUnconfiguredError(TerminalConfigError):
     """Indicated that no VPN configuration has
-    been assigned to the respective terminal
+    been assigned to the respective terminal.
     """
 
     pass
 
 
 class AddressUnconfiguredError(TerminalConfigError):
-    """Indicated that no address has been configured for the terminal"""
+    """Indicated that no address has been configured for the terminal."""
 
     pass
 
 
 class TerminalModel(Model):
-    """Terminal manager basic Model"""
+    """Terminal manager basic Model."""
 
     id = PrimaryKeyField()
 
@@ -73,7 +73,7 @@ class TerminalModel(Model):
 
 
 class Class(TerminalModel):
-    """Terminal classes"""
+    """Terminal classes."""
 
     name = CharField(32)
     full_name = CharField(32)
@@ -82,7 +82,7 @@ class Class(TerminalModel):
 
     @classmethod
     def _add(cls, name, full_name=None, touch=False):
-        """Forcibly adds a new class"""
+        """Forcibly adds a new class."""
         class_ = cls()
         class_.name = name
 
@@ -97,16 +97,16 @@ class Class(TerminalModel):
 
     @classmethod
     def add(cls, name, full_name=None, touch=False):
-        """Adds a terminal class"""
+        """Adds a terminal class."""
         try:
             return cls.get(
                 (cls.name == name) &
                 (cls.touch == touch))
         except DoesNotExist:
-            return cls._add(name, full_name=None, touch=False)
+            return cls._add(name, full_name=full_name, touch=False)
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return {
             'token': self.name,
             'name': self.full_name,
@@ -114,14 +114,14 @@ class Class(TerminalModel):
 
 
 class Domain(TerminalModel):
-    """Terminal domains"""
+    """Terminal domains."""
 
     # The domain's fully qualified domain name
     _fqdn = CharField(32, db_column='fqdn')
 
     @classmethod
     def add(cls, fqdn):
-        """Adds a domain with a certain FQDN"""
+        """Adds a domain with a certain FQDN."""
         try:
             return cls.get(cls._fqdn == fqdn)
         except DoesNotExist:
@@ -132,12 +132,12 @@ class Domain(TerminalModel):
 
     @property
     def fqdn(self):
-        """Returns the FQDN"""
+        """Returns the FQDN."""
         return self._fqdn
 
     @fqdn.setter
     def fqdn(self, fqdn):
-        """Sets the FQDN"""
+        """Sets the FQDN."""
         if fqdn.endswith('.') and not fqdn.startswith('.'):
             self._fqdn = fqdn
         else:
@@ -145,31 +145,31 @@ class Domain(TerminalModel):
 
     @property
     def name(self):
-        """Returns the domain name without trailing '.'"""
+        """Returns the domain name without trailing dot."""
         return self._fqdn[:-1]
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return self.fqdn
 
 
 class OS(TerminalModel):
-    """Operating systems"""
+    """Operating systems."""
 
     family = CharField(8)
     name = CharField(16)
     version = CharField(16, null=True, default=None)
 
     def __str__(self):
-        """Returns the family name"""
+        """Returns the family name."""
         return self.family
 
     def __repr__(self):
-        """Returns the OS name and version"""
+        """Returns the OS name and version."""
         return '{} {}'.format(self.name, self.version)
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return {
             'family': self.family,
             'name': self.name,
@@ -177,7 +177,7 @@ class OS(TerminalModel):
 
 
 class VPN(TerminalModel):
-    """OpenVPN settings"""
+    """OpenVPN settings."""
 
     NETWORK = IPv4Network('{}/{}'.format(
         CONFIG['net']['IPV4NET'],
@@ -189,7 +189,7 @@ class VPN(TerminalModel):
 
     @classmethod
     def add(cls, ipv4addr=None, key=None, mtu=None):
-        """Adds a record for the terminal"""
+        """Adds a record for the terminal."""
         openvpn = cls()
         openvpn.ipv4addr = cls._gen_addr(desired=ipv4addr)
         openvpn.key = key
@@ -200,14 +200,14 @@ class VPN(TerminalModel):
     @classproperty
     @classmethod
     def used_ipv4addrs(cls):
-        """Yields used IPv4 addresses"""
+        """Yields used IPv4 addresses."""
         for openvpn in cls:
             yield openvpn.ipv4addr
 
     @classproperty
     @classmethod
     def free_ipv4addrs(cls):
-        """Yields availiable IPv4 addresses"""
+        """Yields availiable IPv4 addresses."""
         used_ipv4addrs = [a for a in cls.used_ipv4addrs]
         lowest = None
         for ipv4addr in cls.NETWORK:
@@ -219,7 +219,7 @@ class VPN(TerminalModel):
 
     @classmethod
     def _gen_addr(cls, desired=None):
-        """Generates a unique IPv4 address"""
+        """Generates a unique IPv4 address."""
         if desired is not None:
             try:
                 ipv4addr = IPv4Address(desired)
@@ -238,21 +238,21 @@ class VPN(TerminalModel):
 
     @property
     def ipv4addr(self):
-        """Returns an IPv4 Address"""
+        """Returns an IPv4 Address."""
         return IPv4Address(self._ipv4addr)
 
     @ipv4addr.setter
     def ipv4addr(self, ipv4addr):
-        """Sets the IPv4 address"""
+        """Sets the IPv4 address."""
         self._ipv4addr = int(ipv4addr)
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return {'ipv4addr': str(self.ipv4addr), 'key': self.key}
 
 
 class Connection(TerminalModel):
-    """Connection data"""
+    """Internet connection information."""
 
     name = CharField(4)
     timeout = IntegerField()
@@ -261,18 +261,18 @@ class Connection(TerminalModel):
         return '{} ({})'.format(self.name, self.timeout)
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return {'name': self.name, 'timeout': self.timeout}
 
 
 class Location(TerminalModel):
-    """Location of a terminal"""
+    """Location of a terminal."""
 
     address = ForeignKeyField(Address, null=False, db_column='address')
     annotation = CharField(255, null=True, default=None)
 
     def __iter__(self):
-        """Yields location items"""
+        """Yields location items."""
         yield self.address.street
         yield self.address.house_number
         yield self.address.zip_code
@@ -282,11 +282,11 @@ class Location(TerminalModel):
             yield self.annotation
 
     def __str__(self):
-        """Returns location string"""
+        """Returns location string."""
         return '\n'.join((str(item) for item in self))
 
     def __repr__(self):
-        """Returns a unique on-liner"""
+        """Returns a unique on-liner."""
         result = '{} {}, {} {}'.format(
             self.address.street, self.address.house_number,
             self.address.zip_code, self.address.city)
@@ -298,7 +298,7 @@ class Location(TerminalModel):
 
     @classmethod
     def _add(cls, address, annotation=None):
-        """Forcibly adds a location record"""
+        """Forcibly adds a location record."""
         location = cls()
         location.address = address
         location.annotation = annotation
@@ -307,7 +307,7 @@ class Location(TerminalModel):
 
     @classmethod
     def add(cls, address, annotation=None):
-        """Adds a unique location"""
+        """Adds a unique location."""
         if annotation is None:
             try:
                 return cls.get(
@@ -325,7 +325,7 @@ class Location(TerminalModel):
 
     @property
     def shortinfo(self):
-        """Returns a short information e.g. for Nagios"""
+        """Returns a short information e.g. for Nagios."""
         result = ' '.join((self.address.street, self.address.house_number))
 
         if self.annotation:
@@ -334,14 +334,14 @@ class Location(TerminalModel):
         return result
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return {
             'address': self.address.to_dict(),
             'annotation': self.annotation}
 
 
 class Terminal(TerminalModel):
-    """A physical terminal out in the field"""
+    """A physical terminal out in the field."""
 
     # Ping once
     _CHK_CMD = '/bin/ping -c 1 -W {timeout} {host}'
@@ -372,38 +372,36 @@ class Terminal(TerminalModel):
     annotation = CharField(255, null=True, default=None)
 
     def __str__(self):
-        """Converts the terminal to a unique string"""
+        """Converts the terminal to a unique string."""
         return '.'.join([str(ident) for ident in self.idents])
 
     @classproperty
     @classmethod
     def hosts(cls):
-        """Yields entries for /etc/hosts"""
+        """Yields entries for /etc/hosts."""
         for terminal in cls.select().where(True):
             yield '{}\t{}'.format(terminal.ipv4addr, terminal.hostname)
 
     @classmethod
     def by_cid(cls, cid):
         """Yields terminals of a customer that
-        run the specified virtual terminal
+        run the specified virtual terminal.
         """
         return cls.select().where(cls.customer == cid).order_by(Terminal.tid)
 
     @classmethod
     def by_ids(cls, cid, tid, deleted=False):
-        """Get a terminal by customer id and terminal id"""
+        """Get a terminal by customer id and terminal id."""
         if deleted:
             return cls.get((cls.customer == cid) & (cls.tid == tid))
-        else:
-            return cls.get(
-                (cls.customer == cid) &
-                (cls.tid == tid) &
-                (cls.deleted >> None))
+
+        return cls.get(
+            (cls.customer == cid) & (cls.tid == tid) & (cls.deleted >> None))
 
     @classmethod
     def by_virt(cls, cid, vid):
         """Yields terminals of a customer that
-        run the specified virtual terminal
+        run the specified virtual terminal.
         """
         return cls.select().where(
             (cls.customer == cid) &
@@ -412,29 +410,31 @@ class Terminal(TerminalModel):
 
     @classmethod
     def tids(cls, cid):
-        """Yields used terminal IDs for a certain customer"""
+        """Yields used terminal IDs for a certain customer."""
         for terminal in cls.by_cid(cid):
             yield terminal.tid
 
     @classmethod
     def gen_tid(cls, cid, desired=None):
-        """Gets a unique terminal ID for the customer"""
+        """Gets a unique terminal ID for the customer."""
+        used_tids = cls.tids(cid)
+
         if desired is None:
             tid = 1
 
-            while tid in cls.tids(cid):
+            while tid in used_tids:
                 tid += 1
 
             return tid
-        else:
-            if desired in cls.tids(cid):
-                return cls.gen_tid(cid, desired=None)
-            else:
-                return desired
+
+        if desired in used_tids:
+            return cls.gen_tid(cid, desired=None)
+
+        return desired
 
     @classmethod
     def min_tid(cls, customer):
-        """Gets the lowest TID for the respective customer"""
+        """Gets the lowest TID for the respective customer."""
         result = None
 
         for terminal in cls.select().where(cls.customer == customer):
@@ -447,7 +447,7 @@ class Terminal(TerminalModel):
 
     @classmethod
     def max_tid(cls, customer):
-        """Gets the highest TID for the respective customer"""
+        """Gets the highest TID for the respective customer."""
         result = 0
 
         for terminal in cls.select().where(cls.customer == customer):
@@ -457,7 +457,7 @@ class Terminal(TerminalModel):
 
     @classmethod
     def min_vid(cls, customer):
-        """Gets the highest VID for the respective customer"""
+        """Gets the highest VID for the respective customer."""
         result = None
 
         for terminal in cls.select().where(cls.customer == customer):
@@ -471,7 +471,7 @@ class Terminal(TerminalModel):
 
     @classmethod
     def max_vid(cls, customer):
-        """Gets the highest TID for the respective customer"""
+        """Gets the highest TID for the respective customer."""
         result = 0
 
         for terminal in cls.select().where(cls.customer == customer):
@@ -484,7 +484,7 @@ class Terminal(TerminalModel):
     def add(cls, cid, class_, os, connection, vpn, domain,
             location=None, weather=None, scheduled=None,
             annotation=None, tid=None):
-        """Adds a new terminal"""
+        """Adds a new terminal."""
         terminal = cls()
         terminal.tid = cls.gen_tid(cid, desired=tid)
         terminal.customer = cid
@@ -507,22 +507,22 @@ class Terminal(TerminalModel):
 
     @property
     def cid(self):
-        """Returns the customer identifier"""
+        """Returns the customer identifier."""
         return self.customer.id
 
     @property
     def idents(self):
-        """Returns the terminals identifiers"""
+        """Returns the terminals identifiers."""
         return (self.tid, self.cid)
 
     @property
     def hostname(self):
-        """Generates and returns the terminal's host name"""
+        """Generates and returns the terminal's host name."""
         return '{}.{}.{}'.format(self.tid, self.cid, self.domain.name)
 
     @property
     def ipv4addr(self):
-        """Returns an IPv4 Address"""
+        """Returns an IPv4 Address."""
         if self.vpn is not None:
             return self.vpn.ipv4addr
         else:
@@ -530,6 +530,7 @@ class Terminal(TerminalModel):
 
     @property
     def address(self):
+        """Returns the terminal's address."""
         location = self.location
 
         if location is not None:
@@ -552,9 +553,8 @@ class Terminal(TerminalModel):
 
     @property
     def online(self):
-        """Determines whether the terminal is online
-
-        XXX: This may take some time, so use it carefully.
+        """Determines whether the terminal is online.
+        This may take some time, so use it carefully.
         """
         if self.connection:
             chk_cmd = self._CHK_CMD.format(
@@ -569,57 +569,57 @@ class Terminal(TerminalModel):
     @property
     def syncable(self):
         """Determines whether the terminal
-        can be synchronized by HIPSTER
+        can be synchronized by HIPSTER.
         """
         return self.os.family == 'Linux'
 
     @property
     def status(self):
-        """Determines the status of the terminal"""
+        """Determines the status of the terminal."""
         return False if self.tainted else self.online
 
     @property
     def due(self):
-        """Determines whether the terminal is due for deployment"""
+        """Determines whether the terminal is due for deployment."""
         return self.scheduled is not None and self.scheduled <= datetime.now()
 
     @property
     def isdeployed(self):
-        """Determines whether the terminal is deployed"""
+        """Determines whether the terminal is deployed."""
         return self.deployed is not None and self.deployed <= datetime.now()
 
     @property
     def productive(self):
-        """Returns whether the system has been deployed and is non-testing"""
+        """Returns whether the system has been deployed and is non-testing."""
         return self.isdeployed and not self.testing
 
     def deploy(self, date_time=None, force=False):
-        """Sets terminals to deployed"""
+        """Sets terminals to deployed."""
         if self.deployed is None or force:
             deployed = datetime.now() if date_time is None else date_time
             self.logger.success('Deploying {} on {}.'.format(self, deployed))
             self.deployed = deployed
             self.save()
             return True
-        else:
-            self.logger.warning('{} has already been deployed on {}.'.format(
-                self, self.deployed))
-            return False
+
+        self.logger.warning('{} has already been deployed on {}.'.format(
+            self, self.deployed))
+        return False
 
     def undeploy(self, force=False):
-        """Sets terminals to NOT deployed"""
+        """Sets terminals to NOT deployed."""
         if self.deployed is not None or force:
             self.logger.info('Undeploying {} from {}.'.format(
                 self, self.deployed))
             self.deployed = None
             self.save()
             return True
-        else:
-            self.logger.warning('{} is not deployed.'.format(self))
-            return False
+
+        self.logger.warning('{} is not deployed.'.format(self))
+        return False
 
     def to_dict(self, short=False):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         dictionary = {
             'customer': self.customer.id,
             'tid': self.tid}
@@ -669,7 +669,7 @@ class Terminal(TerminalModel):
 
 
 class Synchronization(TerminalModel):
-    """Synchronization log
+    """Synchronization log.
 
     Recommended usage:
 
@@ -700,7 +700,7 @@ class Synchronization(TerminalModel):
 
     @classmethod
     def start(cls, terminal, result=None):
-        """Start a synchronization for this terminal"""
+        """Start a synchronization for this terminal."""
         sync = cls()
         sync.terminal = terminal
         sync.started = datetime.now()
@@ -708,14 +708,14 @@ class Synchronization(TerminalModel):
         return sync
 
     def stop(self, force=False):
-        """Stops the synchronization"""
+        """Stops the synchronization."""
         if force or self.result is not None:
             self.finished = datetime.now()
             self.save()
             return True
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         dictionary = {
             'terminal': self.terminal.id,
             'started': str(self.started)}
@@ -743,7 +743,7 @@ class Synchronization(TerminalModel):
 
 class Admin(TerminalModel):
     """Many-to-many mapping in-between
-    Employees and terminal classes
+    Employees and terminal classes.
     """
 
     class Meta:
@@ -756,22 +756,22 @@ class Admin(TerminalModel):
 
     @property
     def name(self):
-        """Returns a short name"""
+        """Returns a short name."""
         if self._name is None:
             return self.employee.surname
-        else:
-            return self._name
+
+        return self._name
 
     @property
     def email(self):
-        """Returns the admin's email"""
+        """Returns the admin's email."""
         if self._email is None:
             return self.employee.email
-        else:
-            return self._email
+
+        return self._email
 
     def to_dict(self):
-        """Returns a JSON-like dictionary"""
+        """Returns a JSON-like dictionary."""
         return {
             'name': self.name,
             'email': self.email,
@@ -779,7 +779,7 @@ class Admin(TerminalModel):
 
 
 class Statistics(Model):
-    """Stores application access statistics"""
+    """Stores application access statistics."""
 
     class Meta:
         database = MySQLDatabase(
@@ -799,7 +799,9 @@ class Statistics(Model):
 
     @classmethod
     def latest(cls, terminal):
-        """Returns the latest statistics record for the respective terminal"""
+        """Returns the latest statistics
+        record for the respective terminal.
+        """
         for statistics in cls.select().limit(1).where(
                 (cls.customer == terminal.cid) &
                 (cls.tid == terminal.tid)).order_by(
@@ -808,7 +810,7 @@ class Statistics(Model):
 
 
 class LatestStats(TerminalModel):
-    """Stores the last statistics of the respective terminal"""
+    """Stores the last statistics of the respective terminal."""
 
     class Meta:
         db_table = 'latest_stats'
@@ -818,7 +820,7 @@ class LatestStats(TerminalModel):
 
     @classmethod
     def refresh(cls, terminal=None):
-        """Refreshes the stats for the respective terminal"""
+        """Refreshes the stats for the respective terminal."""
         if terminal is None:
             for terminal in Terminal:
                 cls.refresh(terminal=terminal)

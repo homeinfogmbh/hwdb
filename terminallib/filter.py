@@ -1,4 +1,4 @@
-"""Terminal filters"""
+"""Terminal filters."""
 
 from contextlib import suppress
 from sys import stderr
@@ -19,14 +19,7 @@ class NoSuchTerminals(Exception):
         super().__init__(missing)
         self.missing = missing
 
-    def __str__(self):
-        """Prints the missing terminal IDs."""
-        return '\n'.join(
-            'Missing terminal: {}.'.format(terminal)
-            for terminal in self.terminals)
-
-    @property
-    def terminals(self):
+    def __iter__(self):
         """Yields the missing terminal IDs."""
         for cid, identifiers in self.missing.items():
             for identifier in identifiers:
@@ -93,5 +86,7 @@ class PrintMissing:
     def __exit__(self, typ, value, _):
         """Checks for NoSuchTerminals exception."""
         if typ is NoSuchTerminals:
-            print(value, file=self.file, flush=True)
+            for ident in value:
+                print(self.template.format(ident), file=self.file, flush=True)
+
             return True

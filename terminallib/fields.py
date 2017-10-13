@@ -53,14 +53,14 @@ def justify(string, size, leftbound=False):
     return string[0:size].rjust(size)
 
 
-class TerminalField():
+class TerminalField:
     """Wrapper to access terminal properties."""
 
     def __init__(self, getter, caption, size=0, leftbound=False):
         """Sets the field's name"""
         self.getter = getter
         self.caption = caption
-        self._size = size
+        self.size = size
         self.leftbound = leftbound
 
     def __str__(self):
@@ -69,15 +69,15 @@ class TerminalField():
 
     def __repr__(self):
         """Returns the justified caption."""
-        return justify(self.caption, self.size, leftbound=self.leftbound)
+        return justify(self.caption, self.max, leftbound=self.leftbound)
 
     def __call__(self, terminal):
         """Handles the given value."""
         value = self.getter(terminal)
         string = stringify(value)
-        return justify(string, self.size, leftbound=self.leftbound)
+        return justify(string, self.max, leftbound=self.leftbound)
 
     @property
-    def size(self):
-        """Returns the desired size."""
-        return max(self._size, len(self.caption))
+    def max(self):
+        """Returns the maximum size."""
+        return max(self.size, len(self.caption))

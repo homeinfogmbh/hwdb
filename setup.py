@@ -3,14 +3,12 @@
 from distutils.core import setup
 
 setup(
-    name='homeinfo.terminals',
-    version='latest',
+    name='terminallib',
     author='HOMEINFO - Digitale Informationssysteme GmbH',
     author_email='info@homeinfo.de',
     maintainer='Richard Neumann',
     maintainer_email='r.neumann@homeinfo.de',
-    package_dir={'homeinfo': ''},
-    packages=['homeinfo.terminals'],
+    packages=['terminallib'],
     scripts=[
         'files/termutil',
         'files/chkstats',

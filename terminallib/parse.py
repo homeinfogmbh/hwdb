@@ -75,8 +75,8 @@ def split_cid(expression, sep='.'):
     except ValueError:
         if sep in expression:
             raise InvalidExpression(expression) from None
-        else:
-            return (None, expression)
+
+        return (None, expression)
     else:
         return (blocks, cid)
 
@@ -96,18 +96,16 @@ def parse_block(block, sep='-'):
     except ValueError:
         if sep in block:
             raise InvalidBlock(block) from None
-        else:
-            return Identifier.from_string(block)
+
+        return Identifier.from_string(block)
     else:
         start = Identifier.from_string(start)
         end = Identifier.from_string(end)
 
         if int(start) < int(end):
             return (start, end)
-        else:
-            raise ValueError(
-                'Invalid range {}→{}. Start must be smaller than end.'.format(
-                    start, end))
+
+        raise ValueError('Invalid range {}→{}.'.format(start, end))
 
 
 class Identifier:

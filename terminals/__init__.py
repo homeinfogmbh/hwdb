@@ -1,1 +1,0 @@
-"""HOMEINFO's terminal library"""
