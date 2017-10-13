@@ -370,6 +370,7 @@ class Terminal(TerminalModel):
     replacement = BooleanField(default=False)
     tainted = BooleanField(default=False)
     annotation = CharField(255, null=True, default=None)
+    serial_number = CharField(255, null=True, default=None)
 
     def __str__(self):
         """Converts the terminal to a unique string."""
@@ -483,7 +484,7 @@ class Terminal(TerminalModel):
     @classmethod
     def add(cls, cid, class_, os, connection, vpn, domain,
             location=None, weather=None, scheduled=None,
-            annotation=None, tid=None):
+            annotation=None, serial_number=None, tid=None):
         """Adds a new terminal."""
         terminal = cls()
         terminal.tid = cls.gen_tid(cid, desired=tid)
@@ -502,6 +503,7 @@ class Terminal(TerminalModel):
         terminal.testing = False
         terminal.replacement = False
         terminal.annotation = annotation
+        terminal.serial_number = serial_number
         terminal.save()
         return terminal
 
@@ -664,6 +666,9 @@ class Terminal(TerminalModel):
 
             if self.annotation is not None:
                 dictionary['annotation'] = self.annotation
+
+            if self.serial_number is not None:
+                dictionary['serial_number'] = self.serial_number
 
         return dictionary
 
