@@ -47,7 +47,7 @@ def main(options):
             clients_dir = Path(CONFIG['openvpn']['CLIENTS_DIR'])
             file_path = clients_dir.joinpath(file_name)
 
-            with open(file_path, 'w') as cfg:
+            with file_path.open('w') as cfg:
                 cfg.write(config_text)
 
     if reload:
