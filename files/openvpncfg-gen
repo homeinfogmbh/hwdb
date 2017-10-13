@@ -13,6 +13,7 @@ Options:
 from pathlib import Path
 from subprocess import CalledProcessError, check_call
 from sys import stderr, exit as exit_
+from traceback import format_exc
 
 from fancylog import TTYAnimation
 from terminallib import CONFIG, VPNUnconfiguredError, Terminal
@@ -29,10 +30,8 @@ ifconfig-push {} {}
 '''     # Mandatory empty line at end of file
 
 
-def main(options):
-    """Runs the OpenVPN config generator."""
-
-    reload = not options['--no-restart']
+def generate_config():
+    """Generates the respective configuration files."""
 
     for terminal in Terminal.select().where(Terminal.deleted >> None):
         try:
@@ -49,6 +48,26 @@ def main(options):
 
             with file_path.open('w') as cfg:
                 cfg.write(config_text)
+
+
+def main(options):
+    """Runs the OpenVPN config generator."""
+
+    reload = not options['--no-restart']
+    error = None
+
+    with TTYAnimation('Generating configuration') as animation:
+        try:
+            generate_config()
+        except Exception:
+            error = format_exc()
+            animation.result = False
+        else:
+            animation.result = True
+
+    if error is not None:
+        print(error, file=stderr)
+        return 2
 
     if reload:
         with TTYAnimation('Restarting OpenVPN') as animation:
