@@ -16,6 +16,7 @@ __all__ = [
     'AddressUnconfiguredError',
     'parse',
     'terminals',
+    'TerminalAware',
     'PrintMissing',
     'CustomSSHOptions',
     'RemoteController',
