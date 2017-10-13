@@ -5,7 +5,7 @@ from itertools import chain
 
 from syslib import run, ProcessResult
 
-from .abc import TerminalAware
+from .common import TerminalAware
 from .config import CONFIG
 
 __all__ = ['RemoteController']

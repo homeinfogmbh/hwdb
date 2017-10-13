@@ -1,5 +1,6 @@
 """HOMEINFO's terminal library."""
 
+from .common import TerminalAware
 from .config import CONFIG
 from .ctrl import CustomSSHOptions, RemoteController
 from .filter import parse, terminals, PrintMissing
