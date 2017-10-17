@@ -622,9 +622,12 @@ class Terminal(TerminalModel):
 
     def to_dict(self, short=False):
         """Returns a JSON-like dictionary."""
-        dictionary = {
-            'customer': self.customer.id,
-            'tid': self.tid}
+        dictionary = {'tid': self.tid}
+
+        if short:
+            dictionary['customer'] = self.customer.id
+        else:
+            dictionary['customer'] = self.customer.to_dict()
 
         if self.location is not None:
             dictionary['location'] = self.location.to_dict()
