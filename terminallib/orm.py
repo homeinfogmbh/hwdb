@@ -633,10 +633,10 @@ class Terminal(TerminalModel):
             dictionary['location'] = self.location.to_dict()
 
         if self.scheduled is not None:
-            dictionary['scheduled'] = str(self.scheduled)
+            dictionary['scheduled'] = self.scheduled.isoformat()
 
         if self.deployed is not None:
-            dictionary['deployed'] = str(self.deployed)
+            dictionary['deployed'] = self.deployed.isoformat()
 
         if not short:
             dictionary['class'] = self.class_.to_dict()
@@ -656,7 +656,7 @@ class Terminal(TerminalModel):
                 dictionary['weather'] = self.weather
 
             if self.deleted is not None:
-                dictionary['deleted'] = str(self.deleted)
+                dictionary['deleted'] = self.deleted.isoformat()
 
             if self.testing is not None:
                 dictionary['testing'] = self.testing
