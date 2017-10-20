@@ -1,5 +1,6 @@
 """Terminal filters."""
 
+from collections import defaultdict
 from contextlib import suppress
 from sys import stderr
 
@@ -29,18 +30,15 @@ class NoSuchTerminals(Exception):
 def parse(*expressions, quiet=False):
     """Yields parsers from expressions"""
 
-    missing = {}
+    missing = defaultdict(set)
 
     for expression in expressions:
         try:
             for terminal in TerminalSelection(expression):
                 yield terminal
         except MissingTerminals as missing_terminals:
-            try:
-                missing[missing_terminals.cid].update(
-                    missing_terminals.identifiers)
-            except KeyError:
-                missing[missing_terminals.cid] = missing_terminals.identifiers
+            missing[missing_terminals.cid].update(
+                missing_terminals.identifiers)
 
     if not quiet and missing:
         raise NoSuchTerminals(missing)
