@@ -18,6 +18,31 @@ __all__ = [
     'DomainUtil']
 
 
+FIELDS = {
+    'id': TerminalField(lambda terminal: terminal.id, 'ID', size=4),
+    'tid': TerminalField(lambda terminal: terminal.tid, 'TID', size=3),
+    'cid': TerminalField(
+        lambda terminal: terminal.customer.id, 'CID', size=10),
+    'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
+    'class': TerminalField(
+        lambda terminal: repr(terminal.class_), 'Class', leftbound=True),
+    'os': TerminalField(
+        lambda terminal: repr(terminal.os), 'OS', size=19, leftbound=True),
+    'ipv4addr': TerminalField(
+        lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
+    'deployed': TerminalField(
+        lambda terminal: terminal.deployed, 'Deployed', size=21),
+    'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
+    'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
+    'address': TerminalField(
+        get_address, 'Address', size=48, leftbound=True),
+    'annotation': TerminalField(
+        get_annotation, 'Annotation', size=32, leftbound=True),
+    'comment': TerminalField(
+        lambda terminal: terminal.annotation, 'Comment',
+        size=24, leftbound=True)}
+
+
 class DeploymentFilter:
     """Filters terminals for their deployment state."""
 
@@ -58,28 +83,6 @@ class TestingFilter:
 
 class TerminalUtil:
     """Terminals query utility"""
-
-    FIELDS = {
-        'id': TerminalField(lambda terminal: terminal.id, 'ID', size=4),
-        'tid': TerminalField(lambda terminal: terminal.tid, 'TID', size=3),
-        'cid': TerminalField(
-            lambda terminal: terminal.customer.id, 'CID', size=10),
-        'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
-        'os': TerminalField(
-            lambda terminal: repr(terminal.os), 'OS', size=19, leftbound=True),
-        'ipv4addr': TerminalField(
-            lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
-        'deployed': TerminalField(
-            lambda terminal: terminal.deployed, 'Deployed', size=21),
-        'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
-        'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
-        'address': TerminalField(
-            get_address, 'Address', size=48, leftbound=True),
-        'annotation': TerminalField(
-            get_annotation, 'Annotation', size=32, leftbound=True),
-        'comment': TerminalField(
-            lambda terminal: terminal.annotation, 'Comment',
-            size=24, leftbound=True)}
 
     def __init__(self, expr, deployed=None, testing=None):
         self.expr = expr
@@ -170,7 +173,7 @@ class TerminalUtil:
                 'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
                 'testing', 'tainted', 'address', 'annotation')
 
-        fields = tuple(self.FIELDS[field] for field in fields)
+        fields = tuple(FIELDS[field] for field in fields)
 
         if header:
             yield sep.join(str(field) for field in fields)
