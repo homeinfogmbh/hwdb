@@ -29,9 +29,10 @@ def management_hosts():
     yield ';# Management network hosts\n'
 
     with open(LOCAL_HOSTS_LIST, 'r') as local_hosts_list:
-        for record in local_hosts_list:
-            if record.strip() and not record.startswith('#'):
-                yield RECORD.format(*record.split())
+        for record in filter(
+                lambda record: record.startswith('#'),
+                map(lambda record: record.strip(), local_hosts_list)):
+            yield RECORD.format(*record.split())
 
 
 def terminal_hosts():
