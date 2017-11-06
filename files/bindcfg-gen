@@ -20,7 +20,7 @@ SYSTEMCTL = '/bin/systemctl'
 DNS_TEMPLATE = '/usr/local/etc/homeinfo.intranet.zone.temp'
 LOCAL_HOSTS_LIST = '/usr/local/etc/local_hosts'
 DNS_CONFIG = '/etc/bind/homeinfo.intranet.zone'
-RECORD = '{}\tIN\tA\t{}\n'
+RECORD = '{}\tIN\tA\t{}'
 
 
 def management_hosts():
@@ -58,7 +58,8 @@ def main():
         template = temp.read()
 
     config = template.format(
-        file=__file__, management='\n'.join(management_hosts()),
+        file=__file__,
+        management='\n'.join(management_hosts()),
         terminals='\n'.join(terminal_hosts()))
 
     with open(DNS_CONFIG, 'w') as dns_cfg:
