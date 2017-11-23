@@ -22,11 +22,12 @@ Options:
     --index=<n>, -i                 On ambiguous results, use the nth.
     --annotation=<annotation>, -a   Consider the specified location annotation.
 """
-from sys import exit as exit_
+from sys import argv, exit as exit_
 
 from docopt import docopt
 
 from terminallib import TerminalUtil, ClassUtil, OSUtil, DomainUtil
+from terminallib.util import ARNIE
 
 
 def list_terminals(options):
@@ -113,8 +114,11 @@ def main(options):
     if options['list'] or options['ls']:
         if sum((options['--terminals'], options['--classes'],
                 options['--os'], options['--domains'])) != 1:
-            print('Must specify exactly one list option.')
-            return 1
+            if 'CSM-101' in argv:
+                print(ARNIE)
+            else:
+                print('Must specify exactly one list option.')
+                return 1
         elif options['--terminals']:
             list_terminals(options)
         elif options['--classes']:

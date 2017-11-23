@@ -43,6 +43,21 @@ FIELDS = {
         lambda terminal: terminal.annotation, 'Comment',
         size=24, leftbound=True)}
 
+ARNIE = '''                     <((((((\\\\\\
+                     /      . }\\
+                     ;--..--._|}
+  (\\                 '--/\\--'  )
+   \\\\                | '-'  :'|
+    \\\\               . -==- .-|
+     \\\\               \\.__.'   \\--._
+     [\\\\          __.--|       //  _/'--.
+     \\ \\\\       .'-._ ('-----'/ __/      \\
+      \\ \\\\     /   __>|      | '--.       |
+       \\ \\\\   |   \\   |     /    /       /
+        \\ '\\ /     \\  |     |  _/       /
+         \\  \\       \\ |     | /        /
+   snd    \\  \\      \\        /'''
+
 
 class DeploymentFilter:
     """Filters terminals for their deployment state."""
