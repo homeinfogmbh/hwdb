@@ -43,20 +43,17 @@ FIELDS = {
         lambda terminal: terminal.annotation, 'Comment',
         size=24, leftbound=True)}
 
-ARNIE = '''                     <((((((\\\\\\
-                     /      . }\\
-                     ;--..--._|}
-  (\\                 '--/\\--'  )
-   \\\\                | '-'  :'|
-    \\\\               . -==- .-|
-     \\\\               \\.__.'   \\--._
-     [\\\\          __.--|       //  _/'--.
-     \\ \\\\       .'-._ ('-----'/ __/      \\
-      \\ \\\\     /   __>|      | '--.       |
-       \\ \\\\   |   \\   |     /    /       /
-        \\ '\\ /     \\  |     |  _/       /
-         \\  \\       \\ |     | /        /
-   snd    \\  \\      \\        /'''
+ARNIE = ('ICAgICAgICAgICAgICAgICAgICAgPCgoKCgoKFxcXAogICAgICAgICAgICAgICAgICAg'
+         'ICAvICAgICAgLiB9XAogICAgICAgICAgICAgICAgICAgICA7LS0uLi0tLl98fQogIChc'
+         'ICAgICAgICAgICAgICAgICAnLS0vXC0tJyAgKQogICBcXCAgICAgICAgICAgICAgICB8'
+         'ICctJyAgOid8CiAgICBcXCAgICAgICAgICAgICAgIC4gLT09LSAuLXwKICAgICBcXCAg'
+         'ICAgICAgICAgICAgIFwuX18uJyAgIFwtLS5fCiAgICAgW1xcICAgICAgICAgIF9fLi0t'
+         'fCAgICAgICAvLyAgXy8nLS0uCiAgICAgXCBcXCAgICAgICAuJy0uXyAoJy0tLS0tJy8g'
+         'X18vICAgICAgXAogICAgICBcIFxcICAgICAvICAgX18+fCAgICAgIHwgJy0tLiAgICAg'
+         'ICB8CiAgICAgICBcIFxcICAgfCAgIFwgICB8ICAgICAvICAgIC8gICAgICAgLwogICAg'
+         'ICAgIFwgJ1wgLyAgICAgXCAgfCAgICAgfCAgXy8gICAgICAgLwogICAgICAgICBcICBc'
+         'ICAgICAgIFwgfCAgICAgfCAvICAgICAgICAvCiAgIHNuZCAgICBcICBcICAgICAgXCAg'
+         'ICAgICAgLw==')
 
 
 class DeploymentFilter:

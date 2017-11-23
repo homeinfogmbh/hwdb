@@ -22,6 +22,7 @@ Options:
     --index=<n>, -i                 On ambiguous results, use the nth.
     --annotation=<annotation>, -a   Consider the specified location annotation.
 """
+from base64 import b64decode
 from sys import argv, exit as exit_
 
 from docopt import docopt
@@ -115,7 +116,7 @@ def main(options):
         if sum((options['--terminals'], options['--classes'],
                 options['--os'], options['--domains'])) != 1:
             if 'CSM-101' in argv:
-                print(ARNIE)
+                print(b64decode(ARNIE.encode()).decode())
             else:
                 print('Must specify exactly one list option.')
                 return 1
