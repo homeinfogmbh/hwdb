@@ -54,6 +54,13 @@ AgICAgIFwgJ1wgLyAgICAgXCAgfCAgICAgfCAgXy8gICAgICAgLwogICAgICAgICBcICBcICAgICAgI
 FwgfCAgICAgfCAvICAgICAgICAvCiAgIHNuZCAgICBcICBcICAgICAgXCAgICAgICAgLw=='''
 
 
+def print_terminal(terminal):
+    """Prints the respective terminal."""
+
+    print(repr(terminal.location), file=stderr)
+    print(str(terminal))
+
+
 class DeploymentFilter:
     """Filters terminals for their deployment state."""
 
@@ -145,19 +152,15 @@ class TerminalUtil:
     @classmethod
     def get(cls, street, house_number=None, annotation=None, index=None):
         """Finds a terminal by its location"""
-
-        def _print(terminal):
-            print(repr(terminal.location), file=stderr)
-            print(str(terminal))
-
-        terminals = list(cls.find(
+        terminals = tuple(cls.find(
             street, house_number=house_number, annotation=annotation))
 
         if not terminals:
             print('No terminal matching query.', file=stderr)
+            return False
         elif len(terminals) == 1:
             terminal = terminals[0]
-            _print(terminal)
+            print_terminal(terminal)
             return True
         elif index is not None:
             try:
@@ -166,16 +169,16 @@ class TerminalUtil:
                 print('No {}th terminal available ({}).'.format(
                     index, len(terminals)), file=stderr)
                 return False
-            else:
-                _print(terminal)
-                return True
-        else:
-            print(Shell.bold('Ambiguous terminals:'), file=stderr)
 
-            for terminal in terminals:
-                _print(terminal)
+            print_terminal(terminal)
+            return True
 
-            return False
+        print(Shell.bold('Ambiguous terminals:'), file=stderr)
+
+        for terminal in terminals:
+            print_terminal(terminal)
+
+        return False
 
     def print(self, header=True, fields=None, sep='  '):
         """Yields formatted terminals for console outoput"""
