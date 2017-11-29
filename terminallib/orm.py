@@ -369,6 +369,7 @@ class Terminal(TerminalModel):
     testing = BooleanField(default=False)
     replacement = BooleanField(default=False)
     tainted = BooleanField(default=False)
+    monitor = BooleanField(null=True, default=None)
     annotation = CharField(255, null=True, default=None)
     serial_number = CharField(255, null=True, default=None)
 
