@@ -30,7 +30,7 @@ def management_hosts():
 
     with open(LOCAL_HOSTS_LIST, 'r') as local_hosts_list:
         for record in filter(
-                lambda record: record.startswith('#'),
+                lambda record: record and not record.startswith('#'),
                 map(lambda record: record.strip(), local_hosts_list)):
             yield RECORD.format(*record.split())
 
