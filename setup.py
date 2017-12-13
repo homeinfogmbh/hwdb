@@ -11,6 +11,7 @@ setup(
     packages=['terminallib'],
     scripts=[
         'files/termutil',
+        'files/terminals',
         'files/chkstats',
         'files/chksync',
         'files/refresh-termstats',

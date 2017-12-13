@@ -1,0 +1,50 @@
+#! /usr/bin/env python3
+"""terminals.
+
+    Lists terminals.
+
+Usage:
+    terminals [options]
+
+Options:
+    --os=<os>, -O       Only print terminals running the specified operating \
+system.
+    --online, -o        Only list online terminals.
+    --help, -h          Show this page.
+"""
+from sys import exit as exit_, stderr
+
+from docopt import docopt
+from peewee import DoesNotExist
+
+from terminallib import OS, Terminal
+
+
+def main(options):
+    """Prints terminals to stdout for shell processing."""
+
+    operating_system = options['--os']
+
+    if operating_system is not None:
+        try:
+            operating_system = OS.get(OS.family == operating_system)
+        except DoesNotExist:
+            print('No such operating system: {}.'.format(operating_system),
+                  file=stderr, flush=True)
+            return 1
+
+        terminals = Terminal.select().where(Terminal.os == operating_system)
+    else:
+        terminals = Terminal
+
+    if options['--online']:
+        terminals = filter(lambda terminal: terminal.online, terminals)
+
+    for terminal in terminals:
+        print(terminal, flush=True)
+
+    return 0
+
+
+if __name__ == '__main__':
+    exit_(main(docopt(__doc__)))
