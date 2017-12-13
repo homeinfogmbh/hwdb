@@ -9,7 +9,7 @@ Usage:
 Options:
     --os=<os>, -O       Only print terminals running the specified operating \
 system.
-    --online, -o        Only list online terminals.
+    --online, -o        Only list online terminals. This will be slow!
     --help, -h          Show this page.
 """
 from sys import exit as exit_, stderr
