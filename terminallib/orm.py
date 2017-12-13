@@ -168,6 +168,17 @@ class OS(TerminalModel):
         """Returns the OS name and version."""
         return '{} {}'.format(self.name, self.version)
 
+    @classmethod
+    def search(cls, string):
+        """Fuzzily searches an operating system by the given string."""
+        try:
+            return cls.get(cls.id == int(string))
+        except ValueError:
+            return cls.get(
+                (cls.family == string)
+                | (cls.name == string)
+                | (cls.version == string))
+
     def to_dict(self):
         """Returns a JSON-like dictionary."""
         return {
