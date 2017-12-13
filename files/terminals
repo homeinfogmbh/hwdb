@@ -17,13 +17,28 @@ from sys import exit as exit_, stderr
 from docopt import docopt
 from peewee import DoesNotExist
 
+from homeinfo.crm import Customer
+
 from terminallib import OS, Terminal
 
 
-def main(options):
-    """Prints terminals to stdout for shell processing."""
+def _filter_by_customers(terminals, cids):
+    """Filters terminals by customers."""
 
-    operating_system = options['--os']
+    try:
+        customers = [Customer.get(Customer.cid == cid) for cid in cids]
+    except DoesNotExist as does_not_exist:
+        print(does_not_exist, file=stderr, flush=True)
+        raise
+
+    if customers is None:
+        return terminals
+
+    return terminals.select().where(Terminal.customer << customers)
+
+
+def _filter_by_os(terminals, operating_system):
+    """Filters terminals by operating system."""
 
     if operating_system is not None:
         try:
@@ -31,11 +46,29 @@ def main(options):
         except DoesNotExist:
             print('No such operating system: {}.'.format(operating_system),
                   file=stderr, flush=True)
-            return 1
+            raise
 
-        terminals = Terminal.select().where(Terminal.os == operating_system)
-    else:
-        terminals = Terminal
+        return terminals.select().where(Terminal.os == operating_system)
+
+    return terminals
+
+
+def main(options):
+    """Prints terminals to stdout for shell processing."""
+
+    cid = options['--customer']
+    cids = options['--customers'].split(',')
+
+    if cid is not None:
+        cids = [cid] + cids
+
+    operating_system = options['--os']
+
+    try:
+        terminals = _filter_by_os(
+            _filter_by_customers(Terminal, cids), operating_system)
+    except DoesNotExist:
+        return 1
 
     if options['--online']:
         terminals = filter(lambda terminal: terminal.online, terminals)
