@@ -7,6 +7,8 @@ Usage:
     terminals [options]
 
 Options:
+    --customer=<cid>    Only prints terminals of the specified customer.
+    --customers=<cids>  Only prints terminals of the specified customers.
     --os=<os>, -O       Only print terminals running the specified operating \
 system.
     --online, -o        Only list online terminals. This will be slow!
