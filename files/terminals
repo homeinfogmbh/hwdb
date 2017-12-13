@@ -27,7 +27,7 @@ def main(options):
 
     if operating_system is not None:
         try:
-            operating_system = OS.get(OS.family == operating_system)
+            operating_system = OS.search(operating_system)
         except DoesNotExist:
             print('No such operating system: {}.'.format(operating_system),
                   file=stderr, flush=True)
