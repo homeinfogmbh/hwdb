@@ -28,7 +28,7 @@ def _filter_by_customers(terminals, cids):
     """Filters terminals by customers."""
 
     try:
-        customers = [Customer.get(Customer.cid == cid) for cid in cids]
+        customers = [Customer.get(Customer.id == cid) for cid in cids]
     except DoesNotExist as does_not_exist:
         print(does_not_exist, file=stderr, flush=True)
         raise
