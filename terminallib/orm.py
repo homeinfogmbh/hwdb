@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address
-from subprocess import CalledProcessError, check_call
+from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField, \
     BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
@@ -478,7 +478,7 @@ class Terminal(TerminalModel):
         This may take some time, so use it carefully.
         """
         try:
-            check_call(self._check_command)
+            check_call(self._check_command, stdout=DEVNULL, stderr=DEVNULL)
         except (AttributeError, CalledProcessError):
             return False
 
