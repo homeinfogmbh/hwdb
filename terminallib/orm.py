@@ -358,7 +358,7 @@ class Terminal(TerminalModel):
 
     def __str__(self):
         """Converts the terminal to a unique string."""
-        return '.'.join([str(ident) for ident in self.idents])
+        return '{}.{}'.format(self.tid, self.subdomain)
 
     @classmethod
     def hosts(cls):
@@ -452,7 +452,7 @@ class Terminal(TerminalModel):
     @property
     def hostname(self):
         """Returns the terminal's host name."""
-        return '{}.{}.{}'.format(self.tid, self.subdomain, self.domain.name)
+        return '{}.{}'.format(str(self), self.domain.name)
 
     @property
     def ipv4addr(self):
