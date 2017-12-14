@@ -320,19 +320,14 @@ class Location(TerminalModel):
     def add(cls, address, annotation=None):
         """Adds a unique location."""
         if annotation is None:
-            try:
-                return cls.get(
-                    (cls.address == address) &
-                    (cls.annotation >> None))
-            except DoesNotExist:
-                return cls._add(address)
+            annotation_selector = cls.annotation >> None
         else:
-            try:
-                return cls.get(
-                    (cls.address == address) &
-                    (cls.annotation == annotation))
-            except DoesNotExist:
-                return cls._add(address, annotation=annotation)
+            annotation_selector = cls.annotation == annotation
+
+        try:
+            return cls.get((cls.address == address) & annotation_selector)
+        except DoesNotExist:
+            return cls._add(address, annotation=annotation)
 
     @property
     def shortinfo(self):
@@ -360,17 +355,12 @@ class Terminal(TerminalModel):
 
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
-        Customer, db_column='customer', related_name='terminals')
-    class_ = ForeignKeyField(
-        Class, db_column='class', related_name='terminals')
-    os = ForeignKeyField(OS, db_column='os', related_name='terminals')
-    connection = ForeignKeyField(
-        Connection, db_column='connection', null=True, default=None)
-    vpn = ForeignKeyField(
-        VPN, null=True, db_column='vpn',
-        related_name='terminals', default=None)
-    domain = ForeignKeyField(
-        Domain, db_column='domain', related_name='terminals')
+        Customer, db_column='customer', on_update='CASCADE')
+    class_ = ForeignKeyField(Class, db_column='class')
+    os = ForeignKeyField(OS, db_column='os')
+    connection = ForeignKeyField(Connection, db_column='connection', null=True)
+    vpn = ForeignKeyField(VPN, null=True, db_column='vpn')
+    domain = ForeignKeyField(Domain, db_column='domain')
     location = ForeignKeyField(Location, null=True, db_column='location')
     vid = IntegerField(null=True, default=None)
     weather = CharField(16, null=True)
@@ -770,7 +760,9 @@ class Admin(TerminalModel):
         db_table = 'admin'
 
     _name = CharField(16, db_column='name', null=True, default=None)
-    employee = ForeignKeyField(Employee, db_column='employee')
+    employee = ForeignKeyField(
+        Employee, db_column='employee', on_update='CASCADE',
+        on_delete='CASCADE')
     _email = CharField(255, db_column='email', null=True, default=None)
     root = BooleanField(default=False)
 
