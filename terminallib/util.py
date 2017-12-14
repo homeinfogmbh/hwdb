@@ -4,9 +4,9 @@ from sys import stderr
 
 from strflib import Shell
 
-from .fields import get_address, get_annotation, TerminalField
-from .filter import parse, PrintMissing
-from .orm import Class, Domain, OS, Terminal
+from terminallib.fields import get_address, get_annotation, TerminalField
+from terminallib.filter import parse, PrintMissing
+from terminallib.orm import Class, Domain, OS, Terminal
 
 
 __all__ = [
@@ -22,7 +22,7 @@ FIELDS = {
     'id': TerminalField(lambda terminal: terminal.id, 'ID', size=4),
     'tid': TerminalField(lambda terminal: terminal.tid, 'TID', size=3),
     'cid': TerminalField(
-        lambda terminal: terminal.customer.id, 'CID', size=10),
+        lambda terminal: terminal.customer.cid, 'CID', size=10),
     'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
     'class': TerminalField(
         lambda terminal: terminal.class_.name, 'Class', size=9,

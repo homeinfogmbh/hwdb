@@ -2,14 +2,15 @@
 
 from peewee import DoesNotExist
 
-from .orm import Terminal
+from homeinfo.crm import Customer
+
+from terminallib.orm import Terminal
 
 __all__ = [
     'VID_PREFIX',
     'InvalidExpression',
     'InvalidBlock',
     'InvalidIdentifier',
-    'InvalidCustomerID',
     'MissingTerminals',
     'Identifier',
     'IdentifierList',
@@ -48,15 +49,6 @@ class InvalidIdentifier(ValueError):
         self.identifier = identifier
 
 
-class InvalidCustomerID(ValueError):
-    """Indicates that an invalid customer ID has been specified."""
-
-    def __init__(self, cid):
-        """Sets the invalid cid."""
-        super().__init__(cid)
-        self.cid = cid
-
-
 class MissingTerminals(ValueError):
     """indicates that the respective terminals were missing."""
 
@@ -71,14 +63,14 @@ def split_cid(expression, sep='.'):
     """Splits IDs and customer ID."""
 
     try:
-        blocks, cid = expression.split(sep)
+        blocks, customer_path = expression.split(sep)
     except ValueError:
         if sep in expression:
             raise InvalidExpression(expression) from None
 
         return (None, expression)
-    else:
-        return (blocks, cid)
+
+    return (blocks, customer_path)
 
 
 def split_blocks(blocks, sep=','):
@@ -208,7 +200,7 @@ class TerminalSelection:
         identifiers = self.identifiers
 
         if identifiers is None:
-            yield from Terminal.select().where(Terminal.customer == self.cid)
+            yield from Terminal.select().where(Terminal.customer == self.customer)
         else:
             missing = set()
 
@@ -216,20 +208,20 @@ class TerminalSelection:
                 if identifier.virtual:
                     try:
                         yield Terminal.get(
-                            (Terminal.customer == self.cid) &
-                            (Terminal.vid == identifier.value))
+                            (Terminal.customer == self.customer)
+                            & (Terminal.vid == identifier.value))
                     except DoesNotExist:
                         missing.add(identifier)
                 else:
                     try:
                         yield Terminal.get(
-                            (Terminal.customer == self.cid) &
-                            (Terminal.tid == identifier.value))
+                            (Terminal.customer == self.customer)
+                            & (Terminal.tid == identifier.value))
                     except DoesNotExist:
                         missing.add(identifier)
 
             if missing:
-                raise MissingTerminals(self.cid, missing)
+                raise MissingTerminals(self.customer, missing)
 
     @property
     def expression(self):
@@ -240,7 +232,8 @@ class TerminalSelection:
     def expression(self, expression):
         """Sets the expression."""
         self._expression = expression
-        self._blocks, self.cid = split_cid(expression)
+        self._blocks, customer_path = split_cid(expression)
+        self._cids = customer_path.split('/')
 
     @property
     def blocks(self):
@@ -248,6 +241,21 @@ class TerminalSelection:
         if self._blocks is not None:
             for block in split_blocks(self._blocks):
                 yield parse_block(block)
+
+    @property
+    def customer(self):
+        """Returns the respective customer."""
+        customer = None
+
+        for cid in self._cids:
+            if customer is None:
+                Customer.get(
+                    (Customer.cid == cid) & (Customer.reseller >> None))
+            else:
+                Customer.get(
+                    (Customer.cid == cid) & (Customer.reseller == customer))
+
+        return customer
 
     @property
     def identifiers(self):

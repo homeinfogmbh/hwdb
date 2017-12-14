@@ -6,8 +6,8 @@ from sys import stderr
 
 from peewee import DoesNotExist
 
-from .orm import Terminal
-from .parse import MissingTerminals, TerminalSelection
+from terminallib.orm import Terminal
+from terminallib.parse import MissingTerminals, TerminalSelection
 
 __all__ = ['NoSuchTerminals', 'parse', 'terminals', 'PrintMissing']
 

@@ -5,8 +5,8 @@ from itertools import chain
 
 from syslib import run, ProcessResult
 
-from .common import TerminalAware
-from .config import CONFIG
+from terminallib.common import TerminalAware
+from terminallib.config import CONFIG
 
 __all__ = ['RemoteController']
 

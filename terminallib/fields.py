@@ -1,7 +1,8 @@
 """Command line interface utilities."""
 
 from strflib import Shell
-from .orm import AddressUnconfiguredError
+
+from terminallib.orm import AddressUnconfiguredError
 
 __all__ = [
     'get_annotation',
