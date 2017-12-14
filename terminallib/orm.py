@@ -36,7 +36,7 @@ DATABASE = MySQLDatabase(
     closing=True)
 NETWORK = IPv4Network('{}/{}'.format(
     CONFIG['net']['IPV4NET'], CONFIG['net']['IPV4MASK']))
-CHECK_COMMAND = ('/bin/ping', '-c', '1')
+CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
 
 
 class TerminalError(Exception):
@@ -440,7 +440,7 @@ class Terminal(TerminalModel):
     @property
     def _check_command(self):
         """Returns the respective check command."""
-        return CHECK_COMMAND + ('-W', self.connection.timeout, self.hostname)
+        return CHECK_COMMAND + (str(self.connection.timeout), self.hostname)
 
     @property
     def subdomain(self):
