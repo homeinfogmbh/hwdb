@@ -401,23 +401,22 @@ class Terminal(TerminalModel):
             yield terminal.tid
 
     @classmethod
-    def max_vid(cls, customer):
-        """Gets the highest TID for the respective customer."""
-        result = 0
+    def gen_tid(cls, customer):
+        """Generates a terminal ID."""
+        tids = tuple(cls.tids(customer))
+        tid = 1
 
-        for terminal in cls.select().where(cls.customer == customer):
-            if terminal.vid is not None:
-                result = max(result, terminal.vid)
+        while tid in tids:
+            tid += 1
 
-        return result
+        return tid
 
     @classmethod
-    def add(cls, customer, class_, os, connection, vpn, domain,
-            location=None, weather=None, scheduled=None,
-            annotation=None, serial_number=None, tid=None):
+    def add(cls, customer, class_, os, connection, vpn, domain, location=None,
+            weather=None, scheduled=None, annotation=None, serial_number=None):
         """Adds a new terminal."""
         terminal = cls()
-        terminal.tid = cls.gen_tid(cid, desired=tid)
+        terminal.tid = cls.gen_tid(customer)
         terminal.customer = customer
         terminal.class_ = class_
         terminal.os = os
