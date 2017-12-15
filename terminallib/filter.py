@@ -60,13 +60,14 @@ def parse(*expressions, quiet=False):
             for terminal in TerminalSelection(expression):
                 yield terminal
         except NoSuchCustomer as no_such_customer:
-            invalid_customers.add(no_such_customer.cids)
+            invalid_customers.add(tuple(no_such_customer.cids))
         except MissingTerminals as missing_terminals:
             invalid_terminals[missing_terminals.customer].update(
                 missing_terminals.identifiers)
 
-    if not quiet and invalid_terminals:
-        raise ParsingError(invalid_customers, invalid_terminals)
+    if invalid_customers or invalid_terminals:
+        if not quiet:
+            raise ParsingError(invalid_customers, invalid_terminals)
 
 
 def terminals(customer, vids=None, tids=None):
