@@ -7,41 +7,66 @@ from sys import stderr
 from peewee import DoesNotExist
 
 from terminallib.orm import Terminal
-from terminallib.parse import MissingTerminals, TerminalSelection
+from terminallib.parse import NoSuchCustomer, MissingTerminals, \
+    TerminalSelection
 
-__all__ = ['NoSuchTerminals', 'parse', 'terminals', 'PrintMissing']
+__all__ = ['ParsingError', 'parse', 'terminals', 'PrintErrors']
 
 
-class NoSuchTerminals(Exception):
+class ParsingError(Exception):
     """Idicates that the respective terminals are missing."""
 
-    def __init__(self, missing):
+    def __init__(self, invalid_customers, invalid_terminals):
         """Sets the missing terminals dictionary."""
-        super().__init__(missing)
-        self.missing = missing
+        super().__init__(invalid_customers, invalid_terminals)
+        self.invalid_customers = invalid_customers
+        self.invalid_terminals = invalid_terminals
 
-    def __iter__(self):
+    def __str__(self):
+        """Returns the complete error message."""
+        return '\n'.join(self.messages)
+
+    @property
+    def customers(self):
+        """Yields missing customer IDs."""
+        for cids in self.invalid_customers:
+            return '/'.join(cids)
+
+    @property
+    def terminals(self):
         """Yields the missing terminal IDs."""
-        for cid, identifiers in self.missing.items():
+        for cid, identifiers in self.invalid_terminals.items():
             for identifier in identifiers:
                 yield '{}.{}'.format(identifier, cid)
+
+    @property
+    def messages(self):
+        """Yields messages."""
+        for customer in self.customers:
+            yield 'No such customer: {}.'.format(customer)
+
+        for terminal in self.terminals:
+            yield 'No such terminal: {}.'.format(terminal)
 
 
 def parse(*expressions, quiet=False):
     """Yields parsers from expressions"""
 
-    missing = defaultdict(set)
+    invalid_customers = set()
+    invalid_terminals = defaultdict(set)
 
     for expression in expressions:
         try:
             for terminal in TerminalSelection(expression):
                 yield terminal
+        except NoSuchCustomer as no_such_customer:
+            invalid_customers.add(no_such_customer.cids)
         except MissingTerminals as missing_terminals:
-            missing[missing_terminals.cid].update(
+            invalid_terminals[missing_terminals.customer].update(
                 missing_terminals.identifiers)
 
-    if not quiet and missing:
-        raise NoSuchTerminals(missing)
+    if not quiet and invalid_terminals:
+        raise ParsingError(invalid_customers, invalid_terminals)
 
 
 def terminals(customer, vids=None, tids=None):
@@ -69,22 +94,19 @@ def terminals(customer, vids=None, tids=None):
                     (Terminal.tid == tid))
 
 
-class PrintMissing:
+class PrintErrors:
     """Context to print out missing terminals."""
 
-    def __init__(self, template='Missing terminal: {}.', file=stderr):
+    def __init__(self, file=stderr):
         """Sets the output file."""
-        self.template = template
         self.file = file
 
     def __enter__(self):
         """Returns itself."""
         return self
 
-    def __exit__(self, typ, value, _):
+    def __exit__(self, _, value, __):
         """Checks for NoSuchTerminals exception."""
-        if typ is NoSuchTerminals:
-            for ident in value:
-                print(self.template.format(ident), file=self.file, flush=True)
-
+        if isinstance(value, ParsingError):
+            print(value, file=self.file, flush=True)
             return True

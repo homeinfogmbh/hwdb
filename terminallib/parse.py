@@ -8,6 +8,7 @@ from terminallib.orm import Terminal
 
 __all__ = [
     'VID_PREFIX',
+    'NoSuchCustomer',
     'InvalidExpression',
     'InvalidBlock',
     'InvalidIdentifier',
@@ -18,6 +19,15 @@ __all__ = [
 
 
 VID_PREFIX = 'v'
+
+
+class NoSuchCustomer(Exception):
+    """Indicates that the respective customer does not exist."""
+
+    def __init__(self, cids):
+        """Sets the respective customer IDs."""
+        super().__init__(*cids)
+        self.cids = cids
 
 
 class InvalidExpression(ValueError):
@@ -52,10 +62,10 @@ class InvalidIdentifier(ValueError):
 class MissingTerminals(ValueError):
     """indicates that the respective terminals were missing."""
 
-    def __init__(self, cid, identifiers):
+    def __init__(self, customer, identifiers):
         """Sets the customer ID and identifiers."""
-        super().__init__((cid, identifiers))
-        self.cid = cid
+        super().__init__(customer, identifiers)
+        self.customer = customer
         self.identifiers = identifiers
 
 
@@ -250,11 +260,14 @@ class TerminalSelection:
 
         for cid in self._cids:
             if customer is None:
-                customer = Customer.get(
-                    (Customer.cid == cid) & (Customer.reseller >> None))
+                reseller_expr = Customer.reseller >> None
             else:
-                customer = Customer.get(
-                    (Customer.cid == cid) & (Customer.reseller == customer))
+                reseller_expr = Customer.reseller == customer
+
+            try:
+                customer = Customer.get((Customer.cid == cid) & reseller_expr)
+            except DoesNotExist:
+                raise NoSuchCustomer(self._cids)
 
         return customer
 
