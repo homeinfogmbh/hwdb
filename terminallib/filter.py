@@ -30,7 +30,7 @@ class ParsingError(Exception):
     def customers(self):
         """Yields missing customer IDs."""
         for cids in self.invalid_customers:
-            return '/'.join(cids)
+            yield '/'.join(cids)
 
     @property
     def terminals(self):
