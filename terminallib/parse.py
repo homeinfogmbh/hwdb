@@ -27,7 +27,7 @@ class NoSuchCustomer(Exception):
     def __init__(self, cids):
         """Sets the respective customer IDs."""
         super().__init__(*cids)
-        self.cids = cids
+        self.cids = tuple(cids)
 
 
 class InvalidExpression(ValueError):
