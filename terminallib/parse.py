@@ -200,7 +200,8 @@ class TerminalSelection:
         identifiers = self.identifiers
 
         if identifiers is None:
-            yield from Terminal.select().where(Terminal.customer == self.customer)
+            yield from Terminal.select().where(
+                Terminal.customer == self.customer)
         else:
             missing = set()
 
@@ -249,10 +250,10 @@ class TerminalSelection:
 
         for cid in self._cids:
             if customer is None:
-                Customer.get(
+                customer = Customer.get(
                     (Customer.cid == cid) & (Customer.reseller >> None))
             else:
-                Customer.get(
+                customer = Customer.get(
                     (Customer.cid == cid) & (Customer.reseller == customer))
 
         return customer
@@ -263,4 +264,4 @@ class TerminalSelection:
         blocks = tuple(self.blocks)
 
         if blocks:
-            return IdentifierList(self.blocks)
+            return IdentifierList(blocks)
