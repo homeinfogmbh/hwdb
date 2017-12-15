@@ -727,7 +727,7 @@ class Statistics(Model):
         record for the respective terminal.
         """
         for statistics in cls.select().limit(1).where(
-                (cls.customer == terminal.cid) &
+                (cls.customer == terminal.customer.id) &
                 (cls.tid == terminal.tid)).order_by(
                     cls.timestamp.desc()):
             return statistics
