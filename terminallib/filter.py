@@ -35,9 +35,9 @@ class ParsingError(Exception):
     @property
     def terminals(self):
         """Yields the missing terminal IDs."""
-        for cid, identifiers in self.invalid_terminals.items():
+        for customer, identifiers in self.invalid_terminals.items():
             for identifier in identifiers:
-                yield '{}.{}'.format(identifier, cid)
+                yield '{}.{}'.format(identifier, repr(customer))
 
     @property
     def messages(self):
