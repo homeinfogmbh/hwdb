@@ -382,8 +382,11 @@ class Terminal(TerminalModel):
         else:
             deleted_sel = cls.deleted >> None
 
-        return cls.select().join(Customer).where(
-            (Customer.cid == cid) & (cls.tid == tid) & deleted_sel)
+        for terminal in cls.select().join(Customer).where(
+                (Customer.cid == cid) & (cls.tid == tid) & deleted_sel):
+            return terminal
+
+        raise DoesNotExist(cls)
 
     @classmethod
     def by_virt(cls, customer, vid):
