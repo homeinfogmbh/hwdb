@@ -47,7 +47,7 @@ def terminal_hosts():
             print('Terminal {} has no VPN configuration.'.format(terminal),
                   file=stderr)
         else:
-            yield RECORD.format(terminal.hostname, ipv4addr)
+            yield RECORD.format(str(terminal), ipv4addr)
 
 
 def main():
