@@ -640,6 +640,8 @@ class Synchronization(TerminalModel):
             self.save()
             return True
 
+        return False
+
     def to_dict(self):
         """Returns a JSON-like dictionary."""
         dictionary = {
