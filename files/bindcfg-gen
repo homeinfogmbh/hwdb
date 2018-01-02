@@ -41,15 +41,13 @@ def terminal_hosts():
     yield ';# Terminal network hosts\n'
 
     for terminal in Terminal:
-        hostname = '{}.{}'.format(terminal.tid, terminal.cid)
-
         try:
             ipv4addr = terminal.ipv4addr
         except VPNUnconfiguredError:
             print('Terminal {} has no VPN configuration.'.format(terminal),
                   file=stderr)
         else:
-            yield RECORD.format(hostname, ipv4addr)
+            yield RECORD.format(terminal.hostname, ipv4addr)
 
 
 def main():
