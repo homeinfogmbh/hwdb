@@ -45,13 +45,16 @@ def get_hostname(customer):
 
 
 class B64LZMA:
-    """A base64 encoded, LZMA compressed string."""
+    """A string of base64 encoded, LZMA compressed data."""
 
     def __init__(self, b64lzma):
         """Sets the base64 string."""
         self.b64lzma = b64lzma
 
+    def __bytes__(self):
+        """Returns the decompressed data."""
+        return LZMADecompressor().decompress(b64decode(self.b64lzma.encode()))
+
     def __str__(self):
-        """Returns the decoded string."""
-        return LZMADecompressor().decompress(
-            b64decode(self.b64lzma.encode())).decode()
+        """Returns the string decoded from __bytes__."""
+        return bytes(self).decode()
