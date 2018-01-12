@@ -23,7 +23,7 @@ Options:
     --annotation=<annotation>, -a   Consider the specified location annotation.
 """
 from base64 import b64decode
-from sys import argv, exit as exit_
+from sys import exit as exit_
 
 from docopt import docopt
 
@@ -115,7 +115,7 @@ def main(options):
     if options['list'] or options['ls']:
         if sum((options['--terminals'], options['--classes'],
                 options['--os'], options['--domains'])) != 1:
-            if 'CSM-101' in argv:
+            if options['<expr>'] == 'CSM-101':
                 print(b64decode(ARNIE.encode()).decode())
             else:
                 print('Must specify exactly one list option.')
