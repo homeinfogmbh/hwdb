@@ -3,10 +3,10 @@
 from sys import stderr
 
 from strflib import Shell
+from syslib import B64LZMA
 
 from terminallib.fields import get_address, get_annotation, TerminalField
 from terminallib.filter import parse, PrintErrors
-from terminallib.misc import B64LZMA
 from terminallib.orm import Class, Domain, OS, Terminal
 
 
