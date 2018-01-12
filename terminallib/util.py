@@ -6,6 +6,7 @@ from strflib import Shell
 
 from terminallib.fields import get_address, get_annotation, TerminalField
 from terminallib.filter import parse, PrintErrors
+from terminallib.misc import B64LZMA
 from terminallib.orm import Class, Domain, OS, Terminal
 
 
@@ -43,15 +44,12 @@ FIELDS = {
         lambda terminal: terminal.annotation, 'Comment',
         size=24, leftbound=True)}
 
-ARNIE = '''ICAgICAgICAgICAgICAgICAgICAgPCgoKCgoKFxcXAogICAgICAgICAgICAgICAgICAg
-ICAvICAgICAgLiB9XAogICAgICAgICAgICAgICAgICAgICA7LS0uLi0tLl98fQogIChcICAgICAgICA
-gICAgICAgICAnLS0vXC0tJyAgKQogICBcXCAgICAgICAgICAgICAgICB8ICctJyAgOid8CiAgICBcXC
-AgICAgICAgICAgICAgIC4gLT09LSAuLXwKICAgICBcXCAgICAgICAgICAgICAgIFwuX18uJyAgIFwtL
-S5fCiAgICAgW1xcICAgICAgICAgIF9fLi0tfCAgICAgICAvLyAgXy8nLS0uCiAgICAgXCBcXCAgICAg
-ICAuJy0uXyAoJy0tLS0tJy8gX18vICAgICAgXAogICAgICBcIFxcICAgICAvICAgX18+fCAgICAgIHw
-gJy0tLiAgICAgICB8CiAgICAgICBcIFxcICAgfCAgIFwgICB8ICAgICAvICAgIC8gICAgICAgLwogIC
-AgICAgIFwgJ1wgLyAgICAgXCAgfCAgICAgfCAgXy8gICAgICAgLwogICAgICAgICBcICBcICAgICAgI
-FwgfCAgICAgfCAvICAgICAgICAvCiAgIHNuZCAgICBcICBcICAgICAgXCAgICAgICAgLw=='''
+ARNIE = B64LZMA(
+    '/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4AIEAK9dABBuADwUaYt0gRsna7sph26BXekoRMls4'
+    'PqOjQ0VHvqxoXly1uRgtvfLn9pvnm1DrCgcJiPp8HhWiGzH7ssJqMiSKm0l67Why5BVT8apzO'
+    'CVXevyza2ZXmT21h0aDCiPYjN4ltUrrguxqC4Lwn0XwvoWRxpXGb0wAyV//ppegMFpCqvR3y/'
+    'l6gnu1zzfCVOISaOCOjHXq2NiJ3ZUMv76UcKZjfFEnW11r/P35yFKGo4AAJxj7ZVSD0rZAAHL'
+    'AYUEAADP/ZRYscRn+wIAAAAABFla')
 
 
 def print_terminal(terminal):

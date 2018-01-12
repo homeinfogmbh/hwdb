@@ -1,8 +1,10 @@
 """Miscellaneous functions."""
 
+from base64 import b64decode
+from lzma import LZMADecompressor
 from string import ascii_letters, digits
 
-__all__ = ['LET_DIG', 'LET_DIG_HYP', 'is_label', 'get_hostname']
+__all__ = ['LET_DIG', 'LET_DIG_HYP', 'is_label', 'get_hostname', 'B64LZMA']
 
 
 LET_DIG = ascii_letters + digits
@@ -40,3 +42,16 @@ def get_hostname(customer):
         return customer.cid
 
     return str(customer.id)
+
+
+class B64LZMA:
+    """A base64 encoded, LZMA compressed string."""
+
+    def __init__(self, b64lzma):
+        """Sets the base64 string."""
+        self.b64lzma = b64lzma
+
+    def __str__(self):
+        """Returns the decoded string."""
+        return LZMADecompressor().decompress(
+            b64decode(self.b64lzma.encode())).decode()

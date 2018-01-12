@@ -36,7 +36,7 @@ def stringify(value):
     """Returns the string representation of the value."""
 
     if value is None:
-        return '–'
+        return '-'
     elif value is True:
         return '✓'
     elif value is False:
@@ -74,9 +74,9 @@ class TerminalField:
 
     def __call__(self, terminal):
         """Handles the given value."""
-        value = self.getter(terminal)
-        string = stringify(value)
-        return justify(string, self.max, leftbound=self.leftbound)
+        return justify(
+            stringify(self.getter(terminal)), self.max,
+            leftbound=self.leftbound)
 
     @property
     def max(self):
