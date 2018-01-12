@@ -58,3 +58,7 @@ class B64LZMA:
     def __str__(self):
         """Returns the string decoded from __bytes__."""
         return bytes(self).decode()
+
+    def __repr__(self):
+        """Returns the base64 encoded LZMA compressed string."""
+        return self.b64lzma
