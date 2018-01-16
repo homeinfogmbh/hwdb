@@ -307,9 +307,7 @@ class Location(TerminalModel):
     @property
     def oneliner(self):
         """Returns a unique one-liner."""
-        return '{} {}, {} {}'.format(
-            self.address.street, self.address.house_number,
-            self.address.zip_code, self.address.city)
+        return repr(self.address)
 
     @property
     def shortinfo(self):
