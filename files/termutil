@@ -60,7 +60,21 @@ def _list_terminals(options):
         testing = None
 
     class_ = options['--class']
+
+    try:
+        class_ = Class.get(Class.name == name)
+    except DoesNotExist:
+        print('No such class: {}.'.format(class_), file=stderr)
+        return 1
+
     os = options['--os']
+
+    try:
+        os = OS.get(OS.name == os)
+    except DoesNotExist:
+        print('No such operating system: {}.'.format(os), file=stderr)
+        return 2
+
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields'] or None
@@ -74,6 +88,8 @@ def _list_terminals(options):
     for line in list_terminals(
             terminals, header=header, fields=fields, sep=separator):
         print(line, flush=True)
+
+    return 0
 
 
 def _list_classes(_):
@@ -115,13 +131,13 @@ def _find_terminal(options):
         for terminal in ambiguous.terminals:
             print_terminal(terminal)
 
-        return False
+        return 1
     except TerminalError as error:
         print(error, file=stderr)
-        return False
+        return 2
 
     print_terminal(terminal)
-    return True
+    return 0
 
 
 def main(options):
@@ -136,7 +152,7 @@ def main(options):
                 print('Must specify exactly one list option.')
                 return 1
         elif options['--terminals']:
-            _list_terminals(options)
+            return _list_terminals(options)
         elif options['--classes']:
             _list_classes(options)
         elif options['--os']:
@@ -144,8 +160,7 @@ def main(options):
         elif options['--domains']:
             _list_domains(options)
     elif options['find']:
-        if not _find_terminal(options):
-            return 2
+        return _find_terminal(options)
 
     return 0
 
