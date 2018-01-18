@@ -10,13 +10,17 @@ Usage:
 Options:
     --terminals, -T                 List terminals.
     --classes, -C                   List terminal classes.
-    --os, -O                        List operating systems.
+    --oss, -O                       List operating systems.
     --domains, -D                   List domains.
     --deployed, -d                  Only print deployed terminals.
     --undeployed, -u                Only print undeployed terminals.
     --testing, -t                   Only print testing terminals.
     --productive, -p                Only print productive terminals.
-    --omit-header, -o               Do not print the column header.
+    --class=<class>, -c             Only print terminals of the specified \
+class.
+    --os=<os>, -o                   Only print terminals using the specified \
+operating system.
+    --omit-header, -n               Do not print the column header.
     --separator=<separator>, -s     Specifies the column separator.
     --fields=<fields>, -f           Comma-separated list of fields to display.
     --index=<n>, -i                 On ambiguous results, use the nth.
@@ -53,6 +57,8 @@ def list_terminals(options):
     else:
         testing = None
 
+    class_ = options['--class']
+    operating_system = options['--os']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields'] or None
@@ -60,7 +66,7 @@ def list_terminals(options):
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
 
-    utl = TerminalUtil(expr, deployed, testing)
+    utl = TerminalUtil(expr, deployed, testing, class_, operating_system)
 
     for line in utl.print(header=header, fields=fields, sep=separator):
         print(line, flush=True)
@@ -113,7 +119,7 @@ def main(options):
 
     if options['list'] or options['ls']:
         if sum((options['--terminals'], options['--classes'],
-                options['--os'], options['--domains'])) != 1:
+                options['--oss'], options['--domains'])) != 1:
             if options['<expr>'] == 'CSM-101':
                 print(ARNIE)
             else:

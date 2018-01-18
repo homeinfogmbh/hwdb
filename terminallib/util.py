@@ -101,20 +101,40 @@ class TestingFilter:
 class TerminalUtil:
     """Terminals query utility"""
 
-    def __init__(self, expr, deployed=None, testing=None):
+    def __init__(self, expr, deployed=None, testing=None, clas=None, os=None):
         self.expr = expr
         self.deployed = deployed
         self.testing = testing
+        self.clas = clas
+        self.os = os
 
     def __iter__(self):
         """Filters the terminals by the respective settings"""
-        deployed = self.deployed is None
-        testing = self.testing is None
-
         for terminal in self.terminals:
-            if ((deployed or terminal.isdeployed == self.deployed) and
-                    (testing or terminal.testing == self.testing)):
+            if self._filter(terminal):
                 yield terminal
+
+    def _filter_deployed(self, terminal):
+        """Filter routine for deployment checks."""
+        return self.deployed is None or terminal.isdeployed == self.deployed
+
+    def _filter_testing(self, terminal):
+        """Filter routine for testing checks."""
+        return self.testing is None or terminal.testing == self.testing
+
+    def _filter_class(self, terminal):
+        """Filter routine for testing checks."""
+        return self.clas is None or terminal.clas == self.clas
+
+    def _filter_os(self, terminal):
+        """Filter routine for testing checks."""
+        return self.os is None or terminal.os == self.os
+
+    def _filter(self, terminal):
+        """Filters the terminal against all rules."""
+        return all((
+            self._filter_deployed(terminal), self._filter_testing(terminal),
+            self._filter_class(terminal), self._filter_os(terminal)))
 
     @property
     def terminals(self):
