@@ -98,9 +98,11 @@ def filter_terminals(
         if all((deployed is None or terminal.isdeployed == deployed,
                 testing is None or terminal.testing == testing,
                 class_ is None or terminal.class_ == class_,
-                os is None or terminal.os == os,
-                not online or terminal.online)):
-            yield terminal
+                os is None or terminal.os == os)):
+            # Perform online check after all other
+            # checks, since it is extremely slow.
+            if not online or terminal.online:
+                yield terminal
 
 
 def find_terminals(street, house_number=None, annotation=None):
