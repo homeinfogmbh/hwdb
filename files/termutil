@@ -29,8 +29,10 @@ operating system.
 from sys import stderr, exit as exit_
 
 from docopt import docopt
+from peewee import DoesNotExist
 from strflib import Shell
 
+from terminallib.orm import Class, OS
 from terminallib.util import ARNIE, TerminalError, AmbiguousTerminals, \
     print_terminal, filter_terminals, get_terminal, list_terminals, \
     list_classes, list_oss, list_domains
@@ -62,7 +64,7 @@ def _list_terminals(options):
     class_ = options['--class']
 
     try:
-        class_ = Class.get(Class.name == name)
+        class_ = Class.get(Class.name == class_)
     except DoesNotExist:
         print('No such class: {}.'.format(class_), file=stderr)
         return 1
