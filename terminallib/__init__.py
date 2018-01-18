@@ -7,7 +7,6 @@ from .filter import parse, terminals, PrintErrors
 from .orm import TerminalConfigError, VPNUnconfiguredError, \
     AddressUnconfiguredError, Class, Domain, OS, VPN, Connection, Location, \
     Terminal, Synchronization, Admin, Statistics, LatestStats
-from .util import TerminalUtil, ClassUtil, OSUtil, DomainUtil
 
 __all__ = [
     'CONFIG',
@@ -30,8 +29,4 @@ __all__ = [
     'Synchronization',
     'Admin',
     'Statistics',
-    'LatestStats',
-    'TerminalUtil',
-    'ClassUtil',
-    'OSUtil',
-    'DomainUtil']
+    'LatestStats']
