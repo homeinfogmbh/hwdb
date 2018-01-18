@@ -26,15 +26,17 @@ operating system.
     --index=<n>, -i                 On ambiguous results, use the nth.
     --annotation=<annotation>, -a   Consider the specified location annotation.
 """
-from sys import exit as exit_
+from sys import stderr, exit as exit_
 
 from docopt import docopt
+from strflib import Shell
 
-from terminallib import TerminalUtil, ClassUtil, OSUtil, DomainUtil
-from terminallib.util import ARNIE
+from terminallib.util import ARNIE, TerminalError, AmbiguousTerminals, \
+    print_terminal, filter_terminals, get_terminal, list_terminals, \
+    list_classes, list_oss, list_domains
 
 
-def list_terminals(options):
+def _list_terminals(options):
     """Lists terminals."""
 
     expr = options['<expr>']
@@ -58,7 +60,7 @@ def list_terminals(options):
         testing = None
 
     class_ = options['--class']
-    operating_system = options['--os']
+    os = options['--os']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields'] or None
@@ -66,40 +68,36 @@ def list_terminals(options):
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
 
-    utl = TerminalUtil(expr, deployed, testing, class_, operating_system)
+    terminals = filter_terminals(
+        expr, deployed=deployed, testing=testing, class_=class_, os=os)
 
-    for line in utl.print(header=header, fields=fields, sep=separator):
+    for line in list_terminals(
+            terminals, header=header, fields=fields, sep=separator):
         print(line, flush=True)
 
 
-def list_classes(_):
+def _list_classes(_):
     """Lists available classes."""
 
-    utl = ClassUtil()
-
-    for class_ in utl.print():
+    for class_ in list_classes():
         print(class_, flush=True)
 
 
-def list_os(_):
+def _list_oss(_):
     """Lists available operating systems."""
 
-    utl = OSUtil()
-
-    for operating_system in utl.print():
+    for operating_system in list_oss():
         print(operating_system, flush=True)
 
 
-def list_domains(_):
+def _list_domains(_):
     """Lists available domains."""
 
-    utl = DomainUtil()
-
-    for domain in utl.print():
+    for domain in list_domains():
         print(domain, flush=True)
 
 
-def find_terminal(options):
+def _find_terminal(options):
     """Finds a terminal."""
 
     if options['--index']:
@@ -107,11 +105,23 @@ def find_terminal(options):
     else:
         index = None
 
-    return TerminalUtil.get(
-        options['<street>'],
-        options['<house_number>'],
-        options['--annotation'],
-        index=index)
+    try:
+        terminal = get_terminal(
+            options['<street>'], options['<house_number>'],
+            options['--annotation'], index=index)
+    except AmbiguousTerminals as ambiguous:
+        print(Shell.bold(ambiguous), file=stderr)
+
+        for terminal in ambiguous.terminals:
+            print_terminal(terminal)
+
+        return False
+    except TerminalError as error:
+        print(error, file=stderr)
+        return False
+
+    print_terminal(terminal)
+    return True
 
 
 def main(options):
@@ -126,15 +136,15 @@ def main(options):
                 print('Must specify exactly one list option.')
                 return 1
         elif options['--terminals']:
-            list_terminals(options)
+            _list_terminals(options)
         elif options['--classes']:
-            list_classes(options)
+            _list_classes(options)
         elif options['--os']:
-            list_os(options)
+            _list_oss(options)
         elif options['--domains']:
-            list_domains(options)
+            _list_domains(options)
     elif options['find']:
-        if not find_terminal(options):
+        if not _find_terminal(options):
             return 2
 
     return 0

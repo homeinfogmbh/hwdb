@@ -1,22 +1,28 @@
-"""Terminal query utilities"""
+"""Terminal query utilities."""
 
 from sys import stderr
 
-from strflib import Shell
 from syslib import B64LZMA
 
 from terminallib.fields import get_address, get_annotation, TerminalField
-from terminallib.filter import parse, PrintErrors
+from terminallib.filter import parse
 from terminallib.orm import Class, Domain, OS, Terminal
 
 
 __all__ = [
-    'DeploymentFilter',
-    'TestingFilter',
-    'TerminalUtil',
-    'ClassUtil',
-    'OSUtil',
-    'DomainUtil']
+    'ARNIE',
+    'TerminalError',
+    'AmbiguousTerminals',
+    'print_terminal',
+    'filter_terminals',
+    'find_terminals',
+    'get_terminal',
+    'list_terminals',
+    'deployment_filter',
+    'testing_filter',
+    'list_classes',
+    'list_oss',
+    'list_domains']
 
 
 FIELDS = {
@@ -52,6 +58,27 @@ ARNIE = B64LZMA(
     'l6gnu1zzfCVOISaOCOjHXq2NiJ3ZUMv76UcKZjfFEnW11r/P35yFKGo4AAJxj7ZVSD0rZAAHL'
     'AYUEAADP/ZRYscRn+wIAAAAABFla')
 
+CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
+OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
+DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
+
+
+class TerminalError(Exception):
+    """Indicates an error with the respective terminal."""
+
+    pass
+
+
+class AmbiguousTerminals(TerminalError):
+    """Indicates that a query for a single
+    terminal yielded ambiguous terminals.
+    """
+
+    def __init__(self, message, terminals):
+        """Sets message and terminals."""
+        super().__init__(message)
+        self.terminals = terminals
+
 
 def print_terminal(terminal):
     """Prints the respective terminal."""
@@ -60,210 +87,125 @@ def print_terminal(terminal):
     print(str(terminal))
 
 
-class DeploymentFilter:
-    """Filters terminals for their deployment state."""
+def filter_terminals(
+        expr=None, *, deployed=None, testing=None, class_=None, os=None):
+    """Lists terminals."""
 
-    def __init__(self, terminals, deployed=True, undeployed=True):
-        self.terminals = terminals
-        self.deployed = deployed
-        self.undeployed = undeployed
+    terminals = parse(expr) if expr else Terminal
 
-    def __iter__(self):
-        """Yields appropriate terminals."""
-        for terminal in self.terminals:
-            if terminal.isdeployed:
-                if self.deployed:
-                    yield terminal
-            else:
-                if self.undeployed:
-                    yield terminal
+    for terminal in terminals:
+        if all((deployed is None or terminal.isdeployed == deployed,
+                testing is None or terminal.testing == testing,
+                class_ is None or terminal.class_ == class_,
+                os is None or terminal.os == os)):
+            yield terminal
 
 
-class TestingFilter:
-    """Filters terminals for their testing state."""
+def find_terminals(street, house_number=None, annotation=None):
+    """Finds terminals in the specified location."""
 
-    def __init__(self, terminals, testing=True, productive=True):
-        self.terminals = terminals
-        self.testing = testing
-        self.productive = productive
+    for terminal in Terminal.select().where(~ (Terminal.location >> None)):
+        address = terminal.location.address
+        house_number_ = address.house_number.replace(' ', '')
+        annotation_ = terminal.location.annotation
 
-    def __iter__(self):
-        """Yields appropriate terminals."""
-        for terminal in self.terminals:
-            if terminal.testing:
-                if self.testing:
-                    yield terminal
-            else:
-                if self.productive:
-                    yield terminal
-
-
-class TerminalUtil:
-    """Terminals query utility"""
-
-    def __init__(self, expr, deployed=None, testing=None, clas=None, os=None):
-        self.expr = expr
-        self.deployed = deployed
-        self.testing = testing
-        self.clas = clas
-        self.os = os
-
-    def __iter__(self):
-        """Filters the terminals by the respective settings"""
-        for terminal in self.terminals:
-            if self._filter(terminal):
-                yield terminal
-
-    def _filter_deployed(self, terminal):
-        """Filter routine for deployment checks."""
-        return self.deployed is None or terminal.isdeployed == self.deployed
-
-    def _filter_testing(self, terminal):
-        """Filter routine for testing checks."""
-        return self.testing is None or terminal.testing == self.testing
-
-    def _filter_class(self, terminal):
-        """Filter routine for testing checks."""
-        return self.clas is None or terminal.clas == self.clas
-
-    def _filter_os(self, terminal):
-        """Filter routine for testing checks."""
-        return self.os is None or terminal.os == self.os
-
-    def _filter(self, terminal):
-        """Filters the terminal against all rules."""
-        return all((
-            self._filter_deployed(terminal), self._filter_testing(terminal),
-            self._filter_class(terminal), self._filter_os(terminal)))
-
-    @property
-    def terminals(self):
-        """Yields terminals selected by self.expr"""
-        if self.expr:
-            with PrintErrors():
-                yield from parse(self.expr)
-        else:
-            yield from Terminal
-
-    @classmethod
-    def find(cls, street, house_number=None, annotation=None):
-        """Finds terminals in the specified location"""
-        for terminal in Terminal.select().where(~ (Terminal.location >> None)):
-            address = terminal.location.address
-            house_number_ = address.house_number.replace(' ', '')
-            annotation_ = terminal.location.annotation
-
-            if street.lower() in address.street.lower():
-                if house_number is not None:
-                    if house_number.lower() == house_number_.lower():
-                        if annotation is not None:
-                            if annotation.lower() in annotation_.lower():
-                                yield terminal
-                        else:
-                            yield terminal
-                else:
+        if street.lower() in address.street.lower():
+            if house_number is not None:
+                if house_number.lower() == house_number_.lower():
                     if annotation is not None:
                         if annotation.lower() in annotation_.lower():
                             yield terminal
                     else:
                         yield terminal
-
-    @classmethod
-    def get(cls, street, house_number=None, annotation=None, index=None):
-        """Finds a terminal by its location"""
-        terminals = tuple(cls.find(
-            street, house_number=house_number, annotation=annotation))
-
-        if not terminals:
-            print('No terminal matching query.', file=stderr)
-            return False
-        elif len(terminals) == 1:
-            terminal = terminals[0]
-            print_terminal(terminal)
-            return True
-        elif index is not None:
-            try:
-                terminal = terminals[index]
-            except IndexError:
-                print('No {}th terminal available ({}).'.format(
-                    index, len(terminals)), file=stderr)
-                return False
-
-            print_terminal(terminal)
-            return True
-
-        print(Shell.bold('Ambiguous terminals:'), file=stderr)
-
-        for terminal in terminals:
-            print_terminal(terminal)
-
-        return False
-
-    def print(self, header=True, fields=None, sep='  '):
-        """Yields formatted terminals for console outoput"""
-        if fields is None:
-            fields = (
-                'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
-                'testing', 'tainted', 'address', 'annotation')
-
-        fields = tuple(FIELDS[field] for field in fields)
-
-        if header:
-            yield sep.join(str(field) for field in fields)
-
-        for terminal in self:
-            yield sep.join(field(terminal) for field in fields)
+            else:
+                if annotation is not None:
+                    if annotation.lower() in annotation_.lower():
+                        yield terminal
+                else:
+                    yield terminal
 
 
-class ClassUtil:
-    """Terminal classes query utility"""
+def get_terminal(street, house_number=None, annotation=None, index=None):
+    """Finds a terminal by its location."""
 
-    TEMP = ('{id: >5.5}  {name: <10.10}  '
-            '{full_name: <10.10}  {touch: <5.5}')
+    terminals = tuple(find_terminals(
+        street, house_number=house_number, annotation=annotation))
 
-    def __iter__(self):
-        """Yields available classes"""
-        yield from Class
+    if not terminals:
+        raise TerminalError('No terminal matching query.')
+    elif len(terminals) == 1:
+        return terminals[0]
+    elif index is not None:
+        try:
+            return terminals[index]
+        except IndexError:
+            raise TerminalError('No {}th terminal available ({}).'.format(
+                index, len(terminals)))
 
-    def print(self):
-        """Yields formatted classes for console outoput"""
-        for class_ in self:
-            yield self.TEMP.format(
-                id=str(class_.id),
-                name=class_.name,
-                full_name=class_.full_name,
-                touch=str(class_.touch))
-
-
-class OSUtil:
-    """Terminal OS query utility"""
-
-    TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
-
-    def __iter__(self):
-        """Yields available OSs"""
-        yield from OS
-
-    def print(self):
-        """Yields formatted OSs for console outoput"""
-        for operating_system in self:
-            yield self.TEMP.format(
-                id=str(operating_system.id),
-                family=operating_system.family,
-                name=operating_system.name,
-                version=operating_system.version)
+    raise AmbiguousTerminals('Ambiguous terminals:', terminals)
 
 
-class DomainUtil:
-    """Terminal domains query utility"""
+def list_terminals(terminals, header=True, fields=None, sep='  '):
+    """Yields formatted terminals for console outoput."""
 
-    TEMP = '{id: >5.5}  {fqdn}'
+    if fields is None:
+        fields = (
+            'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
+            'testing', 'tainted', 'address', 'annotation')
 
-    def __iter__(self):
-        """Yields available domains"""
-        yield from Domain
+    fields = tuple(FIELDS[field] for field in fields)
 
-    def print(self):
-        """Yields formatted domains for console outoput"""
-        for domain in self:
-            yield self.TEMP.format(id=str(domain.id), fqdn=domain.fqdn)
+    if header:
+        yield sep.join(str(field) for field in fields)
+
+    for terminal in terminals:
+        yield sep.join(field(terminal) for field in fields)
+
+
+def deployment_filter(terminals, deployed=True, undeployed=True):
+    """Yields deployed terminals."""
+
+    for terminal in terminals:
+        if terminal.isdeployed:
+            if deployed:
+                yield terminal
+        else:
+            if undeployed:
+                yield terminal
+
+
+def testing_filter(terminals, testing=True, productive=True):
+    """Yields the respective terminals."""
+
+    for terminal in terminals:
+        if terminal.testing:
+            if testing:
+                yield terminal
+        else:
+            if productive:
+                yield terminal
+
+
+def list_classes():
+    """Yields formatted terminal classes."""
+
+    for class_ in Class:
+        yield CLASS_TEMP.format(
+            id=str(class_.id), name=class_.name, full_name=class_.full_name,
+            touch=str(class_.touch))
+
+
+def list_oss():
+    """Yields formatted operating system entries."""
+
+    for operating_system in OS:
+        yield OS_TEMP.format(
+            id=str(operating_system.id), family=operating_system.family,
+            name=operating_system.name, version=operating_system.version)
+
+
+def list_domains():
+    """Lists formatted domains."""
+
+    for domain in Domain:
+        yield DOMAIN_TEMP.format(id=str(domain.id), fqdn=domain.fqdn)
