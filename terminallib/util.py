@@ -42,7 +42,8 @@ FIELDS = {
         get_annotation, 'Annotation', size=32, leftbound=True),
     'comment': TerminalField(
         lambda terminal: terminal.annotation, 'Comment',
-        size=24, leftbound=True)}
+        size=24, leftbound=True),
+    'online': TerminalField(lambda terminal: terminal.online, 'Online')}
 
 ARNIE = B64LZMA(
     '/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4AIEAK9dABBuADwUaYt0gRsna7sph26BXekoRMls4'
