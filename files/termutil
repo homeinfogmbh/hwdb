@@ -38,6 +38,24 @@ from terminallib.util import ARNIE, TerminalError, AmbiguousTerminals, \
     list_classes, list_oss, list_domains
 
 
+def _get_class(name):
+    """Returns the class by its name."""
+
+    if name is None:
+        return None
+
+    return Class.get(Class.name == name)
+
+
+def _get_os(name):
+    """Returns the operating system by its name."""
+
+    if name is None:
+        return None
+
+    return OS.get(OS.name == name)
+
+
 def _list_terminals(options):
     """Lists terminals."""
 
@@ -61,20 +79,17 @@ def _list_terminals(options):
     else:
         testing = None
 
-    class_ = options['--class']
-
     try:
-        class_ = Class.get(Class.name == class_)
+        class_ = _get_class(options['--class'])
     except DoesNotExist:
-        print('No such class: {}.'.format(class_), file=stderr)
+        print('No such class: {}.'.format(options['--class']), file=stderr)
         return 1
 
-    os = options['--os']
-
     try:
-        os = OS.get(OS.name == os)
+        os = _get_os(options['--os'])
     except DoesNotExist:
-        print('No such operating system: {}.'.format(os), file=stderr)
+        print('No such operating system: {}.'.format(options['--os']),
+              file=stderr)
         return 2
 
     header = not options['--omit-header']
