@@ -20,6 +20,7 @@ Options:
 class.
     --os=<os>, -o                   Only print terminals using the specified \
 operating system.
+    --online, -u                    Only print terminals that are online.
     --omit-header, -n               Do not print the column header.
     --separator=<separator>, -s     Specifies the column separator.
     --fields=<fields>, -f           Comma-separated list of fields to display.
@@ -92,6 +93,7 @@ def _list_terminals(options):
               file=stderr)
         return 2
 
+    online = options['--online']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields'] or None
@@ -100,7 +102,8 @@ def _list_terminals(options):
         fields = [field.lower() for field in fields.split(',') if field]
 
     terminals = filter_terminals(
-        expr, deployed=deployed, testing=testing, class_=class_, os=os)
+        expr, deployed=deployed, testing=testing, class_=class_, os=os,
+        online=online)
 
     for line in list_terminals(
             terminals, header=header, fields=fields, sep=separator):

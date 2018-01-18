@@ -88,7 +88,8 @@ def print_terminal(terminal):
 
 
 def filter_terminals(
-        expr=None, *, deployed=None, testing=None, class_=None, os=None):
+        expr=None, *, deployed=None, testing=None, class_=None, os=None,
+        online=None):
     """Lists terminals."""
 
     terminals = parse(expr) if expr else Terminal
@@ -97,7 +98,8 @@ def filter_terminals(
         if all((deployed is None or terminal.isdeployed == deployed,
                 testing is None or terminal.testing == testing,
                 class_ is None or terminal.class_ == class_,
-                os is None or terminal.os == os)):
+                os is None or terminal.os == os,
+                not online or terminal.online)):
             yield terminal
 
 
