@@ -258,7 +258,9 @@ class Connection(TerminalModel):
 class Location(TerminalModel):
     """Location of a terminal."""
 
-    address = ForeignKeyField(Address, null=False, db_column='address')
+    address = ForeignKeyField(
+        Address, null=False, db_column='address',
+        on_delete='CASCADE', on_update='CASCADE')
     annotation = CharField(255, null=True)
 
     def __iter__(self):
@@ -336,12 +338,22 @@ class Terminal(TerminalModel):
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
         Customer, db_column='customer', on_update='CASCADE')
-    class_ = ForeignKeyField(Class, db_column='class')
-    os = ForeignKeyField(OS, db_column='os')
-    connection = ForeignKeyField(Connection, db_column='connection', null=True)
-    vpn = ForeignKeyField(VPN, null=True, db_column='vpn')
-    domain = ForeignKeyField(Domain, db_column='domain')
-    location = ForeignKeyField(Location, null=True, db_column='location')
+    class_ = ForeignKeyField(
+        Class, null=True, db_column='class',
+        on_delete='SET NULL', on_update='CASCADE')
+    os = ForeignKeyField(
+        OS, null=True, db_column='os',
+        on_delete='SET NULL', on_update='CASCADE')
+    connection = ForeignKeyField(
+        Connection, null=True, db_column='connection',
+        on_delete='SET NULL', on_update='CASCADE')
+    vpn = ForeignKeyField(
+        VPN, null=True, db_column='vpn',
+        on_delete='SET NULL', on_update='CASCADE')
+    domain = ForeignKeyField(Domain, db_column='domain', on_update='CASCADE')
+    location = ForeignKeyField(
+        Location, null=True, db_column='location',
+        on_delete='SET NULL', on_update='CASCADE')
     vid = IntegerField(null=True)
     weather = CharField(16, null=True)
     scheduled = DateTimeField(null=True)
@@ -607,7 +619,9 @@ class Synchronization(TerminalModel):
                 sync.status = False
     """
 
-    terminal = ForeignKeyField(Terminal, db_column='terminal')
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal', on_delete='CASCADE',
+        on_update='CASCADE')
     started = DateTimeField()
     finished = DateTimeField(null=True)
     reload = BooleanField(null=True)
@@ -677,8 +691,8 @@ class Admin(TerminalModel):
 
     name_ = CharField(16, db_column='name', null=True)
     employee = ForeignKeyField(
-        Employee, db_column='employee', on_update='CASCADE',
-        on_delete='CASCADE')
+        Employee, db_column='employee',
+        on_update='CASCADE', on_delete='CASCADE')
     email_ = CharField(255, db_column='email', null=True)
     root = BooleanField(default=False)
 
@@ -743,8 +757,12 @@ class LatestStats(TerminalModel):
     class Meta:
         db_table = 'latest_stats'
 
-    terminal = ForeignKeyField(Terminal, db_column='terminal')
-    statistics = ForeignKeyField(Statistics, db_column='statistics', null=True)
+    terminal = ForeignKeyField(
+        Terminal, db_column='terminal',
+        on_delete='CASCADE', on_update='CASCADE')
+    statistics = ForeignKeyField(
+        Statistics, db_column='statistics', null=True,
+        on_delete='CASCADE', on_update='CASCADE')
 
     @classmethod
     def refresh(cls, terminal=None):
