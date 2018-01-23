@@ -35,14 +35,7 @@ def get_address(terminal):
 def stringify(value):
     """Returns the string representation of the value."""
 
-    if value is None:
-        return '-'
-    elif value is True:
-        return '✓'
-    elif value is False:
-        return '✗'
-
-    return str(value)
+    return {None: '-', True: '✓', False: '✗'}.get(value, str(value))
 
 
 def justify(string, size, leftbound=False):
