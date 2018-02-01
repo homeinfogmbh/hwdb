@@ -13,8 +13,6 @@ Options:
 from datetime import datetime, timedelta
 from sys import stderr, exit as exit_
 
-from peewee import DoesNotExist
-
 from terminallib import Terminal, Synchronization
 
 
@@ -55,7 +53,7 @@ def parse_options(options):
         terminal = Terminal.get(
             (Terminal.customer == cid) &
             (Terminal.tid == tid))
-    except DoesNotExist:
+    except Terminal.DoesNotExist:
         print('No such terminal.', file=stderr)
         exit_(8)
 

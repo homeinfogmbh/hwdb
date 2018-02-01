@@ -1,7 +1,5 @@
 """Terminal selection expression parsing."""
 
-from peewee import DoesNotExist
-
 from homeinfo.crm import Customer
 
 from terminallib.orm import Terminal
@@ -221,14 +219,14 @@ class TerminalSelection:
                         yield Terminal.get(
                             (Terminal.customer == self.customer)
                             & (Terminal.vid == identifier.value))
-                    except DoesNotExist:
+                    except Terminal.DoesNotExist:
                         missing.add(identifier)
                 else:
                     try:
                         yield Terminal.get(
                             (Terminal.customer == self.customer)
                             & (Terminal.tid == identifier.value))
-                    except DoesNotExist:
+                    except Terminal.DoesNotExist:
                         missing.add(identifier)
 
             if missing:
@@ -266,7 +264,7 @@ class TerminalSelection:
 
             try:
                 customer = Customer.get((Customer.cid == cid) & reseller_expr)
-            except DoesNotExist:
+            except Customer.DoesNotExist:
                 raise NoSuchCustomer(self._cids)
 
         return customer

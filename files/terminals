@@ -17,7 +17,6 @@ system.
 from sys import exit as exit_, stderr
 
 from docopt import docopt
-from peewee import DoesNotExist
 
 from homeinfo.crm import Customer
 
@@ -29,7 +28,7 @@ def _filter_by_customers(terminals, cids):
 
     try:
         customers = [Customer.get(Customer.id == cid) for cid in cids]
-    except DoesNotExist as does_not_exist:
+    except Customer.DoesNotExist as does_not_exist:
         print(does_not_exist, file=stderr, flush=True)
         raise
 
@@ -45,7 +44,7 @@ def _filter_by_os(terminals, operating_system):
     if operating_system is not None:
         try:
             operating_system = OS.search(operating_system)
-        except DoesNotExist:
+        except OS.DoesNotExist:
             print('No such operating system: {}.'.format(operating_system),
                   file=stderr, flush=True)
             raise
@@ -69,7 +68,7 @@ def main(options):
     try:
         terminals = _filter_by_os(
             _filter_by_customers(Terminal, cids), operating_system)
-    except DoesNotExist:
+    except (Customer.DoesNotExist, OS.DoesNotExist):
         return 1
 
     if options['--online']:

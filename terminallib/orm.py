@@ -5,7 +5,7 @@ from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import Model, ForeignKeyField, IntegerField, CharField, \
-    BigIntegerField, DoesNotExist, DateTimeField, BooleanField, PrimaryKeyField
+    BigIntegerField, DateTimeField, BooleanField, PrimaryKeyField
 
 from fancylog import LogLevel, Logger
 from homeinfo.crm import Customer, Address, Employee
@@ -102,7 +102,7 @@ class Class(TerminalModel):
         """Adds a terminal class."""
         try:
             return cls.get((cls.name == name) & (cls.touch == touch))
-        except DoesNotExist:
+        except cls.DoesNotExist:
             return cls._add(name, full_name=full_name, touch=False)
 
     def to_dict(self):
@@ -124,7 +124,7 @@ class Domain(TerminalModel):
         """Adds a domain with a certain FQDN."""
         try:
             return cls.get(cls.fqdn_ == fqdn)
-        except DoesNotExist:
+        except cls.DoesNotExist:
             domain = cls()
             domain.fqdn = fqdn
             domain.save()
@@ -303,7 +303,7 @@ class Location(TerminalModel):
 
         try:
             return cls.get((cls.address == address) & annotation_selector)
-        except DoesNotExist:
+        except cls.DoesNotExist:
             return cls._add(address, annotation=annotation)
 
     @property
@@ -396,7 +396,7 @@ class Terminal(TerminalModel):
                 (Customer.cid == cid) & (cls.tid == tid) & deleted_sel):
             return terminal
 
-        raise DoesNotExist(cls)
+        raise cls.DoesNotExist()
 
     @classmethod
     def by_virt(cls, customer, vid):
@@ -773,7 +773,7 @@ class LatestStats(TerminalModel):
         else:
             try:
                 current = cls.get(cls.terminal == terminal)
-            except DoesNotExist:
+            except cls.DoesNotExist:
                 current = cls()
                 current.terminal = terminal
 

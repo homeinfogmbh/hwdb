@@ -4,8 +4,6 @@ from collections import defaultdict
 from contextlib import suppress
 from sys import stderr
 
-from peewee import DoesNotExist
-
 from terminallib.orm import Terminal
 from terminallib.parse import NoSuchCustomer, MissingTerminals, \
     TerminalSelection
@@ -83,13 +81,13 @@ def terminals(customer, vids=None, tids=None):
         yield from Terminal.select().where(Terminal.customer == customer)
     else:
         for vid in vids:
-            with suppress(DoesNotExist):
+            with suppress(Terminal.DoesNotExist):
                 yield Terminal.get(
                     (Terminal.customer == customer) &
                     (Terminal.vid == vid))
 
         for tid in tids:
-            with suppress(DoesNotExist):
+            with suppress(Terminal.DoesNotExist):
                 yield Terminal.get(
                     (Terminal.customer == customer) &
                     (Terminal.tid == tid))

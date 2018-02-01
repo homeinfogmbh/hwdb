@@ -13,8 +13,6 @@ Options:
 from datetime import datetime, timedelta
 from sys import stderr, exit as exit_
 
-from peewee import DoesNotExist
-
 from terminallib import Terminal, LatestStats
 
 
@@ -53,7 +51,7 @@ def parse_options(options):
 
     try:
         terminal = Terminal.by_ids(cid, tid)
-    except DoesNotExist:
+    except Terminal.DoesNotExist:
         print('No such terminal.', file=stderr)
         exit_(8)
     else:
@@ -72,7 +70,7 @@ def main(options):
 
     try:
         latest = LatestStats.get(LatestStats.terminal == terminal)
-    except DoesNotExist:
+    except LatestStats.DoesNotExist:
         last = terminal.deployed
         print('Never.')
     else:

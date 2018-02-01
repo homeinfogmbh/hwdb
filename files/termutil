@@ -30,7 +30,6 @@ operating system.
 from sys import stderr, exit as exit_
 
 from docopt import docopt
-from peewee import DoesNotExist
 from strflib import Shell
 
 from terminallib.orm import Class, OS
@@ -82,13 +81,13 @@ def _list_terminals(options):
 
     try:
         class_ = _get_class(options['--class'])
-    except DoesNotExist:
+    except Class.DoesNotExist:
         print('No such class: {}.'.format(options['--class']), file=stderr)
         return 1
 
     try:
         os = _get_os(options['--os'])
-    except DoesNotExist:
+    except OS.DoesNotExist:
         print('No such operating system: {}.'.format(options['--os']),
               file=stderr)
         return 2
