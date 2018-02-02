@@ -145,7 +145,7 @@ def _find_terminal(options):
             options['<street>'], options['<house_number>'],
             options['--annotation'], index=index)
     except AmbiguousTerminals as ambiguous:
-        print(Terminal().bold(ambiguous), file=stderr)
+        print(Terminal().bold(str(ambiguous)), file=stderr)
 
         for terminal in ambiguous.terminals:
             print_terminal(terminal)
