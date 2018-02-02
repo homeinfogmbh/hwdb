@@ -29,8 +29,8 @@ operating system.
 """
 from sys import stderr, exit as exit_
 
+from blessings import Terminal
 from docopt import docopt
-from strflib import Shell
 
 from terminallib.orm import Class, OS
 from terminallib.util import ARNIE, TerminalError, AmbiguousTerminals, \
@@ -145,7 +145,7 @@ def _find_terminal(options):
             options['<street>'], options['<house_number>'],
             options['--annotation'], index=index)
     except AmbiguousTerminals as ambiguous:
-        print(Shell.bold(ambiguous), file=stderr)
+        print(Terminal().bold(ambiguous), file=stderr)
 
         for terminal in ambiguous.terminals:
             print_terminal(terminal)
