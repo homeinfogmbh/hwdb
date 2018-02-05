@@ -3,12 +3,18 @@
 from tempfile import NamedTemporaryFile
 from itertools import chain
 
-from syslib import run, ProcessResult
+from syslib import run
 
 from terminallib.common import TerminalAware
 from terminallib.config import CONFIG
 
-__all__ = ['RemoteController']
+__all__ = ['InvalidCommand', 'RemoteController']
+
+
+class InvalidCommand(Exception):
+    """Indicates that the respective command is invalid."""
+
+    pass
 
 
 class CustomSSHOptions:
@@ -51,10 +57,10 @@ class RemoteController(TerminalAware):
             connect_timeout = CONFIG['ssh']['CONNECT_TIMEOUT']
 
         self.ssh_options = {
-            # Trick SSH it into not checking the host key
+            # Trick SSH it into not checking the host key.
             'UserKnownHostsFile': CONFIG['ssh']['USER_KNOWN_HOSTS_FILE'],
             'StrictHostKeyChecking': CONFIG['ssh']['STRICT_HOST_KEY_CHECKING'],
-            # Set timeout to avoid blocking of rsync / ssh call
+            # Set timeout to avoid blocking of rsync / ssh call.
             'ConnectTimeout': connect_timeout}
 
     @property
@@ -74,8 +80,8 @@ class RemoteController(TerminalAware):
     def ssh_cmd(self):
         """Returns the SSH basic command line."""
         return '{} {} {}'.format(
-            CONFIG['ssh']['SSH_BIN'], self.identity,
-            ' '.join(self.ssh_options_params))
+            CONFIG['ssh']['SSH_BIN'], self.identity, ' '.join(
+                self.ssh_options_params))
 
     @property
     def remote_shell(self):
@@ -89,7 +95,7 @@ class RemoteController(TerminalAware):
 
     def remote(self, cmd, *args):
         """Makes a command remote."""
-        return ' '.join(chain([self.ssh_cmd, self.user_host, cmd], args))
+        return ' '.join(chain((self.ssh_cmd, self.user_host, cmd), args))
 
     def remote_file(self, src):
         """Returns a remote file path."""
@@ -126,7 +132,7 @@ class RemoteController(TerminalAware):
             self.logger.debug('Executing: {}'.format(remote_cmd))
             return run(remote_cmd, shell=True)
 
-        return ProcessResult(3, stderr=b'Command not allowed.')
+        raise InvalidCommand()
 
     def get(self, file, options=None):
         """Gets a file from a remote terminal."""
