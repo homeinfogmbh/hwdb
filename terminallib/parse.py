@@ -74,7 +74,7 @@ def split_cid(expression, sep='.'):
         blocks, customer_path = expression.split(sep)
     except ValueError:
         if sep in expression:
-            raise InvalidExpression(expression) from None
+            raise InvalidExpression(expression)
 
         return (None, expression)
 
@@ -95,17 +95,17 @@ def parse_block(block, sep='-'):
         start, end = block.split(sep)
     except ValueError:
         if sep in block:
-            raise InvalidBlock(block) from None
+            raise InvalidBlock(block)
 
         return Identifier.from_string(block)
-    else:
-        start = Identifier.from_string(start)
-        end = Identifier.from_string(end)
 
-        if int(start) < int(end):
-            return (start, end)
+    start = Identifier.from_string(start)
+    end = Identifier.from_string(end)
 
-        raise ValueError('Invalid range {}→{}.'.format(start, end))
+    if int(start) < int(end):
+        return (start, end)
+
+    raise ValueError('Invalid range {}→{}.'.format(start, end))
 
 
 class Identifier:
