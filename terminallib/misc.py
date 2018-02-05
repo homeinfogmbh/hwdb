@@ -2,7 +2,7 @@
 
 from string import ascii_letters, digits
 
-__all__ = ['LET_DIG', 'LET_DIG_HYP', 'is_label', 'get_hostname', 'B64LZMA']
+__all__ = ['LET_DIG', 'LET_DIG_HYP', 'is_label', 'get_hostname']
 
 
 LET_DIG = ascii_letters + digits
