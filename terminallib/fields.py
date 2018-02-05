@@ -47,7 +47,7 @@ def justify(string, size, leftbound=False):
     return string[0:size].rjust(size)
 
 
-class TerminalField():
+class TerminalField:
     """Wrapper to access terminal properties."""
 
     def __init__(self, getter, caption, size=0, leftbound=False):
