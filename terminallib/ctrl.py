@@ -134,10 +134,6 @@ class RemoteController(TerminalAware):
 
         raise InvalidCommand()
 
-    def sudo(self, cmd, *args):
-        """Runs the respective command using sudo."""
-        return self.execute('/usr/bin/sudo', cmd, *args)
-
     def get(self, file, options=None):
         """Gets a file from a remote terminal."""
         with NamedTemporaryFile('rb') as tmp:
