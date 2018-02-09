@@ -535,18 +535,26 @@ class Terminal(TerminalModel):
         if short:
             dictionary['customer'] = self.customer.id
         else:
-            dictionary['customer'] = self.customer.to_dict(company=True)
+            dictionary['customer'] = self.customer.to_dict(
+                *args, company=True, **kwargs)
 
-        if not short:
-            dictionary['class'] = self.class_.to_dict()
-            dictionary['os'] = self.os.to_dict()
-            dictionary['domain'] = self.domain.to_dict()
+            if self.class_ is not None:
+                dictionary['class'] = self.class_.to_dict(*args, **kwargs)
+
+            if self.os is not None:
+                dictionary['os'] = self.os.to_dict(*args, **kwargs)
+
+            dictionary['domain'] = self.domain.to_dict(*args, **kwargs)
 
             if self.connection is not None:
-                dictionary['connection'] = self.connection.to_dict()
+                dictionary['connection'] = self.connection.to_dict(
+                    *args, **kwargs)
 
             if self.vpn is not None:
-                dictionary['vpn'] = self.vpn.to_dict()
+                dictionary['vpn'] = self.vpn.to_dict(*args, **kwargs)
+
+            if self.location is not None:
+                dictionary['location'] = self.location.to_dict(*args, **kwargs)
 
         return dictionary
 
