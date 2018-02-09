@@ -4,12 +4,12 @@ from datetime import datetime
 from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
-from peewee import Model, ForeignKeyField, IntegerField, CharField, \
-    BigIntegerField, DateTimeField, BooleanField, PrimaryKeyField
+from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
+    DateTimeField, BooleanField, PrimaryKeyField
 
 from fancylog import LogLevel, Logger
 from homeinfo.crm import Customer, Address, Employee
-from peeweeplus import MySQLDatabase
+from peeweeplus import MySQLDatabase, JSONModel
 
 from terminallib.config import CONFIG
 from terminallib.misc import get_hostname
@@ -65,7 +65,7 @@ class AddressUnconfiguredError(TerminalConfigError):
     pass
 
 
-class TerminalModel(Model):
+class TerminalModel(JSONModel):
     """Terminal manager basic Model."""
 
     id = PrimaryKeyField()
@@ -105,13 +105,6 @@ class Class(TerminalModel):
         except cls.DoesNotExist:
             return cls._add(name, full_name=full_name, touch=False)
 
-    def to_dict(self):
-        """Returns a JSON-like dictionary."""
-        return {
-            'token': self.name,
-            'name': self.full_name,
-            'touch': self.touch}
-
 
 class Domain(TerminalModel):
     """Terminal domains."""
@@ -135,10 +128,6 @@ class Domain(TerminalModel):
         """Returns the domain name without trailing dot."""
         return self.fqdn.strip('.')
 
-    def to_dict(self):
-        """Returns a JSON-like dictionary."""
-        return self.fqdn
-
 
 class OS(TerminalModel):
     """Operating systems."""
@@ -161,13 +150,6 @@ class OS(TerminalModel):
         return cls.select().where(
             (cls.family == string) | (cls.name == string)
             | (cls.version == string))
-
-    def to_dict(self):
-        """Returns a JSON-like dictionary."""
-        return {
-            'family': self.family,
-            'name': self.name,
-            'version': self.version}
 
 
 class VPN(TerminalModel):
@@ -233,12 +215,11 @@ class VPN(TerminalModel):
         """Sets the IPv4 address."""
         self.ipv4addr_ = int(ipv4addr)
 
-    def to_dict(self):
+    def to_dict(self, *args, **kwargs):
         """Returns a JSON-like dictionary."""
-        return {
-            'ipv4addr': str(self.ipv4addr),
-            'key': self.key,
-            'mtu': self.mtu}
+        dictionary = super().to_dict(*args, **kwargs)
+        dictionary['ipv4addr'] = str(self.ipv4addr)
+        return dictionary
 
 
 class Connection(TerminalModel):
@@ -250,17 +231,12 @@ class Connection(TerminalModel):
     def __str__(self):
         return '{} ({})'.format(self.name, self.timeout)
 
-    def to_dict(self):
-        """Returns a JSON-like dictionary."""
-        return {'name': self.name, 'timeout': self.timeout}
-
 
 class Location(TerminalModel):
     """Location of a terminal."""
 
     address = ForeignKeyField(
-        Address, null=False, db_column='address',
-        on_delete='CASCADE', on_update='CASCADE')
+        Address, db_column='address', on_delete='CASCADE', on_update='CASCADE')
     annotation = CharField(255, null=True)
 
     def __iter__(self):
@@ -321,11 +297,14 @@ class Location(TerminalModel):
 
         return result
 
-    def to_dict(self):
+    def to_dict(self, *args, address=True, **kwargs):
         """Returns a JSON-like dictionary."""
-        return {
-            'address': self.address.to_dict(),
-            'annotation': self.annotation}
+        dictionary = super().to_dict(*args, **kwargs)
+
+        if address:
+            dictionary['address'] = self.address.to_dict(*args, **kwargs)
+
+        return dictionary
 
 
 class Terminal(TerminalModel):
@@ -549,23 +528,14 @@ class Terminal(TerminalModel):
         self.logger.warning('{} is not deployed.'.format(self))
         return False
 
-    def to_dict(self, short=False):
+    def to_dict(self, *args, short=False, **kwargs):
         """Returns a JSON-like dictionary."""
-        dictionary = {'tid': self.tid}
+        dictionary = super().to_dict(*args, **kwargs)
 
         if short:
             dictionary['customer'] = self.customer.id
         else:
-            dictionary['customer'] = self.customer.to_dict()
-
-        if self.location is not None:
-            dictionary['location'] = self.location.to_dict()
-
-        if self.scheduled is not None:
-            dictionary['scheduled'] = self.scheduled.isoformat()
-
-        if self.deployed is not None:
-            dictionary['deployed'] = self.deployed.isoformat()
+            dictionary['customer'] = self.customer.to_dict(company=True)
 
         if not short:
             dictionary['class'] = self.class_.to_dict()
@@ -577,30 +547,6 @@ class Terminal(TerminalModel):
 
             if self.vpn is not None:
                 dictionary['vpn'] = self.vpn.to_dict()
-
-            if self.vid is not None:
-                dictionary['vid'] = self.vid
-
-            if self.weather is not None:
-                dictionary['weather'] = self.weather
-
-            if self.deleted is not None:
-                dictionary['deleted'] = self.deleted.isoformat()
-
-            if self.testing is not None:
-                dictionary['testing'] = self.testing
-
-            if self.replacement is not None:
-                dictionary['replacement'] = self.replacement
-
-            if self.tainted is not None:
-                dictionary['tainted'] = self.tainted
-
-            if self.annotation is not None:
-                dictionary['annotation'] = self.annotation
-
-            if self.serial_number is not None:
-                dictionary['serial_number'] = self.serial_number
 
         return dictionary
 
@@ -654,29 +600,14 @@ class Synchronization(TerminalModel):
 
         return False
 
-    def to_dict(self):
+    def to_dict(self, *args, terminal=None, **kwargs):
         """Returns a JSON-like dictionary."""
-        dictionary = {
-            'terminal': self.terminal.id,
-            'started': str(self.started)}
+        dictionary = super().to_dict(*args, **kwargs)
 
-        if self.finished is not None:
-            dictionary['finished'] = str(self.finished)
-
-        if self.reload is not None:
-            dictionary['reload'] = self.reload
-
-        if self.force is not None:
-            dictionary['force'] = self.force
-
-        if self.nocheck is not None:
-            dictionary['nocheck'] = self.nocheck
-
-        if self.result is not None:
-            dictionary['result'] = self.result
-
-        if self.annotation is not None:
-            dictionary['annotation'] = self.annotation
+        if terminal is None:
+            dictionary['terminal'] = self.terminal.id
+        elif terminal:
+            dictionary['terminal'] = self.terminal.to_dict(*args, **kwargs)
 
         return dictionary
 
@@ -720,7 +651,7 @@ class Admin(TerminalModel):
             'root': self.root}
 
 
-class Statistics(Model):
+class Statistics(JSONModel):
     """Stores application access statistics."""
 
     class Meta:
