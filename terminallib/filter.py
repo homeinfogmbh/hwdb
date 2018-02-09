@@ -71,11 +71,8 @@ def parse(*expressions, quiet=False):
 def terminals(customer, vids=None, tids=None):
     """Yields terminals for the respective customer, TIDs and VIDs."""
 
-    if vids:
-        vids = set(vids)
-
-    if tids:
-        tids = set(tids)
+    vids = set() if vids is None else set(vids)
+    tids = set() if tids is None else set(tids)
 
     if not vids and not tids:
         yield from Terminal.select().where(Terminal.customer == customer)
