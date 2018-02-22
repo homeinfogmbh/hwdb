@@ -1,7 +1,6 @@
 """Library for terminal remote control."""
 
 from tempfile import NamedTemporaryFile
-from itertools import chain
 
 from syslib import run
 
@@ -64,29 +63,19 @@ class RemoteController(TerminalAware):
             'ConnectTimeout': connect_timeout}
 
     @property
-    def identity(self):
-        """Returns the SSH identity file argument
-        with the respective identity file's path.
-        """
-        return '-i {}'.format(self.keyfile)
-
-    @property
-    def ssh_options_params(self):
-        """Returns options for SSH."""
-        for option, value in self.ssh_options.items():
-            yield '-o {}={}'.format(option, value)
-
-    @property
     def ssh_cmd(self):
         """Returns the SSH basic command line."""
-        return '{} {} {}'.format(
-            CONFIG['ssh']['SSH_BIN'], self.identity, ' '.join(
-                self.ssh_options_params))
+        result = [CONFIG['ssh']['SSH_BIN'], '-i', self.keyfile]
+
+        for option, value in self.ssh_options.items():
+            result += ['-o', '{}={}'.format(option, value)]
+
+        return result
 
     @property
     def remote_shell(self):
         """Returns the rsync remote shell."""
-        return '-e "{}"'.format(self.ssh_cmd)
+        return '-e "{}"'.format(' '.join(self.ssh_cmd))
 
     @property
     def user_host(self):
@@ -95,7 +84,10 @@ class RemoteController(TerminalAware):
 
     def remote(self, cmd, *args):
         """Makes a command remote."""
-        return ' '.join(chain((self.ssh_cmd, self.user_host, cmd), args))
+        yield from self.ssh_cmd
+        yield self.user_host
+        yield cmd
+        yield from args
 
     def remote_file(self, src):
         """Returns a remote file path."""
@@ -125,12 +117,12 @@ class RemoteController(TerminalAware):
 
         return self.white_list is None or cmd in self.white_list
 
-    def execute(self, cmd, *args):
+    def execute(self, cmd, *args, shell=False):
         """Executes a certain command on a remote terminal."""
         if self.check_command(cmd):
-            remote_cmd = self.remote(cmd, *args)
+            remote_cmd = tuple(self.remote(cmd, *args))
             self.logger.debug('Executing: {}'.format(remote_cmd))
-            return run(remote_cmd, shell=True)
+            return run(remote_cmd, shell=shell)
 
         raise InvalidCommand()
 
