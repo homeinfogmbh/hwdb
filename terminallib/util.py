@@ -38,6 +38,8 @@ FIELDS = {
         lambda terminal: repr(terminal.os), 'OS', size=19, leftbound=True),
     'ipv4addr': TerminalField(
         lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
+    'scheduled': TerminalField(
+        lambda terminal: terminal.scheduled, 'Scheduled', size=21),
     'deployed': TerminalField(
         lambda terminal: terminal.deployed, 'Deployed', size=21),
     'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
