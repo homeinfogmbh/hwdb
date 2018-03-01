@@ -1,15 +1,15 @@
 """Terminal library ORM models."""
 
-from datetime import datetime
+from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
-    DateTimeField, BooleanField, PrimaryKeyField
+    DateTimeField, DateField, BooleanField
 
 from fancylog import LogLevel, Logger
 from homeinfo.crm import Customer, Address, Employee
-from peeweeplus import MySQLDatabase, JSONModel
+from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
 from terminallib.config import CONFIG
 from terminallib.misc import get_hostname
@@ -67,8 +67,6 @@ class AddressUnconfiguredError(TerminalConfigError):
 
 class TerminalModel(JSONModel):
     """Terminal manager basic Model."""
-
-    id = PrimaryKeyField()
 
     class Meta:
         database = DATABASE
@@ -235,8 +233,7 @@ class Connection(TerminalModel):
 class Location(TerminalModel):
     """Location of a terminal."""
 
-    address = ForeignKeyField(
-        Address, db_column='address', on_delete='CASCADE', on_update='CASCADE')
+    address = CascadingFKField(Address, db_column='address')
     annotation = CharField(255, null=True)
 
     def __iter__(self):
@@ -335,7 +332,7 @@ class Terminal(TerminalModel):
         on_delete='SET NULL', on_update='CASCADE')
     vid = IntegerField(null=True)
     weather = CharField(16, null=True)
-    scheduled = DateTimeField(null=True)
+    scheduled = DateField(null=True)
     deployed = DateTimeField(null=True)
     deleted = DateTimeField(null=True)
     testing = BooleanField(default=False)
@@ -404,7 +401,7 @@ class Terminal(TerminalModel):
         return tid
 
     @classmethod
-    def add(cls, customer, class_, os, connection, vpn, domain, location=None,
+    def add(cls, customer, class_, os_, connection, vpn, domain, location=None,
             weather=None, scheduled=None, testing=False, annotation=None,
             serial_number=None):
         """Adds a new terminal."""
@@ -412,7 +409,7 @@ class Terminal(TerminalModel):
         terminal.tid = cls.gen_tid(customer)
         terminal.customer = customer
         terminal.class_ = class_
-        terminal.os = os
+        terminal.os = os_
         terminal.connection = connection
         terminal.vpn = vpn
         terminal.domain = domain
@@ -491,7 +488,7 @@ class Terminal(TerminalModel):
     @property
     def due(self):
         """Determines whether the terminal is due for deployment."""
-        return self.scheduled is not None and self.scheduled <= datetime.now()
+        return self.scheduled is not None and self.scheduled <= date.today()
 
     @property
     def isdeployed(self):
@@ -573,9 +570,7 @@ class Synchronization(TerminalModel):
                 sync.status = False
     """
 
-    terminal = ForeignKeyField(
-        Terminal, db_column='terminal', on_delete='CASCADE',
-        on_update='CASCADE')
+    terminal = CascadingFKField(Terminal, db_column='terminal')
     started = DateTimeField()
     finished = DateTimeField(null=True)
     reload = BooleanField(null=True)
@@ -629,9 +624,7 @@ class Admin(TerminalModel):
         db_table = 'admin'
 
     name_ = CharField(16, db_column='name', null=True)
-    employee = ForeignKeyField(
-        Employee, db_column='employee',
-        on_update='CASCADE', on_delete='CASCADE')
+    employee = CascadingFKField(Employee, db_column='employee')
     email_ = CharField(255, db_column='email', null=True)
     root = BooleanField(default=False)
 
@@ -671,7 +664,6 @@ class Statistics(JSONModel):
             closing=True)
         schema = database.database
 
-    id = PrimaryKeyField()
     customer = IntegerField()
     tid = IntegerField(null=True)
     vid = IntegerField()
@@ -696,12 +688,9 @@ class LatestStats(TerminalModel):
     class Meta:
         db_table = 'latest_stats'
 
-    terminal = ForeignKeyField(
-        Terminal, db_column='terminal',
-        on_delete='CASCADE', on_update='CASCADE')
-    statistics = ForeignKeyField(
-        Statistics, db_column='statistics', null=True,
-        on_delete='CASCADE', on_update='CASCADE')
+    terminal = CascadingFKField(Terminal, db_column='terminal')
+    statistics = CascadingFKField(
+        Statistics, db_column='statistics', null=True)
 
     @classmethod
     def refresh(cls, terminal=None):
