@@ -533,15 +533,17 @@ class Terminal(TerminalModel):
                 'id': self.id,
                 'tid': self.tid,
                 'customer': self.customer.id}
+        else:
+            dictionary = super().to_dict(*args, **kwargs)
 
-            location = self.location
+        location = self.location
 
-            if location is not None:
-                dictionary['location'] = location.to_dict(*args, **kwargs)
+        if location is not None:
+            dictionary['location'] = location.to_dict(*args, **kwargs)
 
+        if short:
             return dictionary
 
-        dictionary = super().to_dict(*args, **kwargs)
         dictionary['customer'] = self.customer.to_dict(
             *args, company=True, **kwargs)
 
@@ -559,9 +561,6 @@ class Terminal(TerminalModel):
 
         if self.vpn is not None:
             dictionary['vpn'] = self.vpn.to_dict(*args, **kwargs)
-
-        if self.location is not None:
-            dictionary['location'] = self.location.to_dict(*args, **kwargs)
 
         if online_state:
             dictionary['online'] = self.online
