@@ -525,7 +525,7 @@ class Terminal(TerminalModel):
         self.logger.warning('{} is not deployed.'.format(self))
         return False
 
-    def to_dict(self, *args, short=False, **kwargs):
+    def to_dict(self, *args, short=False, online_state=False, **kwargs):
         """Returns a JSON-like dictionary."""
 
         if short:
@@ -562,6 +562,9 @@ class Terminal(TerminalModel):
 
         if self.location is not None:
             dictionary['location'] = self.location.to_dict(*args, **kwargs)
+
+        if online_state:
+            dictionary['online'] = self.online
 
         return dictionary
 
