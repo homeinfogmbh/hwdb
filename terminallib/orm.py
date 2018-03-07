@@ -536,10 +536,10 @@ class Terminal(TerminalModel):
         else:
             dictionary = super().to_dict(*args, **kwargs)
 
-        location = self.location
-
         if online_state:
             dictionary['online'] = self.online
+
+        location = self.location
 
         if location is not None:
             dictionary['location'] = location.to_dict(*args, **kwargs)
