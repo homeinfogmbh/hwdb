@@ -538,6 +538,9 @@ class Terminal(TerminalModel):
 
         location = self.location
 
+        if online_state:
+            dictionary['online'] = self.online
+
         if location is not None:
             dictionary['location'] = location.to_dict(*args, **kwargs)
 
@@ -561,9 +564,6 @@ class Terminal(TerminalModel):
 
         if self.vpn is not None:
             dictionary['vpn'] = self.vpn.to_dict(*args, **kwargs)
-
-        if online_state:
-            dictionary['online'] = self.online
 
         return dictionary
 
