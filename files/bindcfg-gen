@@ -4,7 +4,7 @@
 from subprocess import CalledProcessError, check_call
 from sys import stderr, exit as exit_
 
-from fancylog import TTYAnimation
+from fancylog import TTYAnimator
 from terminallib import VPNUnconfiguredError, Terminal
 
 
@@ -64,7 +64,7 @@ def main():
     with open(DNS_CONFIG, 'w') as dns_cfg:
         dns_cfg.write(config)
 
-    with TTYAnimation('Restarting bind9 service') as anim:
+    with TTYAnimator('Restarting bind9 service') as anim:
         try:
             check_call([SYSTEMCTL, 'restart', 'bind9.service'])
         except CalledProcessError:
