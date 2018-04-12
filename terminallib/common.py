@@ -1,17 +1,22 @@
 """Abstract base classes for the terminal management."""
 
-from fancylog import LoggingClass
+from logging import getLogger
+
 
 __all__ = ['TerminalAware']
 
 
-class TerminalAware(LoggingClass):
+class TerminalAware:
     """Manages terminals."""
 
-    def __init__(self, terminal, logger=None, debug=False):
+    def __init__(self, terminal, logger=None):
         """Sets user name and password."""
-        super().__init__(logger=logger, debug=debug)
         self.terminal = terminal
+
+        if logger is None:
+            self.logger = getLogger(self.__class__.__name__)
+        else:
+            self.logger = logger.getChild(self.__class__.__name__)
 
     @property
     def idstr(self):

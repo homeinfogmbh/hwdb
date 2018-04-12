@@ -7,7 +7,6 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
     DateTimeField, DateField, BooleanField
 
-from fancylog import LogLevel, Logger
 from homeinfo.crm import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
@@ -307,10 +306,6 @@ class Location(TerminalModel):
 class Terminal(TerminalModel):
     """A physical terminal out in the field."""
 
-    # Ping once
-    _CHK_CMD = '/bin/ping -c 1 -W {timeout} {host}'
-    logger = Logger('Terminal', level=LogLevel.SUCCESS)
-
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
         Customer, db_column='customer', on_update='CASCADE')
@@ -504,26 +499,17 @@ class Terminal(TerminalModel):
         """Sets terminals to deployed."""
         if self.deployed is None or force:
             deployed = datetime.now() if date_time is None else date_time
-            self.logger.success('Deploying {} on {}.'.format(self, deployed))
             self.deployed = deployed
             self.save()
-            return True
+            return deployed
 
-        self.logger.warning('{} has already been deployed on {}.'.format(
-            self, self.deployed))
-        return False
+        return self.deployed
 
     def undeploy(self, force=False):
         """Sets terminals to NOT deployed."""
         if self.deployed is not None or force:
-            self.logger.info('Undeploying {} from {}.'.format(
-                self, self.deployed))
             self.deployed = None
             self.save()
-            return True
-
-        self.logger.warning('{} is not deployed.'.format(self))
-        return False
 
     def to_dict(self, *args, short=False, online_state=False, **kwargs):
         """Returns a JSON-like dictionary."""
