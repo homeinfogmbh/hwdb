@@ -41,9 +41,9 @@ class RemoteController(TerminalAware):
     """Controls a terminal remotely."""
 
     def __init__(self, user, terminal, keyfile=None, white_list=None,
-                 black_list=None, logger=None, debug=False):
+                 black_list=None, logger=None):
         """Initializes a remote terminal controller."""
-        super().__init__(terminal, logger=logger, debug=debug)
+        super().__init__(terminal, logger=logger)
         self.user = user
         self.keyfile = keyfile or '/home/{}/.ssh/terminals'.format(self.user)
         self.white_list = white_list    # May be None → allow all.
