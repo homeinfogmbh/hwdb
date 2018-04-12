@@ -48,7 +48,6 @@ class RemoteController(TerminalAware):
         self.keyfile = keyfile or '/home/{}/.ssh/terminals'.format(self.user)
         self.white_list = white_list    # May be None → allow all.
         self.black_list = black_list or []
-        self.debug = debug
 
         if self.terminal.connection:
             connect_timeout = self.terminal.connection.timeout
@@ -125,7 +124,7 @@ class RemoteController(TerminalAware):
             else:
                 remote_cmd = tuple(self.remote(cmd, *args))
 
-            self.logger.debug('Executing: {}'.format(remote_cmd))
+            self.logger.debug('Executing: "%s".', remote_cmd)
             return run(remote_cmd, shell=shell)
 
         raise InvalidCommand()
@@ -146,7 +145,7 @@ class RemoteController(TerminalAware):
     def send(self, dst, *srcs, options=None):
         """Sends files to a remote terminal."""
         rsync = self.rsync(self.remote_file(dst), *srcs, options=options)
-        self.logger.debug('Executing: {}'.format(rsync))
+        self.logger.debug('Executing: "%s".', rsync)
         result = run(rsync, shell=True)
         self.logger.debug(str(result))
         return result
