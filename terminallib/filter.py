@@ -2,7 +2,7 @@
 
 from terminallib.orm import Class, OS, Terminal
 
-__all__ = ['parse', 'terminals']
+__all__ = ['parse', 'get_terminals']
 
 
 def _online(terminal_expr):
@@ -40,8 +40,8 @@ def parse(expressions):
     return terminal_expr
 
 
-def terminals(expressions, deployed=None, testing=None, class_=None, os=None,
-              online=None):
+def get_terminals(expressions, deployed=None, testing=None, class_=None,
+                  os=None, online=None):
     """Yields terminals for the respective expressions and filters."""
 
     terminal_expr = parse(expressions)
