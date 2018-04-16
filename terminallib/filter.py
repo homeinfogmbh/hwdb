@@ -6,7 +6,10 @@ __all__ = ['parse', 'terminals']
 
 
 def parse(expressions):
-    """Yields parsers from expressions"""
+    """Returns a peewee.Expression for the respective terminal expressions."""
+
+    if not expressions:
+        return True
 
     terminal_expr = None
 
