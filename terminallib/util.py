@@ -5,7 +5,6 @@ from sys import stderr
 from syslib import B64LZMA
 
 from terminallib.fields import get_address, get_annotation, TerminalField
-from terminallib.filter import parse
 from terminallib.orm import Class, Domain, OS, Terminal
 
 
@@ -14,7 +13,6 @@ __all__ = [
     'TerminalError',
     'AmbiguousTerminals',
     'print_terminal',
-    'filter_terminals',
     'find_terminals',
     'get_terminal',
     'list_terminals',
@@ -87,24 +85,6 @@ def print_terminal(terminal):
 
     print(repr(terminal.location), file=stderr)
     print(str(terminal))
-
-
-def filter_terminals(
-        expr=None, *, deployed=None, testing=None, class_=None, os=None,
-        online=None):
-    """Lists terminals."""
-
-    terminals = parse(expr) if expr else Terminal
-
-    for terminal in terminals:
-        if all((deployed is None or terminal.isdeployed == deployed,
-                testing is None or terminal.testing == testing,
-                class_ is None or terminal.class_ == class_,
-                os is None or terminal.os == os)):
-            # Perform online check after all other
-            # checks, since it is extremely slow.
-            if not online or terminal.online:
-                yield terminal
 
 
 def find_terminals(street, house_number=None, annotation=None):
