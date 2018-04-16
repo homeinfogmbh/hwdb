@@ -3,7 +3,7 @@
 from .common import TerminalAware
 from .config import CONFIG
 from .ctrl import CustomSSHOptions, RemoteController
-from .filter import parse, terminals
+from .filter import parse, get_terminals
 from .orm import TerminalConfigError, VPNUnconfiguredError, \
     AddressUnconfiguredError, Class, Domain, OS, VPN, Connection, Location, \
     Terminal, Synchronization, Admin, Statistics, LatestStats
@@ -14,7 +14,7 @@ __all__ = [
     'VPNUnconfiguredError',
     'AddressUnconfiguredError',
     'parse',
-    'terminals',
+    'get_terminals',
     'TerminalAware',
     'CustomSSHOptions',
     'RemoteController',
