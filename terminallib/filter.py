@@ -1,8 +1,16 @@
 """Terminal filters."""
 
-from terminallib.orm import Terminal
+from terminallib.orm import Class, OS, Terminal
 
 __all__ = ['parse', 'terminals']
+
+
+def _online(terminal_expr):
+    """Yields online terminals."""
+
+    for terminal in Terminal.select().where(terminal_expr):
+        if terminal.online:
+            yield terminal
 
 
 def parse(expressions):
@@ -32,7 +40,45 @@ def parse(expressions):
     return terminal_expr
 
 
-def terminals(expressions):
-    """Yields terminals for the respective expressions."""
+def terminals(expressions, deployed=None, testing=None, class_=None, os=None,
+              online=None):
+    """Yields terminals for the respective expressions and filters."""
 
-    return Terminal.select().where(parse(expressions))
+    terminal_expr = parse(expressions)
+
+    if deployed is not None:
+        if deployed in (True, False):
+            if deployed:
+                terminal_expr &= ~ (Terminal.deployed >> None)
+            else:
+                terminal_expr &= Terminal.deployed >> None
+        else:  # Compare to datetime.
+            terminal_expr &= Terminal.deployed == deployed
+
+    if testing is not None:
+        if testing:
+            terminal_expr &= Terminal.testing == 1
+        else:
+            terminal_expr &= Terminal.testing == 0
+
+    if class_ is not None:
+        try:
+            class_ = int(class_)
+        except ValueError:
+            class_ = Class.get(
+                (Class.name == class_) | (Class.full_name == class_))
+
+        terminal_expr &= Terminal.class_ == class_
+
+    if os is not None:
+        try:
+            os_ = int(os)
+        except ValueError:
+            os_ = OS.get((OS.family == os) | (OS.name == os))
+
+        terminal_expr &= Terminal.os == os_
+
+    if online:
+        return _online(terminal_expr)
+
+    return Terminal.select().where(terminal_expr)
