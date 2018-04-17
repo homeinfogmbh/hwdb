@@ -34,9 +34,9 @@ from docopt import docopt
 
 from terminallib.filter import get_terminals
 from terminallib.orm import Class, OS
-from terminallib.util import ARNIE, TerminalError, AmbiguousTerminals, \
-    print_terminal, get_terminal, list_terminals, list_classes, list_oss, \
-    list_domains
+from terminallib.util import ARNIE, DEFAULT_FIELDS, TerminalError, \
+    AmbiguousTerminals, print_terminal, get_terminal, list_terminals, \
+    list_classes, list_oss, list_domains
 
 
 def _get_class(name):
@@ -96,10 +96,12 @@ def _list_terminals(options):
     online = options['--online']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
-    fields = options['--fields'] or None
+    fields = options['--fields']
 
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
+    else:
+        fields = DEFAULT_FIELDS
 
     terminals = get_terminals(
         expr, deployed=deployed, testing=testing, class_=class_, os=os,

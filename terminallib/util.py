@@ -10,6 +10,7 @@ from terminallib.orm import Class, Domain, OS, Terminal
 
 __all__ = [
     'ARNIE',
+    'DEFAULT_FIELDS',
     'TerminalError',
     'AmbiguousTerminals',
     'print_terminal',
@@ -61,6 +62,9 @@ ARNIE = B64LZMA(
 CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
+DEFAULT_FIELDS = (
+    'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed', 'testing',
+    'tainted', 'address', 'annotation')
 
 
 class TerminalError(Exception):
@@ -131,13 +135,8 @@ def get_terminal(street, house_number=None, annotation=None, index=None):
     raise AmbiguousTerminals('Ambiguous terminals:', terminals)
 
 
-def list_terminals(terminals, header=True, fields=None, sep='  '):
+def list_terminals(terminals, header=True, fields=DEFAULT_FIELDS, sep='  '):
     """Yields formatted terminals for console outoput."""
-
-    if fields is None:
-        fields = (
-            'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed',
-            'testing', 'tainted', 'address', 'annotation')
 
     fields = tuple(FIELDS[field] for field in fields)
 
