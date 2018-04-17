@@ -166,7 +166,7 @@ def main(options):
     if options['list'] or options['ls']:
         if sum((options['--terminals'], options['--classes'],
                 options['--oss'], options['--domains'])) != 1:
-            if ''.join(options['<expression>']) == 'CSM-101':
+            if '-'.join(options['<expression>']) == 'CSM-101':
                 print(ARNIE)
             else:
                 print('Must specify exactly one list option.')
