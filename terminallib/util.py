@@ -125,7 +125,7 @@ def get_terminal(street, house_number=None, annotation=None, index=None):
         try:
             return terminals[index]
         except IndexError:
-            raise TerminalError('No {}th terminal available ({}).'.format(
+            raise TerminalError('No terminal #{} available ({}).'.format(
                 index, len(terminals)))
 
     raise AmbiguousTerminals('Ambiguous terminals:', terminals)
