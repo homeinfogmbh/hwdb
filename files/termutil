@@ -8,24 +8,23 @@ Usage:
     termutil find <street> [<house_number>] [options]
 
 Options:
-    --terminals, -T                 List terminals.
-    --classes, -C                   List terminal classes.
-    --oss, -O                       List operating systems.
-    --domains, -D                   List domains.
-    --deployed, -d                  Only print deployed terminals.
-    --undeployed, -u                Only print undeployed terminals.
-    --testing, -t                   Only print testing terminals.
-    --productive, -p                Only print productive terminals.
-    --class=<class>, -c             Only print terminals of the specified \
-class.
-    --os=<os>, -o                   Only print terminals using the specified \
-operating system.
-    --online, -u                    Only print terminals that are online.
-    --omit-header, -n               Do not print the column header.
-    --separator=<separator>, -s     Specifies the column separator.
-    --fields=<fields>, -f           Comma-separated list of fields to display.
-    --index=<n>, -i                 On ambiguous results, use the nth.
-    --annotation=<annotation>, -a   Consider the specified location annotation.
+    --terminals, -T             List terminals.
+    --classes, -C               List terminal classes.
+    --oss, -O                   List operating systems.
+    --domains, -D               List domains.
+    --deployed, -d              Filter for deployed terminals.
+    --undeployed, -u            Filter for undeployed terminals.
+    --testing, -t               Filter for testing terminals.
+    --productive, -p            Filter for productive terminals.
+    --class=<classes>, -c       Filter for terminals of the specified classes.
+    --os=<os>, -o               Filter for terminals using the specified
+                                operating system.
+    --online, -u                Filter for terminals that are online.
+    --omit-header, -n           Do not print the column header.
+    --separator=<sep>, -s       Specifies the column separator.
+    --fields=<fields>, -f       Comma-separated list of fields to display.
+    --index=<n>, -i             On ambiguous results, use the nth.
+    --annotation=<text>, -a     Consider the specified location annotation.
 """
 from logging import INFO, basicConfig, getLogger
 from pathlib import Path
