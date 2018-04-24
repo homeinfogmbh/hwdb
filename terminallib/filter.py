@@ -74,7 +74,7 @@ def get_terminals(expressions, deployed=None, testing=None, classes=None,
 
             class_ids.append(class_id)
 
-        terminal_expr &= Terminal.class_ >> class_ids
+        terminal_expr &= Terminal.class_ << class_ids
 
     if os is not None:
         try:
