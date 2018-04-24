@@ -27,9 +27,10 @@ operating system.
     --index=<n>, -i                 On ambiguous results, use the nth.
     --annotation=<annotation>, -a   Consider the specified location annotation.
 """
-from sys import stderr, exit as exit_
+from logging import INFO, basicConfig, getLogger
+from pathlib import Path
+from sys import exit as exit_
 
-from blessings import Terminal
 from docopt import docopt
 
 from terminallib.filter import get_terminals
@@ -37,6 +38,10 @@ from terminallib.orm import Class, OS
 from terminallib.util import ARNIE, DEFAULT_FIELDS, TerminalError, \
     AmbiguousTerminals, print_terminal, get_terminal, list_terminals, \
     list_classes, list_oss, list_domains
+
+
+LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
+LOGGER = getLogger(Path(__file__).name)
 
 
 def _get_class(name):
@@ -80,19 +85,8 @@ def _list_terminals(options):
     else:
         testing = None
 
-    try:
-        class_ = _get_class(options['--class'])
-    except Class.DoesNotExist:
-        print('No such class: {}.'.format(options['--class']), file=stderr)
-        return 1
-
-    try:
-        os = _get_os(options['--os'])
-    except OS.DoesNotExist:
-        print('No such operating system: {}.'.format(options['--os']),
-              file=stderr)
-        return 2
-
+    classes = options['--class'].split(',') if options['--class'] else ()
+    os_ = options['--os']
     online = options['--online']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
@@ -104,7 +98,7 @@ def _list_terminals(options):
         fields = DEFAULT_FIELDS
 
     terminals = get_terminals(
-        expr, deployed=deployed, testing=testing, class_=class_, os=os,
+        expr, deployed=deployed, testing=testing, classes=classes, os=os_,
         online=online)
 
     for line in list_terminals(
@@ -148,14 +142,14 @@ def _find_terminal(options):
             options['<street>'], options['<house_number>'],
             options['--annotation'], index=index)
     except AmbiguousTerminals as ambiguous:
-        print(Terminal().bold(str(ambiguous)), file=stderr)
+        LOGGER.error(ambiguous)
 
         for terminal in ambiguous.terminals:
             print_terminal(terminal)
 
         return 1
     except TerminalError as error:
-        print(error, file=stderr)
+        LOGGER.error(error)
         return 2
 
     print_terminal(terminal)
@@ -165,13 +159,15 @@ def _find_terminal(options):
 def main(options):
     """Runs the terminal utility."""
 
+    basicConfig(level=INFO, format=LOG_FORMAT)
+
     if options['list'] or options['ls']:
         if sum((options['--terminals'], options['--classes'],
                 options['--oss'], options['--domains'])) != 1:
             if '-'.join(options['<expression>']) == 'CSM-101':
                 print(ARNIE)
             else:
-                print('Must specify exactly one list option.')
+                LOGGER.error('Must specify exactly one list option.')
                 return 1
         elif options['--terminals']:
             return _list_terminals(options)

@@ -40,7 +40,7 @@ def parse(expressions):
     return terminal_expr
 
 
-def get_terminals(expressions, deployed=None, testing=None, class_=None,
+def get_terminals(expressions, deployed=None, testing=None, classes=None,
                   os=None, online=None):
     """Yields terminals for the respective expressions and filters."""
 
@@ -61,14 +61,20 @@ def get_terminals(expressions, deployed=None, testing=None, class_=None,
         else:
             terminal_expr &= Terminal.testing == 0
 
-    if class_ is not None:
-        try:
-            class_ = int(class_)
-        except ValueError:
-            class_ = Class.get(
-                (Class.name == class_) | (Class.full_name == class_))
+    if classes:
+        class_ids = []
 
-        terminal_expr &= Terminal.class_ == class_
+        for value in classes:
+            try:
+                class_id = int(value)
+            except ValueError:
+                class_ = Class.get(
+                    (Class.name == value) | (Class.full_name == value))
+                class_id = class_.id
+
+            class_ids.append(class_id)
+
+        terminal_expr &= Terminal.class_ >> class_ids
 
     if os is not None:
         try:
