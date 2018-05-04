@@ -5,7 +5,7 @@ from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
-    DateTimeField, DateField, BooleanField
+    DateTimeField, DateField, BooleanField, SmallIntegerField
 
 from homeinfo.crm import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
@@ -22,6 +22,9 @@ __all__ = [
     'Domain',
     'OS',
     'VPN',
+    'LTEInfo',
+    'Connection',
+    'Location',
     'Terminal',
     'Synchronization',
     'Admin',
@@ -64,7 +67,7 @@ class AddressUnconfiguredError(TerminalConfigError):
     pass
 
 
-class TerminalModel(JSONModel):
+class _TerminalModel(JSONModel):
     """Terminal manager basic Model."""
 
     class Meta:
@@ -72,7 +75,7 @@ class TerminalModel(JSONModel):
         schema = database.database
 
 
-class Class(TerminalModel):
+class Class(_TerminalModel):
     """Terminal classes."""
 
     name = CharField(32)
@@ -103,7 +106,7 @@ class Class(TerminalModel):
             return cls._add(name, full_name=full_name, touch=False)
 
 
-class Domain(TerminalModel):
+class Domain(_TerminalModel):
     """Terminal domains."""
 
     # The domain's fully qualified domain name
@@ -126,7 +129,7 @@ class Domain(TerminalModel):
         return self.fqdn.strip('.')
 
 
-class OS(TerminalModel):
+class OS(_TerminalModel):
     """Operating systems."""
 
     family = CharField(8)
@@ -149,7 +152,7 @@ class OS(TerminalModel):
             | (cls.version == string))
 
 
-class VPN(TerminalModel):
+class VPN(_TerminalModel):
     """OpenVPN settings."""
 
     ipv4addr_ = BigIntegerField(db_column='ipv4addr')
@@ -219,17 +222,54 @@ class VPN(TerminalModel):
         return dictionary
 
 
-class Connection(TerminalModel):
+class LTEInfo(_TerminalModel):
+    """Represents information about LTE connections."""
+
+    sim_id = CharField(32, null=True)
+    pin = CharField(4, null=True)
+    rssi = SmallIntegerField(null=True)
+
+    def to_dict(self):
+        """Returns a JSON-ish dictionary."""
+        dictionary = {}
+
+        if self.sim_id is not None:
+            dictionary['sim_id'] = self.sim_id
+
+        if self.pin is not None:
+            dictionary['pin'] = self.pin
+
+        if self.rssi is not None:
+            dictionary['rssi'] = self.rssi
+
+        return dictionary
+
+
+class Connection(_TerminalModel):
     """Internet connection information."""
 
     name = CharField(4)
     timeout = IntegerField()
+    lte_info = ForeignKeyField(LTEInfo, null=True, column_name='lte_info')
 
     def __str__(self):
         return '{} ({})'.format(self.name, self.timeout)
 
+    def to_dict(self):
+        """Returns a JSON-ish dictionary."""
+        dictionary = {'name': self.name, 'timeout': self.timeout}
+        lte_info = self.lte_info
 
-class Location(TerminalModel):
+        if lte_info is not None:
+            lte_info = lte_info.to_dict()
+
+            if lte_info:
+                dictionary['lte_info'] = lte_info
+
+        return dictionary
+
+
+class Location(_TerminalModel):
     """Location of a terminal."""
 
     address = CascadingFKField(Address, db_column='address')
@@ -303,7 +343,7 @@ class Location(TerminalModel):
         return dictionary
 
 
-class Terminal(TerminalModel):
+class Terminal(_TerminalModel):
     """A physical terminal out in the field."""
 
     tid = IntegerField()    # Customer-unique terminal identifier
@@ -554,7 +594,7 @@ class Terminal(TerminalModel):
         return dictionary
 
 
-class Synchronization(TerminalModel):
+class Synchronization(_TerminalModel):
     """Synchronization log.
 
     Recommended usage:
@@ -613,7 +653,7 @@ class Synchronization(TerminalModel):
         return dictionary
 
 
-class Admin(TerminalModel):
+class Admin(_TerminalModel):
     """Many-to-many mapping in-between
     Employees and terminal classes.
     """
@@ -680,7 +720,7 @@ class Statistics(JSONModel):
             return statistics
 
 
-class LatestStats(TerminalModel):
+class LatestStats(_TerminalModel):
     """Stores the last statistics of the respective terminal."""
 
     class Meta:
