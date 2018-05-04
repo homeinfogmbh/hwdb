@@ -225,6 +225,9 @@ class VPN(_TerminalModel):
 class LTEInfo(_TerminalModel):
     """Represents information about LTE connections."""
 
+    class Meta:
+        table_name = 'lte_info'
+
     sim_id = CharField(32, null=True)
     pin = CharField(4, null=True)
     rssi = SmallIntegerField(null=True)
