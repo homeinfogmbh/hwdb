@@ -172,7 +172,7 @@ def main(options):
             return _list_terminals(options)
         elif options['--classes']:
             _list_classes(options)
-        elif options['--os']:
+        elif options['--oss']:
             _list_oss(options)
         elif options['--domains']:
             _list_domains(options)
