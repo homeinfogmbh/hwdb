@@ -67,7 +67,7 @@ class _TerminalModel(JSONModel):
     """Terminal manager basic Model."""
 
     class Meta:
-        database = MySQLDatabase.from_config(CONFIG['terminaldb'])
+        database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
 
