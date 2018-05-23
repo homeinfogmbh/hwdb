@@ -32,10 +32,7 @@ __all__ = [
     'LatestStats']
 
 
-DATABASE = MySQLDatabase(
-    CONFIG['terminals']['database'], host=CONFIG['terminals']['host'],
-    user=CONFIG['terminals']['user'], passwd=CONFIG['terminals']['passwd'],
-    closing=True)
+DATABASE = MySQLDatabase.from_config(CONFIG['database'])
 NETWORK = IPv4Network('{}/{}'.format(
     CONFIG['net']['IPV4NET'], CONFIG['net']['IPV4MASK']))
 CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
