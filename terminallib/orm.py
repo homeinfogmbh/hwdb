@@ -32,7 +32,6 @@ __all__ = [
     'LatestStats']
 
 
-DATABASE = MySQLDatabase.from_config(CONFIG['database'])
 NETWORK = IPv4Network('{}/{}'.format(
     CONFIG['net']['IPV4NET'], CONFIG['net']['IPV4MASK']))
 CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
@@ -68,7 +67,7 @@ class _TerminalModel(JSONModel):
     """Terminal manager basic Model."""
 
     class Meta:
-        database = DATABASE
+        database = MySQLDatabase.from_config(CONFIG['terminaldb'])
         schema = database.database
 
 
@@ -694,12 +693,7 @@ class Statistics(JSONModel):
     """Stores application access statistics."""
 
     class Meta:
-        database = MySQLDatabase(
-            CONFIG['statistics']['database'],
-            host=CONFIG['statistics']['host'],
-            user=CONFIG['statistics']['user'],
-            passwd=CONFIG['statistics']['passwd'],
-            closing=True)
+        database = MySQLDatabase.from_config(CONFIG['statisticsdb'])
         schema = database.database
 
     customer = IntegerField()
