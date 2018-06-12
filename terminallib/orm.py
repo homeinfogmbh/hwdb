@@ -106,7 +106,7 @@ class Domain(_TerminalModel):
     """Terminal domains."""
 
     # The domain's fully qualified domain name
-    fqdn = CharField(32, db_column='fqdn')
+    fqdn = CharField(32, column_name='fqdn')
 
     @classmethod
     def add(cls, fqdn):
@@ -151,7 +151,7 @@ class OS(_TerminalModel):
 class VPN(_TerminalModel):
     """OpenVPN settings."""
 
-    ipv4addr_ = BigIntegerField(db_column='ipv4addr')
+    ipv4addr_ = BigIntegerField(column_name='ipv4addr')
     key = CharField(36, null=True)
     mtu = IntegerField(null=True)
 
@@ -271,7 +271,7 @@ class Connection(_TerminalModel):
 class Location(_TerminalModel):
     """Location of a terminal."""
 
-    address = CascadingFKField(Address, db_column='address')
+    address = CascadingFKField(Address, column_name='address')
     annotation = CharField(255, null=True)
 
     def __iter__(self):
@@ -347,22 +347,22 @@ class Terminal(_TerminalModel):
 
     tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
-        Customer, db_column='customer', on_update='CASCADE')
+        Customer, column_name='customer', on_update='CASCADE')
     class_ = ForeignKeyField(
-        Class, null=True, db_column='class',
+        Class, null=True, column_name='class',
         on_delete='SET NULL', on_update='CASCADE')
     os = ForeignKeyField(
-        OS, null=True, db_column='os',
+        OS, null=True, column_name='os',
         on_delete='SET NULL', on_update='CASCADE')
     connection = ForeignKeyField(
-        Connection, null=True, db_column='connection',
+        Connection, null=True, column_name='connection',
         on_delete='SET NULL', on_update='CASCADE')
     vpn = ForeignKeyField(
-        VPN, null=True, db_column='vpn',
+        VPN, null=True, column_name='vpn',
         on_delete='SET NULL', on_update='CASCADE')
-    domain = ForeignKeyField(Domain, db_column='domain', on_update='CASCADE')
+    domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
     location = ForeignKeyField(
-        Location, null=True, db_column='location',
+        Location, null=True, column_name='location',
         on_delete='SET NULL', on_update='CASCADE')
     vid = IntegerField(null=True)
     weather = CharField(16, null=True)
@@ -607,7 +607,7 @@ class Synchronization(_TerminalModel):
                 sync.status = False
     """
 
-    terminal = CascadingFKField(Terminal, db_column='terminal')
+    terminal = CascadingFKField(Terminal, column_name='terminal')
     started = DateTimeField()
     finished = DateTimeField(null=True)
     reload = BooleanField(null=True)
@@ -658,11 +658,11 @@ class Admin(_TerminalModel):
     """
 
     class Meta:
-        db_table = 'admin'
+        table_name = 'admin'
 
-    name_ = CharField(16, db_column='name', null=True)
-    employee = CascadingFKField(Employee, db_column='employee')
-    email_ = CharField(255, db_column='email', null=True)
+    name_ = CharField(16, column_name='name', null=True)
+    employee = CascadingFKField(Employee, column_name='employee')
+    email_ = CharField(255, column_name='email', null=True)
     root = BooleanField(default=False)
 
     @property
@@ -718,11 +718,11 @@ class LatestStats(_TerminalModel):
     """Stores the last statistics of the respective terminal."""
 
     class Meta:
-        db_table = 'latest_stats'
+        table_name = 'latest_stats'
 
-    terminal = CascadingFKField(Terminal, db_column='terminal')
+    terminal = CascadingFKField(Terminal, column_name='terminal')
     statistics = CascadingFKField(
-        Statistics, db_column='statistics', null=True)
+        Statistics, column_name='statistics', null=True)
 
     @classmethod
     def refresh(cls, terminal=None):
