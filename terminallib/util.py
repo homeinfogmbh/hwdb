@@ -84,6 +84,12 @@ class AmbiguousTerminals(TerminalError):
         self.terminals = terminals
 
 
+def _match_annotation(annotation, target):
+    """Matches the annotation against the target value."""
+
+    return annotation is None or annotation.lower() in target.lower()
+
+
 def print_terminal(terminal):
     """Prints the respective terminal."""
 
@@ -94,25 +100,19 @@ def print_terminal(terminal):
 def find_terminals(street, house_number=None, annotation=None):
     """Finds terminals in the specified location."""
 
-    for terminal in Terminal.select().where(~ (Terminal.location >> None)):
+    for terminal in Terminal.select().where(~(Terminal.location >> None)):
         address = terminal.location.address
         house_number_ = address.house_number.replace(' ', '')
         annotation_ = terminal.location.annotation
 
         if street.lower() in address.street.lower():
-            if house_number is not None:
-                if house_number.lower() == house_number_.lower():
-                    if annotation is not None:
-                        if annotation.lower() in annotation_.lower():
-                            yield terminal
-                    else:
-                        yield terminal
-            else:
-                if annotation is not None:
-                    if annotation.lower() in annotation_.lower():
-                        yield terminal
-                else:
+            if house_number is None:
+                if _match_annotation(annotation, annotation_):
                     yield terminal
+            else:
+                if house_number.lower() == house_number_.lower():
+                    if _match_annotation(annotation, annotation_):
+                        yield terminal
 
 
 def get_terminal(street, house_number=None, annotation=None, index=None):
