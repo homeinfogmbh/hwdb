@@ -41,7 +41,7 @@ def parse(expressions):
 
 
 def get_terminals(expressions, deployed=None, testing=None, classes=None,
-                  os=None, online=None):
+                  oss=None, online=None):
     """Yields terminals for the respective expressions and filters."""
 
     terminal_expr = parse(expressions)
@@ -76,13 +76,19 @@ def get_terminals(expressions, deployed=None, testing=None, classes=None,
 
         terminal_expr &= Terminal.class_ << class_ids
 
-    if os is not None:
-        try:
-            os_ = int(os)
-        except ValueError:
-            os_ = OS.get((OS.family == os) | (OS.name == os))
+    if oss:
+        os_ids = []
 
-        terminal_expr &= Terminal.os == os_
+        for value in oss:
+            try:
+                os_id = int(value)
+            except ValueError:
+                os_ = OS.get((OS.family == value) | (OS.name == value))
+                os_id = os_.id
+
+            os_ids.append(os_id)
+
+        terminal_expr &= Terminal.os << os_ids
 
     if online:
         return _online(terminal_expr)
