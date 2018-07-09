@@ -13,6 +13,8 @@ Options:
 from datetime import datetime, timedelta
 from sys import stderr, exit as exit_
 
+from docopt import docopt
+
 from terminallib import Terminal, LatestStats
 
 
@@ -90,5 +92,4 @@ def main(options):
 
 
 if __name__ == '__main__':
-    from docopt import docopt
     exit_(main(docopt(__doc__)))
