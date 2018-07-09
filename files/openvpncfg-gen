@@ -15,7 +15,9 @@ from subprocess import CalledProcessError, check_call
 from sys import stderr, exit as exit_
 from traceback import format_exc
 
+from docopt import docopt
 from fancylog import TTYAnimator
+
 from terminallib import CONFIG, VPNUnconfiguredError, Terminal
 
 
@@ -82,5 +84,4 @@ def main(options):
 
 
 if __name__ == '__main__':
-    from docopt import docopt
     exit_(main(docopt(__doc__)))
