@@ -10,15 +10,16 @@ Usage:
 Options:
     --terminals, -T             List terminals.
     --classes, -C               List terminal classes.
-    --oss, -O                   List operating systems.
+    --operating-systems, -O     List operating systems.
     --domains, -D               List domains.
     --deployed, -d              Filter for deployed terminals.
     --undeployed, -u            Filter for undeployed terminals.
     --testing, -t               Filter for testing terminals.
     --productive, -p            Filter for productive terminals.
-    --class=<classes>, -c       Filter for terminals of the specified classes.
-    --os=<os>, -o               Filter for terminals using the specified
-                                operating system.
+    --class=<classes>, -c       Filter for terminals of the specified
+                                classes (comma separated).
+    --oss=<oss>, -o             Filter for terminals using the specified
+                                operating systems (comma separated).
     --online, -u                Filter for terminals that are online.
     --omit-header, -n           Do not print the column header.
     --separator=<sep>, -s       Specifies the column separator.
@@ -85,7 +86,7 @@ def _list_terminals(options):
         testing = None
 
     classes = options['--class'].split(',') if options['--class'] else ()
-    os_ = options['--os']
+    oss = options['--oss'].split(',') if options['--oss'] else ()
     online = options['--online']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
@@ -97,7 +98,7 @@ def _list_terminals(options):
         fields = DEFAULT_FIELDS
 
     terminals = get_terminals(
-        expr, deployed=deployed, testing=testing, classes=classes, os=os_,
+        expr, deployed=deployed, testing=testing, classes=classes, oss=oss,
         online=online)
 
     for line in list_terminals(
@@ -162,7 +163,7 @@ def main(options):
 
     if options['list'] or options['ls']:
         if sum((options['--terminals'], options['--classes'],
-                options['--oss'], options['--domains'])) != 1:
+                options['--operating-systems'], options['--domains'])) != 1:
             if '-'.join(options['<expression>']) == 'CSM-101':
                 print(ARNIE)
             else:
@@ -172,7 +173,7 @@ def main(options):
             return _list_terminals(options)
         elif options['--classes']:
             _list_classes(options)
-        elif options['--oss']:
+        elif options['--operating-systems']:
             _list_oss(options)
         elif options['--domains']:
             _list_domains(options)
