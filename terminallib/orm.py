@@ -7,7 +7,6 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
     DateTimeField, DateField, BooleanField, SmallIntegerField
 
-from digsigdb import Statistics
 from mdb import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
