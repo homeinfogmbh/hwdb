@@ -7,7 +7,7 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
     DateTimeField, DateField, BooleanField, SmallIntegerField
 
-from homeinfo.crm import Customer, Address, Employee
+from mdb import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
 from terminallib.config import CONFIG
