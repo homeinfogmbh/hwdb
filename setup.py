@@ -12,16 +12,10 @@ setup(
     scripts=[
         'files/termutil',
         'files/terminals',
-        'files/chkstats',
         'files/chksync',
-        'files/refresh-termstats',
         'files/bindcfg-gen',
         'files/openvpncfg-gen'],
     data_files=[
         ('/usr/share/terminals',
-         ['files/openvpn.conf.temp',
-          'files/pacman.conf.temp']),
-        ('/usr/lib/systemd/system',
-         ['files/refresh-termstats.service',
-          'files/refresh-termstats.timer'])],
+         ['files/openvpn.conf.temp', 'files/pacman.conf.temp'])],
     description=("HOMEINFO's terminal libary."))

@@ -28,8 +28,7 @@ __all__ = [
     'Location',
     'Terminal',
     'Synchronization',
-    'Admin',
-    'LatestStats']
+    'Admin']
 
 
 NETWORK = IPv4Network('{}/{}'.format(
@@ -687,30 +686,3 @@ class Admin(_TerminalModel):
             'name': self.name,
             'email': self.email,
             'root': self.root}
-
-
-class LatestStats(_TerminalModel):
-    """Stores the last statistics of the respective terminal."""
-
-    class Meta:
-        table_name = 'latest_stats'
-
-    terminal = CascadingFKField(Terminal, column_name='terminal')
-    statistics = CascadingFKField(
-        Statistics, column_name='statistics', null=True)
-
-    @classmethod
-    def refresh(cls, terminal=None):
-        """Refreshes the stats for the respective terminal."""
-        if terminal is None:
-            for terminal in Terminal:
-                cls.refresh(terminal=terminal)
-        else:
-            try:
-                current = cls.get(cls.terminal == terminal)
-            except cls.DoesNotExist:
-                current = cls()
-                current.terminal = terminal
-
-            current.statistics = Statistics.latest(terminal)
-            current.save()
