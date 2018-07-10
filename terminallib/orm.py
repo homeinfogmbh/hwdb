@@ -7,6 +7,7 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
     DateTimeField, DateField, BooleanField, SmallIntegerField
 
+from digsigdb import Statistics
 from mdb import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
@@ -28,7 +29,6 @@ __all__ = [
     'Terminal',
     'Synchronization',
     'Admin',
-    'Statistics',
     'LatestStats']
 
 
@@ -687,31 +687,6 @@ class Admin(_TerminalModel):
             'name': self.name,
             'email': self.email,
             'root': self.root}
-
-
-class Statistics(JSONModel):
-    """Stores application access statistics."""
-
-    class Meta:
-        database = MySQLDatabase.from_config(CONFIG['statisticsdb'])
-        schema = database.database
-
-    customer = IntegerField()
-    tid = IntegerField(null=True)
-    vid = IntegerField()
-    document = CharField(255)
-    timestamp = DateTimeField()
-
-    @classmethod
-    def latest(cls, terminal):
-        """Returns the latest statistics
-        record for the respective terminal.
-        """
-        for statistics in cls.select().limit(1).where(
-                (cls.customer == terminal.customer.id) &
-                (cls.tid == terminal.tid)).order_by(
-                    cls.timestamp.desc()):
-            return statistics
 
 
 class LatestStats(_TerminalModel):

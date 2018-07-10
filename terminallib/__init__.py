@@ -6,7 +6,7 @@ from .ctrl import CustomSSHOptions, RemoteController
 from .filter import parse, get_terminals
 from .orm import TerminalConfigError, VPNUnconfiguredError, \
     AddressUnconfiguredError, Class, Domain, OS, VPN, LTEInfo, Connection, \
-    Location, Terminal, Synchronization, Admin, Statistics, LatestStats
+    Location, Terminal, Synchronization, Admin, LatestStats
 
 __all__ = [
     'CONFIG',
@@ -28,5 +28,4 @@ __all__ = [
     'Terminal',
     'Synchronization',
     'Admin',
-    'Statistics',
     'LatestStats']
