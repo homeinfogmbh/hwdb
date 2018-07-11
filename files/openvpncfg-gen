@@ -17,6 +17,7 @@ from traceback import format_exc
 
 from docopt import docopt
 from fancylog import TTYAnimator
+from syslib import script
 
 from terminallib import CONFIG, VPNUnconfiguredError, Terminal
 
@@ -52,6 +53,7 @@ def generate_config():
                 cfg.write(config_text)
 
 
+@script
 def main(options):
     """Runs the OpenVPN config generator."""
 
@@ -85,3 +87,4 @@ def main(options):
 
 if __name__ == '__main__':
     exit_(main(docopt(__doc__)))
+

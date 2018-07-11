@@ -5,6 +5,7 @@ from subprocess import CalledProcessError, check_call
 from sys import stderr, exit as exit_
 
 from fancylog import TTYAnimator
+from syslib import script
 from terminallib import VPNUnconfiguredError, Terminal
 
 
@@ -50,6 +51,7 @@ def terminal_hosts():
             yield RECORD.format(str(terminal), ipv4addr)
 
 
+@script
 def main():
     """Runs generates the confi files."""
 
@@ -77,3 +79,4 @@ def main():
 
 if __name__ == '__main__':
     exit_(main())
+

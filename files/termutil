@@ -33,6 +33,8 @@ from sys import exit as exit_
 
 from docopt import docopt
 
+from syslib import script
+
 from terminallib.filter import get_terminals
 from terminallib.orm import Class, OS
 from terminallib.util import ARNIE, DEFAULT_FIELDS, TerminalError, \
@@ -156,6 +158,7 @@ def _find_terminal(options):
     return 0
 
 
+@script
 def main(options):
     """Runs the terminal utility."""
 
@@ -185,3 +188,4 @@ def main(options):
 
 if __name__ == '__main__':
     exit_(main(docopt(__doc__)))
+

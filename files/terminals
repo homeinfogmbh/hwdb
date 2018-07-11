@@ -19,6 +19,7 @@ from sys import exit as exit_, stderr
 from docopt import docopt
 
 from mdb import Customer
+from syslib import script
 
 from terminallib import OS, Terminal
 
@@ -54,6 +55,7 @@ def _filter_by_os(terminals, operating_system):
     return terminals
 
 
+@script
 def main(options):
     """Prints terminals to stdout for shell processing."""
 
@@ -82,3 +84,4 @@ def main(options):
 
 if __name__ == '__main__':
     exit_(main(docopt(__doc__)))
+
