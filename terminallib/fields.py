@@ -8,6 +8,7 @@ __all__ = [
     'get_annotation',
     'get_address',
     'justify',
+    'to_string',
     'TerminalField']
 
 
@@ -40,6 +41,24 @@ def justify(string, size, leftbound=False):
     return string[0:size].rjust(size)
 
 
+def to_string(value, none='-', true='✓', false='✗'):
+    """Applies builtin str() to value unless value is None, True or
+    False, in which case it will return none, true or false from the
+    keyword arguments respectively.
+    """
+
+    if value is None:
+        return none
+
+    if value is True:
+        return true
+
+    if value is False:
+        return false
+
+    return str(value)
+
+
 class TerminalField:
     """Wrapper to access terminal properties."""
 
@@ -57,7 +76,7 @@ class TerminalField:
     def format(self, terminal):
         """Formats the respective field of the given terminal record."""
         return justify(
-            self.string_for_terminal(terminal), self.max,
+            to_string(self.getter(terminal)), self.max,
             leftbound=self.leftbound)
 
     @property
@@ -69,20 +88,3 @@ class TerminalField:
     def header(self):
         """Returns the appropriate header text."""
         return justify(self.caption, self.max, leftbound=self.leftbound)
-
-    def string_for_terminal(self, terminal):
-        """Returns the appropriate string value
-        for the respective terminal record.
-        """
-        value = self.getter(terminal)
-
-        if value is None:
-            return '-'
-
-        if value is True:
-            return '✓'
-
-        if value is False:
-            return '✗'
-
-        return str(value)
