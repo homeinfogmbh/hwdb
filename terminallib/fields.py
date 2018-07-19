@@ -37,9 +37,11 @@ def stringify(value):
 
     if value is None:
         return '-'
-    elif value is True:
+
+    if value is True:
         return '✓'
-    elif value is False:
+
+    if value is False:
         return '✗'
 
     return str(value)
