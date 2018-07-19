@@ -7,7 +7,6 @@ from terminallib.orm import AddressUnconfiguredError
 __all__ = [
     'get_annotation',
     'get_address',
-    'stringify',
     'justify',
     'TerminalField']
 
@@ -32,21 +31,6 @@ def get_address(terminal):
         return 'N/A'
 
 
-def stringify(value):
-    """Returns the string representation of the value."""
-
-    if value is None:
-        return '-'
-
-    if value is True:
-        return '✓'
-
-    if value is False:
-        return '✗'
-
-    return str(value)
-
-
 def justify(string, size, leftbound=False):
     """Justifies the string."""
 
@@ -68,19 +52,37 @@ class TerminalField:
 
     def __str__(self):
         """Returns the formatted caption."""
-        return Terminal().bold(repr(self))
-
-    def __repr__(self):
-        """Returns the justified caption."""
-        return justify(self.caption, self.max, leftbound=self.leftbound)
+        return Terminal().bold(self.header)
 
     def __call__(self, terminal):
         """Handles the given value."""
         return justify(
-            stringify(self.getter(terminal)), self.max,
+            self.string_for_terminal(terminal), self.max,
             leftbound=self.leftbound)
 
     @property
     def max(self):
         """Returns the maximum size."""
         return max(self.size, len(self.caption))
+
+    @property
+    def header(self):
+        """Returns the appropriate header text."""
+        return justify(self.caption, self.max, leftbound=self.leftbound)
+
+    def string_for_terminal(self, terminal):
+        """Returns the appropriate string value
+        for the respective terminal record.
+        """
+        value = self.getter(terminal)
+
+        if value is None:
+            return '-'
+
+        if value is True:
+            return '✓'
+
+        if value is False:
+            return '✗'
+
+        return str(value)
