@@ -43,8 +43,8 @@ def justify(string, size, leftbound=False):
 
 def to_string(value, none='-', true='✓', false='✗'):
     """Applies builtin str() to value unless value is None, True or
-    False, in which case it will return none, true or false from the
-    keyword arguments respectively.
+    False, in which case it will return none, true respectively false
+    from the keyword arguments.
     """
 
     if value is None:
