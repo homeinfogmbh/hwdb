@@ -54,8 +54,8 @@ class TerminalField:
         """Returns the formatted caption."""
         return Terminal().bold(self.header)
 
-    def __call__(self, terminal):
-        """Handles the given value."""
+    def format(self, terminal):
+        """Formats the respective field of the given terminal record."""
         return justify(
             self.string_for_terminal(terminal), self.max,
             leftbound=self.leftbound)

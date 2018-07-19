@@ -144,7 +144,7 @@ def list_terminals(terminals, header=True, fields=DEFAULT_FIELDS, sep='  '):
         yield sep.join(str(field) for field in fields)
 
     for terminal in terminals:
-        yield sep.join(field(terminal) for field in fields)
+        yield sep.join(field.format(terminal) for field in fields)
 
 
 def deployment_filter(terminals, deployed=True, undeployed=True):
