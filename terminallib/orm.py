@@ -315,6 +315,13 @@ class Location(_TerminalModel):
         except cls.DoesNotExist:
             return cls._add(address, annotation=annotation)
 
+    @classmethod
+    def from_dict(cls, dictionary):
+        """Creates a location from the respective dictionary."""
+        address = Address.from_dict(dictionary['address'])
+        annotation = dictionary.get('annotation')
+        return cls(address, annotation=annotation)
+
     @property
     def oneliner(self):
         """Returns a unique one-liner."""
