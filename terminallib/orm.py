@@ -320,7 +320,7 @@ class Location(_TerminalModel):
         """Creates a location from the respective dictionary."""
         address = Address.from_dict(dictionary['address'])
         annotation = dictionary.get('annotation')
-        return cls(address, annotation=annotation)
+        return cls.add(address, annotation=annotation)
 
     @property
     def oneliner(self):
