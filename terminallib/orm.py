@@ -7,6 +7,7 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
     DateTimeField, DateField, BooleanField, SmallIntegerField
 
+from functoolsplus import with_class
 from mdb import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
@@ -324,12 +325,11 @@ class Location(_TerminalModel):
 
         return result
 
-    def save_unique(self, *args, **kwargs):
+    @with_class
+    def save_unique(self, cls, *args, **kwargs):
         """Saves the location if it is new or
         returns the appropriate existing record.
         """
-        cls = self.__class__
-
         if self.annotation is None:
             annotation_selector = cls.annotation >> None
         else:
