@@ -294,33 +294,20 @@ class Location(_TerminalModel):
         return self.oneliner
 
     @classmethod
-    def _add(cls, address, annotation=None):
+    def add(cls, address, annotation=None):
         """Forcibly adds a location record."""
         location = cls()
         location.address = address
         location.annotation = annotation
-        location.save()
-        return location
-
-    @classmethod
-    def add(cls, address, annotation=None):
-        """Adds a unique location."""
-        if annotation is None:
-            annotation_selector = cls.annotation >> None
-        else:
-            annotation_selector = cls.annotation == annotation
-
-        try:
-            return cls.get((cls.address == address) & annotation_selector)
-        except cls.DoesNotExist:
-            return cls._add(address, annotation=annotation)
+        return location.save_unique()
 
     @classmethod
     def from_dict(cls, dictionary):
         """Creates a location from the respective dictionary."""
-        address = Address.from_dict(dictionary['address'])
-        annotation = dictionary.get('annotation')
-        return cls.add(address, annotation=annotation)
+        address = dictionary.pop('address')
+        record = super().from_dict(dictionary)
+        record.address = address
+        return record.save_unique()
 
     @property
     def oneliner(self):
@@ -336,6 +323,22 @@ class Location(_TerminalModel):
             result = ' - '.join((result, self.annotation))
 
         return result
+
+    def save_unique(self, *args, **kwargs):
+        """Saves the location if it is new or
+        returns the appropriate existing record.
+        """
+        if self.annotation is None:
+            annotation_selector = self.__class__.annotation >> None
+        else:
+            annotation_selector = self.__class__.annotation == self.annotation
+
+        try:
+            return self.__class__.get(
+                (self.__class__.address == self.address) & annotation_selector)
+        except self.__class__.DoesNotExist:
+            self.save(*args, **kwargs)
+            return self
 
     def to_dict(self, *args, address=True, **kwargs):
         """Returns a JSON-like dictionary."""
