@@ -328,15 +328,16 @@ class Location(_TerminalModel):
         """Saves the location if it is new or
         returns the appropriate existing record.
         """
+        cls = self.__class__
+
         if self.annotation is None:
-            annotation_selector = self.__class__.annotation >> None
+            annotation_selector = cls.annotation >> None
         else:
-            annotation_selector = self.__class__.annotation == self.annotation
+            annotation_selector = cls.annotation == self.annotation
 
         try:
-            return self.__class__.get(
-                (self.__class__.address == self.address) & annotation_selector)
-        except self.__class__.DoesNotExist:
+            return cls.get((cls.address == self.address) & annotation_selector)
+        except cls.DoesNotExist:
             self.save(*args, **kwargs)
             return self
 
