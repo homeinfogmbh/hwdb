@@ -149,7 +149,7 @@ class OS(_TerminalModel):
 class VPN(_TerminalModel):
     """OpenVPN settings."""
 
-    ipv4addr_ = BigIntegerField(column_name='ipv4addr')
+    _ipv4addr = BigIntegerField(column_name='ipv4addr')
     key = CharField(36, null=True)
     mtu = IntegerField(null=True)
 
@@ -202,12 +202,12 @@ class VPN(_TerminalModel):
     @property
     def ipv4addr(self):
         """Returns an IPv4 Address."""
-        return IPv4Address(self.ipv4addr_)
+        return IPv4Address(self._ipv4addr)
 
     @ipv4addr.setter
     def ipv4addr(self, ipv4addr):
         """Sets the IPv4 address."""
-        self.ipv4addr_ = int(ipv4addr)
+        self._ipv4addr = int(ipv4addr)
 
     def to_dict(self, *args, **kwargs):
         """Returns a JSON-like dictionary."""
