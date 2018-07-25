@@ -11,7 +11,7 @@ from mdb import Customer, Address, Employee
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
 
 from terminallib.config import CONFIG
-from terminallib.misc import get_hostname
+
 
 __all__ = [
     'TerminalError',
@@ -387,7 +387,7 @@ class Terminal(_TerminalModel):
 
     def __str__(self):
         """Converts the terminal to a unique string."""
-        return '{}.{}'.format(self.tid, self.subdomain)
+        return '{}.{}'.format(self.tid, repr(self.customer))
 
     @classmethod
     def hosts(cls):
@@ -400,19 +400,21 @@ class Terminal(_TerminalModel):
         """Yields terminals of a customer that
         run the specified virtual terminal.
         """
-        return cls.select().join(Customer).where(Customer.cid == cid).order_by(
+        return cls.select().join(Customer).where(Customer.id == cid).order_by(
             Terminal.tid)
 
     @classmethod
     def by_ids(cls, cid, tid, deleted=False):
         """Get a terminal by customer id and terminal id."""
         if deleted:
-            deleted_sel = True
+            expression = True
         else:
-            deleted_sel = cls.deleted >> None
+            expression = cls.deleted >> None
 
-        for terminal in cls.select().join(Customer).where(
-                (Customer.cid == cid) & (cls.tid == tid) & deleted_sel):
+        expression &= Customer.id == cid
+        expression &= cls.tid == tid
+
+        for terminal in cls.select().join(Customer).where(expression):
             return terminal
 
         raise cls.DoesNotExist()
@@ -473,13 +475,6 @@ class Terminal(_TerminalModel):
     def _check_command(self):
         """Returns the respective check command."""
         return CHECK_COMMAND + (str(self.connection.timeout), self.hostname)
-
-    @property
-    def subdomain(self):
-        """Returns the respective subdomain."""
-        return '.'.join(
-            get_hostname(customer) for customer
-            in self.customer.reselling_chain)
 
     @property
     def hostname(self):

@@ -28,7 +28,7 @@ FIELDS = {
     'id': TerminalField(lambda terminal: terminal.id, 'ID', size=4),
     'tid': TerminalField(lambda terminal: terminal.tid, 'TID', size=3),
     'cid': TerminalField(
-        lambda terminal: terminal.customer.cid, 'CID', size=10),
+        lambda terminal: terminal.customer.id, 'CID', size=10),
     'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
     'class': TerminalField(
         lambda terminal: terminal.class_.name, 'Class', size=9,
