@@ -4,15 +4,13 @@ from .common import TerminalAware
 from .config import CONFIG
 from .ctrl import CustomSSHOptions, RemoteController
 from .filter import parse, get_terminals
-from .orm import TerminalConfigError, VPNUnconfiguredError, \
-    AddressUnconfiguredError, Class, Domain, OS, VPN, LTEInfo, Connection, \
-    Location, Terminal, Synchronization, Admin
+from .orm import TerminalConfigError, VPNUnconfiguredError, Class, Domain, \
+    OS, VPN, LTEInfo, Connection, Terminal, Synchronization, Admin
 
 __all__ = [
     'CONFIG',
     'TerminalConfigError',
     'VPNUnconfiguredError',
-    'AddressUnconfiguredError',
     'parse',
     'get_terminals',
     'TerminalAware',
@@ -24,7 +22,6 @@ __all__ = [
     'VPN',
     'LTEInfo',
     'Connection',
-    'Location',
     'Terminal',
     'Synchronization',
     'Admin']

@@ -17,14 +17,12 @@ __all__ = [
     'TerminalError',
     'TerminalConfigError',
     'VPNUnconfiguredError',
-    'AddressUnconfiguredError',
     'Class',
     'Domain',
     'OS',
     'VPN',
     'LTEInfo',
     'Connection',
-    'Location',
     'Terminal',
     'Synchronization',
     'Admin']
@@ -51,12 +49,6 @@ class VPNUnconfiguredError(TerminalConfigError):
     """Indicated that no VPN configuration has
     been assigned to the respective terminal.
     """
-
-    pass
-
-
-class AddressUnconfiguredError(TerminalConfigError):
-    """Indicated that no address has been configured for the terminal."""
 
     pass
 
@@ -266,91 +258,6 @@ class Connection(_TerminalModel):
         return dictionary
 
 
-class Location(_TerminalModel):
-    """Location of a terminal."""
-
-    address = CascadingFKField(Address, column_name='address')
-    annotation = CharField(255, null=True)
-
-    def __iter__(self):
-        """Yields location items."""
-        yield self.address.street
-        yield self.address.house_number
-        yield self.address.zip_code
-        yield self.address.city
-
-        if self.annotation:
-            yield self.annotation
-
-    def __str__(self):
-        """Returns location string."""
-        return '\n'.join((str(item) for item in self))
-
-    def __repr__(self):
-        """Returns a unique one-liner with annotation."""
-        if self.annotation:
-            return self.oneliner + ' ({})'.format(self.annotation)
-
-        return self.oneliner
-
-    @classmethod
-    def add(cls, address, annotation=None):
-        """Forcibly adds a location record."""
-        location = cls()
-        location.address = address
-        location.annotation = annotation
-        return location.save_unique()
-
-    @classmethod
-    def from_dict(cls, dictionary):
-        """Creates a location from the respective dictionary."""
-        address = dictionary.pop('address')
-        record = super().from_dict(dictionary)
-        record.address = address
-        return record.save_unique()
-
-    @property
-    def oneliner(self):
-        """Returns a unique one-liner."""
-        return repr(self.address)
-
-    @property
-    def shortinfo(self):
-        """Returns a short information e.g. for Nagios."""
-        result = ' '.join((self.address.street, self.address.house_number))
-
-        if self.annotation:
-            result = ' - '.join((result, self.annotation))
-
-        return result
-
-    def save_unique(self, *args, **kwargs):
-        """Saves the location if it is new or
-        returns the appropriate existing record.
-        """
-        cls = self.__class__
-
-        if self.annotation is None:
-            annotation_selector = cls.annotation >> None
-        else:
-            annotation_selector = cls.annotation == self.annotation
-
-        try:
-            return cls.get((cls.address == self.address) & annotation_selector)
-        except cls.DoesNotExist:
-            self.save(*args, **kwargs)
-            return self
-
-    def to_dict(self, *args, address=True, **kwargs):
-        """Returns a JSON-like dictionary."""
-        dictionary = super().to_dict(*args, **kwargs)
-
-        if address:
-            dictionary['address'] = self.address.to_dict(*args, **kwargs)
-
-        return dictionary
-
-
 class Terminal(_TerminalModel):
     """A physical terminal out in the field."""
 
@@ -370,8 +277,8 @@ class Terminal(_TerminalModel):
         VPN, null=True, column_name='vpn',
         on_delete='SET NULL', on_update='CASCADE')
     domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
-    location = ForeignKeyField(
-        Location, null=True, column_name='location',
+    address = ForeignKeyField(
+        Address, null=True, column_name='address',
         on_delete='SET NULL', on_update='CASCADE')
     vid = IntegerField(null=True)
     weather = CharField(16, null=True)
@@ -446,7 +353,7 @@ class Terminal(_TerminalModel):
         return tid
 
     @classmethod
-    def add(cls, customer, class_, os_, connection, vpn, domain, location=None,
+    def add(cls, customer, class_, os_, connection, vpn, domain, address=None,
             weather=None, scheduled=None, testing=False, annotation=None,
             serial_number=None):
         """Adds a new terminal."""
@@ -458,7 +365,7 @@ class Terminal(_TerminalModel):
         terminal.connection = connection
         terminal.vpn = vpn
         terminal.domain = domain
-        terminal.location = location
+        terminal.address = address
         terminal.vid = None
         terminal.weather = weather
         terminal.scheduled = scheduled
@@ -488,16 +395,6 @@ class Terminal(_TerminalModel):
             raise VPNUnconfiguredError()
 
         return self.vpn.ipv4addr
-
-    @property
-    def address(self):
-        """Returns the terminal's address."""
-        location = self.location
-
-        if location is not None:
-            return location.oneliner
-
-        raise AddressUnconfiguredError()
 
     @property
     def online(self):
@@ -537,6 +434,16 @@ class Terminal(_TerminalModel):
     def productive(self):
         """Returns whether the system has been deployed and is non-testing."""
         return self.isdeployed and not self.testing
+
+    @property
+    def shortinfo(self):
+        """Returns a short information e.g. for Nagios."""
+        result = ' '.join((self.address.street, self.address.house_number))
+
+        if self.annotation:
+            result = ' - '.join((result, self.annotation))
+
+        return result
 
     def deploy(self, date_time=None, force=False):
         """Sets terminals to deployed."""

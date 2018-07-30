@@ -2,34 +2,23 @@
 
 from blessings import Terminal
 
-from terminallib.orm import AddressUnconfiguredError
 
 __all__ = [
-    'get_annotation',
     'get_address',
     'justify',
     'to_string',
     'TerminalField']
 
 
-def get_annotation(terminal):
-    """Returns the terminal's address annotation."""
-
-    location = terminal.location
-
-    if location is not None:
-        return location.annotation
-
-    return None
-
-
 def get_address(terminal):
     """Returns the terminal's address."""
 
-    try:
-        return terminal.address
-    except AddressUnconfiguredError:
+    address = terminal.address
+
+    if address is None:
         return 'N/A'
+
+    return repr(address)
 
 
 def justify(string, size, leftbound=False):

@@ -2,9 +2,10 @@
 
 from sys import stderr
 
+from mdb import Address
 from syslib import B64LZMA
 
-from terminallib.fields import get_address, get_annotation, TerminalField
+from terminallib.fields import get_address, TerminalField
 from terminallib.orm import Class, Domain, OS, Terminal
 
 
@@ -46,10 +47,8 @@ FIELDS = {
     'address': TerminalField(
         get_address, 'Address', size=48, leftbound=True),
     'annotation': TerminalField(
-        get_annotation, 'Annotation', size=32, leftbound=True),
-    'comment': TerminalField(
-        lambda terminal: terminal.annotation, 'Comment',
-        size=24, leftbound=True),
+        lambda terminal: terminal.annotation, 'Comment', size=24,
+        leftbound=True),
     'online': TerminalField(lambda terminal: terminal.online, 'Online')}
 
 ARNIE = B64LZMA(
@@ -93,26 +92,23 @@ def _match_annotation(annotation, target):
 def print_terminal(terminal):
     """Prints the respective terminal."""
 
-    print(repr(terminal.location), file=stderr)
+    print(repr(terminal.address), '({})'.format(terminal.annotation),
+          file=stderr)
     print(str(terminal))
 
 
 def find_terminals(street, house_number=None, annotation=None):
     """Finds terminals in the specified location."""
 
-    for terminal in Terminal.select().where(~(Terminal.location >> None)):
-        address = terminal.location.address
-        house_number_ = address.house_number.replace(' ', '')
-        annotation_ = terminal.location.annotation
+    selection = Address.street ** '%{}%'.format(street)
 
-        if street.lower() in address.street.lower():
-            if house_number is None:
-                if _match_annotation(annotation, annotation_):
-                    yield terminal
-            else:
-                if house_number.lower() == house_number_.lower():
-                    if _match_annotation(annotation, annotation_):
-                        yield terminal
+    if house_number is not None:
+        selection &= Address.house_number ** '%{}%'.format(house_number)
+
+    if annotation is not None:
+        selection &= Terminal.annotation ** '%{}%'.format(annotation)
+
+    return Terminal.select().join(Address).where(selection)
 
 
 def get_terminal(street, house_number=None, annotation=None, index=None):
