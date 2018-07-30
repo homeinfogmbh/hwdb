@@ -475,10 +475,10 @@ class Terminal(_TerminalModel):
         if online_state:
             dictionary['online'] = self.online
 
-        location = self.location
+        address = self.address
 
-        if location is not None:
-            dictionary['location'] = location.to_dict(*args, **kwargs)
+        if address is not None:
+            dictionary['address'] = address.to_dict(*args, **kwargs)
 
         if short:
             return dictionary
