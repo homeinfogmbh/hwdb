@@ -4,11 +4,12 @@ from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
-from peewee import ForeignKeyField, IntegerField, CharField, BigIntegerField, \
-    DateTimeField, DateField, BooleanField, SmallIntegerField
+from peewee import ForeignKeyField, IntegerField, CharField, DateTimeField, \
+    DateField, BooleanField, SmallIntegerField
 
 from mdb import Customer, Address, Employee
-from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField
+from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField, \
+    IPv4AddressField
 
 from terminallib.config import CONFIG
 
@@ -141,7 +142,7 @@ class OS(_TerminalModel):
 class VPN(_TerminalModel):
     """OpenVPN settings."""
 
-    _ipv4addr = BigIntegerField(column_name='ipv4addr')
+    ipv4addr = IPv4AddressField()
     key = CharField(36, null=True)
     mtu = IntegerField(null=True)
 
@@ -190,16 +191,6 @@ class VPN(_TerminalModel):
             return ipv4addr
 
         raise TerminalConfigError('Network exhausted!')
-
-    @property
-    def ipv4addr(self):
-        """Returns an IPv4 Address."""
-        return IPv4Address(self._ipv4addr)
-
-    @ipv4addr.setter
-    def ipv4addr(self, ipv4addr):
-        """Sets the IPv4 address."""
-        self._ipv4addr = int(ipv4addr)
 
     def to_dict(self, *args, **kwargs):
         """Returns a JSON-like dictionary."""
