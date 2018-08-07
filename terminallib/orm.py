@@ -192,12 +192,6 @@ class VPN(_TerminalModel):
 
         raise TerminalConfigError('Network exhausted!')
 
-    def to_dict(self, *args, **kwargs):
-        """Returns a JSON-like dictionary."""
-        dictionary = super().to_dict(*args, **kwargs)
-        dictionary['ipv4addr'] = str(self.ipv4addr)
-        return dictionary
-
 
 class LTEInfo(_TerminalModel):
     """Represents information about LTE connections."""
