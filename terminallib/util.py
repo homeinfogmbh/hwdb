@@ -47,7 +47,7 @@ FIELDS = {
     'address': TerminalField(
         get_address, 'Address', size=48, leftbound=True),
     'annotation': TerminalField(
-        lambda terminal: terminal.annotation, 'Comment', size=24,
+        lambda terminal: terminal.annotation, 'Annotation', size=24,
         leftbound=True),
     'online': TerminalField(lambda terminal: terminal.online, 'Online')}
 
