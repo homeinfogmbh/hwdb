@@ -9,7 +9,7 @@ from peewee import AutoField, ForeignKeyField, IntegerField, CharField, \
 
 from mdb import Customer, Address
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField, \
-    IPv4AddressField
+    IPv4AddressField, JSONField
 
 from terminallib.config import CONFIG
 
@@ -60,17 +60,15 @@ class _TerminalModel(JSONModel):
         database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
-    id = AutoField()
-    JSON_FIELDS = {id: 'id'}
+    id = JSONField(AutoField)
 
 
 class Class(_TerminalModel):
     """Terminal classes."""
 
-    name = CharField(32)
-    full_name = CharField(32)
-    touch = BooleanField()  # Touch display flag.
-    JSON_FIELDS = {name: 'name', full_name: 'fullName', touch: 'touch'}
+    name = JSONField(CharField, 32)
+    full_name = JSONField(CharField, 32, key='fullName')
+    touch = JSONField(BooleanField)  # Touch display flag.
 
     @classmethod
     def _add(cls, name, full_name=None, touch=False):
@@ -99,9 +97,8 @@ class Class(_TerminalModel):
 class Domain(_TerminalModel):
     """Terminal domains."""
 
-    # The domain's fully qualified domain name
-    fqdn = CharField(32, column_name='fqdn')
-    JSON_FIELDS = {fqdn: 'fqdn'}
+    # The domain's fully qualified domain name.
+    fqdn = JSONField(CharField, 32)
 
     @classmethod
     def add(cls, fqdn):
@@ -123,10 +120,9 @@ class Domain(_TerminalModel):
 class OS(_TerminalModel):
     """Operating systems."""
 
-    family = CharField(8)
-    name = CharField(16)
-    version = CharField(16, null=True)
-    JSON_FIELDS = {family: 'family', name: 'name', version: 'version'}
+    family = JSONField(CharField, 8)
+    name = JSONField(CharField, 16)
+    version = JSONField(CharField, 16, null=True)
 
     def __str__(self):
         """Returns the family name."""
@@ -147,10 +143,9 @@ class OS(_TerminalModel):
 class VPN(_TerminalModel):
     """OpenVPN settings."""
 
-    ipv4addr = IPv4AddressField()
-    key = CharField(36, null=True)
-    mtu = IntegerField(null=True)
-    JSON_FIELDS = {ipv4addr: 'ipv4addr', key: 'key', mtu: 'mtu'}
+    ipv4addr = JSONField(IPv4AddressField)
+    key = JSONField(CharField, 36, null=True)
+    mtu = JSONField(IntegerField, null=True)
 
     @classmethod
     def add(cls, ipv4addr=None, key=None, mtu=None):
@@ -205,19 +200,19 @@ class LTEInfo(_TerminalModel):
     class Meta:
         table_name = 'lte_info'
 
-    sim_id = CharField(32, null=True)
-    pin = CharField(4, null=True)
-    rssi = SmallIntegerField(null=True)
-    JSON_FIELDS = {sim_id: 'simId', pin: 'pin', rssi: 'rssi'}
+    sim_id = JSONField(CharField, 32, null=True, key='simId')
+    pin = JSONField(CharField, 4, null=True)
+    rssi = JSONField(SmallIntegerField, null=True)
 
 
 class Connection(_TerminalModel):
     """Internet connection information."""
 
-    name = CharField(4)
-    timeout = IntegerField()
-    lte_info = ForeignKeyField(LTEInfo, null=True, column_name='lte_info')
-    JSON_FIELDS = {name: 'name', timeout: 'timeout', lte_info: 'lteInfo'}
+    name = JSONField(CharField, 4)
+    timeout = JSONField(IntegerField)
+    lte_info = JSONField(
+        ForeignKeyField, LTEInfo, null=True, column_name='lte_info',
+        key='lteInfo')
 
     def __str__(self):
         return '{} ({})'.format(self.name, self.timeout)
@@ -226,7 +221,7 @@ class Connection(_TerminalModel):
 class Terminal(_TerminalModel):
     """A physical terminal out in the field."""
 
-    tid = IntegerField()    # Customer-unique terminal identifier
+    tid = JSONField(IntegerField)    # Customer-unique terminal identifier
     customer = ForeignKeyField(
         Customer, column_name='customer', on_update='CASCADE')
     class_ = ForeignKeyField(
@@ -245,23 +240,17 @@ class Terminal(_TerminalModel):
     address = ForeignKeyField(
         Address, null=True, column_name='address',
         on_delete='SET NULL', on_update='CASCADE')
-    vid = IntegerField(null=True)
-    weather = CharField(16, null=True)
-    scheduled = DateField(null=True)
-    deployed = DateTimeField(null=True)
-    deleted = DateTimeField(null=True)
-    testing = BooleanField(default=False)
-    replacement = BooleanField(default=False)
-    tainted = BooleanField(default=False)
-    monitor = BooleanField(null=True)
-    annotation = CharField(255, null=True)
-    serial_number = CharField(255, null=True)
-
-    JSON_FIELDS = {
-        tid: 'tid', vid: 'vid', weather: 'weather', scheduled: 'scheduled',
-        deployed: 'deployed', deleted: 'deleted', testing: 'testing',
-        replacement: 'replacement', tainted: 'tainted', monitor: 'monitor',
-        annotation: 'annotation', serial_number: 'serialNumber'}
+    vid = JSONField(IntegerField, null=True)
+    weather = JSONField(CharField, 16, null=True)
+    scheduled = JSONField(DateField, null=True)
+    deployed = JSONField(DateTimeField, null=True)
+    deleted = JSONField(DateTimeField, null=True)
+    testing = JSONField(BooleanField, default=False)
+    replacement = JSONField(BooleanField, default=False)
+    tainted = JSONField(BooleanField, default=False)
+    monitor = JSONField(BooleanField, null=True)
+    annotation = JSONField(CharField, 255, null=True)
+    serial_number = JSONField(CharField, 255, null=True, key='serialNumber')
 
     def __str__(self):
         """Converts the terminal to a unique string."""
@@ -490,17 +479,13 @@ class Synchronization(_TerminalModel):
     """
 
     terminal = CascadingFKField(Terminal, column_name='terminal')
-    started = DateTimeField()
-    finished = DateTimeField(null=True)
-    reload = BooleanField(null=True)
-    force = BooleanField(null=True)
-    nocheck = BooleanField(null=True)
-    result = BooleanField(null=True)
-    annotation = CharField(255, null=True)
-    JSON_FIELDS = {
-        started: 'started', finished: 'finished', reload: 'reload',
-        force: 'force', nocheck: 'nocheck', result: 'result',
-        annotation: 'annotation'}
+    started = JSONField(DateTimeField)
+    finished = JSONField(DateTimeField, null=True)
+    reload = JSONField(BooleanField, null=True)
+    force = JSONField(BooleanField, null=True)
+    nocheck = JSONField(BooleanField, null=True)
+    result = JSONField(BooleanField, null=True)
+    annotation = JSONField(CharField, 255, null=True)
 
     def __enter__(self):
         return self
