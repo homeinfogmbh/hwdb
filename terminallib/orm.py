@@ -4,10 +4,10 @@ from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
-from peewee import ForeignKeyField, IntegerField, CharField, DateTimeField, \
-    DateField, BooleanField, SmallIntegerField
+from peewee import AutoField, ForeignKeyField, IntegerField, CharField, \
+    DateTimeField, DateField, BooleanField, SmallIntegerField
 
-from mdb import Customer, Address, Employee
+from mdb import Customer, Address
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField, \
     IPv4AddressField
 
@@ -25,8 +25,7 @@ __all__ = [
     'LTEInfo',
     'Connection',
     'Terminal',
-    'Synchronization',
-    'Admin']
+    'Synchronization']
 
 
 NETWORK = IPv4Network('{}/{}'.format(
@@ -61,6 +60,9 @@ class _TerminalModel(JSONModel):
         database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
+    id = AutoField()
+    JSON_FIELDS = {id: 'id'}
+
 
 class Class(_TerminalModel):
     """Terminal classes."""
@@ -68,6 +70,7 @@ class Class(_TerminalModel):
     name = CharField(32)
     full_name = CharField(32)
     touch = BooleanField()  # Touch display flag.
+    JSON_FIELDS = {name: 'name', full_name: 'fullName', touch: 'touch'}
 
     @classmethod
     def _add(cls, name, full_name=None, touch=False):
@@ -98,6 +101,7 @@ class Domain(_TerminalModel):
 
     # The domain's fully qualified domain name
     fqdn = CharField(32, column_name='fqdn')
+    JSON_FIELDS = {fqdn: 'fqdn'}
 
     @classmethod
     def add(cls, fqdn):
@@ -122,6 +126,7 @@ class OS(_TerminalModel):
     family = CharField(8)
     name = CharField(16)
     version = CharField(16, null=True)
+    JSON_FIELDS = {family: 'family', name: 'name', version: 'version'}
 
     def __str__(self):
         """Returns the family name."""
@@ -145,6 +150,7 @@ class VPN(_TerminalModel):
     ipv4addr = IPv4AddressField()
     key = CharField(36, null=True)
     mtu = IntegerField(null=True)
+    JSON_FIELDS = {ipv4addr: 'ipv4addr', key: 'key', mtu: 'mtu'}
 
     @classmethod
     def add(cls, ipv4addr=None, key=None, mtu=None):
@@ -202,21 +208,7 @@ class LTEInfo(_TerminalModel):
     sim_id = CharField(32, null=True)
     pin = CharField(4, null=True)
     rssi = SmallIntegerField(null=True)
-
-    def to_dict(self):
-        """Returns a JSON-ish dictionary."""
-        dictionary = {}
-
-        if self.sim_id is not None:
-            dictionary['sim_id'] = self.sim_id
-
-        if self.pin is not None:
-            dictionary['pin'] = self.pin
-
-        if self.rssi is not None:
-            dictionary['rssi'] = self.rssi
-
-        return dictionary
+    JSON_FIELDS = {sim_id: 'simId', pin: 'pin', rssi: 'rssi'}
 
 
 class Connection(_TerminalModel):
@@ -225,22 +217,10 @@ class Connection(_TerminalModel):
     name = CharField(4)
     timeout = IntegerField()
     lte_info = ForeignKeyField(LTEInfo, null=True, column_name='lte_info')
+    JSON_FIELDS = {name: 'name', timeout: 'timeout', lte_info: 'lteInfo'}
 
     def __str__(self):
         return '{} ({})'.format(self.name, self.timeout)
-
-    def to_dict(self):
-        """Returns a JSON-ish dictionary."""
-        dictionary = {'name': self.name, 'timeout': self.timeout}
-        lte_info = self.lte_info
-
-        if lte_info is not None:
-            lte_info = lte_info.to_dict()
-
-            if lte_info:
-                dictionary['lte_info'] = lte_info
-
-        return dictionary
 
 
 class Terminal(_TerminalModel):
@@ -276,6 +256,12 @@ class Terminal(_TerminalModel):
     monitor = BooleanField(null=True)
     annotation = CharField(255, null=True)
     serial_number = CharField(255, null=True)
+
+    JSON_FIELDS = {
+        tid: 'tid', vid: 'vid', weather: 'weather', scheduled: 'scheduled',
+        deployed: 'deployed', deleted: 'deleted', testing: 'testing',
+        replacement: 'replacement', tainted: 'tainted', monitor: 'monitor',
+        annotation: 'annotation', serial_number: 'serialNumber'}
 
     def __str__(self):
         """Converts the terminal to a unique string."""
@@ -511,6 +497,10 @@ class Synchronization(_TerminalModel):
     nocheck = BooleanField(null=True)
     result = BooleanField(null=True)
     annotation = CharField(255, null=True)
+    JSON_FIELDS = {
+        started: 'started', finished: 'finished', reload: 'reload',
+        force: 'force', nocheck: 'nocheck', result: 'result',
+        annotation: 'annotation'}
 
     def __enter__(self):
         return self
@@ -546,40 +536,3 @@ class Synchronization(_TerminalModel):
             dictionary['terminal'] = self.terminal.to_dict(*args, **kwargs)
 
         return dictionary
-
-
-class Admin(_TerminalModel):
-    """Many-to-many mapping in-between
-    Employees and terminal classes.
-    """
-
-    class Meta:
-        table_name = 'admin'
-
-    name_ = CharField(16, column_name='name', null=True)
-    employee = CascadingFKField(Employee, column_name='employee')
-    email_ = CharField(255, column_name='email', null=True)
-    root = BooleanField(default=False)
-
-    @property
-    def name(self):
-        """Returns a short name."""
-        if self.name_ is None:
-            return self.employee.surname
-
-        return self.name_
-
-    @property
-    def email(self):
-        """Returns the admin's email."""
-        if self.email_ is None:
-            return self.employee.email
-
-        return self.email_
-
-    def to_dict(self):
-        """Returns a JSON-like dictionary."""
-        return {
-            'name': self.name,
-            'email': self.email,
-            'root': self.root}
