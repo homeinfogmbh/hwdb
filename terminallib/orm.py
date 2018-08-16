@@ -4,12 +4,12 @@ from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
-from peewee import AutoField, ForeignKeyField, IntegerField, CharField, \
-    DateTimeField, DateField, BooleanField, SmallIntegerField
+from peewee import ForeignKeyField, IntegerField, CharField, DateTimeField, \
+    DateField, BooleanField, SmallIntegerField
 
 from mdb import Customer, Address
 from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField, \
-    IPv4AddressField, JSONField
+    IPv4AddressField
 
 from terminallib.config import CONFIG
 
@@ -60,15 +60,13 @@ class _TerminalModel(JSONModel):
         database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
-    id = JSONField(AutoField)
-
-
 class Class(_TerminalModel):
     """Terminal classes."""
 
-    name = JSONField(CharField, 32)
-    full_name = JSONField(CharField, 32, key='fullName')
-    touch = JSONField(BooleanField)  # Touch display flag.
+    name = CharField(32)
+    full_name = CharField(32)
+    touch = BooleanField()
+    JSON_KEYS = {'fullName': full_name}
 
     @classmethod
     def _add(cls, name, full_name=None, touch=False):
@@ -98,7 +96,7 @@ class Domain(_TerminalModel):
     """Terminal domains."""
 
     # The domain's fully qualified domain name.
-    fqdn = JSONField(CharField, 32)
+    fqdn = CharField(32)
 
     @classmethod
     def add(cls, fqdn):
@@ -120,9 +118,9 @@ class Domain(_TerminalModel):
 class OS(_TerminalModel):
     """Operating systems."""
 
-    family = JSONField(CharField, 8)
-    name = JSONField(CharField, 16)
-    version = JSONField(CharField, 16, null=True)
+    family = CharField(8)
+    name = CharField(16)
+    version = CharField(16, null=True)
 
     def __str__(self):
         """Returns the family name."""
@@ -143,9 +141,9 @@ class OS(_TerminalModel):
 class VPN(_TerminalModel):
     """OpenVPN settings."""
 
-    ipv4addr = JSONField(IPv4AddressField)
-    key = JSONField(CharField, 36, null=True)
-    mtu = JSONField(IntegerField, null=True)
+    ipv4addr = IPv4AddressField()
+    key = CharField(36, null=True)
+    mtu = IntegerField(null=True)
 
     @classmethod
     def add(cls, ipv4addr=None, key=None, mtu=None):
@@ -200,28 +198,29 @@ class LTEInfo(_TerminalModel):
     class Meta:
         table_name = 'lte_info'
 
-    sim_id = JSONField(CharField, 32, null=True, key='simId')
-    pin = JSONField(CharField, 4, null=True)
-    rssi = JSONField(SmallIntegerField, null=True)
+    sim_id = CharField(32, null=True)
+    pin = CharField(4, null=True)
+    rssi = SmallIntegerField(null=True)
+    JSON_FIELDS = {'simId': sim_id}
 
 
 class Connection(_TerminalModel):
     """Internet connection information."""
 
-    name = JSONField(CharField, 4)
-    timeout = JSONField(IntegerField)
-    lte_info = JSONField(
-        ForeignKeyField, LTEInfo, null=True, column_name='lte_info',
-        key='lteInfo')
+    name = CharField(4)
+    timeout = IntegerField()
+    lte_info = ForeignKeyField(LTEInfo, null=True, column_name='lte_info')
+    JSON_KEYS = {'lteInfo': lte_info}
 
     def __str__(self):
+        """Returns name and timeout."""
         return '{} ({})'.format(self.name, self.timeout)
 
 
 class Terminal(_TerminalModel):
     """A physical terminal out in the field."""
 
-    tid = JSONField(IntegerField)    # Customer-unique terminal identifier
+    tid = IntegerField()    # Customer-unique terminal identifier
     customer = ForeignKeyField(
         Customer, column_name='customer', on_update='CASCADE')
     class_ = ForeignKeyField(
@@ -240,17 +239,18 @@ class Terminal(_TerminalModel):
     address = ForeignKeyField(
         Address, null=True, column_name='address',
         on_delete='SET NULL', on_update='CASCADE')
-    vid = JSONField(IntegerField, null=True)
-    weather = JSONField(CharField, 16, null=True)
-    scheduled = JSONField(DateField, null=True)
-    deployed = JSONField(DateTimeField, null=True)
-    deleted = JSONField(DateTimeField, null=True)
-    testing = JSONField(BooleanField, default=False)
-    replacement = JSONField(BooleanField, default=False)
-    tainted = JSONField(BooleanField, default=False)
-    monitor = JSONField(BooleanField, null=True)
-    annotation = JSONField(CharField, 255, null=True)
-    serial_number = JSONField(CharField, 255, null=True, key='serialNumber')
+    vid = IntegerField(null=True)
+    weather = CharField(16, null=True)
+    scheduled = DateField(null=True)
+    deployed = DateTimeField(null=True)
+    deleted = DateTimeField(null=True)
+    testing = BooleanField(default=False)
+    replacement = BooleanField(default=False)
+    tainted = BooleanField(default=False)
+    monitor = BooleanField(null=True)
+    annotation = CharField(255, null=True)
+    serial_number = CharField(255, null=True)
+    JSON_KEYS = {'serialNumber': serial_number}
 
     def __str__(self):
         """Converts the terminal to a unique string."""
@@ -421,7 +421,7 @@ class Terminal(_TerminalModel):
             self.deployed = None
             self.save()
 
-    def to_dict(self, *args, short=False, online_state=False, **kwargs):
+    def serialize(self, *args, short=False, online_state=False, **kwargs):
         """Returns a JSON-like dictionary."""
 
         if short:
@@ -430,7 +430,7 @@ class Terminal(_TerminalModel):
                 'tid': self.tid,
                 'customer': self.customer.id}
         else:
-            dictionary = super().to_dict(*args, **kwargs)
+            dictionary = super().serialize(*args, **kwargs)
 
         if online_state:
             dictionary['online'] = self.online
@@ -438,28 +438,28 @@ class Terminal(_TerminalModel):
         address = self.address
 
         if address is not None:
-            dictionary['address'] = address.to_dict(*args, **kwargs)
+            dictionary['address'] = address.serialize(*args, **kwargs)
 
         if short:
             return dictionary
 
-        dictionary['customer'] = self.customer.to_dict(
+        dictionary['customer'] = self.customer.serialize(
             *args, company=True, **kwargs)
 
         if self.class_ is not None:
-            dictionary['class'] = self.class_.to_dict(*args, **kwargs)
+            dictionary['class'] = self.class_.serialize(*args, **kwargs)
 
         if self.os is not None:
-            dictionary['os'] = self.os.to_dict(*args, **kwargs)
+            dictionary['os'] = self.os.serialize(*args, **kwargs)
 
-        dictionary['domain'] = self.domain.to_dict(*args, **kwargs)
+        dictionary['domain'] = self.domain.serialize(*args, **kwargs)
 
         if self.connection is not None:
-            dictionary['connection'] = self.connection.to_dict(
+            dictionary['connection'] = self.connection.serialize(
                 *args, **kwargs)
 
         if self.vpn is not None:
-            dictionary['vpn'] = self.vpn.to_dict(*args, **kwargs)
+            dictionary['vpn'] = self.vpn.serialize(*args, **kwargs)
 
         return dictionary
 
@@ -479,13 +479,13 @@ class Synchronization(_TerminalModel):
     """
 
     terminal = CascadingFKField(Terminal, column_name='terminal')
-    started = JSONField(DateTimeField)
-    finished = JSONField(DateTimeField, null=True)
-    reload = JSONField(BooleanField, null=True)
-    force = JSONField(BooleanField, null=True)
-    nocheck = JSONField(BooleanField, null=True)
-    result = JSONField(BooleanField, null=True)
-    annotation = JSONField(CharField, 255, null=True)
+    started = DateTimeField()
+    finished = DateTimeField(null=True)
+    reload = BooleanField(null=True)
+    force = BooleanField(null=True)
+    nocheck = BooleanField(null=True)
+    result = BooleanField(null=True)
+    annotation = CharField(255, null=True)
 
     def __enter__(self):
         return self
@@ -511,13 +511,11 @@ class Synchronization(_TerminalModel):
 
         return False
 
-    def to_dict(self, *args, terminal=None, **kwargs):
-        """Returns a JSON-like dictionary."""
-        dictionary = super().to_dict(*args, **kwargs)
+    def serialize(self, *args, terminal=None, **kwargs):
+        """Returns a JSON-ish dictionary."""
+        dictionary = super().serialize(*args, **kwargs)
 
-        if terminal is None:
-            dictionary['terminal'] = self.terminal.id
-        elif terminal:
-            dictionary['terminal'] = self.terminal.to_dict(*args, **kwargs)
+        if terminal is not None:
+            dictionary['terminal'] = self.terminal.serialize(*args, **kwargs)
 
         return dictionary
