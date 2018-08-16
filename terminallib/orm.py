@@ -421,7 +421,7 @@ class Terminal(_TerminalModel):
             self.deployed = None
             self.save()
 
-    def serialize(self, *args, short=False, online_state=False, **kwargs):
+    def to_json(self, *args, short=False, online_state=False, **kwargs):
         """Returns a JSON-like dictionary."""
 
         if short:
@@ -430,7 +430,7 @@ class Terminal(_TerminalModel):
                 'tid': self.tid,
                 'customer': self.customer.id}
         else:
-            dictionary = super().serialize(*args, **kwargs)
+            dictionary = super().to_json(*args, **kwargs)
 
         if online_state:
             dictionary['online'] = self.online
@@ -438,28 +438,28 @@ class Terminal(_TerminalModel):
         address = self.address
 
         if address is not None:
-            dictionary['address'] = address.serialize(*args, **kwargs)
+            dictionary['address'] = address.to_json(*args, **kwargs)
 
         if short:
             return dictionary
 
-        dictionary['customer'] = self.customer.serialize(
+        dictionary['customer'] = self.customer.to_json(
             *args, company=True, **kwargs)
 
         if self.class_ is not None:
-            dictionary['class'] = self.class_.serialize(*args, **kwargs)
+            dictionary['class'] = self.class_.to_json(*args, **kwargs)
 
         if self.os is not None:
-            dictionary['os'] = self.os.serialize(*args, **kwargs)
+            dictionary['os'] = self.os.to_json(*args, **kwargs)
 
-        dictionary['domain'] = self.domain.serialize(*args, **kwargs)
+        dictionary['domain'] = self.domain.to_json(*args, **kwargs)
 
         if self.connection is not None:
-            dictionary['connection'] = self.connection.serialize(
+            dictionary['connection'] = self.connection.to_json(
                 *args, **kwargs)
 
         if self.vpn is not None:
-            dictionary['vpn'] = self.vpn.serialize(*args, **kwargs)
+            dictionary['vpn'] = self.vpn.to_json(*args, **kwargs)
 
         return dictionary
 
@@ -511,11 +511,11 @@ class Synchronization(_TerminalModel):
 
         return False
 
-    def serialize(self, *args, terminal=None, **kwargs):
+    def to_json(self, *args, terminal=None, **kwargs):
         """Returns a JSON-ish dictionary."""
-        dictionary = super().serialize(*args, **kwargs)
+        dictionary = super().to_json(*args, **kwargs)
 
         if terminal is not None:
-            dictionary['terminal'] = self.terminal.serialize(*args, **kwargs)
+            dictionary['terminal'] = self.terminal.to_json(*args, **kwargs)
 
         return dictionary
