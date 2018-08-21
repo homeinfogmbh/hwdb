@@ -201,7 +201,7 @@ class LTEInfo(_TerminalModel):
     sim_id = CharField(32, null=True)
     pin = CharField(4, null=True)
     rssi = SmallIntegerField(null=True)
-    JSON_FIELDS = {'simId': sim_id}
+    JSON_KEYS = {'simId': sim_id}
 
 
 class Connection(_TerminalModel):
