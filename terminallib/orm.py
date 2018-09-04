@@ -462,6 +462,13 @@ class Terminal(_TerminalModel):
 
         return dictionary
 
+    def delete_instance(self, **kwargs):
+        """Removes the respective terminal."""
+        if self.vpn is not None:
+            self.vpn.delete_instance()
+
+        return super().delete_instance(**kwargs)
+
 
 class Synchronization(_TerminalModel):
     """Synchronization log.
