@@ -233,8 +233,7 @@ class Terminal(_TerminalModel):
         Connection, null=True, column_name='connection',
         on_delete='SET NULL', on_update='CASCADE')
     vpn = ForeignKeyField(
-        VPN, null=True, column_name='vpn',
-        on_delete='RESTRICT', on_update='CASCADE')
+        VPN, null=True, column_name='vpn', on_update='CASCADE')
     domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
     address = ForeignKeyField(
         Address, null=True, column_name='address',
