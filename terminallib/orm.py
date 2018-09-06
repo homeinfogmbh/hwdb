@@ -66,7 +66,6 @@ class Class(_TerminalModel):
     name = CharField(32)
     full_name = CharField(32)
     touch = BooleanField()
-    JSON_KEYS = {'fullName': full_name}
 
     @classmethod
     def _add(cls, name, full_name=None, touch=False):
@@ -201,7 +200,6 @@ class LTEInfo(_TerminalModel):
     sim_id = CharField(32, null=True)
     pin = CharField(4, null=True)
     rssi = SmallIntegerField(null=True)
-    JSON_KEYS = {'simId': sim_id}
 
 
 class Connection(_TerminalModel):
@@ -210,7 +208,6 @@ class Connection(_TerminalModel):
     name = CharField(4)
     timeout = IntegerField()
     lte_info = ForeignKeyField(LTEInfo, null=True, column_name='lte_info')
-    JSON_KEYS = {'lteInfo': lte_info}
 
     def __str__(self):
         """Returns name and timeout."""
@@ -249,7 +246,6 @@ class Terminal(_TerminalModel):
     monitor = BooleanField(null=True)
     annotation = CharField(255, null=True)
     serial_number = CharField(255, null=True)
-    JSON_KEYS = {'serialNumber': serial_number}
 
     def __str__(self):
         """Converts the terminal to a unique string."""
