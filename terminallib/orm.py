@@ -12,6 +12,7 @@ from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField, \
     IPv4AddressField
 
 from terminallib.config import CONFIG
+from terminallib.csv import TerminalCSVRecord
 
 
 __all__ = [
@@ -457,6 +458,10 @@ class Terminal(_TerminalModel):
             dictionary['vpn'] = self.vpn.to_json(*args, **kwargs)
 
         return dictionary
+
+    def to_csv(self):
+        """Returns a CSV record."""
+        return TerminalCSVRecord.from_terminal(self)
 
     def delete_instance(self, **kwargs):
         """Removes the respective terminal."""
