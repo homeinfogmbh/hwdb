@@ -236,6 +236,9 @@ class Terminal(_TerminalModel):
     address = ForeignKeyField(
         Address, null=True, column_name='address',
         on_delete='SET NULL', on_update='CASCADE')
+    lpt_address = ForeignKeyField(  # Address for local public transport.
+        Address, null=True, column_name='lpt_address',
+        on_delete='SET NULL', on_update='CASCADE')
     vid = IntegerField(null=True)
     weather = CharField(16, null=True)
     scheduled = DateField(null=True)
