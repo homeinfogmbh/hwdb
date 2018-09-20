@@ -7,6 +7,7 @@ from syslib import run
 from terminallib.common import TerminalAware
 from terminallib.config import CONFIG
 
+
 __all__ = ['InvalidCommand', 'RemoteController']
 
 

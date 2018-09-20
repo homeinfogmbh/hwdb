@@ -2,6 +2,7 @@
 
 from collections import namedtuple
 
+
 __all__ = ['TerminalCSVRecord']
 
 

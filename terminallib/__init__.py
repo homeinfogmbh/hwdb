@@ -1,11 +1,19 @@
 """HOMEINFO's terminal library."""
 
-from .common import TerminalAware
-from .config import CONFIG
-from .ctrl import CustomSSHOptions, RemoteController
-from .filter import parse, get_terminals
-from .orm import TerminalConfigError, VPNUnconfiguredError, Class, Domain, \
-    OS, VPN, LTEInfo, Connection, Terminal, Synchronization
+from terminallib.common import TerminalAware
+from terminallib.config import CONFIG
+from terminallib.ctrl import CustomSSHOptions, RemoteController
+from terminallib.filter import parse, get_terminals
+from terminallib.orm import TerminalConfigError
+from terminallib.orm import VPNUnconfiguredError
+from terminallib.orm import Class
+from terminallib.orm import Domain
+from terminallib.orm import OS
+from terminallib.orm import VPN
+from terminallib.orm import LTEInfo
+from terminallib.orm import Connection
+from terminallib.orm import Terminal
+from terminallib.orm import Synchronization
 
 __all__ = [
     'CONFIG',

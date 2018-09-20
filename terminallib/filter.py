@@ -2,6 +2,7 @@
 
 from terminallib.orm import Class, OS, Terminal
 
+
 __all__ = ['parse', 'get_terminals']
 
 
