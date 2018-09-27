@@ -7,10 +7,10 @@ __all__ = ['TerminalCSVRecord']
 
 
 SEP = ';'
+_FIELDS = ('tid', 'cid', 'street', 'house_number', 'zip_code', 'city')
 
 
-class TerminalCSVRecord(namedtuple('TerminalCSVRecord', (
-        'tid', 'cid', 'street', 'house_number', 'zip_code', 'city'))):
+class TerminalCSVRecord(namedtuple('TerminalCSVRecord', _FIELDS)):
     """A terminal CSV record."""
 
     __slots__ = ()
