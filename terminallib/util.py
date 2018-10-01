@@ -18,8 +18,6 @@ __all__ = [
     'find_terminals',
     'get_terminal',
     'list_terminals',
-    'deployment_filter',
-    'testing_filter',
     'list_classes',
     'list_oss',
     'list_domains']
@@ -112,7 +110,7 @@ def find_terminals(street, house_number=None, annotation=None):
         Address, on=(Terminal.address == Address.id)).where(selection)
 
 
-def get_terminal(street, house_number=None, annotation=None, index=None):
+def get_terminal(street, house_number=None, annotation=None, index=0):
     """Finds a terminal by its location."""
 
     terminals = tuple(find_terminals(
@@ -120,14 +118,14 @@ def get_terminal(street, house_number=None, annotation=None, index=None):
 
     if not terminals:
         raise TerminalError('No terminal matching query.')
-    elif len(terminals) == 1:
-        return terminals[0]
-    elif index is not None:
-        try:
-            return terminals[index]
-        except IndexError:
-            raise TerminalError('No terminal #{} available ({}).'.format(
-                index, len(terminals)))
+
+    index = index or 0
+
+    try:
+        return terminals[index]
+    except IndexError:
+        raise TerminalError('No terminal #{} available ({}).'.format(
+            index, len(terminals)))
 
     raise AmbiguousTerminals('Ambiguous terminals:', terminals)
 
@@ -142,30 +140,6 @@ def list_terminals(terminals, header=True, fields=DEFAULT_FIELDS, sep='  '):
 
     for terminal in terminals:
         yield sep.join(field.format(terminal) for field in fields)
-
-
-def deployment_filter(terminals, deployed=True, undeployed=True):
-    """Yields deployed terminals."""
-
-    for terminal in terminals:
-        if terminal.isdeployed:
-            if deployed:
-                yield terminal
-        else:
-            if undeployed:
-                yield terminal
-
-
-def testing_filter(terminals, testing=True, productive=True):
-    """Yields the respective terminals."""
-
-    for terminal in terminals:
-        if terminal.testing:
-            if testing:
-                yield terminal
-        else:
-            if productive:
-                yield terminal
 
 
 def list_classes():
