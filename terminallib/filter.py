@@ -63,31 +63,32 @@ def get_terminals(expressions, deployed=None, testing=None, classes=None,
             terminal_expr &= Terminal.testing == 0
 
     if classes:
-        class_ids = []
+        class_ids = set()
 
-        for value in classes:
+        for class_desc in classes:
             try:
-                class_id = int(value)
+                class_id = int(class_desc)
             except ValueError:
                 class_ = Class.get(
-                    (Class.name == value) | (Class.full_name == value))
+                    (Class.name == class_desc)
+                    | (Class.full_name == class_desc))
                 class_id = class_.id
 
-            class_ids.append(class_id)
+            class_ids.add(class_id)
 
         terminal_expr &= Terminal.class_ << class_ids
 
     if oss:
-        os_ids = []
+        os_ids = set()
 
-        for value in oss:
+        for od_desc in oss:
             try:
-                os_id = int(value)
+                os_id = int(od_desc)
             except ValueError:
-                os_ = OS.get((OS.family == value) | (OS.name == value))
+                os_ = OS.get((OS.family == od_desc) | (OS.name == od_desc))
                 os_id = os_.id
 
-            os_ids.append(os_id)
+            os_ids.add(os_id)
 
         terminal_expr &= Terminal.os << os_ids
 
