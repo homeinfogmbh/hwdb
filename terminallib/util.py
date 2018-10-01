@@ -108,7 +108,8 @@ def find_terminals(street, house_number=None, annotation=None):
     if annotation is not None:
         selection &= Terminal.annotation ** '%{}%'.format(annotation)
 
-    return Terminal.select().join(Address).where(selection)
+    return Terminal.select().join(
+        Address, on=(Terminal.address == Address.id)).where(selection)
 
 
 def get_terminal(street, house_number=None, annotation=None, index=None):
