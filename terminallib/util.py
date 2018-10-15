@@ -110,7 +110,7 @@ def find_terminals(street, house_number=None, annotation=None):
         Address, on=(Terminal.address == Address.id)).where(selection)
 
 
-def get_terminal(street, house_number=None, annotation=None, index=0):
+def get_terminal(street, house_number=None, annotation=None, index=None):
     """Finds a terminal by its location."""
 
     terminals = tuple(find_terminals(
@@ -119,6 +119,9 @@ def get_terminal(street, house_number=None, annotation=None, index=0):
     if not terminals:
         raise TerminalError('No terminal matching query.')
 
+    if len(terminals) > 1 and index is None:
+        raise AmbiguousTerminals('Ambiguous terminals:', terminals)
+
     index = index or 0
 
     try:
@@ -126,8 +129,6 @@ def get_terminal(street, house_number=None, annotation=None, index=0):
     except IndexError:
         raise TerminalError('No terminal #{} available ({}).'.format(
             index, len(terminals)))
-
-    raise AmbiguousTerminals('Ambiguous terminals:', terminals)
 
 
 def list_terminals(terminals, header=True, fields=DEFAULT_FIELDS, sep='  '):
