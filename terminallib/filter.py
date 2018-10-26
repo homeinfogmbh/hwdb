@@ -6,10 +6,10 @@ from terminallib.orm import Class, OS, Terminal
 __all__ = ['parse', 'get_terminals']
 
 
-def _online(terminal_expr):
+def filter_online(terminals):
     """Yields online terminals."""
 
-    for terminal in Terminal.select().where(terminal_expr):
+    for terminal in terminals:
         if terminal.online:
             yield terminal
 
@@ -92,7 +92,9 @@ def get_terminals(expressions, deployed=None, testing=None, classes=None,
 
         terminal_expr &= Terminal.os << os_ids
 
-    if online:
-        return _online(terminal_expr)
+    terminals = Terminal.select().where(terminal_expr)
 
-    return Terminal.select().where(terminal_expr)
+    if online:
+        return filter_online(terminals)
+
+    return terminals
