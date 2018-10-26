@@ -35,11 +35,17 @@ from docopt import docopt
 
 from syslib import script
 
+from terminallib.exceptions import TerminalError, AmbiguousTerminals
 from terminallib.filter import get_terminals
 from terminallib.orm import Class, OS
-from terminallib.util import ARNIE, DEFAULT_FIELDS, TerminalError, \
-    AmbiguousTerminals, print_terminal, get_terminal, list_terminals, \
-    list_classes, list_oss, list_domains
+from terminallib.util import ARNIE
+from terminallib.util import DEFAULT_FIELDS
+from terminallib.util import print_terminal
+from terminallib.util import get_terminal
+from terminallib.util import list_terminals
+from terminallib.util import list_classes
+from terminallib.util import list_oss
+from terminallib.util import list_domains
 
 
 LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
