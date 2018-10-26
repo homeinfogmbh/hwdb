@@ -28,9 +28,7 @@ class CustomSSHOptions:
 
     def __enter__(self):
         """Spplies the custom SSH options."""
-        self.previous_options = {
-            key: value for key, value in
-            self.remote_controller.ssh_options.items()}
+        self.previous_options = dict(self.remote_controller.ssh_options)
         self.remote_controller.ssh_options.update(self.options)
 
     def __exit__(self, *_):
