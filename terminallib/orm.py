@@ -1,24 +1,31 @@
 """Terminal library ORM models."""
 
+from contextlib import suppress
 from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
 from subprocess import DEVNULL, CalledProcessError, check_call
 
-from peewee import ForeignKeyField, IntegerField, CharField, DateTimeField, \
-    DateField, BooleanField, SmallIntegerField
+from peewee import BooleanField
+from peewee import CharField
+from peewee import DateField
+from peewee import DateTimeField
+from peewee import ForeignKeyField
+from peewee import IntegerField
+from peewee import SmallIntegerField
 
 from mdb import Customer, Address
-from peeweeplus import MySQLDatabase, JSONModel, CascadingFKField, \
-    IPv4AddressField
+from peeweeplus import CascadingFKField
+from peeweeplus import IPv4AddressField
+from peeweeplus import JSONModel
+from peeweeplus import MySQLDatabase
 
 from terminallib.config import CONFIG
 from terminallib.csv import TerminalCSVRecord
+from terminallib.exceptions import TerminalConfigError
+from terminallib.exceptions import VPNUnconfiguredError
 
 
 __all__ = [
-    'TerminalError',
-    'TerminalConfigError',
-    'VPNUnconfiguredError',
     'Class',
     'Domain',
     'OS',
@@ -33,26 +40,6 @@ __all__ = [
 NETWORK = IPv4Network('{}/{}'.format(
     CONFIG['net']['IPV4NET'], CONFIG['net']['IPV4MASK']))
 CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
-
-
-class TerminalError(Exception):
-    """Basic exception for terminals handling."""
-
-    pass
-
-
-class TerminalConfigError(TerminalError):
-    """Exception that indicated errors in the terminal configuration."""
-
-    pass
-
-
-class VPNUnconfiguredError(TerminalConfigError):
-    """Indicated that no VPN configuration has
-    been assigned to the respective terminal.
-    """
-
-    pass
 
 
 class _TerminalModel(JSONModel):

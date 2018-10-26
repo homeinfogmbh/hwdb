@@ -7,13 +7,12 @@ from syslib import B64LZMA
 
 from terminallib.fields import get_address, TerminalField
 from terminallib.orm import Class, Domain, OS, Terminal
+from terminallib.exceptions import TerminalError, AmbiguousTerminals
 
 
 __all__ = [
     'ARNIE',
     'DEFAULT_FIELDS',
-    'TerminalError',
-    'AmbiguousTerminals',
     'print_terminal',
     'find_terminals',
     'get_terminal',
@@ -62,23 +61,6 @@ DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
 DEFAULT_FIELDS = (
     'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed', 'testing',
     'tainted', 'address', 'annotation')
-
-
-class TerminalError(Exception):
-    """Indicates an error with the respective terminal."""
-
-    pass
-
-
-class AmbiguousTerminals(TerminalError):
-    """Indicates that a query for a single
-    terminal yielded ambiguous terminals.
-    """
-
-    def __init__(self, message, terminals):
-        """Sets message and terminals."""
-        super().__init__(message)
-        self.terminals = terminals
 
 
 def _match_annotation(annotation, target):

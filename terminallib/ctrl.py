@@ -6,15 +6,10 @@ from syslib import run
 
 from terminallib.common import TerminalAware
 from terminallib.config import CONFIG
+from terminallib.exceptions import InvalidCommand
 
 
-__all__ = ['InvalidCommand', 'RemoteController']
-
-
-class InvalidCommand(Exception):
-    """Indicates that the respective command is invalid."""
-
-    pass
+__all__ = ['RemoteController']
 
 
 class CustomSSHOptions:
