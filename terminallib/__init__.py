@@ -14,6 +14,8 @@ from terminallib.orm import LTEInfo
 from terminallib.orm import Connection
 from terminallib.orm import Terminal
 from terminallib.orm import Synchronization
+from terminallib.orm import ClassStakeholder
+
 
 __all__ = [
     'CONFIG',
@@ -31,4 +33,5 @@ __all__ = [
     'LTEInfo',
     'Connection',
     'Terminal',
-    'Synchronization']
+    'Synchronization',
+    'ClassStakeholder']
