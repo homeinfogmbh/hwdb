@@ -527,11 +527,11 @@ class Synchronization(_TerminalModel):
 
         return False
 
-    def to_json(self, *args, terminal=None, **kwargs):
+    def to_json(self, *args, terminal=False, **kwargs):
         """Returns a JSON-ish dictionary."""
         dictionary = super().to_json(*args, **kwargs)
 
-        if terminal is not None:
+        if terminal:
             dictionary['terminal'] = self.terminal.to_json(*args, **kwargs)
 
         return dictionary
