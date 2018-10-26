@@ -49,6 +49,7 @@ class _TerminalModel(JSONModel):
         database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
+
 class Class(_TerminalModel):
     """Terminal classes."""
 
@@ -291,7 +292,7 @@ class Terminal(_TerminalModel):
     @classmethod
     def gen_tid(cls, customer):
         """Generates a terminal ID."""
-        tids = tuple(cls.tids(customer))
+        tids = frozenset(cls.tids(customer))
         tid = 1
 
         while tid in tids:
