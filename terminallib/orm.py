@@ -26,7 +26,8 @@ __all__ = [
     'LTEInfo',
     'Connection',
     'Terminal',
-    'Synchronization']
+    'Synchronization',
+    'ClassStakeholder']
 
 
 NETWORK = IPv4Network('{}/{}'.format(
@@ -420,6 +421,23 @@ class Terminal(_TerminalModel):
             self.deployed = None
             self.save()
 
+    def authorize(self, customer):
+        """Authorizes the respective customer for this terminal."""
+        if self.customer == customer:
+            return True
+
+        if self.customer.reseller == customer:
+            return True
+
+        with suppress(ClassStakeholder.DoesNotExist):
+            ClassStakeholder.get(
+                (ClassStakeholder.customer == customer)
+                & (ClassStakeholder.class_ == self.class_))
+            return True
+
+        raise PermissionError('Customer {} may not access terminal {}.'.format(
+            repr(customer), self))
+
     def to_json(self, *args, short=False, online_state=False, **kwargs):
         """Returns a JSON-like dictionary."""
 
@@ -529,3 +547,16 @@ class Synchronization(_TerminalModel):
             dictionary['terminal'] = self.terminal.to_json(*args, **kwargs)
 
         return dictionary
+
+
+class ClassStakeholder(_TerminalModel):
+    """Mappings of customers that have access
+    to terminals of certain classes.
+    """
+
+    class Meta:
+        table_name = 'class_stakeholder'
+
+    customer = ForeignKeyField(
+        Customer, column_name='customer', on_delete='CASCADE')
+    class_ = ForeignKeyField(Class, column_name='class', on_delete='CASCADE')
