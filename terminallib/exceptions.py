@@ -1,6 +1,14 @@
 """Common exceptions."""
 
 
+__all__ = [
+    'InvalidCommand',
+    'TerminalError',
+    'TerminalConfigError',
+    'VPNUnconfiguredError',
+    'AmbiguousTerminals']
+
+
 class InvalidCommand(Exception):
     """Indicates that the respective command is invalid."""
 

@@ -3,11 +3,7 @@
 from blessings import Terminal
 
 
-__all__ = [
-    'get_address',
-    'justify',
-    'to_string',
-    'TerminalField']
+__all__ = ['get_address', 'justify', 'to_string', 'TerminalField']
 
 
 def get_address(terminal):

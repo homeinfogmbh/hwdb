@@ -9,7 +9,7 @@ from terminallib.config import CONFIG
 from terminallib.exceptions import InvalidCommand
 
 
-__all__ = ['RemoteController']
+__all__ = ['CustomSSHOptions', 'RemoteController']
 
 
 class CustomSSHOptions:
