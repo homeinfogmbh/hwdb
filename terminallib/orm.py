@@ -3,6 +3,7 @@
 from contextlib import suppress
 from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
+from itertools import chain
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import BooleanField
@@ -240,6 +241,11 @@ class Terminal(_TerminalModel):
     annotation = CharField(255, null=True)
     serial_number = CharField(255, null=True)
 
+    SKIP_SHORT = frozenset((
+        'class', 'os', 'connection', 'vpn', 'domain', 'lptAddress', 'vid',
+        'weather', 'scheduled', 'deleted', 'replacement', 'tainted', 'monitor',
+        'annotation'))
+
     def __str__(self):
         """Converts the terminal to a unique string."""
         return '{}.{}'.format(self.tid, repr(self.customer))
@@ -426,16 +432,13 @@ class Terminal(_TerminalModel):
         raise PermissionError('Customer {} may not access terminal {}.'.format(
             repr(customer), self))
 
-    def to_json(self, *args, short=False, online_state=False, **kwargs):
+    def to_json(self, *args, short=False, online_state=False, skip=None,
+                **kwargs):
         """Returns a JSON-like dictionary."""
-
         if short:
-            dictionary = {
-                'id': self.id,
-                'tid': self.tid,
-                'customer': self.customer.id}
-        else:
-            dictionary = super().to_json(*args, **kwargs)
+            skip = frozenset(chain(self.SKIP_SHORT, skip or ()))
+
+        dictionary = super().to_json(*args, skip=skip, **kwargs)
 
         if online_state:
             dictionary['online'] = self.online
