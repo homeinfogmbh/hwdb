@@ -3,7 +3,6 @@
 from contextlib import suppress
 from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
-from itertools import chain
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import BooleanField
@@ -435,38 +434,37 @@ class Terminal(_TerminalModel):
     def to_json(self, *args, short=False, online_state=False, skip=None,
                 **kwargs):
         """Returns a JSON-like dictionary."""
+        skip = frozenset(skip) if skip else frozenset()
+
         if short:
-            skip = frozenset(chain(self.SKIP_SHORT, skip or ()))
+            skip = self.SKIP_SHORT | skip
 
         dictionary = super().to_json(*args, skip=skip, **kwargs)
 
-        if online_state:
+        if online_state and 'online' not in skip:
             dictionary['online'] = self.online
 
         address = self.address
 
-        if address is not None:
+        if address is not None and 'address' not in skip:
             dictionary['address'] = address.to_json(*args, **kwargs)
 
-        if short:
-            return dictionary
+        if 'customer' not in skip:
+            dictionary['customer'] = self.customer.to_json(company=True)
 
-        dictionary['customer'] = self.customer.to_json(
-            *args, company=True, **kwargs)
-
-        if self.class_ is not None:
+        if self.class_ is not None and 'class' not in skip:
             dictionary['class'] = self.class_.to_json(*args, **kwargs)
 
-        if self.os is not None:
+        if self.os is not None and 'os' not in skip:
             dictionary['os'] = self.os.to_json(*args, **kwargs)
 
-        dictionary['domain'] = self.domain.to_json(*args, **kwargs)
+        if 'domain' not in skip:
+            dictionary['domain'] = self.domain.to_json(*args, **kwargs)
 
-        if self.connection is not None:
-            dictionary['connection'] = self.connection.to_json(
-                *args, **kwargs)
+        if self.connection is not None and 'connection' not in skip:
+            dictionary['connection'] = self.connection.to_json(*args, **kwargs)
 
-        if self.vpn is not None:
+        if self.vpn is not None and 'vpn' not in skip:
             dictionary['vpn'] = self.vpn.to_json(*args, **kwargs)
 
         return dictionary
