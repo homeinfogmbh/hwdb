@@ -176,7 +176,9 @@ def main(options):
             if '-'.join(options['<expression>']) == 'CSM-101':
                 print(ARNIE)
             else:
-                LOGGER.error('Must specify exactly one list option.')
+                LOGGER.error(
+                    'Must specify exactly one list option '
+                    'or a Cyberdyne Systems Model.')
                 return 1
         elif options['--terminals']:
             return _list_terminals(options)
