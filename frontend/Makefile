@@ -5,9 +5,9 @@ FILE_LIST = ./.installed_files.txt
 default: | install
 
 install:
-	@ mkdir -p /srv/http/de/homeinfo/javascript/his
-	@ chmod 755 /srv/http/de/homeinfo/javascript/his
-	@ install -m 644 *.js /srv/http/de/homeinfo/javascript/his/
+	@ mkdir -p /srv/http/de/homeinfo/javascript/terminallib
+	@ chmod 755 /srv/http/de/homeinfo/javascript/terminallib
+	@ install -m 644 *.js /srv/http/de/homeinfo/javascript/terminallib/
 
 uninstall:
-	@ rm -rf /srv/http/de/homeinfo/javascript/his
+	@ rm -rf /srv/http/de/homeinfo/javascript/terminallib
