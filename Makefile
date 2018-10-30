@@ -1,20 +1,12 @@
-FILE_LIST = ./.installed_files.txt
+.PHONY: pull backend frontend
 
-.PHONY: pull push clean install uninstall
-
-default: | pull clean install
-
-install:
-	@ ./setup.py install --record $(FILE_LIST)
-
-uninstall:
-	@ while read FILE; do echo "Removing: $$FILE"; rm "$$FILE"; done < $(FILE_LIST)
-
-clean:
-	@ rm -Rf ./build
+default: | pull backend frontend
 
 pull:
 	@ git pull
 
-push:
-	@ git push
+backend:
+	@ make -C backend
+
+frontend:
+	@ make -C frontend
