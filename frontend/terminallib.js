@@ -21,3 +21,56 @@
 'use strict';
 
 var terminallib = terminallib || {};
+
+
+/*
+    Converts a customer into a string.
+*/
+terminallib.customerToString = function (customer) {
+    return customer.company.name + ' (' + customer.id + ')';
+};
+
+
+/*
+    Converts an address into text.
+*/
+terminallib.addressToString = function (address) {
+    if (address == null) {
+        return '-';
+    }
+
+    var items = [];
+    var streetHouseNumber = [];
+
+    if (address.street) {
+        streetHouseNumber.push(address.street);
+    }
+
+    if (address.houseNumber) {
+        streetHouseNumber.push(address.houseNumber);
+    }
+
+    streetHouseNumber = streetHouseNumber.join(' ');
+
+    if (streetHouseNumber) {
+        items.push(streetHouseNumber);
+    }
+
+    var zipCodeCity = [];
+
+    if (address.zipCode) {
+        zipCodeCity.push(address.zipCode);
+    }
+
+    if (address.city) {
+        zipCodeCity.push(address.city);
+    }
+
+    zipCodeCity = zipCodeCity.join(' ');
+
+    if (zipCodeCity) {
+        items.push(zipCodeCity);
+    }
+
+    return items.join(', ') || '-';
+};
