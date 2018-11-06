@@ -25,49 +25,6 @@ terminallib.sorting = terminallib.sorting || {};
 
 
 /*
-    Returns a sort function to sort by terminal ID.
-*/
-terminallib.sorting.sortByTID = function (descending) {
-    return function (alice, bob) {
-        var factor = descending ? -1 : 1;
-        var result = alice.tid - bob.tid;
-        return factor * result;
-    };
-};
-
-
-/*
-    Returns a sort function to sort by customer ID.
-*/
-terminallib.sorting.sortByCID = function (descending) {
-    return function (alice, bob) {
-        var factor = descending ? -1 : 1;
-        var result = alice.customer.id - bob.customer.id;
-        return factor * result;
-    };
-};
-
-
-/*
-    Returns a sort function to sort by customer name.
-*/
-terminallib.sorting.sortByCustomerName = function (descending) {
-    return function (alice, bob) {
-        var factor = descending ? -1 : 1;
-        var result = 0;
-
-        if (alice.customer.company.name > bob.customer.company.name) {
-            result = 1;
-        } else if (alice.customer.company.name < bob.customer.company.name) {
-            result = -1;
-        }
-
-        return factor * result;
-    };
-};
-
-
-/*
     Compares two nullable values.
     Returns the respective sort order if at
     least one object is null-ish, else null.
@@ -142,13 +99,52 @@ terminallib.sorting.compareAddress = function (alice, bob) {
 
 
 /*
+    Returns a sort function to sort by terminal ID.
+*/
+terminallib.sorting.sortByTID = function (descending) {
+    return function (alice, bob) {
+        var result = alice.tid - bob.tid;
+        return descending ? -result : result;
+    };
+};
+
+
+/*
+    Returns a sort function to sort by customer ID.
+*/
+terminallib.sorting.sortByCID = function (descending) {
+    return function (alice, bob) {
+        var result = alice.customer.id - bob.customer.id;
+        return descending ? -result : result;
+    };
+};
+
+
+/*
+    Returns a sort function to sort by customer name.
+*/
+terminallib.sorting.sortByCustomerName = function (descending) {
+    return function (alice, bob) {
+        var result = 0;
+
+        if (alice.customer.company.name > bob.customer.company.name) {
+            result = 1;
+        } else if (alice.customer.company.name < bob.customer.company.name) {
+            result = -1;
+        }
+
+        return descending ? -result : result;
+    };
+};
+
+
+/*
     Returns a compare function to sort by address.
 */
 terminallib.sorting.sortByAddress = function (descending) {
     return function (alice, bob) {
-        var factor = descending ? -1 : 1;
         var result = terminallib.sorting.compareAddress(alice.address, bob.address);
-        return factor * result;
+        return descending ? -result : result;
     };
 };
 
@@ -158,9 +154,8 @@ terminallib.sorting.sortByAddress = function (descending) {
 */
 terminallib.sorting.sortByDeployed = function (descending) {
     return function (alice, bob) {
-        var factor = descending ? -1 : 1;
         var result = terminallib.sorting.compareSize(alice.deployed, bob.deployed);
-        return factor * result;
+        return descending ? -result : result;
     };
 };
 
@@ -170,9 +165,8 @@ terminallib.sorting.sortByDeployed = function (descending) {
 */
 terminallib.sorting.sortByTesting = function (descending) {
     return function (alice, bob) {
-        var factor = descending ? -1 : 1;
         var result = terminallib.sorting.compareSize(alice.testing, bob.testing);
-        return factor * result;
+        return descending ? -result : result;
     };
 };
 
@@ -181,10 +175,10 @@ terminallib.sorting.sortByTesting = function (descending) {
     Returns an appropriate sorting function.
 */
 terminallib.sorting.getSorter = function (field, descending) {
-    switch (field) {
-        case 'TID':
+    switch (field.toLowerCase()) {
+        case 'tid':
             return terminallib.sorting.sortByTID(descending);
-        case 'CID':
+        case 'cid':
             return terminallib.sorting.sortByCID(descending);
         case 'customer':
             return terminallib.sorting.sortByCustomerName(descending);
