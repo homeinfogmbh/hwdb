@@ -175,6 +175,10 @@ terminallib.sorting.sortByTesting = function (descending) {
     Returns an appropriate sorting function.
 */
 terminallib.sorting.getSorter = function (field, descending) {
+    if (field == null) {
+        return null;
+    }
+
     switch (field.toLowerCase()) {
         case 'tid':
             return terminallib.sorting.sortByTID(descending);
