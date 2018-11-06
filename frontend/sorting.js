@@ -168,7 +168,7 @@ terminallib.sorting.sortByDeployed = function (descending) {
 /*
     Returns a compare function to sort by testing flag.
 */
-terminallib.sorting.sortByDeployed = function (descending) {
+terminallib.sorting.sortByTesting = function (descending) {
     return function (alice, bob) {
         var factor = descending ? -1 : 1;
         var result = terminallib.sorting.compareSize(alice.testing, bob.testing);
