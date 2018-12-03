@@ -19,6 +19,8 @@ from terminallib import Terminal, RemoteController
 
 USER = 'termgr'
 KEYFILE = '/var/lib/nagios/.ssh/terminals'
+SYSTEMCTL = '/usr/bin/systemctl'
+UNIT = 'application.service'
 
 
 def get_terminal(options):
@@ -51,11 +53,9 @@ def main(options):
 
     terminal = get_terminal(options)
     ctrl = RemoteController(USER, terminal, keyfile=KEYFILE)
-    result = ctrl.execute(
-        '/usr/bin/systemctl', 'is-enabled', 'application.service')
+    result = ctrl.execute(SYSTEMCTL, 'is-enabled', UNIT)
     enabled = min(result.returncode, 1)
-    result = ctrl.execute(
-        '/usr/bin/systemctl', 'is-active', 'application.service')
+    result = ctrl.execute(SYSTEMCTL, 'is-active', UNIT)
     running = min(result.returncode, 1)
     exit_code = enabled + running
 
