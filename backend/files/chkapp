@@ -1,0 +1,80 @@
+#!/usr/bin/python3
+"""chksync.
+
+    Checks application status for the respective terminal.
+
+Usage:
+    chksync <tid> <cid> [options]
+
+Options:
+    --help, -h      Show this page.
+"""
+from sys import stderr, exit as exit_
+
+from docopt import docopt
+
+from syslib import script
+from terminallib import Terminal, RemoteController
+
+
+USER = 'termgr'
+KEYFILE = '/var/lib/nagios/.ssh/terminals'
+
+
+def get_terminal(options):
+    """Returns the respective terminal."""
+
+    try:
+        tid = int(options['<tid>'])
+    except ValueError:
+        print('Invalid terminal ID: {}.'.format(tid), file=stderr)
+        exit_(4)
+
+    try:
+        cid = int(options['<cid>'])
+    except ValueError:
+        print('Invalid customer ID: {}.'.format(cid), file=stderr)
+        exit_(5)
+
+    try:
+        return Terminal.get(
+            (Terminal.customer == cid) &
+            (Terminal.tid == tid))
+    except Terminal.DoesNotExist:
+        print('No such terminal.', file=stderr)
+        exit_(8)
+
+
+@script
+def main(options):
+    """Runs the application check."""
+
+    terminal = get_terminal(options)
+    ctrl = RemoteController(USER, terminal, keyfile=KEYFILE)
+    result = ctrl.execute(
+        '/usr/bin/systemctl', 'is-enabled', 'application.service')
+    enabled = min(result.returncode, 1)
+    result = ctrl.execute(
+        '/usr/bin/systemctl', 'is-active', 'application.service')
+    running = min(result.returncode, 1)
+    exit_code = enabled + running
+
+    if exit_code == 0:
+        print('Application is up and running.')
+    elif exit_code == 1:
+        if enabled:
+            print('Application is not enabled but running.')
+        elif running:
+            print('Application is enabled but not running.')
+        else:
+            print('ERROR IN SCRIPT.')
+    elif exit_code == 2:
+        print('Application is neither enabled, nor running.')
+    else:
+        print('ERROR IN SCRIPT.')
+
+    exit_(exit_code)
+
+
+if __name__ == '__main__':
+    exit_(main(docopt(__doc__)))
