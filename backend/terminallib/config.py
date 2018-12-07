@@ -1,9 +1,9 @@
 """Terminal setup configuration."""
 
-from configlib import INIParser
+from configlib import loadcfg
 
 
 __all__ = ['CONFIG']
 
 
-CONFIG = INIParser('/etc/terminals.conf')
+CONFIG = loadcfg('terminals.conf')
