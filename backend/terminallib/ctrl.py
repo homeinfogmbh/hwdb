@@ -1,5 +1,6 @@
 """Library for terminal remote control."""
 
+from enum import Enum
 from tempfile import NamedTemporaryFile
 
 from syslib import run
@@ -9,7 +10,33 @@ from terminallib.config import CONFIG
 from terminallib.exceptions import InvalidCommand
 
 
-__all__ = ['CustomSSHOptions', 'RemoteController']
+__all__ = ['Backend', 'CustomSSHOptions', 'RemoteController']
+
+
+def _get_sources(sources):
+    """Returns the respective source paths as command line string."""
+
+    return ' '.join("'{}'".format(source) for source in sources)
+
+
+def _get_options(options):
+    """Returns the respective options as command line string."""
+
+    if not options:
+        return ''
+
+    return ' '.join(str(option) for option in options)
+
+
+class Backend(Enum):
+    """File transfer backend."""
+
+    RSYNC = 'rsync'
+    SCP = 'scp'
+
+    def __str__(self):
+        """Returns the backend name."""
+        return self.value
 
 
 class CustomSSHOptions:
@@ -92,16 +119,28 @@ class RemoteController(TerminalAware):
         """
         return CustomSSHOptions(options, self)
 
-    def rsync(self, dst, *srcs, options=None):
-        """Returns an rsync command line to retrieve
-        src file from terminal to local file dst.
-        """
-        srcs = ' '.join("'{}'".format(src) for src in srcs)
-        options = '' if options is None else options
-        cmd = '{} {} {} {} {}'.format(
-            CONFIG['ssh']['RSYNC_BIN'], options, self.remote_shell, srcs, dst)
+    def _file_transfer_command(self, binary, dst, *srcs, options=None):
+        """Returns the respective file transfer command."""
+        srcs = _get_sources(srcs)
+        options = _get_options(options)
+        cmd = (binary, options, self.remote_shell, srcs, dst)
+        cmd = ' '.join(cmd)
         self.logger.debug(cmd)
         return cmd
+
+    def rsync(self, dst, *srcs, options=None):
+        """Returns an rsync command line to
+        send or receive the respective files.
+        """
+        return self._file_transfer_command(
+            CONFIG['ssh']['RSYNC_BIN'], dst, *srcs, options=options)
+
+    def scp(self, dst, *srcs, options=None):
+        """Returns an scp command line to
+        send or receive the respective files.
+        """
+        return self._file_transfer_command(
+            CONFIG['ssh']['SCP_BIN'], dst, *srcs, options=options)
 
     def check_command(self, cmd):
         """Checks the command against the white- and blacklists."""
@@ -136,11 +175,18 @@ class RemoteController(TerminalAware):
 
             return result
 
-    def send(self, dst, *srcs, options=None):
+    def send(self, dst, *srcs, backend=Backend.RSYNC, options=None):
         """Sends files to a remote terminal."""
-        rsync = self.rsync(self.remote_file(dst), *srcs, options=options)
-        self.logger.debug('Executing: "%s".', rsync)
-        result = run(rsync, shell=True)
+        self.logger.debug('Using backend: %s.', backend)
+
+        if backend == Backend.RSYNC:
+            command = self.rsync(self.remote_file(dst), *srcs, options=options)
+        elif backend == Backend.SCP:
+            command = self.scp(self.remote_file(dst), *srcs, options=options)
+        else:
+            raise NotImplementedError()
+
+        result = run(command, shell=True)
         self.logger.debug(str(result))
         return result
 
