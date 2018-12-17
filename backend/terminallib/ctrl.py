@@ -25,6 +25,9 @@ def _get_options(options):
     if not options:
         return ''
 
+    if isinstance(options, str):
+        return options
+
     return ' '.join(str(option) for option in options)
 
 
