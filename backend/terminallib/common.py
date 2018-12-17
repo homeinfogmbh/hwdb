@@ -14,9 +14,9 @@ class TerminalAware:
         self.terminal = terminal
 
         if logger is None:
-            self.logger = getLogger(self.__class__.__name__)
+            self.logger = getLogger(type(self).__name__)
         else:
-            self.logger = logger.getChild(self.__class__.__name__)
+            self.logger = logger.getChild(type(self).__name__)
 
     @property
     def idstr(self):
