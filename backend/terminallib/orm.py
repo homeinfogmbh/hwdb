@@ -45,7 +45,7 @@ CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
 class _TerminalModel(JSONModel):
     """Terminal manager basic Model."""
 
-    class Meta:
+    class Meta:     # pylint: disable=C0111
         database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
@@ -68,7 +68,7 @@ class Class(_TerminalModel):
         else:
             class_.full_name = full_name
 
-        class_.touch = True if touch else False
+        class_.touch = bool(touch)
         class_.save()
         return class_
 
@@ -184,7 +184,7 @@ class VPN(_TerminalModel):
 class LTEInfo(_TerminalModel):
     """Represents information about LTE connections."""
 
-    class Meta:
+    class Meta:     # pylint: disable=C0111
         table_name = 'lte_info'
 
     sim_id = CharField(32, null=True)
@@ -239,6 +239,7 @@ class Terminal(_TerminalModel):
     monitor = BooleanField(null=True)
     annotation = CharField(255, null=True)
     serial_number = CharField(255, null=True)
+    sync_user = CharField(255, null=True)
 
     SKIP_SHORT = frozenset((
         'class', 'os', 'connection', 'vpn', 'domain', 'lptAddress', 'vid',
@@ -536,7 +537,7 @@ class ClassStakeholder(_TerminalModel):
     to terminals of certain classes.
     """
 
-    class Meta:
+    class Meta:     # pylint: disable=C0111
         table_name = 'class_stakeholder'
 
     customer = ForeignKeyField(
