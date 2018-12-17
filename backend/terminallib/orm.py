@@ -362,13 +362,6 @@ class Terminal(_TerminalModel):
         return True
 
     @property
-    def syncable(self):
-        """Determines whether the terminal
-        can be synchronized by HIPSTER.
-        """
-        return self.os.family == 'Linux'
-
-    @property
     def status(self):
         """Determines the status of the terminal."""
         return False if self.tainted else self.online
