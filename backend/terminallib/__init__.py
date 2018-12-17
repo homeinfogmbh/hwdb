@@ -2,7 +2,7 @@
 
 from terminallib.common import TerminalAware
 from terminallib.config import CONFIG
-from terminallib.ctrl import CustomSSHOptions, RemoteController
+from terminallib.ctrl import Backend, CustomSSHOptions, RemoteController
 from terminallib.exceptions import InvalidCommand
 from terminallib.exceptions import TerminalError
 from terminallib.exceptions import TerminalConfigError
@@ -30,6 +30,7 @@ __all__ = [
     'parse',
     'get_terminals',
     'TerminalAware',
+    'Backend',
     'CustomSSHOptions',
     'RemoteController',
     'Class',
