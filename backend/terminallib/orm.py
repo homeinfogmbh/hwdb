@@ -239,7 +239,6 @@ class Terminal(_TerminalModel):
     monitor = BooleanField(null=True)
     annotation = CharField(255, null=True)
     serial_number = CharField(255, null=True)
-    sync_user = CharField(255, null=True)
 
     SKIP_SHORT = frozenset((
         'class', 'os', 'connection', 'vpn', 'domain', 'lptAddress', 'vid',
