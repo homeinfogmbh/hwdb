@@ -43,14 +43,14 @@ terminallib.sorting.compareNull = function (alice, bob) {
     }
 
     return null;
-}
+};
 
 
 /*
     Compares the size of two objects that may be null.
 */
 terminallib.sorting.compareSize = function (alice, bob) {
-    var result = terminallib.sorting.compareNull(alice, bob);
+    const result = terminallib.sorting.compareNull(alice, bob);
 
     if (result != null) {
         return result;
@@ -58,7 +58,9 @@ terminallib.sorting.compareSize = function (alice, bob) {
 
     if (alice > bob) {
         return 1;
-    } else if (alice < bob) {
+    }
+
+    if (alice < bob) {
         return -1;
     }
 
@@ -70,7 +72,7 @@ terminallib.sorting.compareSize = function (alice, bob) {
     Compares two addresses.
 */
 terminallib.sorting.compareAddress = function (alice, bob) {
-    var result = terminallib.sorting.compareNull(alice, bob);
+    let result = terminallib.sorting.compareNull(alice, bob);
 
     if (result != null) {
         return result;
@@ -103,7 +105,7 @@ terminallib.sorting.compareAddress = function (alice, bob) {
 */
 terminallib.sorting.sortByTID = function (descending) {
     return function (alice, bob) {
-        var result = alice.tid - bob.tid;
+        const result = alice.tid - bob.tid;
         return descending ? -result : result;
     };
 };
@@ -114,7 +116,7 @@ terminallib.sorting.sortByTID = function (descending) {
 */
 terminallib.sorting.sortByCID = function (descending) {
     return function (alice, bob) {
-        var result = alice.customer.id - bob.customer.id;
+        const result = alice.customer.id - bob.customer.id;
         return descending ? -result : result;
     };
 };
@@ -125,7 +127,7 @@ terminallib.sorting.sortByCID = function (descending) {
 */
 terminallib.sorting.sortByCustomerName = function (descending) {
     return function (alice, bob) {
-        var result = 0;
+        let result = 0;
 
         if (alice.customer.company.name > bob.customer.company.name) {
             result = 1;
@@ -143,7 +145,7 @@ terminallib.sorting.sortByCustomerName = function (descending) {
 */
 terminallib.sorting.sortByAddress = function (descending) {
     return function (alice, bob) {
-        var result = terminallib.sorting.compareAddress(alice.address, bob.address);
+        const result = terminallib.sorting.compareAddress(alice.address, bob.address);
         return descending ? -result : result;
     };
 };
@@ -154,7 +156,7 @@ terminallib.sorting.sortByAddress = function (descending) {
 */
 terminallib.sorting.sortByDeployed = function (descending) {
     return function (alice, bob) {
-        var result = terminallib.sorting.compareSize(alice.deployed, bob.deployed);
+        const result = terminallib.sorting.compareSize(alice.deployed, bob.deployed);
         return descending ? -result : result;
     };
 };
@@ -165,7 +167,7 @@ terminallib.sorting.sortByDeployed = function (descending) {
 */
 terminallib.sorting.sortByTesting = function (descending) {
     return function (alice, bob) {
-        var result = terminallib.sorting.compareSize(alice.testing, bob.testing);
+        const result = terminallib.sorting.compareSize(alice.testing, bob.testing);
         return descending ? -result : result;
     };
 };
@@ -180,18 +182,18 @@ terminallib.sorting.getSorter = function (field, descending) {
     }
 
     switch (field.toLowerCase()) {
-        case 'tid':
-            return terminallib.sorting.sortByTID(descending);
-        case 'cid':
-            return terminallib.sorting.sortByCID(descending);
-        case 'customer':
-            return terminallib.sorting.sortByCustomerName(descending);
-        case 'address':
-            return terminallib.sorting.sortByAddress(descending);
-        case 'deployed':
-            return terminallib.sorting.sortByDeployed(descending);
-        case 'testing':
-            return terminallib.sorting.sortByTesting(descending);
+    case 'tid':
+        return terminallib.sorting.sortByTID(descending);
+    case 'cid':
+        return terminallib.sorting.sortByCID(descending);
+    case 'customer':
+        return terminallib.sorting.sortByCustomerName(descending);
+    case 'address':
+        return terminallib.sorting.sortByAddress(descending);
+    case 'deployed':
+        return terminallib.sorting.sortByDeployed(descending);
+    case 'testing':
+        return terminallib.sorting.sortByTesting(descending);
     }
 
     return null;

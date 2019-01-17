@@ -39,8 +39,8 @@ terminallib.addressToString = function (address) {
         return '-';
     }
 
-    var items = [];
-    var streetHouseNumber = [];
+    const items = [];
+    let streetHouseNumber = [];
 
     if (address.street) {
         streetHouseNumber.push(address.street);
@@ -56,7 +56,7 @@ terminallib.addressToString = function (address) {
         items.push(streetHouseNumber);
     }
 
-    var zipCodeCity = [];
+    let zipCodeCity = [];
 
     if (address.zipCode) {
         zipCodeCity.push(address.zipCode);
