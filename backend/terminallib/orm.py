@@ -377,6 +377,11 @@ class Terminal(_TerminalModel):
         return self.deployed is not None and self.deployed <= datetime.now()
 
     @property
+    def isdeleted(self):
+        """Determines whether the terminal is deleted."""
+        return self.deleted is not None and self.deleted <= datetime.now()
+
+    @property
     def productive(self):
         """Returns whether the system has been deployed and is non-testing."""
         return self.isdeployed and not self.testing
