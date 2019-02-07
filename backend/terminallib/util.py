@@ -41,6 +41,12 @@ FIELDS = {
         lambda terminal: terminal.deployed, 'Deployed', size=21),
     'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
     'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
+    'deleted': TerminalField(
+        lambda terminal: terminal.deleted, 'Deleted', size=21),
+    'monitor': TerminalField(lambda terminal: terminal.monitor, 'Monitor'),
+    'sn': TerminalField(
+        lambda terminal: terminal.serial_number, 'Serial Number', size=32),
+    'isdeleted': TerminalField(lambda terminal: terminal.isdeleted, 'Deleted'),
     'address': TerminalField(
         get_address, 'Address', size=48, leftbound=True),
     'annotation': TerminalField(
