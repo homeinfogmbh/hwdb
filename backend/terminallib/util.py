@@ -42,7 +42,7 @@ FIELDS = {
     'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
     'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
     'deleted': TerminalField(
-        lambda terminal: terminal.deleted, 'Deleted', size=21),
+        lambda terminal: terminal.deleted, 'Deleted On', size=21),
     'monitor': TerminalField(lambda terminal: terminal.monitor, 'Monitor'),
     'sn': TerminalField(
         lambda terminal: terminal.serial_number, 'Serial Number', size=32),
