@@ -100,7 +100,7 @@ def _list_terminals(options):
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields']
-    deleted = options['--deleted']
+    deleted = None if options['--deleted'] else False
 
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
