@@ -195,7 +195,7 @@ def main(options):
     elif options['find']:
         return _find_terminal(options)
     elif options['list-fields']:
-        print(', '.join(FIELDS))
+        print(', '.join(sorted(FIELDS)))
 
     return 0
 
