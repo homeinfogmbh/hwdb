@@ -6,6 +6,7 @@
 Usage:
     termutil (list | ls) [<expression>...] [options]
     termutil find <street> [<house_number>] [options]
+    termutil list-fields
 
 Options:
     --terminals, -T             List terminals.
@@ -41,6 +42,7 @@ from terminallib.filter import get_terminals
 from terminallib.orm import Class, OS
 from terminallib.util import ARNIE
 from terminallib.util import DEFAULT_FIELDS
+from terminallib.util import FIELDS
 from terminallib.util import print_terminal
 from terminallib.util import get_terminal
 from terminallib.util import list_terminals
@@ -192,6 +194,8 @@ def main(options):
             _list_domains(options)
     elif options['find']:
         return _find_terminal(options)
+    elif options['list-fields']:
+        print(', '.join(FIELDS))
 
     return 0
 
