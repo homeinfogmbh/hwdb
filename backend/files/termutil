@@ -16,6 +16,7 @@ Options:
     --undeployed, -u            Filter for undeployed terminals.
     --testing, -t               Filter for testing terminals.
     --productive, -p            Filter for productive terminals.
+    --deleted                   Also include delted terminals.
     --class=<classes>, -c       Filter for terminals of the specified
                                 classes (comma separated).
     --oss=<oss>, -o             Filter for terminals using the specified
@@ -99,6 +100,7 @@ def _list_terminals(options):
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields']
+    deleted = options['--deleted']
 
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
@@ -107,7 +109,7 @@ def _list_terminals(options):
 
     terminals = get_terminals(
         expr, deployed=deployed, testing=testing, classes=classes, oss=oss,
-        online=online)
+        online=online, deleted=deleted)
 
     for line in list_terminals(
             terminals, header=header, fields=fields, sep=separator):

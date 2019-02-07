@@ -41,8 +41,8 @@ def parse(expressions):
     return terminal_expr
 
 
-def get_terminals(expressions, deployed=None, testing=None, classes=None,
-                  oss=None, online=None):
+def get_terminals(expressions, deployed=None, testing=None, deleted=None,
+                  classes=None, oss=None, online=None):
     """Yields terminals for the respective expressions and filters."""
 
     terminal_expr = parse(expressions)
@@ -61,6 +61,12 @@ def get_terminals(expressions, deployed=None, testing=None, classes=None,
             terminal_expr &= Terminal.testing == 1
         else:
             terminal_expr &= Terminal.testing == 0
+
+    if deleted is not None:
+        if deleted:
+            terminal_expr &= ~(Terminal.deleted >> None)
+        else:
+            terminal_expr &= Terminal.deleted >> None
 
     if classes:
         class_ids = set()
