@@ -17,7 +17,7 @@ Options:
     --undeployed, -u            Filter for undeployed terminals.
     --testing, -t               Filter for testing terminals.
     --productive, -p            Filter for productive terminals.
-    --deleted                   Also include delted terminals.
+    --deleted                   Also include deleted terminals.
     --class=<classes>, -c       Filter for terminals of the specified
                                 classes (comma separated).
     --oss=<oss>, -o             Filter for terminals using the specified
