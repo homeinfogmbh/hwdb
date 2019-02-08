@@ -217,8 +217,7 @@ class Terminal(_TerminalModel):
         OS, null=True, column_name='os',
         on_delete='SET NULL', on_update='CASCADE')
     connection = ForeignKeyField(
-        Connection, null=True, column_name='connection',
-        on_delete='SET NULL', on_update='CASCADE')
+        Connection, column_name='connection', on_update='CASCADE')
     vpn = ForeignKeyField(
         VPN, null=True, column_name='vpn', on_update='CASCADE')
     domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
@@ -334,12 +333,7 @@ class Terminal(_TerminalModel):
     @property
     def _check_command(self):
         """Returns the respective check command."""
-        try:
-            timeout = self.connection.timeout
-        except AttributeError:
-            timeout = 2
-
-        return CHECK_COMMAND + (str(timeout), self.hostname)
+        return CHECK_COMMAND + (str(self.connection.timeout), self.hostname)
 
     @property
     def hostname(self):
