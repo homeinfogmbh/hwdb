@@ -22,7 +22,7 @@ Options:
                                 classes (comma separated).
     --oss=<oss>, -o             Filter for terminals using the specified
                                 operating systems (comma separated).
-    --online, -u                Filter for terminals that are online.
+    --online                    Filter for terminals that are online.
                                 CAUTION: This will significantly slow down
                                          the output.
     --omit-header, -n           Do not print the column header.
