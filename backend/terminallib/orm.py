@@ -361,7 +361,7 @@ class Terminal(_TerminalModel):
         """
         try:
             check_call(self._check_command, stdout=DEVNULL, stderr=DEVNULL)
-        except (AttributeError, CalledProcessError):
+        except CalledProcessError:
             return False
 
         return True
