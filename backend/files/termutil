@@ -23,7 +23,7 @@ Options:
     --oss=<oss>, -o             Filter for terminals using the specified
                                 operating systems (comma separated).
     --online                    Filter for terminals that are online.
-                                CAUTION: This will significantly slow down
+                                CAUTION: This may significantly slow down
                                          the output.
     --omit-header, -n           Do not print the column header.
     --separator=<sep>, -s       Specifies the column separator.
