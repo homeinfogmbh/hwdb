@@ -334,7 +334,12 @@ class Terminal(_TerminalModel):
     @property
     def _check_command(self):
         """Returns the respective check command."""
-        return CHECK_COMMAND + (str(self.connection.timeout), self.hostname)
+        try:
+            timeout = self.connection.timeout
+        except AttributeError:
+            timeout = 2
+
+        return CHECK_COMMAND + (str(timeout), self.hostname)
 
     @property
     def hostname(self):
