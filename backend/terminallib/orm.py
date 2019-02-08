@@ -19,7 +19,7 @@ from peeweeplus import IPv4AddressField
 from peeweeplus import JSONModel
 from peeweeplus import MySQLDatabase
 
-from terminallib.config import CONFIG
+from terminallib.config import CONFIG, WIREGUARD_NETWORK, WIREGUARD_SERVER
 from terminallib.csv import TerminalCSVRecord
 from terminallib.exceptions import TerminalConfigError
 from terminallib.exceptions import VPNUnconfiguredError
@@ -40,6 +40,20 @@ __all__ = [
 NETWORK = IPv4Network('{}/{}'.format(
     CONFIG['net']['IPV4NET'], CONFIG['net']['IPV4MASK']))
 CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
+
+
+def free_ipv4_address():
+    """Returns a free WireGuard IPv4Address.
+    XXX: Beware of race conditions!
+    """
+
+    used = Terminal.ipv4addresses()
+
+    for ipv4address in WIREGUARD_NETWORK:
+        if ipv4address not in used and ipv4address < WIREGUARD_SERVER:
+            return ipv4address
+
+    raise TerminalConfigError('Network exhausted!')
 
 
 class _TerminalModel(JSONModel):
@@ -220,6 +234,7 @@ class Terminal(_TerminalModel):
         Connection, column_name='connection', on_update='CASCADE')
     vpn = ForeignKeyField(
         VPN, null=True, column_name='vpn', on_update='CASCADE')
+    ipv4address = IPv4AddressField(default=free_ipv4_address)   # WG IPv4.
     domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
     address = ForeignKeyField(
         Address, null=True, column_name='address',
@@ -329,6 +344,11 @@ class Terminal(_TerminalModel):
         terminal.serial_number = serial_number
         terminal.save()
         return terminal
+
+    @classmethod
+    def ipv4addresses(cls):
+        """Yields used IPv4 addresses."""
+        return frozenset(terminal.ipv4address for terminal in cls)
 
     @property
     def _check_command(self):

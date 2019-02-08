@@ -1,7 +1,7 @@
 """HOMEINFO's terminal library."""
 
 from terminallib.common import TerminalAware
-from terminallib.config import CONFIG
+from terminallib.config import CONFIG, WIREGUARD_NETWORK
 from terminallib.ctrl import CustomSSHOptions, RemoteController
 from terminallib.exceptions import InvalidCommand
 from terminallib.exceptions import TerminalError
@@ -22,6 +22,7 @@ from terminallib.orm import ClassStakeholder
 
 __all__ = [
     'CONFIG',
+    'WIREGUARD_NETWORK',
     'InvalidCommand',
     'TerminalError',
     'TerminalConfigError',
