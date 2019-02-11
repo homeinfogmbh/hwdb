@@ -14,6 +14,14 @@ def filter_online(terminals):
             yield terminal
 
 
+def filter_offline(terminals):
+    """Yields offline terminals."""
+
+    for terminal in terminals:
+        if not terminal.online:
+            yield terminal
+
+
 def parse(expressions):
     """Returns a peewee.Expression for the respective terminal expressions."""
 
@@ -42,7 +50,7 @@ def parse(expressions):
 
 
 def get_terminals(expressions, deployed=None, testing=None, deleted=None,
-                  classes=None, oss=None, online=None):
+                  classes=None, oss=None, online=None, offline=None):
     """Yields terminals for the respective expressions and filters."""
 
     terminal_expr = parse(expressions)
@@ -100,7 +108,10 @@ def get_terminals(expressions, deployed=None, testing=None, deleted=None,
 
     terminals = Terminal.select().where(terminal_expr)
 
-    if online:
+    if online and not offline:
         return filter_online(terminals)
+
+    if offline and not online:
+        return filter_offline(terminals)
 
     return terminals

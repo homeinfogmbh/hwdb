@@ -23,8 +23,7 @@ Options:
     --oss=<oss>, -o             Filter for terminals using the specified
                                 operating systems (comma separated).
     --online                    Filter for terminals that are online.
-                                CAUTION: This may significantly slow down
-                                         the output.
+    --offline                   Filter for terminals that are offline.
     --omit-header, -n           Do not print the column header.
     --separator=<sep>, -s       Specifies the column separator.
     --fields=<fields>, -f       Comma-separated list of fields to display.
@@ -101,6 +100,7 @@ def _list_terminals(options):
     classes = options['--class'].split(',') if options['--class'] else ()
     oss = options['--oss'].split(',') if options['--oss'] else ()
     online = options['--online']
+    offline = options['--offline']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields']
@@ -113,7 +113,7 @@ def _list_terminals(options):
 
     terminals = get_terminals(
         expr, deployed=deployed, testing=testing, classes=classes, oss=oss,
-        online=online, deleted=deleted)
+        online=online, offline=offline, deleted=deleted)
 
     for line in list_terminals(
             terminals, header=header, fields=fields, sep=separator):
