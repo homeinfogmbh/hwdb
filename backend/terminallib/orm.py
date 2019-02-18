@@ -3,12 +3,14 @@
 from contextlib import suppress
 from datetime import datetime, date
 from ipaddress import IPv4Network, IPv4Address
+from pathlib import Path
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateField
 from peewee import DateTimeField
+from peewee import FixedCharField
 from peewee import ForeignKeyField
 from peewee import IntegerField
 from peewee import SmallIntegerField
@@ -42,29 +44,15 @@ NETWORK = IPv4Network('{}/{}'.format(
 CHECK_COMMAND = ('/bin/ping', '-c', '1', '-W')
 
 
-def free_ipv4_address():
-    """Returns a free WireGuard IPv4Address.
-    XXX: Beware of race conditions!
-    """
-
-    used = Terminal.ipv4addresses()
-
-    for ipv4address in WIREGUARD_NETWORK:
-        if ipv4address not in used and ipv4address < WIREGUARD_SERVER:
-            return ipv4address
-
-    raise TerminalConfigError('Network exhausted!')
-
-
-class _TerminalModel(JSONModel):
+class TerminalModel(JSONModel):
     """Terminal manager basic Model."""
 
-    class Meta:     # pylint: disable=C0111
+    class Meta:     # pylint: disable=C0111,R0903
         database = MySQLDatabase.from_config(CONFIG['terminalsdb'])
         schema = database.database
 
 
-class Class(_TerminalModel):
+class Class(TerminalModel):
     """Terminal classes."""
 
     name = CharField(32)
@@ -95,7 +83,7 @@ class Class(_TerminalModel):
             return cls._add(name, full_name=full_name, touch=False)
 
 
-class Domain(_TerminalModel):
+class Domain(TerminalModel):
     """Terminal domains."""
 
     # The domain's fully qualified domain name.
@@ -118,7 +106,7 @@ class Domain(_TerminalModel):
         return self.fqdn.strip('.')
 
 
-class OS(_TerminalModel):
+class OS(TerminalModel):
     """Operating systems."""
 
     family = CharField(8)
@@ -141,7 +129,7 @@ class OS(_TerminalModel):
             | (cls.version == string))
 
 
-class VPN(_TerminalModel):
+class VPN(TerminalModel):
     """OpenVPN settings."""
 
     ipv4addr = IPv4AddressField()
@@ -195,10 +183,71 @@ class VPN(_TerminalModel):
         raise TerminalConfigError('Network exhausted!')
 
 
-class LTEInfo(_TerminalModel):
+class WireGuard(TerminalModel):
+    """WireGuard configuration."""
+
+    NETWORK = WIREGUARD_NETWORK
+    SERVER = WIREGUARD_SERVER
+    KEYS = Path('/usr/lib/terminals/keys')
+
+    class Meta:     # pylint: disable=C0111,R0903
+        table_name = 'wire_guard'
+
+    ipv4address = IPv4AddressField()
+    pubkey = FixedCharField(44)
+
+    @classmethod
+    def add(cls):
+        """Adds a new WireGuard configuration."""
+        key = genkey()
+        record = cls()
+        record.key = key
+        record.pubkey = pubkey(key)
+        record.ipv4address = cls.genipv4address()
+        record.save()
+        return record
+
+    @property
+    def keyfile(self):
+        """Returns the respective key file."""
+        return type(self).KEYS.joinpath(str(self.id))
+
+    @property
+    def key(self):
+        """Returns the private key."""
+        with self.keyfile.open('r') as file:
+            return file.read()
+
+    @key.setter
+    def key(self, key):
+        """Sets the private key."""
+        with self.keyfile.open('w') as file:
+            return file.write(key)
+
+    @classmethod
+    def ipv4addresses(cls):
+        """Yields all used IPv4 addresses."""
+        for record in cls:
+            yield record.ipv4address
+
+    @classmethod
+    def free_ipv4_address(cls):
+        """Returns a free WireGuard IPv4Address.
+        XXX: Beware of race conditions!
+        """
+        used = frozenset(cls.ipv4addresses())
+
+        for ipv4address in cls.NETWORK:
+            if ipv4address not in used and ipv4address < cls.SERVER:
+                return ipv4address
+
+        raise TerminalConfigError('Network exhausted!')
+
+
+class LTEInfo(TerminalModel):
     """Represents information about LTE connections."""
 
-    class Meta:     # pylint: disable=C0111
+    class Meta:     # pylint: disable=C0111,R0903
         table_name = 'lte_info'
 
     sim_id = CharField(32, null=True)
@@ -206,7 +255,7 @@ class LTEInfo(_TerminalModel):
     rssi = SmallIntegerField(null=True)
 
 
-class Connection(_TerminalModel):
+class Connection(TerminalModel):
     """Internet connection information."""
 
     name = CharField(4)
@@ -218,7 +267,7 @@ class Connection(_TerminalModel):
         return '{} ({})'.format(self.name, self.timeout)
 
 
-class Terminal(_TerminalModel):
+class Terminal(TerminalModel):
     """A physical terminal out in the field."""
 
     tid = IntegerField()    # Customer-unique terminal identifier
@@ -234,7 +283,8 @@ class Terminal(_TerminalModel):
         Connection, column_name='connection', on_update='CASCADE')
     vpn = ForeignKeyField(
         VPN, null=True, column_name='vpn', on_update='CASCADE')
-    ipv4address = IPv4AddressField(default=free_ipv4_address)   # WG IPv4.
+    wire_guard = ForeignKeyField(
+        WireGuard, column_name='wire_guard', null=True)
     domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
     address = ForeignKeyField(
         Address, null=True, column_name='address',
@@ -498,7 +548,7 @@ class Terminal(_TerminalModel):
         return super().delete_instance(**kwargs)
 
 
-class Synchronization(_TerminalModel):
+class Synchronization(TerminalModel):
     """Synchronization log.
 
     Recommended usage:
@@ -555,12 +605,12 @@ class Synchronization(_TerminalModel):
         return dictionary
 
 
-class ClassStakeholder(_TerminalModel):
+class ClassStakeholder(TerminalModel):
     """Mappings of customers that have access
     to terminals of certain classes.
     """
 
-    class Meta:     # pylint: disable=C0111
+    class Meta:     # pylint: disable=C0111,R0903
         table_name = 'class_stakeholder'
 
     customer = ForeignKeyField(
