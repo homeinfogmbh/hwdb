@@ -199,10 +199,8 @@ class WireGuard(TerminalModel):
     @classmethod
     def add(cls):
         """Adds a new WireGuard configuration."""
-        key = genkey()
         record = cls()
-        record.key = key
-        record.pubkey = pubkey(key)
+        record.pubkey, record.key = keypair()  # TODO: Import wgtools.keypair()
         record.ipv4address = cls.genipv4address()
         record.save()
         return record
