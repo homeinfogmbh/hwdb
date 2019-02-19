@@ -32,7 +32,7 @@ FIELDS = {
         lambda terminal: terminal.class_.name, 'Class', size=9,
         leftbound=True),
     'os': TerminalField(
-        lambda terminal: str(terminal.os), 'OS', size=19, leftbound=True),
+        lambda terminal: terminal.os.family, 'OS', size=19, leftbound=True),
     'ipv4addr': TerminalField(
         lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
     'scheduled': TerminalField(
