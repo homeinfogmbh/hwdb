@@ -277,8 +277,8 @@ class Terminal(TerminalModel):
         Connection, column_name='connection', on_update='CASCADE')
     vpn = ForeignKeyField(
         VPN, null=True, column_name='vpn', on_update='CASCADE')
-    wire_guard = ForeignKeyField(
-        WireGuard, column_name='wire_guard', null=True)
+    wireguard = ForeignKeyField(
+        WireGuard, column_name='wireguard', null=True)
     domain = ForeignKeyField(Domain, column_name='domain', on_update='CASCADE')
     address = ForeignKeyField(
         Address, null=True, column_name='address',
