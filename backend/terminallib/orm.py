@@ -32,6 +32,7 @@ __all__ = [
     'Domain',
     'OS',
     'VPN',
+    'WireGuard',
     'LTEInfo',
     'Connection',
     'Terminal',

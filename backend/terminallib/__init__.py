@@ -13,6 +13,7 @@ from terminallib.orm import Class
 from terminallib.orm import Domain
 from terminallib.orm import OS
 from terminallib.orm import VPN
+from terminallib.orm import WireGuard
 from terminallib.orm import LTEInfo
 from terminallib.orm import Connection
 from terminallib.orm import Terminal
@@ -37,6 +38,7 @@ __all__ = [
     'Domain',
     'OS',
     'VPN',
+    'WireGuard',
     'LTEInfo',
     'Connection',
     'Terminal',
