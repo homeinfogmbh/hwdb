@@ -32,7 +32,7 @@ FIELDS = {
         lambda terminal: terminal.class_.name, 'Class', size=9,
         leftbound=True),
     'os': TerminalField(
-        lambda terminal: repr(terminal.os), 'OS', size=19, leftbound=True),
+        lambda terminal: str(terminal.os), 'OS', size=19, leftbound=True),
     'ipv4addr': TerminalField(
         lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
     'scheduled': TerminalField(
@@ -78,7 +78,7 @@ def _match_annotation(annotation, target):
 def print_terminal(terminal):
     """Prints the respective terminal."""
 
-    print(repr(terminal.address), '({})'.format(terminal.annotation),
+    print(str(terminal.address), '({})'.format(terminal.annotation),
           file=stderr)
     print(str(terminal))
 

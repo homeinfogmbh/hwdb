@@ -115,10 +115,6 @@ class OS(TerminalModel):
 
     def __str__(self):
         """Returns the family name."""
-        return self.family
-
-    def __repr__(self):
-        """Returns the OS name and version."""
         return '{} {}'.format(self.name, self.version)
 
     @classmethod

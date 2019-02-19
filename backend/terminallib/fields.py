@@ -14,7 +14,7 @@ def get_address(terminal):
     if address is None:
         return 'N/A'
 
-    return repr(address)
+    return str(address)
 
 
 def justify(string, size, leftbound=False):
