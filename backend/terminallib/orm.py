@@ -189,6 +189,7 @@ class WireGuard(TerminalModel):
 
     ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
+    psk = CharField(16, null=True)  # Name of the pre-shared key.
 
     @classmethod
     def add(cls):
