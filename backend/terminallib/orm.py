@@ -187,9 +187,6 @@ class WireGuard(TerminalModel):
     SERVER = WIREGUARD_SERVER
     KEYS = Path('/usr/lib/terminals/keys')
 
-    class Meta:     # pylint: disable=C0111,R0903
-        table_name = 'wire_guard'
-
     ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
 
