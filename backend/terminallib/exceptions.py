@@ -5,34 +5,33 @@ __all__ = [
     'InvalidCommand',
     'TerminalError',
     'TerminalConfigError',
-    'VPNUnconfiguredError',
+    'AmbiguousConnections',
+    'NoConnection',
     'AmbiguousTerminals']
 
 
 class InvalidCommand(Exception):
     """Indicates that the respective command is invalid."""
 
-    pass
-
 
 class TerminalError(Exception):
     """Basic exception for terminals handling."""
-
-    pass
 
 
 class TerminalConfigError(TerminalError):
     """Exception that indicated errors in the terminal configuration."""
 
-    pass
 
-
-class VPNUnconfiguredError(TerminalConfigError):
+class AmbiguousConnections(TerminalConfigError):
     """Indicated that no VPN configuration has
     been assigned to the respective terminal.
     """
 
-    pass
+
+class NoConnection(TerminalConfigError):
+    """Indicated that no VPN configuration has
+    been assigned to the respective terminal.
+    """
 
 
 class AmbiguousTerminals(TerminalError):
