@@ -18,6 +18,7 @@ class OperatingSystem(Enum):
 
     ARCH_LINUX = 'Arch Linux'
     WINDOWS_XP = 'Windows XP'
+    # TODO: implement.
 
 
 class Type(Enum):

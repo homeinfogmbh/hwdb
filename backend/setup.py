@@ -8,7 +8,7 @@ setup(
     author_email='info@homeinfo.de',
     maintainer='Richard Neumann',
     maintainer_email='r.neumann@homeinfo.de',
-    packages=['terminallib'],
+    packages=['terminallib', 'terminallib.orm'],
     scripts=[
         'files/bindcfg-gen',
         'files/chkapp',
