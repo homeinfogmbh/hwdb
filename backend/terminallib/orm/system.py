@@ -29,14 +29,15 @@ class System(BaseModel):
         on_delete='SET NULL', on_update='CASCADE')
     openvpn = ForeignKeyField(OpenVPN, column_name='openvpn', null=True)
     wireguard = ForeignKeyField(WireGuard, column_name='wireguard', null=True)
-    creator = ForeignKeyField(
-        Customer, column_name='creator', on_delete='SET NULL',
+    manufacturer = ForeignKeyField(
+        Customer, null=True, column_name='customer', on_delete='CASCADE',
         on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     operating_system = EnumField(OperatingSystem)
     testing = BooleanField(default=False)
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
+    model = CharField(255, null=True)   # Hardware model.
 
     @property
     def vpn_hostname(self):
@@ -52,11 +53,17 @@ class System(BaseModel):
         """Returns a JSON-like dictionary."""
         dictionary = super().to_json(**kwargs)
 
+        if self.location is not None:
+            if cascade:
+                dictionary['location'] = self.location.to_json()
+            else:
+                dictionary['location'] = self.location.id
+
         if not brief and self.openvpn is not None:
             if cascade:
-                dictionary['vpn'] = self.openvpn.to_json()
+                dictionary['openvpn'] = self.openvpn.to_json()
             else:
-                dictionary['vpn'] = self.openvpn.id
+                dictionary['openvpn'] = self.openvpn.id
 
         if not brief and self.wireguard is not None:
             if cascade:
@@ -64,16 +71,10 @@ class System(BaseModel):
             else:
                 dictionary['wireguard'] = self.wireguard.id
 
-        if not brief:
+        if not brief and self.manufacturer is not None:
             if cascade:
-                dictionary['creator'] = self.creator.to_json()
+                dictionary['manufacturer'] = self.manufacturer.to_json()
             else:
-                dictionary['creator'] = self.creator.id
-
-        if self.location is not None:
-            if cascade:
-                dictionary['location'] = self.location.to_json()
-            else:
-                dictionary['location'] = self.location.id
+                dictionary['manufacturer'] = self.manufacturer.id
 
         return dictionary

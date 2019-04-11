@@ -20,3 +20,16 @@ class TypeStakeholder(BaseModel):
 
     type = EnumField(Type)
     customer = CascadingFKField(Customer, column_name='customer')
+
+
+class SystemManufacturer(BaseModel):
+    """Maps customers on systems to allow
+    them to setup the respective terminals.
+    """
+
+    class Meta:     # pylint: disable=C0111,R0903
+        table_name = 'system_manufacturer'
+
+    system = ForeignKeyField(
+        System, column_name='system', on_delete='CASCADE',
+        on_update='CASCADE')

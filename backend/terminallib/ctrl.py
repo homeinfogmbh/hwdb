@@ -32,7 +32,7 @@ def is_online(system):
     if openvpn is None:
         return False
 
-    command = (CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4addr))
+    command = (CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4address))
 
     try:
         check_call(command)
@@ -80,7 +80,7 @@ class RemoteController:
     def ipv4addr(self):
         """Returns the system's IPv4 address."""
         try:
-            return self.system.openvpn.ipv4addr
+            return self.system.openvpn.ipv4address
         except AttributeError:
             raise TerminalConfigError('Terminal has no OpenVPN address.')
 
@@ -102,7 +102,7 @@ class RemoteController:
     @property
     def user_host(self):
         """Returns the respective user@host string."""
-        return '{}@{}'.format(self.user, self.ipv4addr)
+        return '{}@{}'.format(self.user, self.ipv4address)
 
     def remote(self, cmd, *args):
         """Makes a command remote."""

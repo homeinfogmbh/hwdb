@@ -9,6 +9,7 @@ from wgtools import keypair
 
 from terminallib.config import CONFIG
 from terminallib.exceptions import TerminalConfigError
+from terminallib.iptools import used_ipv4addresses, get_ipv4address
 from terminallib.orm.common import BaseModel
 
 
@@ -17,7 +18,7 @@ __all__ = ['WireGuard']
 
 NETWORK = CONFIG['WireGuard']['network']
 SERVER = CONFIG['WireGuard']['server']
-KEYS = Path('/usr/lib/terminals/keys')
+KEYS_DIR = Path('/usr/lib/terminals/keys')
 
 
 class WireGuard(BaseModel):
@@ -25,27 +26,36 @@ class WireGuard(BaseModel):
 
     ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
-    psk = CharField(16, null=True)  # Name of the pre-shared key.
+
+    def __str__(self):
+        """Returns a human readable representation."""
+        return str(self.ipv4address)
 
     @classmethod
     def add(cls):
         """Adds a new WireGuard configuration."""
         record = cls()
         record.pubkey, record.key = keypair()
-        record.ipv4address = cls.genipv4address()
+        record.ipv4address = get_ipv4address(
+            NETWORK, used=used_ipv4addresses(cls), reserved={SERVER})
         record.save()
         return record
 
     @property
     def keyfile(self):
         """Returns the respective key file."""
-        return KEYS.joinpath(str(self.id))
+        return KEYS_DIR.joinpath(str(self.id))
+
+    @property
+    def pskfile(self):
+        """Returns the respective key file."""
+        return KEYS_DIR.joinpath('terminals.psk')
 
     @property
     def key(self):
         """Returns the private key."""
         with self.keyfile.open('r') as file:
-            return file.read()
+            return file.read().strip()
 
     @key.setter
     def key(self, key):
@@ -53,21 +63,8 @@ class WireGuard(BaseModel):
         with self.keyfile.open('w') as file:
             return file.write(key)
 
-    @classmethod
-    def ipv4addresses(cls):
-        """Yields all used IPv4 addresses."""
-        for record in cls:
-            yield record.ipv4address
-
-    @classmethod
-    def free_ipv4_address(cls):
-        """Returns a free WireGuard IPv4Address.
-        XXX: Beware of race conditions!
-        """
-        used = frozenset(cls.ipv4addresses())
-
-        for ipv4address in NETWORK:
-            if ipv4address not in used and ipv4address < SERVER:
-                return ipv4address
-
-        raise TerminalConfigError('Network exhausted!')
+    @property
+    def psk(self):
+        """Returns the pre-shared key."""
+        with self.pskfile.open('r') as file:
+            return file.read().strip()

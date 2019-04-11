@@ -27,10 +27,9 @@ FIELDS = {
     'id': TerminalField(lambda system: system.id, 'ID', size=5),
     'os': TerminalField(lambda system: system.os.value, 'OS', size=19),
     'openvpn': TerminalField(
-        lambda system: system.openvpn.ipv4addr, 'OpenVPN Address', size=14),
+        lambda system: system.openvpn, 'OpenVPN Address', size=14),
     'wireguard': TerminalField(
-        lambda system: system.wireguard.ipv4addr, 'WireGuard Address',
-        size=14),
+        lambda system: system.wireguard, 'WireGuard Address', size=14),
     'testing': TerminalField(lambda system: system.testing, 'Testing'),
     'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
     'sn': TerminalField(

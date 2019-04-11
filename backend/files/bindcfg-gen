@@ -1,12 +1,13 @@
 #! /usr/bin/env python3
 """Generates bind9 configuration for HOMEINFO's VPN networks."""
 
+from logging import basicConfig, getLogger
 from subprocess import CalledProcessError, check_call
-from sys import stderr, exit as exit_
+from sys import exit    # pylint: disable=W0622
 
 from fancylog import TTYAnimator
 from syslib import script
-from terminallib import VPNUnconfiguredError, Terminal
+from terminallib import System
 
 
 __all__ = [
@@ -22,6 +23,8 @@ DNS_TEMPLATE = '/usr/local/etc/homeinfo.intranet.zone.temp'
 LOCAL_HOSTS_LIST = '/usr/local/etc/local_hosts'
 DNS_CONFIG = '/etc/bind/homeinfo.intranet.zone'
 RECORD = '{}\tIN\tA\t{}'
+LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
+LOGGER = getLogger('bindcfg-gen')
 
 
 def management_hosts():
@@ -30,10 +33,11 @@ def management_hosts():
     yield ';# Management network hosts\n'
 
     with open(LOCAL_HOSTS_LIST, 'r') as local_hosts_list:
-        for record in filter(
-                lambda record: record and not record.startswith('#'),
-                map(lambda record: record.strip(), local_hosts_list)):
-            yield RECORD.format(*record.split())
+        for record in local_hosts_list:
+            record = record.strip()
+
+            if record and not record.startswith('#'):
+                yield RECORD.format(*record.split())
 
 
 def terminal_hosts():
@@ -41,19 +45,27 @@ def terminal_hosts():
 
     yield ';# Terminal network hosts\n'
 
-    for terminal in Terminal:
+    for system in System:
         try:
-            ipv4addr = terminal.ipv4addr
-        except VPNUnconfiguredError:
-            print('Terminal {} has no VPN configuration.'.format(terminal),
-                  file=stderr)
+            ipv4address = system.openvpn.ipv4address
+        except AttributeError:
+            LOGGER.warning('No OpenVPN config for #%i.', system.id)
         else:
-            yield RECORD.format(str(terminal), ipv4addr)
+            yield RECORD.format(system.vpn_hostname, ipv4address)
+
+        try:
+            ipv4address = system.wireguard.ipv4address
+        except AttributeError:
+            LOGGER.warning('No WireGuard config for #%i.', system.id)
+        else:
+            yield RECORD.format(system.wg_hostname, ipv4address)
 
 
 @script
 def main():
     """Runs generates the confi files."""
+
+    basicConfig(format=LOG_FORMAT)
 
     with open(DNS_TEMPLATE, 'r') as temp:
         template = temp.read()
@@ -78,4 +90,4 @@ def main():
 
 
 if __name__ == '__main__':
-    exit_(main())
+    exit(main())
