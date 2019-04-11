@@ -3,18 +3,7 @@
 from blessings import Terminal
 
 
-__all__ = ['get_address', 'justify', 'to_string', 'TerminalField']
-
-
-def get_address(terminal):
-    """Returns the terminal's address."""
-
-    address = terminal.address
-
-    if address is None:
-        return 'N/A'
-
-    return str(address)
+__all__ = ['justify', 'to_string', 'TerminalField']
 
 
 def justify(string, size, leftbound=False):

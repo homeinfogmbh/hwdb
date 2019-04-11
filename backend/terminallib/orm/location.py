@@ -10,13 +10,13 @@ from peeweeplus import CascadingFKField
 from peeweeplus import EnumField
 
 from terminallib.enumerations import Connection, Type
-from terminallib.orm.common import TerminalModel
+from terminallib.orm.common import BaseModel
 
 
 __all__ = ['Location']
 
 
-class Location(TerminalModel):
+class Location(BaseModel):
     """A location for a terminal."""
 
     customer = CascadingFKField(Customer, column_name='customer')

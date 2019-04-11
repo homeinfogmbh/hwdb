@@ -5,54 +5,44 @@ from sys import stderr
 from mdb import Address
 from syslib import B64LZMA
 
-from terminallib.fields import get_address, TerminalField
-from terminallib.orm import Class, Domain, OS, Terminal
-from terminallib.exceptions import TerminalError, AmbiguousTerminals
+from terminallib.config import LOGGER
+from terminallib.fields import TerminalField
+from terminallib.orm import Location, System
+from terminallib.enumerations import OperatingSystem, Type
+from terminallib.exceptions import TerminalError, AmbiguousSystems
 
 
 __all__ = [
     'ARNIE',
     'DEFAULT_FIELDS',
-    'print_terminal',
-    'find_terminals',
-    'get_terminal',
-    'list_terminals',
-    'list_classes',
+    'print_system',
+    'find_systems',
+    'get_system',
     'list_oss',
-    'list_domains']
+    'list_systems',
+    'list_types']
 
 
 FIELDS = {
-    'id': TerminalField(lambda terminal: terminal.id, 'ID', size=4),
-    'tid': TerminalField(lambda terminal: terminal.tid, 'TID', size=3),
-    'cid': TerminalField(
-        lambda terminal: terminal.customer.id, 'CID', size=10),
-    'vid': TerminalField(lambda terminal: terminal.vid, 'VID', size=3),
-    'class': TerminalField(
-        lambda terminal: terminal.class_.name, 'Class', size=9,
-        leftbound=True),
-    'os': TerminalField(
-        lambda terminal: terminal.os.family, 'OS', size=19, leftbound=True),
-    'ipv4addr': TerminalField(
-        lambda terminal: terminal.ipv4addr, 'IPv4 Address', size=14),
-    'scheduled': TerminalField(
-        lambda terminal: terminal.scheduled, 'Scheduled', size=21),
-    'deployed': TerminalField(
-        lambda terminal: terminal.deployed, 'Deployed', size=21),
-    'testing': TerminalField(lambda terminal: terminal.testing, 'Testing'),
-    'tainted': TerminalField(lambda terminal: terminal.tainted, 'Tainted'),
-    'deleted': TerminalField(
-        lambda terminal: terminal.deleted, 'Deleted On', size=21),
-    'monitor': TerminalField(lambda terminal: terminal.monitor, 'Monitor'),
+    'id': TerminalField(lambda system: system.id, 'ID', size=5),
+    'os': TerminalField(lambda system: system.os.value, 'OS', size=19),
+    'openvpn': TerminalField(
+        lambda system: system.openvpn.ipv4addr, 'OpenVPN Address', size=14),
+    'wireguard': TerminalField(
+        lambda system: system.wireguard.ipv4addr, 'WireGuard Address',
+        size=14),
+    'testing': TerminalField(lambda system: system.testing, 'Testing'),
+    'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
     'sn': TerminalField(
-        lambda terminal: terminal.serial_number, 'Serial Number', size=32),
-    'isdeleted': TerminalField(lambda terminal: terminal.isdeleted, 'Deleted'),
-    'address': TerminalField(
-        get_address, 'Address', size=48, leftbound=True),
+        lambda system: system.serial_number, 'Serial Number', size=32),
+    'location': TerminalField(
+        lambda system: system.location, 'Address', size=48, leftbound=True),
+    'connection': TerminalField(
+        lambda system: system.connection.value, 'Connection', size=8),
     'annotation': TerminalField(
-        lambda terminal: terminal.annotation, 'Annotation', size=24,
+        lambda system: system.annotation, 'Annotation', size=24,
         leftbound=True),
-    'online': TerminalField(lambda terminal: terminal.online, 'Online')}
+    'online': TerminalField(lambda system: system.online, 'Online')}
 
 ARNIE = B64LZMA(
     '/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4AIEAK9dABBuADwUaYt0gRsna7sph26BXekoRMls4'
@@ -64,27 +54,33 @@ ARNIE = B64LZMA(
 CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
-DEFAULT_FIELDS = (
-    'id', 'tid', 'cid', 'vid', 'os', 'ipv4addr', 'deployed', 'testing',
-    'tainted', 'address', 'annotation')
+DEFAULT_FIELDS = ('id', 'os', 'openvpn', 'wireguard', 'testing', 'location')
 
 
-def _match_annotation(annotation, target):
-    """Matches the annotation against the target value."""
+def _get_fields(fields):
+    """Yields valid fields from a string of field names."""
 
-    return annotation is None or annotation.lower() in target.lower()
-
-
-def print_terminal(terminal):
-    """Prints the respective terminal."""
-
-    print(str(terminal.address), '({})'.format(terminal.annotation),
-          file=stderr)
-    print(str(terminal))
+    for field in fields:
+        try:
+            yield FIELDS[field]
+        except KeyError:
+            LOGGER.warning('Ignoring invalid field: %s', field)
 
 
-def find_terminals(street, house_number=None, annotation=None):
-    """Finds terminals in the specified location."""
+def print_system(system):
+    """Prints the respective system."""
+
+    location = system.location
+
+    if location is not None:
+        print(str(location.address), '({})'.format(location.annotation),
+              file=stderr)
+
+    print(system.id)
+
+
+def find_systems(street, house_number=None, annotation=None):
+    """Finds systems in the specified location."""
 
     selection = Address.street ** '%{}%'.format(street)
 
@@ -92,65 +88,49 @@ def find_terminals(street, house_number=None, annotation=None):
         selection &= Address.house_number ** '%{}%'.format(house_number)
 
     if annotation is not None:
-        selection &= Terminal.annotation ** '%{}%'.format(annotation)
+        selection &= Location.annotation ** '%{}%'.format(annotation)
 
-    return Terminal.select().join(
-        Address, on=(Terminal.address == Address.id)).where(selection)
+    join_condition = Address.id == Location.address
+    join = System.select().join(Location).join(Address, on=join_condition)
+    return join.where(selection)
 
 
-def get_terminal(street, house_number=None, annotation=None, index=None):
-    """Finds a terminal by its location."""
-
-    terminals = tuple(find_terminals(
-        street, house_number=house_number, annotation=annotation))
-
-    if not terminals:
-        raise TerminalError('No terminal matching query.')
-
-    if len(terminals) > 1 and index is None:
-        raise AmbiguousTerminals('Ambiguous terminals:', terminals)
-
-    index = index or 0
+def get_system(street, house_number=None, annotation=None):
+    """Finds a system by its location."""
 
     try:
-        return terminals[index]
-    except IndexError:
-        raise TerminalError('No terminal #{} available ({}).'.format(
-            index, len(terminals)))
+        system, superfluous = find_systems(
+            street, house_number=house_number, annotation=annotation)
+    except ValueError:
+        raise TerminalError('No system matching query.')
 
+    if superfluous:
+        raise AmbiguousSystems(superfluous)
 
-def list_terminals(terminals, header=True, fields=DEFAULT_FIELDS, sep='  '):
-    """Yields formatted terminals for console outoput."""
-
-    fields = tuple(FIELDS[field] for field in fields)
-
-    if header:
-        yield sep.join(str(field) for field in fields)
-
-    for terminal in terminals:
-        yield sep.join(field.format(terminal) for field in fields)
-
-
-def list_classes():
-    """Yields formatted terminal classes."""
-
-    for class_ in Class:
-        yield CLASS_TEMP.format(
-            id=str(class_.id), name=class_.name, full_name=class_.full_name,
-            touch=str(class_.touch))
+    return system
 
 
 def list_oss():
     """Yields formatted operating system entries."""
 
-    for operating_system in OS:
-        yield OS_TEMP.format(
-            id=str(operating_system.id), family=operating_system.family,
-            name=operating_system.name, version=operating_system.version)
+    for operating_system in OperatingSystem:
+        yield str(operating_system)
 
 
-def list_domains():
-    """Lists formatted domains."""
+def list_systems(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
+    """Yields formatted systems for console outoput."""
 
-    for domain in Domain:
-        yield DOMAIN_TEMP.format(id=str(domain.id), fqdn=domain.fqdn)
+    fields = tuple(_get_fields(fields))
+
+    if header:
+        yield sep.join(str(field) for field in fields)
+
+    for system in systems:
+        yield sep.join(field.format(system) for field in fields)
+
+
+def list_types():
+    """Yields formatted terminal classes."""
+
+    for typ in Type:
+        yield str(typ)

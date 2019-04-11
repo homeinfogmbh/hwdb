@@ -2,16 +2,10 @@
 
 
 __all__ = [
-    'InvalidCommand',
     'TerminalError',
     'TerminalConfigError',
-    'AmbiguousConnections',
     'NoConnection',
-    'AmbiguousTerminals']
-
-
-class InvalidCommand(Exception):
-    """Indicates that the respective command is invalid."""
+    'AmbiguousSystems']
 
 
 class TerminalError(Exception):
@@ -22,24 +16,22 @@ class TerminalConfigError(TerminalError):
     """Exception that indicated errors in the terminal configuration."""
 
 
-class AmbiguousConnections(TerminalConfigError):
-    """Indicated that no VPN configuration has
-    been assigned to the respective terminal.
-    """
-
-
 class NoConnection(TerminalConfigError):
     """Indicated that no VPN configuration has
     been assigned to the respective terminal.
     """
 
 
-class AmbiguousTerminals(TerminalError):
+class AmbiguousSystems(TerminalError):
     """Indicates that a query for a single
     terminal yielded ambiguous terminals.
     """
 
-    def __init__(self, message, terminals):
-        """Sets message and terminals."""
-        super().__init__(message)
-        self.terminals = terminals
+    def __init__(self, systems):
+        """Sets the respective systems."""
+        super().__init__()
+        self.systems = systems
+
+    def __iter__(self):
+        """Yields the systems."""
+        yield from self.systems

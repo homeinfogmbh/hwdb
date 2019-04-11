@@ -2,32 +2,27 @@
 
 from pathlib import Path
 
-from peewee import CharField
-from peewee import FixedCharField
-from peewee import ForeignKeyField
-from wgtools import keypair
+from peewee import CharField, FixedCharField
 
 from peeweeplus import IPv4AddressField
+from wgtools import keypair
 
 from terminallib.config import CONFIG
 from terminallib.exceptions import TerminalConfigError
-from terminallib.orm.common import TerminalModel
-from terminallib.orm.terminal import Terminal
+from terminallib.orm.common import BaseModel
 
 
 __all__ = ['WireGuard']
 
 
-class WireGuard(TerminalModel):
+NETWORK = CONFIG['WireGuard']['network']
+SERVER = CONFIG['WireGuard']['server']
+KEYS = Path('/usr/lib/terminals/keys')
+
+
+class WireGuard(BaseModel):
     """WireGuard configuration."""
 
-    NETWORK = CONFIG['WireGuard']['network']
-    SERVER = CONFIG['WireGuard']['server']
-    KEYS = Path('/usr/lib/terminals/keys')
-
-    terminal = ForeignKeyField(
-        Terminal, column_name='terminal', on_delete='CASCADE',
-        on_update='CASCADE', backref='wg_connections')
     ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
     psk = CharField(16, null=True)  # Name of the pre-shared key.
@@ -44,7 +39,7 @@ class WireGuard(TerminalModel):
     @property
     def keyfile(self):
         """Returns the respective key file."""
-        return type(self).KEYS.joinpath(str(self.id))
+        return KEYS.joinpath(str(self.id))
 
     @property
     def key(self):
@@ -71,8 +66,8 @@ class WireGuard(TerminalModel):
         """
         used = frozenset(cls.ipv4addresses())
 
-        for ipv4address in cls.NETWORK:
-            if ipv4address not in used and ipv4address < cls.SERVER:
+        for ipv4address in NETWORK:
+            if ipv4address not in used and ipv4address < SERVER:
                 return ipv4address
 
         raise TerminalConfigError('Network exhausted!')

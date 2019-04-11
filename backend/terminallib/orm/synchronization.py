@@ -5,17 +5,16 @@ from datetime import datetime
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import ForeignKeyField
 
-from peeweeplus import CascadingFKField
-
-from terminallib.orm.common import TerminalModel
-from terminallib.orm.terminal import Terminal
+from terminallib.orm.common import BaseModel
+from terminallib.orm.system import System
 
 
 __all__ = ['Synchronization']
 
 
-class Synchronization(TerminalModel):
+class Synchronization(BaseModel):
     """Synchronization log.
 
     Recommended usage:
@@ -29,7 +28,9 @@ class Synchronization(TerminalModel):
                 sync.status = False
     """
 
-    terminal = CascadingFKField(Terminal, column_name='terminal')
+    system = ForeignKeyField(
+        System, column_name='system', backref='synchronizations',
+        on_delete='CASCADE', on_update='CASCADE')
     started = DateTimeField()
     finished = DateTimeField(null=True)
     reload = BooleanField(null=True)
@@ -45,10 +46,10 @@ class Synchronization(TerminalModel):
         self.stop()
 
     @classmethod
-    def start(cls, terminal, result=None):
+    def start(cls, system, result=None):
         """Start a synchronization for this terminal."""
         sync = cls()
-        sync.terminal = terminal
+        sync.system = system
         sync.started = datetime.now()
         sync.result = result
         return sync
@@ -62,11 +63,11 @@ class Synchronization(TerminalModel):
 
         return False
 
-    def to_json(self, *args, terminal=False, **kwargs):
+    def to_json(self, system=False, **kwargs):
         """Returns a JSON-ish dictionary."""
-        dictionary = super().to_json(*args, **kwargs)
+        dictionary = super().to_json(**kwargs)
 
-        if terminal:
-            dictionary['terminal'] = self.terminal.to_json(*args, **kwargs)
+        if system:
+            dictionary['system'] = self.system.to_json(**kwargs)
 
         return dictionary

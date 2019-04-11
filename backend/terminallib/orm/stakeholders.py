@@ -4,13 +4,13 @@ from mdb import Customer
 from peeweeplus import CascadingFKField, EnumField
 
 from terminallib.enumerations import Type
-from terminallib.orm.common import TerminalModel
+from terminallib.orm.common import BaseModel
 
 
 __all__ = ['TypeStakeholder']
 
 
-class TypeStakeholder(TerminalModel):
+class TypeStakeholder(BaseModel):
     """Mappings of customers that have access
     to terminals of certain types.
     """

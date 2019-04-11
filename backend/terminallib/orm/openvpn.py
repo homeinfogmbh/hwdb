@@ -3,7 +3,6 @@
 from ipaddress import IPv4Network, IPv4Address
 
 from peewee import CharField
-from peewee import ForeignKeyField
 from peewee import IntegerField
 
 from peeweeplus import IPv4AddressField
@@ -11,23 +10,19 @@ from peeweeplus import IPv4AddressField
 from terminallib.config import CONFIG
 from terminallib.exceptions import TerminalConfigError
 
-from terminallib.orm.common import TerminalModel
-from terminallib.orm.terminal import Terminal
+from terminallib.orm.common import BaseModel
 
 
-__all__ = ['VPN']
+__all__ = ['OpenVPN']
 
 
 NETWORK = IPv4Network('{}/{}'.format(
     CONFIG['OpenVPN']['network'], CONFIG['OpenVPN']['mask']))
 
 
-class VPN(TerminalModel):
+class OpenVPN(BaseModel):
     """OpenVPN settings."""
 
-    terminal = ForeignKeyField(
-        Terminal, column_name='terminal', on_delete='CASCADE',
-        on_update='CASCADE', backref='vpn_connections')
     ipv4addr = IPv4AddressField()
     key = CharField(36, null=True)
     mtu = IntegerField(null=True)

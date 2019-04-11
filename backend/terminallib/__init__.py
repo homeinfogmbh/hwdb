@@ -1,46 +1,42 @@
 """HOMEINFO's terminal library."""
 
-from terminallib.common import TerminalAware
 from terminallib.config import CONFIG, WIREGUARD_NETWORK
 from terminallib.ctrl import CustomSSHOptions, RemoteController
-from terminallib.exceptions import InvalidCommand
+from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError
 from terminallib.exceptions import TerminalConfigError
-from terminallib.exceptions import VPNUnconfiguredError
-from terminallib.exceptions import AmbiguousTerminals
-from terminallib.filter import parse, get_terminals
-from terminallib.orm import Class
-from terminallib.orm import Domain
-from terminallib.orm import OS
-from terminallib.orm import VPN
-from terminallib.orm import WireGuard
-from terminallib.orm import LTEInfo
-from terminallib.orm import Connection
-from terminallib.orm import Terminal
+from terminallib.exceptions import AmbiguousSystems
+from terminallib.filter import parse, get_systems
+from terminallib.orm import Location
+from terminallib.orm import OpenVPN
 from terminallib.orm import Synchronization
-from terminallib.orm import ClassStakeholder
+from terminallib.orm import System
+from terminallib.orm import TypeStakeholder
+from terminallib.orm import WireGuard
 
 
 __all__ = [
+    # Constants:
     'CONFIG',
     'WIREGUARD_NETWORK',
-    'InvalidCommand',
+    # Exceptions:
     'TerminalError',
     'TerminalConfigError',
-    'VPNUnconfiguredError',
-    'AmbiguousTerminals',
+    'AmbiguousSystems',
+    # Functions:
     'parse',
-    'get_terminals',
-    'TerminalAware',
+    'get_systems',
+    # Misc. classes:
     'CustomSSHOptions',
     'RemoteController',
-    'Class',
-    'Domain',
-    'OS',
-    'VPN',
-    'WireGuard',
-    'LTEInfo',
+    # Enumerations:
     'Connection',
-    'Terminal',
+    'OperatingSystem',
+    'Type',
+    # ORM models:
+    'Location',
+    'OpenVPN',
     'Synchronization',
-    'ClassStakeholder']
+    'System',
+    'TypeStakeholder',
+    'WireGuard',]

@@ -1,117 +1,79 @@
 """Terminal filters."""
 
-from terminallib.orm import Class, OS, Terminal
+from terminallib.config import LOGGER
+from terminallib.ctrl import is_online
+from terminallib.orm import Location, System
 
 
-__all__ = ['parse', 'get_terminals']
+__all__ = ['parse', 'filter_online', 'filter_offline', 'get_systems']
 
 
-def filter_online(terminals):
-    """Yields online terminals."""
+def _parse_ids(idents):
+    """Yields system IDs."""
 
-    for terminal in terminals:
-        if terminal.online:
-            yield terminal
-
-
-def filter_offline(terminals):
-    """Yields offline terminals."""
-
-    for terminal in terminals:
-        if not terminal.online:
-            yield terminal
-
-
-def parse(expressions):
-    """Returns a peewee.Expression for the respective terminal expressions."""
-
-    if not expressions:
-        return True
-
-    terminal_expr = None
-
-    for expression in expressions:
+    for ident in idents:
         try:
-            tid, cid = expression.split('.')
+            yield int(ident)
         except ValueError:
-            expr = Terminal.customer == expression
-        else:
-            expr = (Terminal.tid == tid) & (Terminal.customer == cid)
+            LOGGER.warning('Ignoring invalid system ID: %s', ident)
 
-        if terminal_expr is None:
-            terminal_expr = expr
-        else:
-            terminal_expr |= expr
 
-    if terminal_expr is None:
+def parse(ids):
+    """Returns a peewee.Expression for the respective systems selection."""
+
+    if not ids:
         return True
 
-    return terminal_expr
+    ids = frozenset(_parse_ids(ids))
+    return System.id << ids
 
 
-def get_terminals(expressions, deployed=None, testing=None, deleted=None,
-                  classes=None, oss=None, online=None, offline=None):
-    """Yields terminals for the respective expressions and filters."""
+def filter_online(systems):
+    """Yields online systems."""
 
-    terminal_expr = parse(expressions)
+    for system in systems:
+        if is_online(system):
+            yield system
+
+
+def filter_offline(systems):
+    """Yields offline systems."""
+
+    for system in systems:
+        if not is_online(system):
+            yield system
+
+
+def get_systems(ids, customer=None, deployed=None,  # pylint: disable=R0913
+                testing=None, oss=None, online=None, offline=None):
+    """Yields systems for the respective expressions and filters."""
+
+    select = parse(ids)
+
+    if customer is not None:
+        select &= Location.customer == customer
 
     if deployed is not None:
-        if deployed in (True, False):
+        if deployed in {True, False}:
             if deployed:
-                terminal_expr &= ~ (Terminal.deployed >> None)
+                select &= ~(Location.deployed >> None)
             else:
-                terminal_expr &= Terminal.deployed >> None
-        else:  # Compare to datetime.
-            terminal_expr &= Terminal.deployed == deployed
+                select &= Location.deployed >> None
+        else:
+            select &= Location.deployed == deployed
 
     if testing is not None:
-        if testing:
-            terminal_expr &= Terminal.testing == 1
-        else:
-            terminal_expr &= Terminal.testing == 0
-
-    if deleted is not None:
-        if deleted:
-            terminal_expr &= ~(Terminal.deleted >> None)
-        else:
-            terminal_expr &= Terminal.deleted >> None
-
-    if classes:
-        class_ids = set()
-
-        for class_desc in classes:
-            try:
-                class_id = int(class_desc)
-            except ValueError:
-                class_ = Class.get(
-                    (Class.name == class_desc)
-                    | (Class.full_name == class_desc))
-                class_id = class_.id
-
-            class_ids.add(class_id)
-
-        terminal_expr &= Terminal.class_ << class_ids
+        select &= System.testing == testing
 
     if oss:
-        os_ids = set()
+        select &= System.operating_system << oss
 
-        for od_desc in oss:
-            try:
-                os_id = int(od_desc)
-            except ValueError:
-                os_ = OS.get((OS.family == od_desc) | (OS.name == od_desc))
-                os_id = os_.id
-
-            os_ids.add(os_id)
-
-        terminal_expr &= Terminal.os << os_ids
-
-    terminals = Terminal.select().where(terminal_expr)
+    systems = System.select().join(Location).where(select)
 
     if online and not offline:
-        return filter_online(terminals)
+        return filter_online(systems)
 
     if offline and not online:
-        return filter_offline(terminals)
+        return filter_offline(systems)
 
-    return terminals
+    return systems

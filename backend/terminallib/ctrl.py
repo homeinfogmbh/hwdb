@@ -1,15 +1,15 @@
 """Library for terminal remote control."""
 
+from subprocess import CalledProcessError, check_call
 from tempfile import NamedTemporaryFile
 
 from syslib import run
 
-from terminallib.common import TerminalAware
-from terminallib.config import CONFIG
-from terminallib.exceptions import InvalidCommand
+from terminallib.config import CONFIG, LOGGER
+from terminallib.exceptions import TerminalConfigError
 
 
-__all__ = ['CustomSSHOptions', 'RemoteController']
+__all__ = ['is_online', 'CustomSSHOptions', 'RemoteController']
 
 
 def _get_options(options):
@@ -22,6 +22,24 @@ def _get_options(options):
         return options
 
     return ' '.join(str(option) for option in options)
+
+
+def is_online(system):
+    """Determines whether the respective system is online."""
+
+    openvpn = system.openvpn
+
+    if openvpn is None:
+        return False
+
+    command = (CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4addr))
+
+    try:
+        check_call(command)
+    except CalledProcessError:
+        return False
+
+    return True
 
 
 class CustomSSHOptions:
@@ -43,29 +61,28 @@ class CustomSSHOptions:
         self.remote_controller.ssh_options = self.previous_options
 
 
-class RemoteController(TerminalAware):
+class RemoteController:
     """Controls a terminal remotely."""
 
-    def __init__(self, user, terminal, keyfile=None, white_list=None,
-                 black_list=None, logger=None):
+    def __init__(self, user, system, *, keyfile=None):
         """Initializes a remote terminal controller."""
-        super().__init__(terminal, logger=logger)
         self.user = user
+        self.system = system
         self.keyfile = keyfile or '/home/{}/.ssh/terminals'.format(self.user)
-        self.white_list = white_list    # May be None → allow all.
-        self.black_list = black_list or []
-
-        if self.terminal.connection:
-            connect_timeout = self.terminal.connection.timeout
-        else:
-            connect_timeout = CONFIG['ssh']['CONNECT_TIMEOUT']
-
         self.ssh_options = {
             # Trick SSH it into not checking the host key.
             'UserKnownHostsFile': CONFIG['ssh']['USER_KNOWN_HOSTS_FILE'],
             'StrictHostKeyChecking': CONFIG['ssh']['STRICT_HOST_KEY_CHECKING'],
             # Set timeout to avoid blocking of rsync / ssh call.
-            'ConnectTimeout': connect_timeout}
+            'ConnectTimeout': CONFIG['ssh']['CONNECT_TIMEOUT']}
+
+    @property
+    def ipv4addr(self):
+        """Returns the system's IPv4 address."""
+        try:
+            return self.system.openvpn.ipv4addr
+        except AttributeError:
+            raise TerminalConfigError('Terminal has no OpenVPN address.')
 
     @property
     def ssh_cmd(self):
@@ -85,7 +102,7 @@ class RemoteController(TerminalAware):
     @property
     def user_host(self):
         """Returns the respective user@host string."""
-        return '{}@{}'.format(self.user, self.terminal.ipv4addr)
+        return '{}@{}'.format(self.user, self.ipv4addr)
 
     def remote(self, cmd, *args):
         """Makes a command remote."""
@@ -102,7 +119,7 @@ class RemoteController(TerminalAware):
 
     def extra_options(self, options):
         """Returns an CustomSSHOptions context
-        manager for this terminal controller.
+        manager for this remote controller.
         """
         return CustomSSHOptions(options, self)
 
@@ -113,36 +130,26 @@ class RemoteController(TerminalAware):
         binary = CONFIG['ssh']['RSYNC_BIN']
         cmd = (binary, options, self.remote_shell, srcs, dst)
         cmd = ' '.join(cmd)
-        self.logger.debug(cmd)
+        LOGGER.debug(cmd)
         return cmd
 
-    def check_command(self, cmd):
-        """Checks the command against the white- and blacklists."""
-        if cmd in self.black_list:
-            return False
-
-        return self.white_list is None or cmd in self.white_list
-
     def execute(self, cmd, *args, shell=False):
-        """Executes a certain command on a remote terminal."""
-        if self.check_command(cmd):
-            if shell:
-                remote_cmd = ' '.join(self.remote(cmd, *args))
-            else:
-                remote_cmd = tuple(self.remote(cmd, *args))
+        """Executes a certain command on a remote system."""
+        if shell:
+            remote_cmd = ' '.join(self.remote(cmd, *args))
+        else:
+            remote_cmd = tuple(self.remote(cmd, *args))
 
-            self.logger.debug('Executing: "%s".', remote_cmd)
-            return run(remote_cmd, shell=shell)
-
-        raise InvalidCommand()
+        LOGGER.debug('Executing: "%s".', remote_cmd)
+        return run(remote_cmd, shell=shell)
 
     def get(self, file, options=None):
-        """Gets a file from a remote terminal."""
+        """Gets a file from a remote system."""
         with NamedTemporaryFile('rb') as tmp:
             rsync = self.rsync(
                 tmp.name, [self.remote_file(file)], options=options)
             result = run(rsync, shell=True)
-            self.logger.debug(str(result))
+            LOGGER.debug(str(result))
 
             if result:
                 return tmp.read()
@@ -150,11 +157,11 @@ class RemoteController(TerminalAware):
             return result
 
     def send(self, dst, *srcs, options=None):
-        """Sends files to a remote terminal."""
+        """Sends files to a remote system."""
         command = self.rsync(self.remote_file(dst), *srcs, options=options)
-        self.logger.debug('Executing: "%s".', command)
+        LOGGER.debug('Executing: "%s".', command)
         result = run(command, shell=True)
-        self.logger.debug(str(result))
+        LOGGER.debug(str(result))
         return result
 
     def mkdir(self, directory, parents=False, binary='/usr/bin/mkdir'):
