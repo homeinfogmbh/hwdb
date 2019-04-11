@@ -4,17 +4,17 @@
     Checks application status for the respective terminal.
 
 Usage:
-    chksync <tid> <cid> [options]
+    chksync <id> [options]
 
 Options:
     --help, -h      Show this page.
 """
-from sys import stderr, exit as exit_
+from sys import exit    # pylint: disable=W0622
 
 from docopt import docopt
 
 from syslib import script
-from terminallib import Terminal, RemoteController
+from terminallib import System, RemoteController
 
 
 USER = 'termgr'
@@ -23,42 +23,23 @@ SYSTEMCTL = '/usr/bin/systemctl'
 UNIT = 'application.service'
 
 
-def get_terminal(options):
-    """Returns the respective terminal."""
-
-    try:
-        tid = int(options['<tid>'])
-    except ValueError:
-        print('Invalid terminal ID: {}.'.format(tid), file=stderr)
-        exit_(4)
-
-    try:
-        cid = int(options['<cid>'])
-    except ValueError:
-        print('Invalid customer ID: {}.'.format(cid), file=stderr)
-        exit_(5)
-
-    try:
-        return Terminal.get(
-            (Terminal.customer == cid) &
-            (Terminal.tid == tid))
-    except Terminal.DoesNotExist:
-        print('No such terminal.', file=stderr)
-        exit_(8)
-
-
 @script
 def main(options):
     """Runs the application check."""
 
-    terminal = get_terminal(options)
-    ctrl = RemoteController(USER, terminal, keyfile=KEYFILE)
+    try:
+        system = System[options['<id>']]
+    except ValueError:
+        print('Invalid system ID.')
+        exit(4)
+
+    ctrl = RemoteController(USER, system, keyfile=KEYFILE)
     enabled = ctrl.execute(SYSTEMCTL, 'is-enabled', UNIT)
     running = ctrl.execute(SYSTEMCTL, 'is-active', UNIT)
 
     if 255 in (enabled.returncode, running.returncode):
-        print('Cannot connect to terminal.')
-        exit_(3)
+        print('Cannot connect to system.')
+        exit(3)
 
     exit_code = min(enabled.returncode, 1) + min(running.returncode, 1)
 
@@ -76,8 +57,8 @@ def main(options):
     else:
         print('ERROR IN SCRIPT.')
 
-    exit_(exit_code)
+    exit(exit_code)
 
 
 if __name__ == '__main__':
-    exit_(main(docopt(__doc__)))
+    main(docopt(__doc__))

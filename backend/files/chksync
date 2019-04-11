@@ -4,42 +4,36 @@
     Checks synchronization status for the respective terminal.
 
 Usage:
-    chksync <tid> <cid> [options]
+    chksync <id> [options]
 
 Options:
     --warning=<hours>       Warning period in hours [default: 24]
     --critical=<hours>      Critical period in hours [default: 72]
 """
 from datetime import datetime, timedelta
-from sys import stderr, exit as exit_
+from sys import stderr, exit    # pylint: disable=W0622
 
 from docopt import docopt
 
 from syslib import script
-from terminallib import Terminal, Synchronization
+from terminallib import System, Synchronization
 
 
 def parse_options(options):
     """Parses the provided options."""
 
     try:
-        tid = int(options['<tid>'])
+        system = System[options['<id>']]
     except ValueError:
-        print('Invalid terminal ID: {}.'.format(tid), file=stderr)
-        exit_(4)
-
-    try:
-        cid = int(options['<cid>'])
-    except ValueError:
-        print('Invalid customer ID: {}.'.format(cid), file=stderr)
-        exit_(5)
+        print('Invalid system ID.')
+        exit(4)
 
     try:
         warning = int(options['--warning'])
     except ValueError:
         print('Invalid amout of hours for warning: {}.'.format(warning),
               file=stderr)
-        exit_(6)
+        exit(6)
     else:
         warning = timedelta(hours=warning)
 
@@ -48,30 +42,22 @@ def parse_options(options):
     except ValueError:
         print('Invalid amout of hours for critical: {}.'.format(critical),
               file=stderr)
-        exit_(7)
+        exit(7)
     else:
         critical = timedelta(hours=critical)
 
-    try:
-        terminal = Terminal.get(
-            (Terminal.customer == cid) &
-            (Terminal.tid == tid))
-    except Terminal.DoesNotExist:
-        print('No such terminal.', file=stderr)
-        exit_(8)
-
-    return (terminal, warning, critical)
+    return (system, warning, critical)
 
 
 @script
 def main(options):
     """Runs the sync check."""
 
-    terminal, warning, critical = parse_options(options)
+    system, warning, critical = parse_options(options)
     latest = None
 
     for synchronization in Synchronization.select().where(
-            (Synchronization.terminal == terminal) &
+            (Synchronization.system == system) &
             ~ (Synchronization.finished >> None) &
             (Synchronization.result == 1)).order_by(
                 Synchronization.finished.desc()).limit(1):
@@ -79,18 +65,18 @@ def main(options):
 
     if latest is None:
         print('Never.')
-        return 2  # critical
+        exit(2)     # critical
 
     print(latest)
     now = datetime.now()
 
     if now - latest > critical:
-        return 2  # critical
+        exit(2)     # critical
     elif now - latest > warning:
-        return 1  # warning
+        exit(1)     # warning
 
-    return 0  # ok
+    exit(0)     # ok
 
 
 if __name__ == '__main__':
-    exit_(main(docopt(__doc__)))
+    main(docopt(__doc__))

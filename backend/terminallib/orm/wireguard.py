@@ -1,5 +1,6 @@
 """WireGuard configuration for terminals."""
 
+from ipaddress import IPv4Address, IPv4Network
 from pathlib import Path
 
 from peewee import FixedCharField
@@ -15,8 +16,8 @@ from terminallib.orm.common import BaseModel
 __all__ = ['WireGuard']
 
 
-NETWORK = CONFIG['WireGuard']['network']
-SERVER = CONFIG['WireGuard']['server']
+NETWORK = IPv4Network(CONFIG['WireGuard']['network'])
+SERVER = IPv4Address(CONFIG['WireGuard']['server'])
 KEYS_DIR = Path('/usr/lib/terminals/keys')
 
 

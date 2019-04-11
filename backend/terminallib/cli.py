@@ -1,4 +1,4 @@
-"""Terminal query utilities."""
+"""Command line interface utilities."""
 
 from sys import stderr
 

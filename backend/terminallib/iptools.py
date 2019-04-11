@@ -1,4 +1,4 @@
-"""Tools for IPv4 address handling."""
+"""Tools for IPv4 address pools handling."""
 
 from terminallib.exceptions import TerminalConfigError
 

@@ -1,6 +1,6 @@
 """HOMEINFO's terminal library."""
 
-from terminallib.config import CONFIG, WIREGUARD_NETWORK
+from terminallib.config import CONFIG
 from terminallib.ctrl import CustomSSHOptions, RemoteController
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError
@@ -18,7 +18,6 @@ from terminallib.orm import WireGuard
 __all__ = [
     # Constants:
     'CONFIG',
-    'WIREGUARD_NETWORK',
     # Exceptions:
     'TerminalError',
     'TerminalConfigError',

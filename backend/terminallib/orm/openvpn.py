@@ -15,8 +15,9 @@ from terminallib.orm.common import BaseModel
 __all__ = ['OpenVPN']
 
 
-NETWORK = IPv4Network('{}/{}'.format(
-    CONFIG['OpenVPN']['network'], CONFIG['OpenVPN']['mask']))
+NETBASE = CONFIG['OpenVPN']['network']
+NETMASK = CONFIG['OpenVPN']['mask']
+NETWORK = IPv4Network('{}/{}'.format(NETBASE, NETMASK))
 RESERVED = {addr for index, addr in enumerate(NETWORK) if index <= 10}
 
 
