@@ -18,7 +18,7 @@ __all__ = ['Location']
 
 
 class Location(BaseModel):
-    """A location for a terminal."""
+    """A customer-specific location of a terminal."""
 
     customer = CascadingFKField(Customer, column_name='customer')
     type = EnumField(Type)
