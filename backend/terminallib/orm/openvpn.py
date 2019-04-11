@@ -1,6 +1,6 @@
 """OpenVPN connections."""
 
-from ipaddress import IPv4Network, IPv4Address
+from ipaddress import IPv4Network
 
 from peewee import CharField
 from peewee import IntegerField
@@ -8,7 +8,6 @@ from peewee import IntegerField
 from peeweeplus import IPv4AddressField
 
 from terminallib.config import CONFIG
-from terminallib.exceptions import TerminalConfigError
 from terminallib.iptools import used_ipv4addresses, get_ipv4address
 from terminallib.orm.common import BaseModel
 

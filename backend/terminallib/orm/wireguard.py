@@ -2,13 +2,12 @@
 
 from pathlib import Path
 
-from peewee import CharField, FixedCharField
+from peewee import FixedCharField
 
 from peeweeplus import IPv4AddressField
 from wgtools import keypair
 
 from terminallib.config import CONFIG
-from terminallib.exceptions import TerminalConfigError
 from terminallib.iptools import used_ipv4addresses, get_ipv4address
 from terminallib.orm.common import BaseModel
 

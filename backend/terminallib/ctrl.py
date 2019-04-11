@@ -77,7 +77,7 @@ class RemoteController:
             'ConnectTimeout': CONFIG['ssh']['CONNECT_TIMEOUT']}
 
     @property
-    def ipv4addr(self):
+    def ipv4address(self):
         """Returns the system's IPv4 address."""
         try:
             return self.system.openvpn.ipv4address

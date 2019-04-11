@@ -1,5 +1,6 @@
 """Terminal locations."""
 
+from peewee import BooleanField
 from peewee import CharField
 from peewee import DateField
 from peewee import DateTimeField
@@ -32,6 +33,12 @@ class Location(BaseModel):
     scheduled = DateField(null=True)
     deployed = DateTimeField(null=True)
     annotation = CharField(255, null=True)
+    testing = BooleanField(default=False)
+
+    def __str__(self):
+        """Returns a human readable string."""
+        return '{} of {} at {}'.format(
+            self.type, self.customer.id, self.address)
 
     def to_json(self, cascade=True, **kwargs):
         """Returns a JSON-ish dictionary."""

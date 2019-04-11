@@ -1,5 +1,7 @@
 """Tools for IPv4 address handling."""
 
+from terminallib.exceptions import TerminalConfigError
+
 
 __all__ = ['used_ipv4addresses', 'get_ipv4address']
 

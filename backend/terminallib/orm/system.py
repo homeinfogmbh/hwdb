@@ -10,7 +10,7 @@ from peewee import ForeignKeyField
 from mdb import Customer
 from peeweeplus import EnumField
 
-from terminallib.config import CONFIG
+from terminallib.config import CONFIG, LOGGER
 from terminallib.enumerations import OperatingSystem
 from terminallib.orm.common import BaseModel
 from terminallib.orm.location import Location
@@ -34,7 +34,6 @@ class System(BaseModel):
         on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     operating_system = EnumField(OperatingSystem)
-    testing = BooleanField(default=False)
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
     model = CharField(255, null=True)   # Hardware model.
@@ -48,6 +47,18 @@ class System(BaseModel):
     def wg_hostname(self):
         """Returns the respective host name."""
         return '{}.{}'.format(CONFIG['WireGuard']['domain'], self.id)
+
+    def relocate(self, location):
+        """Deploys a terminal at the respective location."""
+        if self.location == location:
+            LOGGER.warning('Refusing relocation to same location.')
+            return False
+
+        self.location, old_location = location, self.location
+        LOGGER.info(
+            'Relocated terminal from "%s" to "%s".', old_location,
+            self.location)
+        return True
 
     def to_json(self, brief=False, cascade=True, **kwargs):
         """Returns a JSON-like dictionary."""
