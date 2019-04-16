@@ -12,6 +12,7 @@ def used_ipv4addresses(model):
     for record in model:
         yield record.ipv4address
 
+
 def get_ipv4address(network, used=frozenset(), reserved=frozenset()):
     """Returns a free IPv4Address.
     XXX: Beware of race conditions!
