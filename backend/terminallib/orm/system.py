@@ -25,13 +25,17 @@ class System(BaseModel):
     """A physical terminal out in the field."""
 
     deployment = ForeignKeyField(
-        Deployment, column_name='deployment', null=True, backref='systems',
+        Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
-    openvpn = ForeignKeyField(OpenVPN, column_name='openvpn', null=True)
-    wireguard = ForeignKeyField(WireGuard, column_name='wireguard', null=True)
+    openvpn = ForeignKeyField(
+        OpenVPN, null=True, column_name='openvpn', backref='systems',
+        on_delete='SET NULL', on_update='CASCADE')
+    wireguard = ForeignKeyField(
+        WireGuard, null=True, column_name='wireguard', backref='systems',
+        on_delete='SET NULL', on_update='CASCADE')
     manufacturer = ForeignKeyField(
-        Customer, null=True, column_name='customer', on_delete='CASCADE',
-        on_update='CASCADE')
+        Customer, null=True, column_name='customer', backref='systems',
+        on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     operating_system = EnumField(OperatingSystem)
     monitor = BooleanField(null=True)
