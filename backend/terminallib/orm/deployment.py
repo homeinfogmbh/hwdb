@@ -23,12 +23,10 @@ class Deployment(BaseModel):
     customer = CascadingFKField(Customer, column_name='customer')
     type = EnumField(Type)
     connection = EnumField(Connection)
-    address = ForeignKeyField(
-        Address, column_name='address', on_delete='SET NULL',
-        on_update='CASCADE')
+    address = ForeignKeyField(Address, column_name='address')
     lpt_address = ForeignKeyField(  # Address for local public transport.
-        Address, null=True, column_name='lpt_address',
-        on_delete='SET NULL', on_update='CASCADE')
+        Address, null=True, column_name='lpt_address', on_delete='SET NULL',
+        on_update='CASCADE')
     weather = CharField(16, null=True)
     scheduled = DateField(null=True)
     annotation = CharField(255, null=True)
