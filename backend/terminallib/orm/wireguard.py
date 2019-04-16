@@ -33,12 +33,12 @@ class WireGuard(BaseModel):
         return str(self.ipv4address)
 
     @classmethod
-    def add(cls):
+    def generate(cls):
         """Adds a new WireGuard configuration."""
-        record = cls()
+        used = used_ipv4addresses(cls)
+        ipv4address = get_ipv4address(NETWORK, used=used, reserved={SERVER})
+        record = cls(ipv4address=ipv4address)
         record.pubkey, record.key = keypair()
-        record.ipv4address = get_ipv4address(
-            NETWORK, used=used_ipv4addresses(cls), reserved={SERVER})
         record.save()
         return record
 

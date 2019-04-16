@@ -35,10 +35,8 @@ class OpenVPN(BaseModel):
     @classmethod
     def add(cls, key=None, mtu=None):
         """Adds a record for the terminal."""
-        openvpn = cls()
-        openvpn.ipv4address = get_ipv4address(
-            NETWORK, used=used_ipv4addresses(cls), reserved=RESERVED)
-        openvpn.key = key
-        openvpn.mtu = mtu
-        openvpn.save()
-        return openvpn
+        used = used_ipv4addresses(cls)
+        ipv4address = get_ipv4address(NETWORK, used=used, reserved=RESERVED)
+        record = cls(ipv4address=ipv4address, key=key, mtu=mtu)
+        record.save()
+        return record
