@@ -14,8 +14,7 @@ setup(
         'files/chkapp',
         'files/chksync',
         'files/openvpncfg-gen',
-        'files/termutil',
-        'files/terminals'],
+        'files/termutil'],
     data_files=[
         ('/usr/share/terminals',
          ['files/openvpn.conf.temp', 'files/pacman.conf.temp'])],
