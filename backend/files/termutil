@@ -9,75 +9,58 @@ Usage:
     termutil list-fields
 
 Options:
-    --terminals, -T             List terminals.
-    --classes, -C               List terminal classes.
-    --operating-systems, -O     List operating systems.
-    --domains, -D               List domains.
-    --deployed, -d              Filter for deployed terminals.
-    --undeployed, -u            Filter for undeployed terminals.
-    --testing, -t               Filter for testing terminals.
-    --productive, -p            Filter for productive terminals.
-    --deleted                   Also include deleted terminals.
-    --class=<classes>, -c       Filter for terminals of the specified
+    --list-systems, -S          List systems.
+    --list-types, -T            List types.
+    --list-oss, -O              List operating systems.
+    --deployed, -d              Filter for deployed systems.
+    --undeployed, -u            Filter for undeployed systems.
+    --testing                   Filter for testing systems.
+    --productive, -p            Filter for productive systems.
+    --types=<types>, -t         Filter for systems of the specified
                                 classes (comma separated).
-    --oss=<oss>, -o             Filter for terminals using the specified
+    --oss=<oss>, -o             Filter for systems using the specified
                                 operating systems (comma separated).
-    --online                    Filter for terminals that are online.
-    --offline                   Filter for terminals that are offline.
+    --online                    Filter for systems that are online.
+    --offline                   Filter for systems that are offline.
     --omit-header, -n           Do not print the column header.
     --separator=<sep>, -s       Specifies the column separator.
     --fields=<fields>, -f       Comma-separated list of fields to display.
-    --index=<n>, -i             On ambiguous results, use the nth.
     --annotation=<text>, -a     Consider the specified annotation.
 """
 from logging import INFO, basicConfig, getLogger
 from pathlib import Path
-from sys import exit as exit_
+from sys import exit    # pylint: disable=W0622
 
 from docopt import docopt
 
 from syslib import script
 
-from terminallib.exceptions import TerminalError, AmbiguousTerminals
-from terminallib.filter import get_terminals
-from terminallib.orm import Class, OS
-from terminallib.util import ARNIE
-from terminallib.util import DEFAULT_FIELDS
-from terminallib.util import FIELDS
-from terminallib.util import print_terminal
-from terminallib.util import get_terminal
-from terminallib.util import list_terminals
-from terminallib.util import list_classes
-from terminallib.util import list_oss
-from terminallib.util import list_domains
+from terminallib.cli import ARNIE
+from terminallib.cli import DEFAULT_FIELDS
+from terminallib.cli import FIELDS
+from terminallib.cli import print_system
+from terminallib.cli import get_system
+from terminallib.cli import list_systems
+from terminallib.cli import list_types
+from terminallib.cli import list_oss
+from terminallib.exceptions import TerminalError, AmbiguousSystems
+from terminallib.filter import get_systems
 
 
 LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
 LOGGER = getLogger(Path(__file__).name)
 
 
-def _get_class(name):
-    """Returns the class by its name."""
+def _list_systems(options):
+    """Lists systems."""
 
-    if name is None:
-        return None
+    ids = [int(id) for id in options['<ids>']]
+    customer = options['--customer']
 
-    return Class.get(Class.name == name)
-
-
-def _get_os(name):
-    """Returns the operating system by its name."""
-
-    if name is None:
-        return None
-
-    return OS.get(OS.name == name)
-
-
-def _list_terminals(options):
-    """Lists terminals."""
-
-    expr = options['<expression>']
+    try:
+        customer = int(customer)
+    except ValueError:
+        LOGGER.error('Invalid customer ID: %s.', customer)
 
     if options['--deployed'] and options['--undeployed']:
         deployed = None
@@ -97,88 +80,64 @@ def _list_terminals(options):
     else:
         testing = None
 
-    classes = options['--class'].split(',') if options['--class'] else ()
     oss = options['--oss'].split(',') if options['--oss'] else ()
     online = options['--online']
     offline = options['--offline']
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields']
-    deleted = None if options['--deleted'] else False
 
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
     else:
         fields = DEFAULT_FIELDS
 
-    terminals = get_terminals(
-        expr, deployed=deployed, testing=testing, classes=classes, oss=oss,
-        online=online, offline=offline, deleted=deleted)
+    systems = get_systems(
+        ids, customer, deployed=deployed, testing=testing, oss=oss,
+        online=online, offline=offline)
 
-    for line in list_terminals(
-            terminals, header=header, fields=fields, sep=separator):
+    for line in list_systems(
+            systems, header=header, fields=fields, sep=separator):
         print(line, flush=True)
 
     return 0
 
 
-def _list_classes(_):
-    """Lists available classes."""
-
-    for class_ in list_classes():
-        print(class_, flush=True)
-
-
 def _list_oss(_):
     """Lists available operating systems."""
 
-    for operating_system in list_oss():
-        print(operating_system, flush=True)
 
-
-def _list_domains(_):
-    """Lists available domains."""
-
-    for domain in list_domains():
-        print(domain, flush=True)
-
-
-def _find_terminal(options):
-    """Finds a terminal."""
-
-    if options['--index']:
-        index = int(options['--index'])
-    else:
-        index = None
+def _find_system(options):
+    """Finds a system."""
 
     try:
-        terminal = get_terminal(
+        system = get_system(
             options['<street>'], options['<house_number>'],
-            options['--annotation'], index=index)
-    except AmbiguousTerminals as ambiguous:
+            options['--annotation'])
+    except AmbiguousSystems as ambiguous:
         LOGGER.error(ambiguous)
 
-        for terminal in ambiguous.terminals:
-            print_terminal(terminal)
+        for system in ambiguous.systems:
+            print_system(system)
 
         return 1
     except TerminalError as error:
         LOGGER.error(error)
         return 2
 
-    print_terminal(terminal)
+    print_system(system)
     return 0
 
 
 @script
 def main(options):
-    """Runs the terminal utility."""
+    """Runs the system utility."""
 
     basicConfig(level=INFO, format=LOG_FORMAT)
 
     if options['list'] or options['ls']:
-        if sum((options['--terminals'], options['--classes'],
-                options['--operating-systems'], options['--domains'])) != 1:
+        if sum((options['--list-system'], options['--list-types'],
+                options['--list-oss'])) != 1:
             if '-'.join(options['<expression>']) == 'CSM-101':
                 print(ARNIE)
             else:
@@ -186,16 +145,16 @@ def main(options):
                     'Must specify exactly one list option '
                     'or a Cyberdyne Systems Model.')
                 return 1
-        elif options['--terminals']:
-            return _list_terminals(options)
-        elif options['--classes']:
-            _list_classes(options)
+        elif options['--systems']:
+            return _list_systems(options)
+        elif options['--types']:
+            for typ in list_types():
+                print(typ, flush=True)
         elif options['--operating-systems']:
-            _list_oss(options)
-        elif options['--domains']:
-            _list_domains(options)
+            for operating_system in list_oss():
+                print(operating_system, flush=True)
     elif options['find']:
-        return _find_terminal(options)
+        return _find_system(options)
     elif options['list-fields']:
         print('Default fields:  ', ', '.join(DEFAULT_FIELDS))
         print('Available fields:', ', '.join(sorted(FIELDS)))
@@ -204,4 +163,4 @@ def main(options):
 
 
 if __name__ == '__main__':
-    exit_(main(docopt(__doc__)))
+    exit(main(docopt(__doc__)))
