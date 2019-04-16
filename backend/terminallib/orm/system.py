@@ -51,7 +51,7 @@ class System(BaseModel):
     def relocate(self, deployment):
         """Locates a system at the respective deployment."""
         if self.deployment == deployment:
-            LOGGER.warning('Refusing to deploy to same deployment.')
+            LOGGER.error('Refusing to deploy to same deployment.')
             return False
 
         self.deployment, old_deployment = deployment, self.deployment
