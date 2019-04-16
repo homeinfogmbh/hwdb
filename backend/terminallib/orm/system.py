@@ -13,7 +13,7 @@ from peeweeplus import EnumField
 from terminallib.config import CONFIG, LOGGER
 from terminallib.enumerations import OperatingSystem
 from terminallib.orm.common import BaseModel
-from terminallib.orm.location import Location
+from terminallib.orm.deployment import Deployment
 from terminallib.orm.openvpn import OpenVPN
 from terminallib.orm.wireguard import WireGuard
 
@@ -24,8 +24,8 @@ __all__ = ['System']
 class System(BaseModel):
     """A physical terminal out in the field."""
 
-    location = ForeignKeyField(
-        Location, column_name='location', null=True, backref='systems',
+    deployment = ForeignKeyField(
+        Deployment, column_name='deployment', null=True, backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     openvpn = ForeignKeyField(OpenVPN, column_name='openvpn', null=True)
     wireguard = ForeignKeyField(WireGuard, column_name='wireguard', null=True)
@@ -48,44 +48,37 @@ class System(BaseModel):
         """Returns the respective host name."""
         return '{}.{}'.format(CONFIG['WireGuard']['domain'], self.id)
 
-    def relocate(self, location):
-        """Deploys a terminal at the respective location."""
-        if self.location == location:
-            LOGGER.warning('Refusing relocation to same location.')
+    def relocate(self, deployment):
+        """Locates a system at the respective deployment."""
+        if self.deployment == deployment:
+            LOGGER.warning('Refusing to deploy to same deployment.')
             return False
 
-        self.location, old_location = location, self.location
-        LOGGER.info(
-            'Relocated terminal from "%s" to "%s".', old_location,
-            self.location)
+        self.deployment, old_deployment = deployment, self.deployment
+
+        if old_deployment is None:
+            LOGGER.info('Initially deployed system at "%s".', self.deployment)
+        else:
+            LOGGER.info('Relocated system from "%s" to "%s".',
+                        old_deployment, self.deployment)
+
         return True
 
-    def to_json(self, brief=False, cascade=True, **kwargs):
+    def to_json(self, brief=False, cascade=False, **kwargs):
         """Returns a JSON-like dictionary."""
         dictionary = super().to_json(**kwargs)
 
-        if self.location is not None:
-            if cascade:
-                dictionary['location'] = self.location.to_json()
-            else:
-                dictionary['location'] = self.location.id
+        if cascade:
+            if self.deployment is not None:
+                dictionary['deployment'] = self.deployment.to_json()
 
-        if not brief and self.openvpn is not None:
-            if cascade:
+            if not brief and self.openvpn is not None:
                 dictionary['openvpn'] = self.openvpn.to_json()
-            else:
-                dictionary['openvpn'] = self.openvpn.id
 
-        if not brief and self.wireguard is not None:
-            if cascade:
+            if not brief and self.wireguard is not None:
                 dictionary['wireguard'] = self.wireguard.to_json()
-            else:
-                dictionary['wireguard'] = self.wireguard.id
 
-        if not brief and self.manufacturer is not None:
-            if cascade:
+            if not brief and self.manufacturer is not None:
                 dictionary['manufacturer'] = self.manufacturer.to_json()
-            else:
-                dictionary['manufacturer'] = self.manufacturer.id
 
         return dictionary

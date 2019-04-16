@@ -7,7 +7,7 @@ from syslib import B64LZMA
 
 from terminallib.config import LOGGER
 from terminallib.fields import TerminalField
-from terminallib.orm import Location, System
+from terminallib.orm import Deployment, System
 from terminallib.enumerations import OperatingSystem, Type
 from terminallib.exceptions import TerminalError, AmbiguousSystems
 
@@ -34,8 +34,8 @@ FIELDS = {
     'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
     'sn': TerminalField(
         lambda system: system.serial_number, 'Serial Number', size=32),
-    'location': TerminalField(
-        lambda system: system.location, 'Address', size=48, leftbound=True),
+    'deployment': TerminalField(
+        lambda system: system.deployment, 'Deployment', size=48,),
     'connection': TerminalField(
         lambda system: system.connection.value, 'Connection', size=8),
     'annotation': TerminalField(
@@ -53,7 +53,7 @@ ARNIE = B64LZMA(
 CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
-DEFAULT_FIELDS = ('id', 'os', 'openvpn', 'wireguard', 'testing', 'location')
+DEFAULT_FIELDS = ('id', 'os', 'openvpn', 'wireguard', 'testing', 'deployment')
 
 
 def _get_fields(fields):
@@ -69,17 +69,17 @@ def _get_fields(fields):
 def print_system(system):
     """Prints the respective system."""
 
-    location = system.location
+    deployment = system.deployment
 
-    if location is not None:
-        print(str(location.address), '({})'.format(location.annotation),
+    if deployment is not None:
+        print(str(deployment.address), '({})'.format(deployment.annotation),
               file=stderr)
 
     print(system.id)
 
 
 def find_systems(street, house_number=None, annotation=None):
-    """Finds systems in the specified location."""
+    """Finds systems at the specified address."""
 
     selection = Address.street ** '%{}%'.format(street)
 
@@ -87,15 +87,15 @@ def find_systems(street, house_number=None, annotation=None):
         selection &= Address.house_number ** '%{}%'.format(house_number)
 
     if annotation is not None:
-        selection &= Location.annotation ** '%{}%'.format(annotation)
+        selection &= Deployment.annotation ** '%{}%'.format(annotation)
 
-    join_condition = Address.id == Location.address
-    join = System.select().join(Location).join(Address, on=join_condition)
+    join_condition = Address.id == Deployment.address
+    join = System.select().join(Deployment).join(Address, on=join_condition)
     return join.where(selection)
 
 
 def get_system(street, house_number=None, annotation=None):
-    """Finds a system by its location."""
+    """Finds a system by its address."""
 
     try:
         system, superfluous = find_systems(

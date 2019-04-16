@@ -7,7 +7,7 @@ from terminallib.exceptions import TerminalError
 from terminallib.exceptions import TerminalConfigError
 from terminallib.exceptions import AmbiguousSystems
 from terminallib.filter import parse, get_systems
-from terminallib.orm import Location
+from terminallib.orm import Deployment
 from terminallib.orm import OpenVPN
 from terminallib.orm import Synchronization
 from terminallib.orm import System
@@ -33,7 +33,7 @@ __all__ = [
     'OperatingSystem',
     'Type',
     # ORM models:
-    'Location',
+    'Deployment',
     'OpenVPN',
     'Synchronization',
     'System',

@@ -1,4 +1,4 @@
-"""Terminal locations."""
+"""Terminal deployments."""
 
 from peewee import BooleanField
 from peewee import CharField
@@ -14,11 +14,11 @@ from terminallib.enumerations import Connection, Type
 from terminallib.orm.common import BaseModel
 
 
-__all__ = ['Location']
+__all__ = ['Deployment']
 
 
-class Location(BaseModel):
-    """A customer-specific location of a terminal."""
+class Deployment(BaseModel):
+    """A customer-specific deployment of a terminal."""
 
     customer = CascadingFKField(Customer, column_name='customer')
     type = EnumField(Type)
@@ -31,9 +31,9 @@ class Location(BaseModel):
         on_delete='SET NULL', on_update='CASCADE')
     weather = CharField(16, null=True)
     scheduled = DateField(null=True)
-    deployed = DateTimeField(null=True)
     annotation = CharField(255, null=True)
     testing = BooleanField(default=False)
+    timestamp = DateTimeField(null=True)
 
     def __str__(self):
         """Returns a human readable string."""

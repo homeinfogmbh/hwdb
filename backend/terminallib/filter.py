@@ -2,7 +2,7 @@
 
 from terminallib.config import LOGGER
 from terminallib.ctrl import is_online
-from terminallib.orm import Location, System
+from terminallib.orm import Deployment, System
 
 
 __all__ = ['parse', 'filter_online', 'filter_offline', 'get_systems']
@@ -51,16 +51,13 @@ def get_systems(ids, customer=None, deployed=None,  # pylint: disable=R0913
     select = parse(ids)
 
     if customer is not None:
-        select &= Location.customer == customer
+        select &= Deployment.customer == customer
 
     if deployed is not None:
-        if deployed in {True, False}:
-            if deployed:
-                select &= ~(Location.deployed >> None)
-            else:
-                select &= Location.deployed >> None
+        if deployed:
+            select &= ~(Deployment.deployed >> None)
         else:
-            select &= Location.deployed == deployed
+            select &= Deployment.deployed >> None
 
     if testing is not None:
         select &= System.testing == testing
@@ -68,7 +65,7 @@ def get_systems(ids, customer=None, deployed=None,  # pylint: disable=R0913
     if oss:
         select &= System.operating_system << oss
 
-    systems = System.select().join(Location).where(select)
+    systems = System.select().join(Deployment).where(select)
 
     if online and not offline:
         return filter_online(systems)
