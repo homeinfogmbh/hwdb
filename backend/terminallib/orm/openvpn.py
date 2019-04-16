@@ -33,7 +33,7 @@ class OpenVPN(BaseModel):
         return str(self.ipv4address)
 
     @classmethod
-    def add(cls, key=None, mtu=None):
+    def generate(cls, key=None, mtu=None):
         """Adds a record for the terminal."""
         used = used_ipv4addresses(cls)
         ipv4address = get_ipv4address(NETWORK, used=used, reserved=RESERVED)
