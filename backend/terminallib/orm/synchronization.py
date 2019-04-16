@@ -31,7 +31,7 @@ class Synchronization(BaseModel):
     system = ForeignKeyField(
         System, column_name='system', backref='synchronizations',
         on_delete='CASCADE', on_update='CASCADE')
-    started = DateTimeField()
+    started = DateTimeField(default=datetime.now)
     finished = DateTimeField(null=True)
     reload = BooleanField(null=True)
     force = BooleanField(null=True)
@@ -44,15 +44,6 @@ class Synchronization(BaseModel):
 
     def __exit__(self, *_):
         self.stop()
-
-    @classmethod
-    def start(cls, system, result=None):
-        """Start a synchronization for this terminal."""
-        sync = cls()
-        sync.system = system
-        sync.started = datetime.now()
-        sync.result = result
-        return sync
 
     def stop(self, force=False):
         """Stops the synchronization."""
