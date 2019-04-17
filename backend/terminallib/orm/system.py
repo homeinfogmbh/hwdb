@@ -45,12 +45,12 @@ class System(BaseModel):
     @property
     def vpn_hostname(self):
         """Returns a host name for the OpenVPN network."""
-        return '{}.{}'.format(CONFIG['OpenVPN']['domain'], self.id)
+        return '{}.{}'.format(self.id, CONFIG['OpenVPN']['domain'])
 
     @property
     def wg_hostname(self):
         """Returns the respective host name."""
-        return '{}.{}'.format(CONFIG['WireGuard']['domain'], self.id)
+        return '{}.{}'.format(self.id, CONFIG['WireGuard']['domain'])
 
     def relocate(self, deployment):
         """Locates a system at the respective deployment."""
