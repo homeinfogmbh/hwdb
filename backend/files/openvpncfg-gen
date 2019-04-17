@@ -46,7 +46,7 @@ def generate_config():
 
         config_text = TEMPLATE.format(
             system.id, openvpn.ipv4address, CONFIG['OpenVPN']['netmask'])
-        file_name = openvpn.key or str(openvpn.id)
+        file_name = str(system.id)
         clients_dir = Path(CONFIG['OpenVPN']['clients_dir'])
         file_path = clients_dir.joinpath(file_name)
 
