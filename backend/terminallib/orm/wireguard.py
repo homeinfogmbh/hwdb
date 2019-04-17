@@ -38,8 +38,9 @@ class WireGuard(BaseModel):
         used = used_ipv4addresses(cls)
         ipv4address = get_ipv4address(NETWORK, used=used, reserved={SERVER})
         record = cls(ipv4address=ipv4address)
-        record.pubkey, record.key = keypair()
+        record.pubkey, key = keypair()
         record.save()
+        record.key = key    # Set key after save, since we need the ID.
         return record
 
     @property
