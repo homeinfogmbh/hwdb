@@ -34,7 +34,7 @@ class System(BaseModel):
         WireGuard, null=True, column_name='wireguard', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     manufacturer = ForeignKeyField(
-        Customer, null=True, column_name='customer', backref='systems',
+        Customer, null=True, column_name='manufacturer', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     operating_system = EnumField(OperatingSystem)
