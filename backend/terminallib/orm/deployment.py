@@ -7,7 +7,6 @@ from peewee import DateTimeField
 from peewee import ForeignKeyField
 
 from mdb import Customer, Address
-from peeweeplus import CascadingFKField
 from peeweeplus import EnumField
 
 from terminallib.enumerations import Connection, Type
