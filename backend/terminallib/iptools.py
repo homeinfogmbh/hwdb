@@ -13,12 +13,12 @@ def used_ipv4addresses(model):
         yield record.ipv4address
 
 
-def get_ipv4address(network, used=frozenset(), reserved=frozenset()):
+def get_ipv4address(network, used=(), reserved=()):
     """Returns a free IPv4Address.
     XXX: Beware of race conditions!
     """
 
-    blacklist = used | reserved
+    blacklist = set(used) | set(reserved)
 
     for ipv4address in network:
         if ipv4address not in blacklist:
