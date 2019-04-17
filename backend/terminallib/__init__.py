@@ -11,7 +11,6 @@ from terminallib.orm import Deployment
 from terminallib.orm import OpenVPN
 from terminallib.orm import Synchronization
 from terminallib.orm import System
-from terminallib.orm import TypeStakeholder
 from terminallib.orm import WireGuard
 
 
@@ -37,5 +36,4 @@ __all__ = [
     'OpenVPN',
     'Synchronization',
     'System',
-    'TypeStakeholder',
     'WireGuard',]
