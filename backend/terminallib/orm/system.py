@@ -45,7 +45,7 @@ class System(BaseModel):
     @property
     def vpn_hostname(self):
         """Returns a host name for the OpenVPN network."""
-        return '{}.{}'.format(CONFIG['VPN']['domain'], self.id)
+        return '{}.{}'.format(CONFIG['OpenVPN']['domain'], self.id)
 
     @property
     def wg_hostname(self):
