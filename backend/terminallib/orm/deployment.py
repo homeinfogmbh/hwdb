@@ -20,7 +20,7 @@ __all__ = ['Deployment']
 class Deployment(BaseModel):
     """A customer-specific deployment of a terminal."""
 
-    customer = CascadingFKField(Customer, column_name='customer')
+    customer = ForeignKeyField(Customer, column_name='customer')
     type = EnumField(Type)
     connection = EnumField(Connection)
     address = ForeignKeyField(Address, column_name='address')
