@@ -8,7 +8,7 @@ from terminallib.config import CONFIG
 __all__ = ['DATABASE', 'BaseModel']
 
 
-DATABASE = MySQLDatabase.from_config(CONFIG['db'])
+DATABASE = MySQLDatabase.from_config(CONFIG['Database'])
 
 
 class BaseModel(JSONModel):
