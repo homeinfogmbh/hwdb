@@ -5,7 +5,7 @@ from pathlib import Path
 
 from peewee import FixedCharField
 
-from peeweeplus import IPv4AddressField
+from peeweeplus import IPv4AddressField, PasswordField
 from wgtools import keypair     # pylint: disable=C0411
 
 from terminallib.config import CONFIG
@@ -27,6 +27,7 @@ class WireGuard(BaseModel):
 
     ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
+    key = PasswordField(44)
 
     def __str__(self):
         """Returns a human readable representation."""
@@ -37,28 +38,10 @@ class WireGuard(BaseModel):
         """Adds a new WireGuard configuration."""
         used = used_ipv4addresses(cls)
         ipv4address = get_ipv4address(NETWORK, used=used, reserved={SERVER})
-        record = cls(ipv4address=ipv4address)
-        record.pubkey, key = keypair()
+        pubkey, key = keypair()
+        record = cls(ipv4address=ipv4address, pubkey=pubkey, key=key)
         record.save()
-        record.key = key    # Set key after save, since we need the ID.
         return record
-
-    @property
-    def keyfile(self):
-        """Returns the respective key file."""
-        return KEYS_DIR.joinpath(str(self.id))
-
-    @property
-    def key(self):
-        """Returns the private key."""
-        with self.keyfile.open('r') as file:
-            return file.read().strip()
-
-    @key.setter
-    def key(self, key):
-        """Sets the private key."""
-        with self.keyfile.open('w') as file:
-            return file.write(key)
 
     @property
     def psk(self):
