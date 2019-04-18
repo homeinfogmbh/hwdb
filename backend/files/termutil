@@ -131,7 +131,7 @@ def _find_system(args):
 
 
 @script
-def main(options):
+def main():
     """Runs the system utility."""
 
     basicConfig(level=INFO, format=LOG_FORMAT)
