@@ -38,10 +38,10 @@ def get_args():
         '-c', '--customer', type=int, metavar='customer',
         help='filter for systems of the respective customer')
     list_systems.add_argument(
-        '-d', '--deployed', type=bool, metavar='deployed',
+        '-d', '--deployed', type=int, metavar='deployed',
         help='filter for deployed or undeployed systems')
     list_systems.add_argument(
-        '--testing', type=bool, metavar='testing',
+        '--testing', type=int, metavar='testing',
         help='filter for testing systems')
     list_systems.add_argument(
         '-t', '--type', nargs='+', type=Type, metavar='type',
