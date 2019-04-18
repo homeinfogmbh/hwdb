@@ -4,7 +4,7 @@
     Terminal database query utility.
 
 Usage:
-    termutil (list | ls) [<expression>...] [options]
+    termutil (list | ls) [<ids>...] [options]
     termutil find <street> [<house_number>] [options]
     termutil list-fields
 
