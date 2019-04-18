@@ -3,7 +3,58 @@
 from blessings import Terminal
 
 
-__all__ = ['justify', 'to_string', 'TerminalField']
+__all__ = [
+    'customer_of',
+    'address_of',
+    'type_of',
+    'is_testing',
+    'justify',
+    'to_string',
+    'TerminalField']
+
+
+def customer_of(system):
+    """Returns the customer of the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.customer
+
+
+def address_of(system):
+    """Returns the address of the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.address
+
+
+def type_of(system):
+    """Returns the type of the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.type.value
+
+
+def is_testing(system):
+    """Returns whether the system is a testing system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.testing
 
 
 def justify(string, size, leftbound=False):

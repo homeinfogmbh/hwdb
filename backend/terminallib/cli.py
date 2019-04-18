@@ -6,6 +6,10 @@ from mdb import Address
 from syslib import B64LZMA
 
 from terminallib.config import LOGGER
+from terminallib.fields import address_of
+from terminallib.fields import customer_of
+from terminallib.fields import is_testing
+from terminallib.fields import type_of
 from terminallib.fields import TerminalField
 from terminallib.orm import Deployment, System
 from terminallib.enumerations import OperatingSystem, Type
@@ -34,9 +38,10 @@ FIELDS = {
     'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
     'sn': TerminalField(
         lambda system: system.serial_number, 'Serial Number', size=32),
-    'deployment': TerminalField(
-        lambda system: system.deployment, 'Deployment', size=128,
-        leftbound=True),
+    'customer': TerminalField(customer_of, 'Customer', size=16),
+    'address': TerminalField(address_of, 'Address', size=64, leftbound=True),
+    'type': TerminalField(type_of, 'Type', size=16),
+    'testing': TerminalField(is_testing, 'Testing'),
     'connection': TerminalField(
         lambda system: system.connection.value, 'Connection', size=8),
     'model': TerminalField(
