@@ -31,7 +31,6 @@ FIELDS = {
         lambda system: system.openvpn, 'OpenVPN Address', size=14),
     'wireguard': TerminalField(
         lambda system: system.wireguard, 'WireGuard Address', size=14),
-    'testing': TerminalField(lambda system: system.testing, 'Testing'),
     'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
     'sn': TerminalField(
         lambda system: system.serial_number, 'Serial Number', size=32),
@@ -54,7 +53,7 @@ ARNIE = B64LZMA(
 CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
-DEFAULT_FIELDS = ('id', 'os', 'openvpn', 'wireguard', 'testing', 'deployment')
+DEFAULT_FIELDS = ('id', 'os', 'openvpn', 'wireguard', 'deployment')
 
 
 def _get_fields(fields):
