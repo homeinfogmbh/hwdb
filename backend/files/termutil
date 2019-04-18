@@ -29,10 +29,10 @@ def get_args():
     """Returns the CLI options."""
 
     parser = ArgumentParser(description='Terminal database query utility.')
-    subparsers = parser.add_subparsers(help='subparsers help')
+    subparsers = parser.add_subparsers()
     list_systems = subparsers.add_parser('ls', help='list systems')
     list_systems.add_argument(
-        'id', action='append', type=int, metavar='id',
+        'id', nargs='*', type=int, metavar='id',
         help='filter for systems of the respective customer')
     list_systems.add_argument(
         '-c', '--customer', type=int, metavar='customer',
@@ -44,17 +44,17 @@ def get_args():
         '-p', '--productive', type=bool, metavar='productive',
         help='filter for productive systems')
     list_systems.add_argument(
-        '-t', '--type', action='append', type=Type, metavar='type',
+        '-t', '--type', nargs='*', type=Type, metavar='type',
         help='filter for the respective types')
     list_systems.add_argument(
-        '-i', '--connection', action='append', type=Connection,
+        '-i', '--connection', nargs='*', type=Connection,
         metavar='connection',
         help='filter for the respective connections')
     list_systems.add_argument(
-        '-o', '--os', action='append', type=OperatingSystem, metavar='os',
+        '-o', '--os', nargs='*', type=OperatingSystem, metavar='os',
         help='filter for the respective operating systems')
     list_systems.add_argument(
-        '-f', '--field', action='append', help='specifies the fields to print')
+        '-f', '--field', nargs='*', help='specifies the fields to print')
     list_systems.add_argument(
         '-n', '--no-header', action='store_true',
         help='do not print table header')
