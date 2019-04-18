@@ -49,9 +49,11 @@ def get_systems(ids, customer=None, deployed=None, testing=None, types=None,
     """Yields systems for the respective expressions and filters."""
 
     select = parse(ids)
+    join_deployment = False
 
     if customer is not None:
         select &= Deployment.customer == customer
+        join_deployment = True
 
     if deployed is not None:
         if deployed:
@@ -61,14 +63,21 @@ def get_systems(ids, customer=None, deployed=None, testing=None, types=None,
 
     if testing is not None:
         select &= Deployment.testing == testing
+        join_deployment = True
 
     if types:
         select &= Deployment.types << types
+        join_deployment = True
 
     if oss:
         select &= System.operating_system << oss
 
-    systems = System.select().join(Deployment).where(select)
+    systems = System.select()
+
+    if join_deployment:
+        systems = systems.join(Deployment)
+
+    systems = systems.where(select)
 
     if online is not None:
         if online:
