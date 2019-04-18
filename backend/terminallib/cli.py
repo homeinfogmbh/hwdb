@@ -30,7 +30,7 @@ __all__ = [
 FIELDS = {
     'id': TerminalField(lambda system: system.id, 'ID', size=5),
     'os': TerminalField(
-        lambda system: system.operating_system.value, 'OS', size=19),
+        lambda system: system.operating_system.value, 'OS', size=25),
     'openvpn': TerminalField(
         lambda system: system.openvpn, 'OpenVPN Address', size=14),
     'wireguard': TerminalField(
@@ -59,7 +59,9 @@ ARNIE = B64LZMA(
 CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
-DEFAULT_FIELDS = ('id', 'os', 'openvpn', 'wireguard', 'deployment')
+DEFAULT_FIELDS = (
+    'id', 'os', 'openvpn', 'wireguard', 'customer', 'type', 'testing',
+    'address')
 
 
 def _get_fields(fields):
