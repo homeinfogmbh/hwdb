@@ -7,6 +7,7 @@ from syslib import B64LZMA
 
 from terminallib.config import LOGGER
 from terminallib.fields import address_of
+from terminallib.fields import cid_of
 from terminallib.fields import customer_of
 from terminallib.fields import is_testing
 from terminallib.fields import type_of
@@ -38,7 +39,9 @@ FIELDS = {
     'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
     'sn': TerminalField(
         lambda system: system.serial_number, 'Serial Number', size=32),
-    'customer': TerminalField(customer_of, 'Customer', size=16),
+    'cid': TerminalField(cid_of, 'Customer ID', size=12),
+    'customer': TerminalField(
+        customer_of, 'Customer', size=32, leftbound=True),
     'address': TerminalField(address_of, 'Address', size=64, leftbound=True),
     'type': TerminalField(type_of, 'Type', size=16),
     'testing': TerminalField(is_testing, 'Testing'),

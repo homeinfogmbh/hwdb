@@ -4,24 +4,14 @@ from blessings import Terminal
 
 
 __all__ = [
-    'customer_of',
     'address_of',
-    'type_of',
+    'cid_of',
+    'customer_of',
     'is_testing',
+    'type_of',
     'justify',
     'to_string',
     'TerminalField']
-
-
-def customer_of(system):
-    """Returns the customer of the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.customer
 
 
 def address_of(system):
@@ -35,15 +25,26 @@ def address_of(system):
     return deployment.address
 
 
-def type_of(system):
-    """Returns the type of the respective system."""
+def cid_of(system):
+    """Returns the customer ID of the respective system."""
 
     deployment = system.deployment
 
     if deployment is None:
         return None
 
-    return deployment.type.value
+    return deployment.customer.id
+
+
+def customer_of(system):
+    """Returns the customer name of the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.customer.name
 
 
 def is_testing(system):
@@ -55,6 +56,17 @@ def is_testing(system):
         return None
 
     return deployment.testing
+
+
+def type_of(system):
+    """Returns the type of the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.type.value
 
 
 def justify(string, size, leftbound=False):
