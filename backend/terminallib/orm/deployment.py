@@ -34,7 +34,7 @@ class Deployment(BaseModel):
     def __str__(self):
         """Returns a human readable string."""
         return '{} of {} at {}'.format(
-            self.type, self.customer.id, self.address)
+            self.type.value, self.customer.id, self.address)
 
     def to_json(self, cascade=True, **kwargs):
         """Returns a JSON-ish dictionary."""
