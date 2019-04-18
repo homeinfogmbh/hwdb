@@ -47,7 +47,7 @@ def get_args():
         '-t', '--type', action='append', type=Type, metavar='type',
         help='filter for the respective types')
     list_systems.add_argument(
-        '-c', '--connection', action='append', type=Connection,
+        '-i', '--connection', action='append', type=Connection,
         metavar='connection',
         help='filter for the respective connections')
     list_systems.add_argument(
