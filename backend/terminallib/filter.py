@@ -55,9 +55,9 @@ def get_systems(ids, customer=None, deployed=None, testing=None, types=None,
 
     if deployed is not None:
         if deployed:
-            select &= ~(Deployment.deployed >> None)
+            select &= ~(System.deployment >> None)
         else:
-            select &= Deployment.deployed >> None
+            select &= System.deployment >> None
 
     if testing is not None:
         select &= Deployment.testing == testing
