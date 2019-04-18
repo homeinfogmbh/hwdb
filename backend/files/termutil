@@ -138,8 +138,8 @@ def main(options):
     args = get_args()
     print(args)
     print(dir(args))
-    return 0
+    exit(0)
 
 
 if __name__ == '__main__':
-    exit(main(docopt(__doc__)))
+    main()
