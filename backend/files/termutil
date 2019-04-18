@@ -85,7 +85,7 @@ def _list_systems(args):
         fields = DEFAULT_FIELDS
 
     systems = get_systems(
-        args.ids, customer=args.customer, deployed=args.deployed,
+        args.id, customer=args.customer, deployed=args.deployed,
         testing=args.testing, oss=args.os, types=args.type)
 
     for line in list_systems(
