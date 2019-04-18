@@ -89,7 +89,8 @@ def _list_systems(args):
         testing=args.testing, oss=args.os, types=args.type)
 
     for line in list_systems(
-            systems, header=not args.no_header, fields=fields, sep=args.sep):
+            systems, header=not args.no_header, fields=fields,
+            sep=args.separator):
         print(line, flush=True)
 
     return 0
