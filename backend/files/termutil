@@ -12,6 +12,7 @@ Options:
     --list-systems, -S          List systems.
     --list-types, -T            List types.
     --list-oss, -O              List operating systems.
+    --customer=<customer>       Filter for terminals of this customer.
     --deployed, -d              Filter for deployed systems.
     --undeployed, -u            Filter for undeployed systems.
     --testing                   Filter for testing systems.
@@ -51,35 +52,51 @@ LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
 LOGGER = getLogger(Path(__file__).name)
 
 
+def _get_deployed(options):
+    """Returns the deployed flag."""
+
+    if options['--deployed'] and options['--undeployed']:
+        return None
+
+    if options['--deployed']:
+        return True
+
+    if options['--undeployed']:
+        return False
+
+    return None
+
+
+def _get_testing(options):
+    """Returns the testing flag."""
+
+    if options['--testing'] and options['--productive']:
+        return None
+
+    if options['--testing']:
+        return True
+
+    if options['--productive']:
+        return False
+
+    return None
+
+
 def _list_systems(options):
     """Lists systems."""
 
     ids = [int(id) for id in options['<ids>']]
     customer = options['--customer']
 
-    try:
-        customer = int(customer)
-    except ValueError:
-        LOGGER.error('Invalid customer ID: %s.', customer)
+    if customer is not None:
+        try:
+            customer = int(customer)
+        except ValueError:
+            LOGGER.error('Invalid customer ID: %s.', customer)
+            return 1
 
-    if options['--deployed'] and options['--undeployed']:
-        deployed = None
-    elif options['--deployed']:
-        deployed = True
-    elif options['--undeployed']:
-        deployed = False
-    else:
-        deployed = None
-
-    if options['--testing'] and options['--productive']:
-        testing = None
-    elif options['--testing']:
-        testing = True
-    elif options['--productive']:
-        testing = False
-    else:
-        testing = None
-
+    deployed = _get_deployed(options)
+    testing = _get_testing(options)
     oss = options['--oss'].split(',') if options['--oss'] else ()
     online = options['--online']
     offline = options['--offline']
@@ -93,7 +110,7 @@ def _list_systems(options):
         fields = DEFAULT_FIELDS
 
     systems = get_systems(
-        ids, customer, deployed=deployed, testing=testing, oss=oss,
+        ids, customer=customer, deployed=deployed, testing=testing, oss=oss,
         online=online, offline=offline)
 
     for line in list_systems(
