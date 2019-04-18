@@ -83,8 +83,11 @@ def print_system(system):
     deployment = system.deployment
 
     if deployment is not None:
-        print(str(deployment.address), '({})'.format(deployment.annotation),
-              file=stderr)
+        if deployment.annotation:
+            print(str(deployment.address),
+                  '({})'.format(deployment.annotation), file=stderr)
+        else:
+            print(str(deployment.address), file=stderr)
 
     print(system.id)
 
