@@ -63,8 +63,7 @@ CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
 DEFAULT_FIELDS = (
-    'id', 'os', 'openvpn', 'wireguard', 'customer', 'type', 'testing',
-    'address')
+    'id', 'os', 'openvpn', 'wireguard', 'cid', 'type', 'testing', 'address')
 
 
 def _get_fields(fields):
