@@ -2,7 +2,7 @@
 """Terminal database query utility."""
 
 from argparse import ArgumentParser
-from logging import INFO, basicConfig, getLogger
+from logging import DEBUG, INFO, basicConfig, getLogger
 from pathlib import Path
 from sys import exit    # pylint: disable=W0622
 
@@ -124,8 +124,8 @@ def _find_system(args):
 def main():
     """Runs the system utility."""
 
-    basicConfig(level=INFO, format=LOG_FORMAT)
     args = get_args()
+    basicConfig(level=DEBUG if args.verbose else INFO, format=LOG_FORMAT)
     retval = 0
 
     if args.mode == 'ls':
