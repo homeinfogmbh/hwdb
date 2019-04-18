@@ -43,7 +43,7 @@ FIELDS = {
     'customer': TerminalField(
         customer_of, 'Customer', size=32, leftbound=True),
     'address': TerminalField(address_of, 'Address', size=64, leftbound=True),
-    'type': TerminalField(type_of, 'Type', size=16),
+    'type': TerminalField(type_of, 'Type', size=18, leftbound=True),
     'testing': TerminalField(is_testing, 'Testing'),
     'connection': TerminalField(
         lambda system: system.connection.value, 'Connection', size=8),
