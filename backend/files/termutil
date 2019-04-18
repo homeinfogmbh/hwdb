@@ -10,12 +10,9 @@ from syslib import script
 
 from terminallib.cli import ARNIE
 from terminallib.cli import DEFAULT_FIELDS
-from terminallib.cli import FIELDS
 from terminallib.cli import print_system
 from terminallib.cli import get_system
 from terminallib.cli import list_systems
-from terminallib.cli import list_types
-from terminallib.cli import list_oss
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError, AmbiguousSystems
 from terminallib.filter import get_systems
@@ -29,7 +26,10 @@ def get_args():
     """Returns the CLI options."""
 
     parser = ArgumentParser(description='Terminal database query utility.')
+    parser.add_argument(
+        '-v', '--verbose', action='store_true', help='turn on verbose logging')
     subparsers = parser.add_subparsers(dest='mode')
+
     list_systems = subparsers.add_parser('ls', help='list systems')
     list_systems.add_argument(
         'id', nargs='*', type=int, metavar='id',
@@ -41,8 +41,8 @@ def get_args():
         '-d', '--deployed', type=bool, metavar='deployed',
         help='filter for deployed or undeployed systems')
     list_systems.add_argument(
-        '-p', '--productive', type=bool, metavar='productive',
-        help='filter for productive systems')
+        '--testing', type=bool, metavar='testing',
+        help='filter for testing systems')
     list_systems.add_argument(
         '-t', '--type', nargs='+', type=Type, metavar='type',
         help='filter for the respective types')
@@ -56,56 +56,43 @@ def get_args():
     list_systems.add_argument(
         '-f', '--field', nargs='+', help='specifies the fields to print')
     list_systems.add_argument(
+        '-s', '--separator', help='specifies the fields separator')
+    list_systems.add_argument(
         '-n', '--no-header', action='store_true',
         help='do not print table header')
-    list_systems.add_argument(
-        '-v', '--verbose', action='store_true', help='turn on verbose logging')
+
     find_systems = subparsers.add_parser(
         'find', help='find digital signage systems')
+    find_systems.add_argument(
+        'street', help='filter for systems of the respective street')
+    find_systems.add_argument(
+        'house_number', nargs='?',
+        help='filter for systems of the respective house number')
+    find_systems.add_argument(
+        'annotation', nargs='?',
+        help='filter for systems of the respective annotation')
+
+    subparsers.add_parser('CSM-101', help='?')
     return parser.parse_args()
 
 
 def _list_systems(args):
     """Lists systems."""
 
-    ids = [int(id) for id in options['<ids>']]
-    customer = options['--customer']
-
-    if customer is not None:
-        try:
-            customer = int(customer)
-        except ValueError:
-            LOGGER.error('Invalid customer ID: %s.', customer)
-            return 1
-
-    deployed = _get_deployed(options)
-    testing = _get_testing(options)
-    oss = options['--oss'].split(',') if options['--oss'] else ()
-    online = options['--online']
-    offline = options['--offline']
-    header = not options['--omit-header']
-    separator = options['--separator'] or '  '
-    fields = options['--fields']
-    types = set(_get_types(options))
-
-    if fields:
-        fields = [field.lower() for field in fields.split(',') if field]
+    if args.fields:
+        fields = [field.lower() for field in args.fields]
     else:
         fields = DEFAULT_FIELDS
 
     systems = get_systems(
-        ids, customer=customer, deployed=deployed, testing=testing, oss=oss,
-        types=types, online=online, offline=offline)
+        args.ids, customer=args.customer, deployed=args.deployed,
+        testing=args.testing, oss=args.os, types=args.type)
 
     for line in list_systems(
-            systems, header=header, fields=fields, sep=separator):
+            systems, header=not args.no_header, fields=fields, sep=args.sep):
         print(line, flush=True)
 
     return 0
-
-
-def _list_oss(_):
-    """Lists available operating systems."""
 
 
 def _find_system(args):
@@ -113,8 +100,8 @@ def _find_system(args):
 
     try:
         system = get_system(
-            options['<street>'], options['<house_number>'],
-            options['--annotation'])
+            args.street, house_number=args.house_number,
+            annotation=args.annotation)
     except AmbiguousSystems as ambiguous:
         LOGGER.error(ambiguous)
 
@@ -136,9 +123,16 @@ def main():
 
     basicConfig(level=INFO, format=LOG_FORMAT)
     args = get_args()
-    print(args)
-    print(dir(args))
-    exit(0)
+    retval = 0
+
+    if args.mode == 'ls':
+        retval = _list_systems(args)
+    elif args.mode == 'find':
+        retval = _find_system(args)
+    elif args.mode == 'CSM-101':
+        print(ARNIE)
+
+    exit(retval)
 
 
 if __name__ == '__main__':
