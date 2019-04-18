@@ -4,25 +4,14 @@ from blessings import Terminal
 
 
 __all__ = [
-    'address_of',
     'cid_of',
     'customer_of',
     'is_testing',
+    'location_of',
     'type_of',
     'justify',
     'to_string',
     'TerminalField']
-
-
-def address_of(system):
-    """Returns the address of the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.address
 
 
 def cid_of(system):
@@ -56,6 +45,20 @@ def is_testing(system):
         return None
 
     return deployment.testing
+
+
+def location_of(system):
+    """Returns the location of the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    if deployment.annotation:
+        return '{} ({})'.format(deployment.address, deployment.annotation)
+
+    return str(deployment.address)
 
 
 def type_of(system):

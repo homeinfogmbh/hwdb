@@ -6,10 +6,10 @@ from mdb import Address
 from syslib import B64LZMA
 
 from terminallib.config import LOGGER
-from terminallib.fields import address_of
 from terminallib.fields import cid_of
 from terminallib.fields import customer_of
 from terminallib.fields import is_testing
+from terminallib.fields import location_of
 from terminallib.fields import type_of
 from terminallib.fields import TerminalField
 from terminallib.orm import Deployment, System
@@ -42,7 +42,7 @@ FIELDS = {
     'cid': TerminalField(cid_of, 'Customer ID', size=12),
     'customer': TerminalField(
         customer_of, 'Customer', size=32, leftbound=True),
-    'address': TerminalField(address_of, 'Address', size=64, leftbound=True),
+    'location': TerminalField(location_of, 'Address', size=64, leftbound=True),
     'type': TerminalField(type_of, 'Type', size=18, leftbound=True),
     'testing': TerminalField(is_testing, 'Testing'),
     'connection': TerminalField(
