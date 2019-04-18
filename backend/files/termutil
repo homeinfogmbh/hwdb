@@ -54,9 +54,10 @@ def get_args():
         '-o', '--os', nargs='+', type=OperatingSystem, metavar='os',
         help='filter for the respective operating systems')
     list_systems.add_argument(
-        '-f', '--field', nargs='+', help='specifies the fields to print')
+        '-f', '--field', nargs='+', metavar='field',
+        help='specifies the fields to print')
     list_systems.add_argument(
-        '-s', '--separator', default='  ',
+        '-s', '--separator', default='  ', metavar='separator',
         help='specifies the fields separator')
     list_systems.add_argument(
         '-n', '--no-header', action='store_true',
