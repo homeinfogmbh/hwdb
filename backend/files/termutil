@@ -56,7 +56,8 @@ def get_args():
     list_systems.add_argument(
         '-f', '--field', nargs='+', help='specifies the fields to print')
     list_systems.add_argument(
-        '-s', '--separator', help='specifies the fields separator')
+        '-s', '--separator', default='  ',
+        help='specifies the fields separator')
     list_systems.add_argument(
         '-n', '--no-header', action='store_true',
         help='do not print table header')
