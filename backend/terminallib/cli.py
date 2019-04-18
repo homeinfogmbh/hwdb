@@ -42,7 +42,8 @@ FIELDS = {
     'cid': TerminalField(cid_of, 'Customer ID', size=12),
     'customer': TerminalField(
         customer_of, 'Customer', size=32, leftbound=True),
-    'location': TerminalField(location_of, 'Address', size=64, leftbound=True),
+    'location': TerminalField(
+        location_of, 'Location', size=64, leftbound=True),
     'type': TerminalField(type_of, 'Type', size=18, leftbound=True),
     'testing': TerminalField(is_testing, 'Testing'),
     'connection': TerminalField(
@@ -63,7 +64,7 @@ CLASS_TEMP = '{id: >5.5}  {name: <10.10}  {full_name: <10.10}  {touch: <5.5}'
 OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
 DEFAULT_FIELDS = (
-    'id', 'os', 'openvpn', 'wireguard', 'cid', 'type', 'testing', 'address')
+    'id', 'os', 'openvpn', 'wireguard', 'cid', 'type', 'testing', 'location')
 
 
 def _get_fields(fields):
