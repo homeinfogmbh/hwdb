@@ -44,8 +44,8 @@ def filter_offline(systems):
             yield system
 
 
-def get_systems(ids, customer=None, deployed=None,  # pylint: disable=R0913
-                testing=None, oss=None, online=None, offline=None):
+def get_systems(ids, customer=None, deployed=None, testing=None, types=None,
+                oss=None, online=None):
     """Yields systems for the respective expressions and filters."""
 
     select = parse(ids)
@@ -60,17 +60,20 @@ def get_systems(ids, customer=None, deployed=None,  # pylint: disable=R0913
             select &= Deployment.deployed >> None
 
     if testing is not None:
-        select &= System.testing == testing
+        select &= Deployment.testing == testing
+
+    if types:
+        select &= Deployment.types << types
 
     if oss:
         select &= System.operating_system << oss
 
     systems = System.select().join(Deployment).where(select)
 
-    if online and not offline:
-        return filter_online(systems)
+    if online is not None:
+        if online:
+            return filter_online(systems)
 
-    if offline and not online:
         return filter_offline(systems)
 
     return systems
