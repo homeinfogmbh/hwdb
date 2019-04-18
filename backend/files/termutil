@@ -79,8 +79,8 @@ def get_args():
 def _list_systems(args):
     """Lists systems."""
 
-    if args.fields:
-        fields = [field.lower() for field in args.fields]
+    if args.field:
+        fields = [field.lower() for field in args.field]
     else:
         fields = DEFAULT_FIELDS
 
