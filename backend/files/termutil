@@ -1,38 +1,10 @@
 #! /usr/bin/env python3
-"""termutil.
+"""Terminal database query utility."""
 
-    Terminal database query utility.
-
-Usage:
-    termutil (list | ls) [<ids>...] [options]
-    termutil find <street> [<house_number>] [options]
-    termutil list-fields
-
-Options:
-    --list-systems, -S          List systems.
-    --list-types, -T            List types.
-    --list-oss, -O              List operating systems.
-    --customer=<customer>       Filter for terminals of this customer.
-    --deployed, -d              Filter for deployed systems.
-    --undeployed, -u            Filter for undeployed systems.
-    --testing                   Filter for testing systems.
-    --productive, -p            Filter for productive systems.
-    --types=<types>, -t         Filter for systems of the specified
-                                classes (comma separated).
-    --oss=<oss>, -o             Filter for systems using the specified
-                                operating systems (comma separated).
-    --online                    Filter for systems that are online.
-    --offline                   Filter for systems that are offline.
-    --omit-header, -n           Do not print the column header.
-    --separator=<sep>, -s       Specifies the column separator.
-    --fields=<fields>, -f       Comma-separated list of fields to display.
-    --annotation=<text>, -a     Consider the specified annotation.
-"""
+from argparse import ArgumentParser
 from logging import INFO, basicConfig, getLogger
 from pathlib import Path
 from sys import exit    # pylint: disable=W0622
-
-from docopt import docopt
 
 from syslib import script
 
@@ -44,6 +16,7 @@ from terminallib.cli import get_system
 from terminallib.cli import list_systems
 from terminallib.cli import list_types
 from terminallib.cli import list_oss
+from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError, AmbiguousSystems
 from terminallib.filter import get_systems
 
@@ -52,37 +25,47 @@ LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
 LOGGER = getLogger(Path(__file__).name)
 
 
-def _get_deployed(options):
-    """Returns the deployed flag."""
+def get_args():
+    """Returns the CLI options."""
 
-    if options['--deployed'] and options['--undeployed']:
-        return None
+    parser = ArgumentParser(description='Terminal database query utility.')
+    subparsers = parser.add_subparsers(help='subparsers help')
+    list_systems = subparsers.add_parser('ls', help='list systems')
+    list_systems.add_argument(
+        'id', action='append', type=int, metavar='id',
+        help='filter for systems of the respective customer')
+    list_systems.add_argument(
+        '-c', '--customer', type=int, metavar='customer',
+        help='filter for systems of the respective customer')
+    list_systems.add_argument(
+        '-d', '--deployed', type=bool, metavar='deployed',
+        help='filter for deployed or undeployed systems')
+    list_systems.add_argument(
+        '-p', '--productive', type=bool, metavar='productive',
+        help='filter for productive systems')
+    list_systems.add_argument(
+        '-t', '--type', action='append', type=Type, metavar='type',
+        help='filter for the respective types')
+    list_systems.add_argument(
+        '-c', '--connection', action='append', type=Connection,
+        metavar='connection',
+        help='filter for the respective connections')
+    list_systems.add_argument(
+        '-o', '--os', action='append', type=OperatingSystem, metavar='os',
+        help='filter for the respective operating systems')
+    list_systems.add_argument(
+        '-f', '--field', action='append', help='specifies the fields to print')
+    list_systems.add_argument(
+        '-n', '--no-header', action='store_true',
+        help='do not print table header')
+    list_systems.add_argument(
+        '-v', '--verbose', action='store_true', help='turn on verbose logging')
+    find_systems = subparsers.add_parser(
+        'find', help='find digital signage systems')
+    return parser.parse_args()
 
-    if options['--deployed']:
-        return True
 
-    if options['--undeployed']:
-        return False
-
-    return None
-
-
-def _get_testing(options):
-    """Returns the testing flag."""
-
-    if options['--testing'] and options['--productive']:
-        return None
-
-    if options['--testing']:
-        return True
-
-    if options['--productive']:
-        return False
-
-    return None
-
-
-def _list_systems(options):
+def _list_systems(args):
     """Lists systems."""
 
     ids = [int(id) for id in options['<ids>']]
@@ -103,6 +86,7 @@ def _list_systems(options):
     header = not options['--omit-header']
     separator = options['--separator'] or '  '
     fields = options['--fields']
+    types = set(_get_types(options))
 
     if fields:
         fields = [field.lower() for field in fields.split(',') if field]
@@ -111,7 +95,7 @@ def _list_systems(options):
 
     systems = get_systems(
         ids, customer=customer, deployed=deployed, testing=testing, oss=oss,
-        online=online, offline=offline)
+        types=types, online=online, offline=offline)
 
     for line in list_systems(
             systems, header=header, fields=fields, sep=separator):
@@ -124,7 +108,7 @@ def _list_oss(_):
     """Lists available operating systems."""
 
 
-def _find_system(options):
+def _find_system(args):
     """Finds a system."""
 
     try:
@@ -151,31 +135,9 @@ def main(options):
     """Runs the system utility."""
 
     basicConfig(level=INFO, format=LOG_FORMAT)
-
-    if options['list'] or options['ls']:
-        if sum((options['--list-systems'], options['--list-types'],
-                options['--list-oss'])) != 1:
-            if '-'.join(options['<expression>']) == 'CSM-101':
-                print(ARNIE)
-            else:
-                LOGGER.error(
-                    'Must specify exactly one list option '
-                    'or a Cyberdyne Systems Model.')
-                return 1
-        elif options['--list-systems']:
-            return _list_systems(options)
-        elif options['--list-types']:
-            for typ in list_types():
-                print(typ, flush=True)
-        elif options['--list-oss']:
-            for operating_system in list_oss():
-                print(operating_system, flush=True)
-    elif options['find']:
-        return _find_system(options)
-    elif options['list-fields']:
-        print('Default fields:  ', ', '.join(DEFAULT_FIELDS))
-        print('Available fields:', ', '.join(sorted(FIELDS)))
-
+    args = get_args()
+    print(args)
+    print(dir(args))
     return 0
 
 
