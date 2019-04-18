@@ -25,7 +25,8 @@ __all__ = [
 
 FIELDS = {
     'id': TerminalField(lambda system: system.id, 'ID', size=5),
-    'os': TerminalField(lambda system: system.os.value, 'OS', size=19),
+    'os': TerminalField(
+        lambda system: system.operating_system.value, 'OS', size=19),
     'openvpn': TerminalField(
         lambda system: system.openvpn, 'OpenVPN Address', size=14),
     'wireguard': TerminalField(
@@ -38,8 +39,8 @@ FIELDS = {
         lambda system: system.deployment, 'Deployment', size=48,),
     'connection': TerminalField(
         lambda system: system.connection.value, 'Connection', size=8),
-    'annotation': TerminalField(
-        lambda system: system.annotation, 'Annotation', size=24,
+    'model': TerminalField(
+        lambda system: system.model, 'Model', size=24,
         leftbound=True),
     'online': TerminalField(lambda system: system.online, 'Online')}
 
