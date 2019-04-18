@@ -35,7 +35,7 @@ FIELDS = {
     'sn': TerminalField(
         lambda system: system.serial_number, 'Serial Number', size=32),
     'deployment': TerminalField(
-        lambda system: system.deployment, 'Deployment', size=90,
+        lambda system: system.deployment, 'Deployment', size=128,
         leftbound=True),
     'connection': TerminalField(
         lambda system: system.connection.value, 'Connection', size=8),
