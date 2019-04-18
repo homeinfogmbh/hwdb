@@ -109,7 +109,7 @@ def get_system(street, house_number=None, annotation=None):
     """Finds a system by its address."""
 
     try:
-        system, superfluous = find_systems(
+        system, *superfluous = find_systems(
             street, house_number=house_number, annotation=annotation)
     except ValueError:
         raise TerminalError('No system matching query.')
