@@ -66,7 +66,7 @@ class System(BaseModel):
             LOGGER.info('Relocated system from "%s" to "%s".',
                         old_deployment, self.deployment)
 
-        return True
+        return self.save()
 
     def to_json(self, brief=False, cascade=False, **kwargs):
         """Returns a JSON-like dictionary."""
