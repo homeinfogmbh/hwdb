@@ -24,7 +24,7 @@ def parse(ids):
     if not ids:
         return True
 
-    ids = frozenset(_parse_ids(ids))
+    ids = set(_parse_ids(ids))
     return System.id << ids
 
 
