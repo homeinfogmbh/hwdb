@@ -42,19 +42,4 @@ class Deployment(BaseModel):
 
     def to_json(self, cascade=True, **kwargs):
         """Returns a JSON-ish dictionary."""
-        dictionary = super().to_json(**kwargs)
-
-        if cascade:
-            dictionary['customer'] = self.customer.to_json(company=True)
-            dictionary['address'] = self.address.to_json()
-        else:
-            dictionary['customer'] = self.customer_id
-            dictionary['address'] = self.address_id
-
-        if self.lpt_address is not None:
-            if cascade:
-                dictionary['lpt_address'] = self.lpt_address.to_json()
-            else:
-                dictionary['lpt_address'] = self.lpt_address_id
-
-        return dictionary
+        return super().to_json(cascade=cascade, **kwargs)

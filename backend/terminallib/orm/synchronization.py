@@ -53,12 +53,3 @@ class Synchronization(BaseModel):
             return True
 
         return False
-
-    def to_json(self, system=False, **kwargs):
-        """Returns a JSON-ish dictionary."""
-        dictionary = super().to_json(**kwargs)
-
-        if system:
-            dictionary['system'] = self.system.to_json(**kwargs)
-
-        return dictionary

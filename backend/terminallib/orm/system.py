@@ -68,21 +68,14 @@ class System(BaseModel):
 
         return self.save()
 
-    def to_json(self, brief=False, cascade=False, **kwargs):
+    def to_json(self, brief=False, skip=None, **kwargs):
         """Returns a JSON-like dictionary."""
-        dictionary = super().to_json(**kwargs)
+        skip = set(skip) if skip else set()
 
-        if cascade:
-            if self.deployment is not None:
-                dictionary['deployment'] = self.deployment.to_json()
+        if brief:
+            skip.add('deployment')
+            skip.add('openvpn')
+            skip.add('wireguard')
+            skip.add('manufacturer')
 
-            if not brief and self.openvpn is not None:
-                dictionary['openvpn'] = self.openvpn.to_json()
-
-            if not brief and self.wireguard is not None:
-                dictionary['wireguard'] = self.wireguard.to_json()
-
-            if not brief and self.manufacturer is not None:
-                dictionary['manufacturer'] = self.manufacturer.to_json()
-
-        return dictionary
+        return super().to_json(skip=skip, **kwargs)
