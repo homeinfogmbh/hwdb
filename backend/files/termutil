@@ -110,7 +110,7 @@ def _find_system(args):
             args.street, house_number=args.house_number,
             annotation=args.annotation)
     except AmbiguousSystems as ambiguous:
-        LOGGER.error(ambiguous)
+        LOGGER.error('Ambiguous systems.')
 
         for system in ambiguous:
             print_system(system)
