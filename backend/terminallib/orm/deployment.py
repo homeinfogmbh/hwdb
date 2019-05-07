@@ -39,7 +39,3 @@ class Deployment(BaseModel):
 
         return '{} of {} at {} ({})'.format(
             self.type.value, self.customer.id, self.address, self.annotation)
-
-    def to_json(self, cascade=True, **kwargs):
-        """Returns a JSON-ish dictionary."""
-        return super().to_json(cascade=cascade, **kwargs)
