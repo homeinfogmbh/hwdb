@@ -4,7 +4,7 @@
 from argparse import ArgumentParser
 from logging import DEBUG, INFO, basicConfig, getLogger
 from pathlib import Path
-from sys import exit    # pylint: disable=W0622
+from sys import exit, stderr    # pylint: disable=W0622
 
 from syslib import script
 
@@ -93,7 +93,11 @@ def _list_systems(args):
     for line in list_systems(
             systems, header=not args.no_header, fields=fields,
             sep=args.separator):
-        print(line, flush=True)
+        try:
+            print(line, flush=True)
+        except BrokenPipeError:
+            stderr.close()
+            break
 
     return 0
 
