@@ -27,11 +27,13 @@ class AmbiguousSystems(TerminalError):
     terminal yielded ambiguous terminals.
     """
 
-    def __init__(self, systems):
+    def __init__(self, system, ambiguous):
         """Sets the respective systems."""
         super().__init__()
-        self.systems = systems
+        self.system = system
+        self.ambiguous = ambiguous
 
     def __iter__(self):
         """Yields the systems."""
-        yield from self.systems
+        yield self.system
+        yield from self.ambiguous

@@ -118,7 +118,7 @@ def get_system(street, house_number=None, annotation=None):
         raise TerminalError('No system matching query.')
 
     if superfluous:
-        raise AmbiguousSystems(superfluous)
+        raise AmbiguousSystems(system, superfluous)
 
     return system
 
