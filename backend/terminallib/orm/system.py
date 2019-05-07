@@ -73,7 +73,6 @@ class System(BaseModel):
         skip = set(skip) if skip else set()
 
         if brief:
-            skip.add('deployment')
             skip.add('openvpn')
             skip.add('wireguard')
             skip.add('manufacturer')
