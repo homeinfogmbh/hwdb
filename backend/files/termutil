@@ -112,7 +112,7 @@ def _find_system(args):
     except AmbiguousSystems as ambiguous:
         LOGGER.error(ambiguous)
 
-        for system in ambiguous.systems:
+        for system in ambiguous:
             print_system(system)
 
         return 1
