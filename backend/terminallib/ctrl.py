@@ -1,15 +1,27 @@
 """Library for terminal remote control."""
 
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError, check_call, run
 from tempfile import NamedTemporaryFile
 
-from syslib import run
-
 from terminallib.config import CONFIG, LOGGER
-from terminallib.exceptions import TerminalConfigError
+from terminallib.exceptions import SystemOffline, TerminalConfigError
 
 
 __all__ = ['is_online', 'CustomSSHOptions', 'RemoteController']
+
+
+def _evaluate_rpc(completed_process):
+    """Evaluates an invoked subprocess call over SSH."""
+
+    try:
+        completed_process.check_returncode()
+    except CalledProcessError as called_process_error:
+        if called_process_error.returncode == 255:
+            raise SystemOffline()
+
+        raise
+
+    return completed_process
 
 
 def _get_options(options):
@@ -142,28 +154,24 @@ class RemoteController:
             remote_cmd = tuple(self.remote(cmd, *args))
 
         LOGGER.debug('Executing: "%s".', remote_cmd)
-        return run(remote_cmd, shell=shell)
+        completed_process = run(remote_cmd, shell=shell)
+        return _evaluate_rpc(completed_process)
 
     def get(self, file, options=None):
         """Gets a file from a remote system."""
         with NamedTemporaryFile('rb') as tmp:
             rsync = self.rsync(
                 tmp.name, [self.remote_file(file)], options=options)
-            result = run(rsync, shell=True)
-            LOGGER.debug(str(result))
-
-            if result:
-                return tmp.read()
-
-            return result
+            completed_process = run(rsync, shell=True)
+            _evaluate_rpc(completed_process)
+            return tmp.read()
 
     def send(self, dst, *srcs, options=None):
         """Sends files to a remote system."""
         command = self.rsync(self.remote_file(dst), *srcs, options=options)
         LOGGER.debug('Executing: "%s".', command)
-        result = run(command, shell=True)
-        LOGGER.debug(str(result))
-        return result
+        completed_process = run(command, shell=True)
+        return _evaluate_rpc(completed_process)
 
     def mkdir(self, directory, parents=False, binary='/usr/bin/mkdir'):
         """Creates a remote directory."""

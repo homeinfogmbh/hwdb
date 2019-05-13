@@ -5,7 +5,8 @@ __all__ = [
     'TerminalError',
     'TerminalConfigError',
     'NoConnection',
-    'AmbiguousSystems']
+    'AmbiguousSystems',
+    'SystemOffline']
 
 
 class TerminalError(Exception):
@@ -37,3 +38,7 @@ class AmbiguousSystems(TerminalError):
         """Yields the systems."""
         yield self.system
         yield from self.ambiguous
+
+
+class SystemOffline(TerminalError):
+    """Indicates that the respective system is offline."""
