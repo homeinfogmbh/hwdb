@@ -32,7 +32,8 @@ def is_online(system):
     if openvpn is None:
         return False
 
-    command = (CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4address))
+    command = (
+        CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4address))
 
     try:
         check_call(command)

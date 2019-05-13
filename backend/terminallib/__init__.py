@@ -1,7 +1,7 @@
 """HOMEINFO's terminal library."""
 
 from terminallib.config import CONFIG
-from terminallib.ctrl import CustomSSHOptions, RemoteController
+from terminallib.ctrl import is_online, CustomSSHOptions, RemoteController
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError
 from terminallib.exceptions import TerminalConfigError
@@ -24,6 +24,7 @@ __all__ = [
     # Functions:
     'parse',
     'get_systems',
+    'is_online',
     # Misc. classes:
     'CustomSSHOptions',
     'RemoteController',
@@ -36,4 +37,4 @@ __all__ = [
     'OpenVPN',
     'Synchronization',
     'System',
-    'WireGuard',]
+    'WireGuard']
