@@ -1,6 +1,6 @@
 """Library for terminal remote control."""
 
-from subprocess import CalledProcessError, check_call, run
+from subprocess import DEVNULL, CalledProcessError, check_call, run
 from tempfile import NamedTemporaryFile
 
 from terminallib.config import CONFIG, LOGGER
@@ -36,7 +36,7 @@ def _get_options(options):
     return ' '.join(str(option) for option in options)
 
 
-def is_online(system):
+def is_online(system, stdout=DEVNULL, stderr=None):
     """Determines whether the respective system is online."""
 
     openvpn = system.openvpn
@@ -48,7 +48,7 @@ def is_online(system):
         CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4address))
 
     try:
-        check_call(command)
+        check_call(command, stdout=stdout, stderr=stderr)
     except CalledProcessError:
         return False
 
