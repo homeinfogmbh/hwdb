@@ -1,6 +1,6 @@
 """Library for terminal remote control."""
 
-from subprocess import DEVNULL, CalledProcessError, check_call, run
+from subprocess import DEVNULL, PIPE, CalledProcessError, check_call, run
 from tempfile import NamedTemporaryFile
 
 from terminallib.config import CONFIG, LOGGER
@@ -145,15 +145,15 @@ class RemoteController:
         LOGGER.debug(cmd)
         return cmd
 
-    def execute(self, cmd, *args, shell=False):
+    def execute(self, command, *args, shell=False):
         """Executes a certain command on a remote system."""
         if shell:
-            remote_cmd = ' '.join(self.remote(cmd, *args))
+            command = ' '.join(self.remote(command, *args))
         else:
-            remote_cmd = tuple(self.remote(cmd, *args))
+            command = tuple(self.remote(command, *args))
 
-        LOGGER.debug('Executing: "%s".', remote_cmd)
-        completed_process = run(remote_cmd, shell=shell)
+        LOGGER.debug('Executing: "%s".', command)
+        completed_process = run(command, shell=shell, stdout=PIPE, stderr=PIPE)
         return _evaluate_rpc(completed_process)
 
     def get(self, file, options=None):
@@ -161,7 +161,8 @@ class RemoteController:
         with NamedTemporaryFile('rb') as tmp:
             rsync = self.rsync(
                 tmp.name, [self.remote_file(file)], options=options)
-            completed_process = run(rsync, shell=True)
+            completed_process = run(
+                rsync, shell=True, stdout=PIPE, stderr=PIPE)
             _evaluate_rpc(completed_process)
             return tmp.read()
 
@@ -169,7 +170,7 @@ class RemoteController:
         """Sends files to a remote system."""
         command = self.rsync(self.remote_file(dst), *srcs, options=options)
         LOGGER.debug('Executing: "%s".', command)
-        completed_process = run(command, shell=True)
+        completed_process = run(command, shell=True, stdout=PIPE, stderr=PIPE)
         return _evaluate_rpc(completed_process)
 
     def mkdir(self, directory, parents=False, binary='/usr/bin/mkdir'):
