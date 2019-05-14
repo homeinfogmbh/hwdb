@@ -36,7 +36,7 @@ def _get_options(options):
     return ' '.join(str(option) for option in options)
 
 
-def is_online(system, stdout=DEVNULL, stderr=None):
+def is_online(system):
     """Determines whether the respective system is online."""
 
     openvpn = system.openvpn
@@ -44,11 +44,10 @@ def is_online(system, stdout=DEVNULL, stderr=None):
     if openvpn is None:
         return False
 
-    command = (
-        CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4address))
+    cmd = (CONFIG['binaries']['PING'], '-qc', '3', str(openvpn.ipv4address))
 
     try:
-        check_call(command, stdout=stdout, stderr=stderr)
+        check_call(cmd, stdout=DEVNULL, stderr=DEVNULL)
     except CalledProcessError:
         return False
 
