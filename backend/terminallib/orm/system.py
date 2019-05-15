@@ -37,6 +37,7 @@ class System(BaseModel):
         Customer, null=True, column_name='manufacturer', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
+    configured = DateTimeField(null=True)
     operating_system = EnumField(OperatingSystem)
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
