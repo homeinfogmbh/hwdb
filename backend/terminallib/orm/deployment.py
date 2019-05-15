@@ -39,3 +39,12 @@ class Deployment(BaseModel):
 
         return '{} of {} at {} ({})'.format(
             self.type.value, self.customer.id, self.address, self.annotation)
+
+    def to_json(self, systems=False, **kwargs):
+        """Returns a JSON-ish dict."""
+        json = super().to_json(**kwargs)
+
+        if systems:
+            json['systems'] = [system.id for system in self.systems]
+
+        return json
