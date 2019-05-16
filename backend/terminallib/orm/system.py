@@ -62,10 +62,10 @@ class System(BaseModel):
         self.deployment, old_deployment = deployment, self.deployment
 
         if old_deployment is None:
-            LOGGER.info('Initially deployed system at "%s".', self.deployment)
+            LOGGER.info('Initially deployed system at "%s".', deployment)
         else:
             LOGGER.info('Relocated system from "%s" to "%s".',
-                        old_deployment, self.deployment)
+                        old_deployment, deployment)
 
         if exclusive:
             cls = type(self)
