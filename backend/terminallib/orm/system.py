@@ -55,14 +55,12 @@ class System(BaseModel):
 
     def deploy(self, deployment, *, exclusive=False):
         """Locates a system at the respective deployment."""
-        if self.deployment == deployment:
-            LOGGER.error('Refusing to deploy to same deployment.')
-            return False
-
         self.deployment, old_deployment = deployment, self.deployment
 
         if old_deployment is None:
             LOGGER.info('Initially deployed system at "%s".', deployment)
+        elif old_deployment == deployment:
+            LOGGER.info('System still deployed at "%s".', old_deployment)
         else:
             LOGGER.info('Relocated system from "%s" to "%s".',
                         old_deployment, deployment)
