@@ -53,7 +53,7 @@ class System(BaseModel):
         """Returns the respective host name."""
         return '{}.{}'.format(self.id, CONFIG['WireGuard']['domain'])
 
-    def relocate(self, deployment):
+    def deploy(self, deployment, *, exclusive=False):
         """Locates a system at the respective deployment."""
         if self.deployment == deployment:
             LOGGER.error('Refusing to deploy to same deployment.')
@@ -66,6 +66,14 @@ class System(BaseModel):
         else:
             LOGGER.info('Relocated system from "%s" to "%s".',
                         old_deployment, self.deployment)
+
+        if exclusive:
+            cls = type(self)
+
+            for system in cls.select().where(cls.deployment == deployment):
+                LOGGER.info('Un-deploying #%i.', system.id)
+                system.deployment = None
+                system.save()
 
         return self.save()
 
