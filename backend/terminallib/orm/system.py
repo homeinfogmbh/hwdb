@@ -43,6 +43,13 @@ class System(BaseModel):
     serial_number = CharField(255, null=True)
     model = CharField(255, null=True)   # Hardware model.
 
+    @classmethod
+    def monitored(cls):
+        """Yields monitored systems."""
+        return cls.select().where(
+            ((System.monitor == 1) | ~(System.deployment >> None))
+            & ~ (System.monitor == 0))
+
     @property
     def vpn_hostname(self):
         """Returns a host name for the OpenVPN network."""
