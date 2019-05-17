@@ -60,15 +60,15 @@ class System(BaseModel):
         if old_deployment is None:
             LOGGER.info('Initially deployed system at "%s".', deployment)
         elif old_deployment == deployment:
-            LOGGER.info('System still deployed at "%s".', old_deployment)
+            LOGGER.info('System still deployed at "%s".', deployment)
         else:
             LOGGER.info('Relocated system from "%s" to "%s".',
                         old_deployment, deployment)
 
         if exclusive:
-            cls = type(self)
+            model = type(self)
 
-            for system in cls.select().where(cls.deployment == deployment):
+            for system in model.select().where(model.deployment == deployment):
                 LOGGER.info('Un-deploying #%i.', system.id)
                 system.deployment = None
                 system.save()
