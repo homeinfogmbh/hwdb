@@ -46,9 +46,10 @@ class System(BaseModel):
     @classmethod
     def monitored(cls):
         """Yields monitored systems."""
-        return cls.select().where(
-            ((System.monitor == 1) | ~(System.deployment >> None))
-            & ~(System.monitor == 0))
+        explicit = System.monitor == 1
+        implicit = System.monitor >> None
+        implicit &= ~(System.deployment >> None)
+        return cls.select().where(explicit | implicit)
 
     @property
     def vpn_hostname(self):
