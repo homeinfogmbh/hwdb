@@ -5,7 +5,7 @@ from pathlib import Path
 
 from peewee import FixedCharField
 
-from peeweeplus import IPv4AddressField, PasswordField
+from peeweeplus import IPv4AddressField
 from wgtools import Keypair, keypair    # pylint: disable=C0411
 
 from terminallib.config import CONFIG
@@ -27,7 +27,6 @@ class WireGuard(BaseModel):
 
     ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
-    _key = PasswordField(44, column_name='key')
 
     def __str__(self):
         """Returns a human readable representation."""
