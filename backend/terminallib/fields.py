@@ -1,5 +1,7 @@
 """Command line interface utilities."""
 
+from enum import Enum
+
 from blessings import Terminal
 
 
@@ -11,7 +13,8 @@ __all__ = [
     'type_of',
     'justify',
     'to_string',
-    'TerminalField']
+    'Field',
+    'FieldFormatter']
 
 
 def cid_of(system):
@@ -99,7 +102,27 @@ def to_string(value, none='-', true='✓', false='✗'):
     return str(value)
 
 
-class TerminalField:
+class Field(Enum):
+    """Terminal field names."""
+
+    ID = 'id'
+    OS = 'os'
+    OPENVPN = 'openvpn'
+    WIREGUARD = 'wireguard'
+    MONITOR = 'monitor'
+    SN = 'sn'
+    CID = 'cid'
+    CUSTOMER = 'customer'
+    LOCATION = 'location'
+    TYPE = 'type'
+    TESTING = 'testing'
+    CONNECTION = 'connection'
+    MANUFACTURER = 'manufacturer'
+    MODEL = 'model'
+    ONLINE = 'online'
+
+
+class FieldFormatter:
     """Wrapper to access terminal properties."""
 
     def __init__(self, getter, caption, size=0, leftbound=False):

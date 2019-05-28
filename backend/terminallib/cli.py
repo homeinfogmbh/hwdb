@@ -11,7 +11,7 @@ from terminallib.fields import customer_of
 from terminallib.fields import is_testing
 from terminallib.fields import location_of
 from terminallib.fields import type_of
-from terminallib.fields import TerminalField
+from terminallib.fields import Field, FieldFormatter
 from terminallib.orm import Deployment, System
 from terminallib.enumerations import OperatingSystem, Type
 from terminallib.exceptions import TerminalError, AmbiguousSystems
@@ -29,31 +29,31 @@ __all__ = [
 
 
 FIELDS = {
-    'id': TerminalField(lambda system: system.id, 'ID', size=5),
-    'os': TerminalField(
+    Field.ID: FieldFormatter(lambda system: system.id, 'ID', size=5),
+    Field.OS: FieldFormatter(
         lambda system: system.operating_system.value, 'OS', size=25),
-    'openvpn': TerminalField(
+    Field.OPENVPN: FieldFormatter(
         lambda system: system.openvpn, 'OpenVPN Address', size=14),
-    'wireguard': TerminalField(
+    Field.WIREGUARD: FieldFormatter(
         lambda system: system.wireguard, 'WireGuard Address', size=14),
-    'monitor': TerminalField(lambda system: system.monitor, 'Monitor'),
-    'sn': TerminalField(
+    Field.MONITOR: FieldFormatter(lambda system: system.monitor, 'Monitor'),
+    Field.SN: FieldFormatter(
         lambda system: system.serial_number, 'Serial Number', size=32),
-    'cid': TerminalField(cid_of, 'Customer ID', size=12),
-    'customer': TerminalField(
+    Field.CID: FieldFormatter(cid_of, 'Customer ID', size=12),
+    Field.CUSTOMER: FieldFormatter(
         customer_of, 'Customer', size=32, leftbound=True),
-    'location': TerminalField(
+    Field.LOCATION: FieldFormatter(
         location_of, 'Location', size=64, leftbound=True),
-    'type': TerminalField(type_of, 'Type', size=18, leftbound=True),
-    'testing': TerminalField(is_testing, 'Testing'),
-    'connection': TerminalField(
+    Field.TYPE: FieldFormatter(type_of, 'Type', size=18, leftbound=True),
+    Field.TESTING: FieldFormatter(is_testing, 'Testing'),
+    Field.CONNECTION: FieldFormatter(
         lambda system: system.connection.value, 'Connection', size=8),
-    'manufacturer': TerminalField(
+    Field.MANUFACTURER: FieldFormatter(
         lambda system: system.manufacturer, 'Manufacturer', size=24),
-    'model': TerminalField(
+    Field.MODEL: FieldFormatter(
         lambda system: system.model, 'Model', size=24,
         leftbound=True),
-    'online': TerminalField(lambda system: system.online, 'Online')}
+    Field.ONLINE: FieldFormatter(lambda system: system.online, 'Online')}
 
 ARNIE = B64LZMA(
     '/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4AIEAK9dABBuADwUaYt0gRsna7sph26BXekoRMls4'

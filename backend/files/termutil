@@ -15,6 +15,7 @@ from terminallib.cli import get_system
 from terminallib.cli import list_systems
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError, AmbiguousSystems
+from terminallib.fields import Field
 from terminallib.filter import get_systems
 
 
@@ -30,36 +31,36 @@ def get_args():
         '-v', '--verbose', action='store_true', help='turn on verbose logging')
     subparsers = parser.add_subparsers(dest='mode')
 
-    list_systems = subparsers.add_parser('ls', help='list systems')
-    list_systems.add_argument(
+    ls_sys = subparsers.add_parser('ls', help='list systems')
+    ls_sys.add_argument(
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems of the respective customer')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-c', '--customer', type=int, metavar='customer',
         help='filter for systems of the respective customer')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-d', '--deployed', type=int, metavar='deployed',
         help='filter for deployed or undeployed systems')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '--testing', type=int, metavar='testing',
         help='filter for testing systems')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-t', '--type', nargs='+', type=Type, metavar='type',
         help='filter for the respective types')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-i', '--connection', nargs='+', type=Connection,
         metavar='connection',
         help='filter for the respective connections')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-o', '--os', nargs='+', type=OperatingSystem, metavar='os',
         help='filter for the respective operating systems')
-    list_systems.add_argument(
-        '-f', '--field', nargs='+', metavar='field',
+    ls_sys.add_argument(
+        '-f', '--field', type=Field, nargs='+', metavar='field',
         help='specifies the fields to print')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-s', '--separator', default='  ', metavar='separator',
         help='specifies the fields separator')
-    list_systems.add_argument(
+    ls_sys.add_argument(
         '-n', '--no-header', action='store_true',
         help='do not print table header')
 
