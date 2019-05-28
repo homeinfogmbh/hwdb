@@ -48,6 +48,8 @@ FIELDS = {
     'testing': TerminalField(is_testing, 'Testing'),
     'connection': TerminalField(
         lambda system: system.connection.value, 'Connection', size=8),
+    'manufacturer': TerminalField(
+        lambda system: system.manufacturer, 'Manufacturer', size=24),
     'model': TerminalField(
         lambda system: system.model, 'Model', size=24,
         leftbound=True),
