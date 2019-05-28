@@ -12,7 +12,7 @@ __all__ = ['get_args']
 def _add_parser_list_systems(subparsers):
     """Adds args to list systems."""
 
-    parser = subparsers.add_parser('systems', help='list systems')
+    parser = subparsers.add_parser('sys', help='list systems')
     parser.add_argument(
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems of the respective customer')
@@ -40,8 +40,7 @@ def _add_parser_list_systems(subparsers):
 def _add_parser_list_deployments(subparsers):
     """Adds a parser to list deployments."""
 
-    parser = subparsers.add_parser(
-        'deployments', help='list deployments')
+    parser = subparsers.add_parser('dep', help='list deployments')
     parser.add_argument('id', nargs='*', type=int, metavar='id')
     parser.add_argument(
         '-C', '--customer', type=int, metavar='customer',
@@ -81,8 +80,7 @@ def _add_parser_list(subparsers):
 def _add_parser_find_systems(subparsers):
     """Adds a parser to find systems."""
 
-    parser = subparsers.add_parser(
-        'system', help='find digital signage systems')
+    parser = subparsers.add_parser('sys', help='find digital signage systems')
     parser.add_argument(
         'street', help='filter for systems of the respective street')
     parser.add_argument(

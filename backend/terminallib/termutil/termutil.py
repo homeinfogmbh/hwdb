@@ -74,11 +74,17 @@ def main():
     basicConfig(level=DEBUG if args.verbose else INFO, format=LOG_FORMAT)
     retval = 0
 
-    if args.mode == 'ls':
-        retval = _list_systems(args)
-    elif args.mode == 'find':
-        retval = _find_system(args)
-    elif args.mode == 'CSM-101':
+    if args.action == 'ls':
+        if args.target == 'sys':
+            retval = _list_systems(args)
+        elif args.target == 'dep':
+            LOGGER.error('Listing of deployments is not yet implemented.')
+    elif args.action == 'find':
+        if args.target == 'sys':
+            retval = _find_system(args)
+        elif args.target == 'dep':
+            LOGGER.error('Finding deployments is not yet implemented.')
+    elif args.action == 'CSM-101':
         print(ARNIE)
 
     exit(retval)
