@@ -82,10 +82,7 @@ def get_args():
 def _list_systems(args):
     """Lists systems."""
 
-    if args.field:
-        fields = [field.lower() for field in args.field]
-    else:
-        fields = DEFAULT_FIELDS
+    fields = args.field or DEFAULT_FIELDS
 
     systems = get_systems(
         args.id, customer=args.customer, deployed=args.deployed,
