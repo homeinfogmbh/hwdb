@@ -26,7 +26,7 @@ LOGGER = getLogger(Path(__file__).name)
 def _list_systems(args):
     """Lists systems."""
 
-    fields = args.field or DEFAULT_FIELDS
+    fields = args.fields or DEFAULT_FIELDS
 
     systems = get_systems(
         args.id, customer=args.customer, deployed=args.deployed,

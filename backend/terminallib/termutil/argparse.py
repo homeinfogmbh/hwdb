@@ -35,6 +35,9 @@ def _add_parser_list_systems(subparsers):
     parser.add_argument(
         '-o', '--os', nargs='+', type=OperatingSystem, metavar='os',
         help='filter for the respective operating systems')
+    parser.add_argument(
+        '-f', '--fields', type=Field, nargs='+', metavar='field',
+        help='specifies the fields to print')
 
 
 def _add_parser_list_deployments(subparsers):
@@ -57,15 +60,15 @@ def _add_parser_list_deployments(subparsers):
     parser.add_argument(
         '-c', '--connection', nargs='+', type=Connection,
         metavar='connection', help='filter for the respective connections')
+    parser.add_argument(
+        '-f', '--fields', type=Field, nargs='+', metavar='field',
+        help='specifies the fields to print')
 
 
 def _add_parser_list(subparsers):
     """Adds listing args."""
 
     parser = subparsers.add_parser('ls', help='list records')
-    parser.add_argument(
-        '-f', '--field', type=Field, nargs='+', metavar='field',
-        help='specifies the fields to print')
     parser.add_argument(
         '-s', '--separator', default='  ', metavar='separator',
         help='specifies the fields separator')
