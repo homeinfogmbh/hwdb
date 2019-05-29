@@ -42,7 +42,7 @@ FIELDS = {
         lambda system: system.serial_number, 'Serial Number', size=32),
     Field.CID: FieldFormatter(cid_of, 'Customer ID', size=12),
     Field.CUSTOMER: FieldFormatter(
-        customer_of, 'Customer', size=32, leftbound=True),
+        customer_of, 'Customer', size=40, leftbound=True),
     Field.ADDRESS: FieldFormatter(
         address_of, 'Address', size=64, leftbound=True),
     Field.ANNOTATION: FieldFormatter(
