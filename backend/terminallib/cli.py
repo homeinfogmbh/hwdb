@@ -9,7 +9,8 @@ from terminallib.config import LOGGER
 from terminallib.fields import cid_of
 from terminallib.fields import customer_of
 from terminallib.fields import is_testing
-from terminallib.fields import location_of
+from terminallib.fields import address_of
+from terminallib.fields import annotation_of
 from terminallib.fields import type_of
 from terminallib.fields import Field, FieldFormatter
 from terminallib.orm import Deployment, System
@@ -42,8 +43,10 @@ FIELDS = {
     Field.CID: FieldFormatter(cid_of, 'Customer ID', size=12),
     Field.CUSTOMER: FieldFormatter(
         customer_of, 'Customer', size=32, leftbound=True),
-    Field.LOCATION: FieldFormatter(
-        location_of, 'Location', size=64, leftbound=True),
+    Field.ADDRESS: FieldFormatter(
+        address_of, 'Address', size=64, leftbound=True),
+    Field.ANNOTATION: FieldFormatter(
+        annotation_of, 'Annotation', size=32, leftbound=True),
     Field.TYPE: FieldFormatter(type_of, 'Type', size=18, leftbound=True),
     Field.TESTING: FieldFormatter(is_testing, 'Testing'),
     Field.CONNECTION: FieldFormatter(
@@ -67,7 +70,7 @@ OS_TEMP = '{id: >5.5}  {family: <6.6}  {name: <8.8}  {version}'
 DOMAIN_TEMP = '{id: >5.5}  {fqdn}'
 DEFAULT_FIELDS = (
     Field.ID, Field.OS, Field.OPENVPN, Field.MANUFACTURER, Field.CID,
-    Field.TYPE, Field.TESTING, Field.LOCATION)
+    Field.TYPE, Field.TESTING, Field.ADDRESS, Field.ANNOTATION)
 
 
 def _get_fields(fields):

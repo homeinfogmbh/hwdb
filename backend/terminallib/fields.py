@@ -9,7 +9,8 @@ __all__ = [
     'cid_of',
     'customer_of',
     'is_testing',
-    'location_of',
+    'address_of',
+    'annotation_of',
     'type_of',
     'justify',
     'to_string',
@@ -50,7 +51,7 @@ def is_testing(system):
     return deployment.testing
 
 
-def location_of(system):
+def address_of(system):
     """Returns the location of the respective system."""
 
     deployment = system.deployment
@@ -58,10 +59,18 @@ def location_of(system):
     if deployment is None:
         return None
 
-    if deployment.annotation:
-        return '{} ({})'.format(deployment.address, deployment.annotation)
+    return deployment.address
 
-    return str(deployment.address)
+
+def annotation_of(system):
+    """Returns the annotation fo the respective system."""
+
+    deployment = system.deployment
+
+    if deployment is None:
+        return None
+
+    return deployment.annotation
 
 
 def type_of(system):
@@ -113,7 +122,8 @@ class Field(Enum):
     SN = 'sn'
     CID = 'cid'
     CUSTOMER = 'customer'
-    LOCATION = 'location'
+    ADDRESS = 'address'
+    ANNOTATION = 'annotation'
     TYPE = 'type'
     TESTING = 'testing'
     CONNECTION = 'connection'
