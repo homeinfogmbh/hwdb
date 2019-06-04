@@ -36,7 +36,7 @@ class Deployment(BaseModel):
         string = f'{self.type.value} of {self.customer.id} at {self.address}'
 
         if self.annotation is not None:
-            string += f' ({self.annotation})'
+            return ' '.join((string, f'({self.annotation})'))
 
         return string
 
