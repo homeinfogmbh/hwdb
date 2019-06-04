@@ -80,7 +80,7 @@ class RemoteController:
         """Initializes a remote terminal controller."""
         self.user = user
         self.system = system
-        self.keyfile = keyfile or '/home/{}/.ssh/terminals'.format(self.user)
+        self.keyfile = keyfile or f'/home/{self.user}/.ssh/terminals'
         self.ssh_options = {
             # Trick SSH it into not checking the host key.
             'UserKnownHostsFile': CONFIG['ssh']['USER_KNOWN_HOSTS_FILE'],
@@ -102,19 +102,20 @@ class RemoteController:
         result = [CONFIG['ssh']['SSH_BIN'], '-i', self.keyfile]
 
         for option, value in self.ssh_options.items():
-            result += ['-o', '{}={}'.format(option, value)]
+            result += ['-o', f'{option}={value}']
 
         return result
 
     @property
     def remote_shell(self):
         """Returns the rsync remote shell."""
-        return '-e "{}"'.format(' '.join(self.ssh_cmd))
+        ssh_cmd = ' '.join(self.ssh_cmd)
+        return f'-e "{ssh_cmd}"'
 
     @property
     def user_host(self):
         """Returns the respective user@host string."""
-        return '{}@{}'.format(self.user, self.ipv4address)
+        return f'{self.user}@{self.ipv4address}'
 
     def remote(self, cmd, *args):
         """Makes a command remote."""
@@ -127,7 +128,7 @@ class RemoteController:
 
     def remote_file(self, src):
         """Returns a remote file path."""
-        return "{}:'{}'".format(self.user_host, src)
+        return f"{self.user_host}:'{src}'"
 
     def extra_options(self, options):
         """Returns an CustomSSHOptions context
@@ -137,7 +138,7 @@ class RemoteController:
 
     def rsync(self, dst, *srcs, options=None):
         """Returns the respective rsync command."""
-        srcs = ' '.join("'{}'".format(src) for src in srcs)
+        srcs = ' '.join(f"'{src}'" for src in srcs)
         options = _get_options(options)
         binary = CONFIG['ssh']['RSYNC_BIN']
         cmd = (binary, options, self.remote_shell, srcs, dst)

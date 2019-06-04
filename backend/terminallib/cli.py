@@ -2,6 +2,7 @@
 
 from sys import stderr
 
+from functoolsplus import coerce
 from mdb import Address
 from syslib import B64LZMA
 
@@ -73,6 +74,7 @@ DEFAULT_FIELDS = (
     Field.TESTING, Field.ADDRESS, Field.ANNOTATION)
 
 
+@coerce(tuple)
 def _get_fields(fields):
     """Yields valid fields from a string of field names."""
 
@@ -90,8 +92,8 @@ def print_system(system):
 
     if deployment is not None:
         if deployment.annotation:
-            print(str(deployment.address),
-                  '({})'.format(deployment.annotation), file=stderr)
+            print(str(deployment.address), f'({deployment.annotation})',
+                  file=stderr)
         else:
             print(str(deployment.address), file=stderr)
 
@@ -101,13 +103,13 @@ def print_system(system):
 def find_systems(street, house_number=None, annotation=None):
     """Finds systems at the specified address."""
 
-    selection = Address.street ** '%{}%'.format(street)
+    selection = Address.street ** f'%{street}%'
 
     if house_number is not None:
-        selection &= Address.house_number ** '%{}%'.format(house_number)
+        selection &= Address.house_number ** f'%{house_number}%'
 
     if annotation is not None:
-        selection &= Deployment.annotation ** '%{}%'.format(annotation)
+        selection &= Deployment.annotation ** f'%{annotation}%'
 
     join_condition = Address.id == Deployment.address
     join = System.select().join(Deployment).join(Address, on=join_condition)
@@ -139,7 +141,7 @@ def list_oss():
 def list_systems(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
     """Yields formatted systems for console outoput."""
 
-    fields = tuple(_get_fields(fields))
+    fields = _get_fields(fields)
 
     if header:
         yield sep.join(str(field) for field in fields)
