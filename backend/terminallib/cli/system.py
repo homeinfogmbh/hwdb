@@ -44,8 +44,8 @@ FIELDS = {
     SystemField.ONLINE: FieldFormatter(lambda sys: sys.online, 'Online')
 }
 DEFAULT_FIELDS = (
-    SystemField.ID, SystemField.OS, SystemField.MANUFACTURER,
-    SystemField.CONFIGURED
+    SystemField.ID, SystemField.DEPLOYMENT, SystemField.OPENVPN,
+    SystemField.MANUFACTURER, SystemField.CONFIGURED, SystemField.OS
 )
 
 
