@@ -5,7 +5,7 @@ __all__ = [
     'TerminalError',
     'TerminalConfigError',
     'NoConnection',
-    'AmbiguousSystems',
+    'AmbiguityError',
     'SystemOffline']
 
 
@@ -23,20 +23,20 @@ class NoConnection(TerminalConfigError):
     """
 
 
-class AmbiguousSystems(TerminalError):
+class AmbiguityError(TerminalError):
     """Indicates that a query for a single
     terminal yielded ambiguous terminals.
     """
 
-    def __init__(self, system, ambiguous):
+    def __init__(self, object, ambiguous):
         """Sets the respective systems."""
         super().__init__()
-        self.system = system
+        self.object = object
         self.ambiguous = ambiguous
 
     def __iter__(self):
         """Yields the systems."""
-        yield self.system
+        yield self.object
         yield from self.ambiguous
 
 

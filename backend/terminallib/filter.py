@@ -5,7 +5,12 @@ from terminallib.ctrl import is_online
 from terminallib.orm import Deployment, System
 
 
-__all__ = ['parse', 'filter_online', 'filter_offline', 'get_systems']
+__all__ = [
+    'filter_online',
+    'filter_offline',
+    'get_deployments',
+    'get_systems'
+]
 
 
 def _parse_ids(idents):
@@ -18,14 +23,14 @@ def _parse_ids(idents):
             LOGGER.warning('Ignoring invalid system ID: %s', ident)
 
 
-def parse(ids):
+def _parse(ids, model):
     """Returns a peewee.Expression for the respective systems selection."""
 
     if not ids:
         return True
 
     ids = set(_parse_ids(ids))
-    return System.id << ids
+    return model.id << ids
 
 
 def filter_online(systems):
@@ -44,16 +49,34 @@ def filter_offline(systems):
             yield system
 
 
-def get_systems(ids, customer=None, deployed=None, testing=None, types=None,
-                oss=None, online=None):
-    """Yields systems for the respective expressions and filters."""
+def get_deployments(ids, customer=None, testing=None, types=None,
+                    connections=None):
+    """Yields deployments."""
 
-    select = parse(ids)
-    join_deployment = False
+    select = _parse(ids, Deployment)
 
     if customer is not None:
         select &= Deployment.customer == customer
-        join_deployment = True
+
+    if testing is not None:
+        select &= Deployment.testing == testing
+
+    if types:
+        select &= Deployment.types << types
+
+    if connections:
+        select &= Deployment.connection << connections
+
+    return Deployment.select().where(select)
+
+
+def get_systems(ids, deployments=None, deployed=None, oss=None, online=None):
+    """Yields systems for the respective expressions and filters."""
+
+    select = _parse(ids, System)
+
+    if deployments is not None:
+        select &= System.deployment << deployments
 
     if deployed is not None:
         if deployed:
@@ -61,23 +84,10 @@ def get_systems(ids, customer=None, deployed=None, testing=None, types=None,
         else:
             select &= System.deployment >> None
 
-    if testing is not None:
-        select &= Deployment.testing == testing
-        join_deployment = True
-
-    if types:
-        select &= Deployment.types << types
-        join_deployment = True
-
     if oss:
         select &= System.operating_system << oss
 
-    systems = System.select()
-
-    if join_deployment:
-        systems = systems.join(Deployment)
-
-    systems = systems.where(select)
+    systems = System.select().where(select)
 
     if online is not None:
         if online:

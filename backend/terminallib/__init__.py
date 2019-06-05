@@ -5,9 +5,9 @@ from terminallib.ctrl import is_online, CustomSSHOptions, RemoteController
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.exceptions import TerminalError
 from terminallib.exceptions import TerminalConfigError
-from terminallib.exceptions import AmbiguousSystems
+from terminallib.exceptions import AmbiguityError
 from terminallib.exceptions import SystemOffline
-from terminallib.filter import parse, get_systems
+from terminallib.filter import get_deployments, get_systems
 from terminallib.orm import Deployment
 from terminallib.orm import OpenVPN
 from terminallib.orm import Synchronization
@@ -21,10 +21,10 @@ __all__ = [
     # Exceptions:
     'TerminalError',
     'TerminalConfigError',
-    'AmbiguousSystems',
+    'AmbiguityError',
     'SystemOffline',
     # Functions:
-    'parse',
+    'get_deployments',
     'get_systems',
     'is_online',
     # Misc. classes:

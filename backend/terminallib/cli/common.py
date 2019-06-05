@@ -6,82 +6,11 @@ from blessings import Terminal
 
 
 __all__ = [
-    'cid_of',
-    'customer_of',
-    'is_testing',
-    'address_of',
-    'annotation_of',
-    'type_of',
     'justify',
     'to_string',
-    'Field',
+    'DeploymentField',
+    'SystemField',
     'FieldFormatter']
-
-
-def cid_of(system):
-    """Returns the customer ID of the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.customer.id
-
-
-def customer_of(system):
-    """Returns the customer name of the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.customer.name
-
-
-def is_testing(system):
-    """Returns whether the system is a testing system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.testing
-
-
-def address_of(system):
-    """Returns the location of the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.address
-
-
-def annotation_of(system):
-    """Returns the annotation fo the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.annotation
-
-
-def type_of(system):
-    """Returns the type of the respective system."""
-
-    deployment = system.deployment
-
-    if deployment is None:
-        return None
-
-    return deployment.type.value
 
 
 def justify(string, size, leftbound=False):
@@ -111,25 +40,37 @@ def to_string(value, none='-', true='✓', false='✗'):
     return str(value)
 
 
-class Field(Enum):
+class DeploymentField(Enum):
     """Terminal field names."""
 
-    ID = 'id'
-    OS = 'os'
-    OPENVPN = 'openvpn'
-    WIREGUARD = 'wireguard'
-    MONITOR = 'monitor'
-    SN = 'sn'
-    CID = 'cid'
-    CUSTOMER = 'customer'
     ADDRESS = 'address'
     ANNOTATION = 'annotation'
-    TYPE = 'type'
-    TESTING = 'testing'
     CONNECTION = 'connection'
+    CUSTOMER = 'customer'
+    ID = 'id'
+    LPT_ADDRESS = 'lpt_address'
+    SCHEDULED = 'scheduled'
+    TESTING = 'testing'
+    TYPE = 'type'
+    TIMESTAMP = 'timestamp'
+    WEATHER = 'weather'
+
+
+class SystemField(Enum):
+    """Terminal field names."""
+
+    CONFIGURED = 'configured'
+    CREATED = 'created'
+    DEPLOYMENT = 'deployment'
+    ID = 'id'
     MANUFACTURER = 'manufacturer'
     MODEL = 'model'
+    MONITOR = 'monitor'
     ONLINE = 'online'
+    OPENVPN = 'openvpn'
+    OS = 'os'
+    SN = 'sn'
+    WIREGUARD = 'wireguard'
 
 
 class FieldFormatter:

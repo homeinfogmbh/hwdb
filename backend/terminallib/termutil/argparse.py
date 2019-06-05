@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 
 from terminallib.enumerations import Connection, OperatingSystem, Type
-from terminallib.fields import Field
+from terminallib.cli.common import DeploymentField, SystemField
 
 
 __all__ = ['get_args']
@@ -17,26 +17,16 @@ def _add_parser_list_systems(subparsers):
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems of the respective customer')
     parser.add_argument(
-        '-c', '--customer', type=int, metavar='customer',
-        help='filter for systems of the respective customer')
-    parser.add_argument(
-        '-d', '--deployed', type=int, metavar='deployed',
+        '-D', '--deployed', type=int, metavar='deployed',
         help='filter for deployed or undeployed systems')
     parser.add_argument(
-        '--testing', type=int, metavar='testing',
-        help='filter for testing systems')
-    parser.add_argument(
-        '-t', '--type', nargs='+', type=Type, metavar='type',
-        help='filter for the respective types')
-    parser.add_argument(
-        '-i', '--connection', nargs='+', type=Connection,
-        metavar='connection',
-        help='filter for the respective connections')
+        '-d', '--deployment', nargs='+', type=int, metavar='deployed',
+        help='filter for the given deployments')
     parser.add_argument(
         '-o', '--os', nargs='+', type=OperatingSystem, metavar='os',
         help='filter for the respective operating systems')
     parser.add_argument(
-        '-f', '--fields', type=Field, nargs='+', metavar='field',
+        '-f', '--fields', type=SystemField, nargs='+', metavar='field',
         help='specifies the fields to print')
 
 
@@ -49,9 +39,6 @@ def _add_parser_list_deployments(subparsers):
         '-C', '--customer', type=int, metavar='customer',
         help='filter for the respective customer')
     parser.add_argument(
-        '-d', '--deployed', type=int, metavar='deployed',
-        help='filter for deployments with or without systems')
-    parser.add_argument(
         '--testing', type=int, metavar='testing',
         help='filter for testing deployments')
     parser.add_argument(
@@ -61,7 +48,7 @@ def _add_parser_list_deployments(subparsers):
         '-c', '--connection', nargs='+', type=Connection,
         metavar='connection', help='filter for the respective connections')
     parser.add_argument(
-        '-f', '--fields', type=Field, nargs='+', metavar='field',
+        '-f', '--fields', type=DeploymentField, nargs='+', metavar='field',
         help='specifies the fields to print')
 
 
