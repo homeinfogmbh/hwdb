@@ -91,8 +91,10 @@ def get_deployment(street, house_number=None, annotation=None):
 def list_deployments(deployments, header=True, fields=DEFAULT_FIELDS, sep='  '):
     """Yields formatted deployment for console outoput."""
 
+    formatters = [FIELDS[field] for field in fields]
+
     if header:
-        yield sep.join(str(field) for field in fields)
+        yield sep.join(str(frmtr) for frmtr in formatters)
 
     for deployment in deployments:
-        yield sep.join(field.format(deployment) for field in fields)
+        yield sep.join(frmtr.format(deployment) for frmtr in formatters)

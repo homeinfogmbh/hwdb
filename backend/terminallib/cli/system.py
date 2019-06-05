@@ -92,8 +92,10 @@ def get_system(street, house_number=None, annotation=None):
 def list_systems(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
     """Yields formatted systems for console outoput."""
 
+    formatters = [FIELDS[field] for field in fields]
+
     if header:
-        yield sep.join(str(field) for field in fields)
+        yield sep.join(str(frmtr) for frmtr in formatters)
 
     for system in systems:
-        yield sep.join(field.format(system) for field in fields)
+        yield sep.join(frmtr.format(system) for frmtr in formatters)
