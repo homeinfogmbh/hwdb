@@ -2,6 +2,10 @@
 
 from syslib import B64LZMA
 
+
+__all__ = ['ARNIE']
+
+
 ARNIE = B64LZMA(
     '/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4AIEAK9dABBuADwUaYt0gRsna7sph26BXekoRMls4'
     'PqOjQ0VHvqxoXly1uRgtvfLn9pvnm1DrCgcJiPp8HhWiGzH7ssJqMiSKm0l67Why5BVT8apzO'
