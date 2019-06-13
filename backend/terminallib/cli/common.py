@@ -53,7 +53,6 @@ class DeploymentField(Enum):
     TESTING = 'testing'
     TYPE = 'type'
     TIMESTAMP = 'timestamp'
-    WEATHER = 'weather'
 
 
 class SystemField(Enum):

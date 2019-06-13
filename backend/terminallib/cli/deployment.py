@@ -31,8 +31,6 @@ FIELDS = {
     DeploymentField.LPT_ADDRESS: FieldFormatter(
         lambda dep: str(dep.lpt_address) if dep.lpt_address else None,
         'Public Transport Address', size=64, leftbound=True),
-    DeploymentField.WEATHER: FieldFormatter(
-        lambda dep: dep.weather, 'Weather', size=12),
     DeploymentField.SCHEDULED: FieldFormatter(
         lambda dep: dep.scheduled.isoformat() if dep.scheduled else None,
         'Scheduled', size=12),
