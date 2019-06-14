@@ -34,7 +34,10 @@ def main():
         if args.target == 'dep':
             success = add_deploment(args)
         elif args.target == 'sys':
-            success = add_system(args)
+            for _ in range(args.amount):
+                add_system(args)
+
+            success = True
 
         needs_hooks = True
     elif args.action == 'deploy':

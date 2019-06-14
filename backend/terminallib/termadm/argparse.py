@@ -33,6 +33,7 @@ def _add_new_system_parser(subparsers):
         help="the system's manufacturer")
     parser.add_argument(
         '-o', '--operating-system', type=OperatingSystem,
+        default=OperatingSystem.ARCH_LINUX,
         help='the installed operating system')
     parser.add_argument(
         '--monitor', type=int, help='set explicit monitoring flag')
@@ -54,7 +55,7 @@ def _add_new_deployment_parser(subparsers):
     parser.add_argument('city', help='the city')
     parser.add_argument('-t', '--type', type=Type, help='the system type')
     parser.add_argument(
-        '-c', '--connection', type=Connection,
+        '-c', '--connection', type=Connection, default=Connection.DSL,
         help='the internet connection on site')
     parser.add_argument(
         '-s', '--scheduled', type=date, help='the scheduled date')
