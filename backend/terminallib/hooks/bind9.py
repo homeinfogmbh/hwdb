@@ -15,7 +15,7 @@ __all__ = ['bind9cfgen']
 
 BIND9_SERVICE = 'bind9.service'
 DNS_CONFIG = Path('/etc/bind/homeinfo.intranet.zone')
-DNS_TEMPLATE = Path('/usr/local/etc/homeinfo.intranet.zone.temp')
+DNS_TEMPLATE = Path('/usr/share/terminals/homeinfo.intranet.zone.temp')
 IN_A_RECORD = '{}\tIN\tA\t{}'
 LOCAL_HOSTS_LIST = Path('/usr/local/etc/local_hosts')
 LOGGER = getLogger('bind9')
@@ -24,14 +24,17 @@ LOGGER = getLogger('bind9')
 def management_hosts():
     """Renders management network hosts."""
 
-    yield ';# Management network hosts\n'
+    try:
+        with LOCAL_HOSTS_LIST.open('r') as file:
+            yield ';# Management network hosts\n'
 
-    with LOCAL_HOSTS_LIST.open('r') as file:
-        for line in file:
-            line = line.strip()
+            for line in file:
+                line = line.strip()
 
-            if line and not line.startswith('#'):
-                yield IN_A_RECORD.format(*line.split())
+                if line and not line.startswith('#'):
+                    yield IN_A_RECORD.format(*line.split())
+    except FileNotFoundError:
+        return
 
 
 def terminal_hosts():

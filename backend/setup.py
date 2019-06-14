@@ -21,6 +21,8 @@ setup(
         'files/termadm',
         'files/termutil'],
     data_files=[
-        ('/usr/share/terminals',
-         ['files/openvpn.conf.temp', 'files/pacman.conf.temp'])],
+        ('/usr/share/terminals', [
+            'files/openvpn.conf.temp',
+            'files/pacman.conf.temp',
+            'files/homeinfo.intranet.zone.temp'])],
     description=("HOMEINFO's terminal libary."))
