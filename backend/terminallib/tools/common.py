@@ -1,16 +1,9 @@
 """Command line interface utilities."""
 
-from enum import Enum
-
 from blessings import Terminal
 
 
-__all__ = [
-    'justify',
-    'to_string',
-    'DeploymentField',
-    'SystemField',
-    'FieldFormatter']
+__all__ = ['justify', 'to_string', 'FieldFormatter']
 
 
 def justify(string, size, leftbound=False):
@@ -38,38 +31,6 @@ def to_string(value, none='-', true='✓', false='✗'):
         return false
 
     return str(value)
-
-
-class DeploymentField(Enum):
-    """Terminal field names."""
-
-    ADDRESS = 'address'
-    ANNOTATION = 'annotation'
-    CONNECTION = 'connection'
-    CUSTOMER = 'customer'
-    ID = 'id'
-    LPT_ADDRESS = 'lpt_address'
-    SCHEDULED = 'scheduled'
-    TESTING = 'testing'
-    TYPE = 'type'
-    TIMESTAMP = 'timestamp'
-
-
-class SystemField(Enum):
-    """Terminal field names."""
-
-    CONFIGURED = 'configured'
-    CREATED = 'created'
-    DEPLOYMENT = 'deployment'
-    ID = 'id'
-    MANUFACTURER = 'manufacturer'
-    MODEL = 'model'
-    MONITOR = 'monitor'
-    ONLINE = 'online'
-    OPENVPN = 'openvpn'
-    OS = 'os'
-    SN = 'sn'
-    WIREGUARD = 'wireguard'
 
 
 class FieldFormatter:

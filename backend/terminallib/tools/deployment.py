@@ -1,21 +1,31 @@
 """Deployments handling."""
 
+from enum import Enum
 from sys import stderr
 
 from mdb import Address
 
-from terminallib.cli.common import DeploymentField, FieldFormatter
+from terminallib.tools.common import FieldFormatter
 from terminallib.exceptions import TerminalError, AmbiguityError
 from terminallib.orm import Deployment
 
 
-__all__ = [
-    'DEFAULT_FIELDS',
-    'print_deployment',
-    'find_deployments',
-    'get_deployment',
-    'list_deployments'
-]
+__all__ = ['DEFAULT_FIELDS', 'find', 'get', 'listdep', 'printdep']
+
+
+class DeploymentField(Enum):
+    """Terminal field names."""
+
+    ADDRESS = 'address'
+    ANNOTATION = 'annotation'
+    CONNECTION = 'connection'
+    CUSTOMER = 'customer'
+    ID = 'id'
+    LPT_ADDRESS = 'lpt_address'
+    SCHEDULED = 'scheduled'
+    TESTING = 'testing'
+    TYPE = 'type'
+    TIMESTAMP = 'timestamp'
 
 
 FIELDS = {
@@ -49,14 +59,7 @@ DEFAULT_FIELDS = (
 )
 
 
-def print_deployment(deployment):
-    """Prints the respective system."""
-
-    print(deployment, file=stderr)
-    print(deployment.id)
-
-
-def find_deployments(street, house_number=None, annotation=None):
+def find(street, house_number=None, annotation=None):
     """Finds systems at the specified address."""
 
     selection = Address.street ** f'%{street}%'
@@ -71,11 +74,11 @@ def find_deployments(street, house_number=None, annotation=None):
         Address, on=Address.id == Deployment.address).where(selection)
 
 
-def get_deployment(street, house_number=None, annotation=None):
+def get(street, house_number=None, annotation=None):
     """Finds a deployment by its address."""
 
     try:
-        deployment, *superfluous = find_deployments(
+        deployment, *superfluous = find(
             street, house_number=house_number, annotation=annotation)
     except ValueError:
         raise TerminalError('No deployment matching query.')
@@ -86,7 +89,7 @@ def get_deployment(street, house_number=None, annotation=None):
     return deployment
 
 
-def list_deployments(deployments, header=True, fields=DEFAULT_FIELDS, sep='  '):
+def listdep(deployments, header=True, fields=DEFAULT_FIELDS, sep='  '):
     """Yields formatted deployment for console outoput."""
 
     formatters = [FIELDS[field] for field in fields]
@@ -96,3 +99,10 @@ def list_deployments(deployments, header=True, fields=DEFAULT_FIELDS, sep='  '):
 
     for deployment in deployments:
         yield sep.join(frmtr.format(deployment) for frmtr in formatters)
+
+
+def printdep(deployment):
+    """Prints the respective system."""
+
+    print(deployment, file=stderr)
+    print(deployment.id)

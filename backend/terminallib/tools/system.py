@@ -1,21 +1,33 @@
 """Systems handling."""
 
+from enum import Enum
 from sys import stderr
 
 from mdb import Address
 
-from terminallib.cli.common import SystemField, FieldFormatter
+from terminallib.tools.common import FieldFormatter
 from terminallib.exceptions import AmbiguityError, TerminalError
 from terminallib.orm import Deployment, System
 
 
-__all__ = [
-    'DEFAULT_FIELDS',
-    'print_system',
-    'find_systems',
-    'get_system',
-    'list_systems'
-]
+__all__ = ['DEFAULT_FIELDS', 'find', 'get', 'listsys', 'printsys']
+
+
+class SystemField(Enum):
+    """Terminal field names."""
+
+    CONFIGURED = 'configured'
+    CREATED = 'created'
+    DEPLOYMENT = 'deployment'
+    ID = 'id'
+    MANUFACTURER = 'manufacturer'
+    MODEL = 'model'
+    MONITOR = 'monitor'
+    ONLINE = 'online'
+    OPENVPN = 'openvpn'
+    OS = 'os'
+    SN = 'sn'
+    WIREGUARD = 'wireguard'
 
 
 FIELDS = {
@@ -49,16 +61,7 @@ DEFAULT_FIELDS = (
 )
 
 
-def print_system(system):
-    """Prints the respective system."""
-
-    if system.deployment is not None:
-        print(system.deployment, file=stderr)
-
-    print(system.id)
-
-
-def find_systems(street, house_number=None, annotation=None):
+def find(street, house_number=None, annotation=None):
     """Finds systems at the specified address."""
 
     selection = Address.street ** f'%{street}%'
@@ -74,11 +77,11 @@ def find_systems(street, house_number=None, annotation=None):
     return join.where(selection)
 
 
-def get_system(street, house_number=None, annotation=None):
+def get(street, house_number=None, annotation=None):
     """Finds a system by its address."""
 
     try:
-        system, *superfluous = find_systems(
+        system, *superfluous = find(
             street, house_number=house_number, annotation=annotation)
     except ValueError:
         raise TerminalError('No system matching query.')
@@ -89,7 +92,7 @@ def get_system(street, house_number=None, annotation=None):
     return system
 
 
-def list_systems(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
+def listsys(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
     """Yields formatted systems for console outoput."""
 
     formatters = [FIELDS[field] for field in fields]
@@ -99,3 +102,12 @@ def list_systems(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
 
     for system in systems:
         yield sep.join(frmtr.format(system) for frmtr in formatters)
+
+
+def printsys(system):
+    """Prints the respective system."""
+
+    if system.deployment is not None:
+        print(system.deployment, file=stderr)
+
+    print(system.id)

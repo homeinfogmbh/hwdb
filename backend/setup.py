@@ -10,14 +10,15 @@ setup(
     maintainer_email='r.neumann@homeinfo.de',
     packages=[
         'terminallib',
-        'terminallib.cli',
+        'terminallib.hooks',
         'terminallib.orm',
-        'terminallib.termutil'],
+        'terminallib.termadm',
+        'terminallib.termutil',
+        'terminallib.tools'],
     scripts=[
-        'files/bindcfg-gen',
         'files/chkapp',
         'files/chksync',
-        'files/openvpncfg-gen',
+        'files/termadm',
         'files/termutil'],
     data_files=[
         ('/usr/share/terminals',

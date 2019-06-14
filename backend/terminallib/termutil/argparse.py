@@ -3,7 +3,10 @@
 from argparse import ArgumentParser
 
 from terminallib.enumerations import Connection, OperatingSystem, Type
-from terminallib.cli.common import DeploymentField, SystemField
+from terminallib.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
+from terminallib.tools.deployment import DeploymentField
+from terminallib.tools.system import DEFAULT_FIELDS as SYSTEM_FIELDS
+from terminallib.tools.system import SystemField
 
 
 __all__ = ['get_args']
@@ -23,11 +26,11 @@ def _add_parser_list_systems(subparsers):
         '-d', '--deployment', nargs='+', type=int, metavar='deployed',
         help='filter for the given deployments')
     parser.add_argument(
-        '-o', '--os', nargs='+', type=OperatingSystem, metavar='os',
-        help='filter for the respective operating systems')
+        '-o', '--operating-system', nargs='+', type=OperatingSystem,
+        metavar='os', help='filter for the respective operating systems')
     parser.add_argument(
-        '-f', '--fields', type=SystemField, nargs='+', metavar='field',
-        help='specifies the fields to print')
+        '-f', '--fields', type=SystemField, nargs='+', default=SYSTEM_FIELDS,
+        metavar='field', help='specifies the fields to print')
 
 
 def _add_parser_list_deployments(subparsers):
@@ -48,7 +51,8 @@ def _add_parser_list_deployments(subparsers):
         '-c', '--connection', nargs='+', type=Connection,
         metavar='connection', help='filter for the respective connections')
     parser.add_argument(
-        '-f', '--fields', type=DeploymentField, nargs='+', metavar='field',
+        '-f', '--fields', type=DeploymentField, nargs='+',
+        default=DEPLOYMENT_FIELDS, metavar='field',
         help='specifies the fields to print')
 
 
