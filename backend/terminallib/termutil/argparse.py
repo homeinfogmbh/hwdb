@@ -99,8 +99,8 @@ def get_args():
     parser = ArgumentParser(description='Terminal database query utility.')
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='turn on verbose logging')
-    action = parser.add_subparsers(dest='action')
-    _add_parser_list(action)
-    _add_parser_find(action)
-    action.add_parser('CSM-101', help='?')
+    subparsers = parser.add_subparsers(dest='action')
+    _add_parser_list(subparsers)
+    _add_parser_find(subparsers)
+    subparsers.add_parser('CSM-101', help='?')
     return parser.parse_args()

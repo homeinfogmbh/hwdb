@@ -17,7 +17,7 @@ __all__ = ['main']
 
 
 DESCRIPTION = 'Command line tool to administer HOMEINFO terminals.'
-LOGGER = getLogger(__file__)
+LOGGER = getLogger('termadm')
 TERMGR_USER = 'termgr'
 
 
@@ -45,8 +45,13 @@ def main():
     elif args.action == 'undeploy':
         success = undeploy(args)
         hooks.add(nagioscfgen)
+    elif args.action == 'run-hooks':
+        if args.no_hooks:
+            LOGGER.error('Are you kidding me?')
+        else:
+            success = True
 
-    if success:
+    if success and not args.no_hooks:
         for hook in hooks:
             hook()
 

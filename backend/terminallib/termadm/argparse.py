@@ -105,4 +105,5 @@ def get_args():
     _add_new_parser(subparsers)
     _add_deploy_parser(subparsers)
     _add_undeploy_parser(subparsers)
+    subparsers.add_parser('run-hooks', help='run post-transaction hooks')
     return parser.parse_args()
