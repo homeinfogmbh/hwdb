@@ -6,14 +6,30 @@ from datetime import datetime
 from mdb import Customer
 
 from terminallib.enumerations import Connection, OperatingSystem, Type
+from terminallib.hooks import HOOKS, bind9cfgen, nagioscfgen, openvpncfgen
 from terminallib.orm.deployment import Deployment
 from terminallib.orm.system import System
+
+
+__all__ = ['get_args']
+
+
+DEFAULT_HOOKS = (bind9cfgen, nagioscfgen, openvpncfgen)
 
 
 def date(string):
     """Parses a date."""
 
     return datetime.strptime(string, '%Y-%m-%d').date()
+
+
+def hook(name):
+    """Returns the respective hook."""
+
+    try:
+        return HOOKS[name]
+    except KeyError:
+        raise ValueError(f'No such hook: {name}.')
 
 
 def _add_new_system_parser(subparsers):
@@ -92,6 +108,17 @@ def _add_undeploy_parser(subparsers):
         'system', nargs='+', type=System.__getitem__,
         help='the system to deploy')
 
+
+def _add_hooks_parser(subparsers):
+    """Adds a parser for running hooks."""
+
+    parser = subparsers.add_parser(
+        'run-hooks', help='run post-transaction hooks')
+    parser.add_argument(
+        '-H', '--hooks', nargs='*', type=hook, default=DEFAULT_HOOKS,
+        help='a list of hooks to run')
+
+
 def get_args():
     """Parses the CLI arguments."""
 
@@ -105,5 +132,5 @@ def get_args():
     _add_new_parser(subparsers)
     _add_deploy_parser(subparsers)
     _add_undeploy_parser(subparsers)
-    subparsers.add_parser('run-hooks', help='run post-transaction hooks')
+    _add_hooks_parser(subparsers)
     return parser.parse_args()

@@ -5,4 +5,11 @@ from terminallib.hooks.nagios import nagioscfgen
 from terminallib.hooks.openvpn import openvpncfgen
 
 
-__all__ = ['bind9cfgen', 'nagioscfgen', 'openvpncfgen']
+__all__ = ['HOOKS', 'bind9cfgen', 'nagioscfgen', 'openvpncfgen']
+
+
+HOOKS = {
+    'bind9': bind9cfgen,
+    'nagios': nagioscfgen,
+    'openvpn': openvpncfgen
+}

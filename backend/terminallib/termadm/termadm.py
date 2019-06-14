@@ -12,7 +12,6 @@ from terminallib.termadm.deployment import add as add_deploment
 from terminallib.termadm.system import add as add_system, deploy, undeploy
 
 
-
 __all__ = ['main']
 
 
@@ -46,7 +45,7 @@ def main():
         success = undeploy(args)
         hooks.add(nagioscfgen)
     elif args.action == 'run-hooks':
-        hooks |= {bind9cfgen, nagioscfgen, openvpncfgen}
+        hooks = args.hooks
 
         if args.no_hooks:
             LOGGER.error('Are you kidding me?')
