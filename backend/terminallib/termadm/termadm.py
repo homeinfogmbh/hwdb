@@ -27,7 +27,7 @@ def main():
     args = get_args()
     basicConfig(level=DEBUG if args.verbose else INFO, format=LOG_FORMAT)
     success = False
-    hooks = ()
+    hooks = None
 
     if args.action == 'add':
         if args.target == 'dep':
@@ -52,7 +52,7 @@ def main():
         else:
             success = True
 
-    if success and not args.no_hooks:
+    if success and hooks and not args.no_hooks:
         for hook in hooks:
             hook()
 
