@@ -28,7 +28,7 @@ class AmbiguityError(TerminalError):
     terminal yielded ambiguous terminals.
     """
 
-    def __init__(self, object, ambiguous):
+    def __init__(self, object, ambiguous):  # pylint: disable=W0622
         """Sets the respective systems."""
         super().__init__()
         self.object = object
