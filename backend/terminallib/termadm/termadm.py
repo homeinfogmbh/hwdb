@@ -27,7 +27,7 @@ def main():
     args = get_args()
     basicConfig(level=DEBUG if args.verbose else INFO, format=LOG_FORMAT)
     success = False
-    hooks = set()
+    hooks = ()
 
     if args.action == 'add':
         if args.target == 'dep':
@@ -37,13 +37,13 @@ def main():
                 add_system(args)
 
             success = True
-            hooks |= {bind9cfgen, nagioscfgen, openvpncfgen}
+            hooks = (bind9cfgen, nagioscfgen, openvpncfgen)
     elif args.action == 'deploy':
         success = deploy(args)
-        hooks.add(nagioscfgen)
+        hooks = [nagioscfgen]
     elif args.action == 'undeploy':
         success = undeploy(args)
-        hooks.add(nagioscfgen)
+        hooks = [nagioscfgen]
     elif args.action == 'run-hooks':
         hooks = args.hooks
 
@@ -53,7 +53,7 @@ def main():
             success = True
 
     if success and not args.no_hooks:
-        for hook in sorted(hooks):
+        for hook in hooks:
             hook()
 
     exit(0 if success else 1)
