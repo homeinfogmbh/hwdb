@@ -6,6 +6,7 @@ from terminallib.exceptions import TerminalConfigError
 from terminallib.orm.openvpn import OpenVPN
 from terminallib.orm.system import System
 from terminallib.orm.wireguard import WireGuard
+from terminallib.system import root
 
 
 __all__ = ['add', 'deploy', 'undeploy']
@@ -14,6 +15,7 @@ __all__ = ['add', 'deploy', 'undeploy']
 LOGGER = getLogger('termadm')
 
 
+@root(LOGGER)   # Needed to write WireGuard private keys.
 def add(args):
     """Adds a new system."""
 

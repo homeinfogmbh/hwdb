@@ -6,8 +6,8 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from sys import exit    # pylint: disable=W0622
 
-from terminallib.hooks.common import root, systemctl
 from terminallib.orm.system import System
+from terminallib.system import root, systemctl
 
 
 __all__ = ['bind9cfgen']

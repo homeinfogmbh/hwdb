@@ -10,7 +10,7 @@ from nagioslib import write_hostgroups
 from nagioslib import write_hosts
 from nagioslib import write_services
 
-from terminallib.hooks.common import root, systemctl
+from terminallib.system import root, systemctl
 
 
 LOGGER = getLogger('nagios')
