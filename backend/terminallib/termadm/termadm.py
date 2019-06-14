@@ -46,6 +46,8 @@ def main():
         success = undeploy(args)
         hooks.add(nagioscfgen)
     elif args.action == 'run-hooks':
+        hooks |= {bind9cfgen, nagioscfgen, openvpncfgen}
+
         if args.no_hooks:
             LOGGER.error('Are you kidding me?')
         else:
