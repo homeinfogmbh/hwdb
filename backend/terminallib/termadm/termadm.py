@@ -54,7 +54,7 @@ def main():
             success = True
 
     if success and not args.no_hooks:
-        for hook in hooks:
+        for hook in sorted(hooks):
             hook()
 
     exit(0 if success else 1)
