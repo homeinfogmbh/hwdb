@@ -4,7 +4,6 @@ from logging import getLogger
 from os import linesep
 from pathlib import Path
 from subprocess import CalledProcessError
-from sys import exit    # pylint: disable=W0622
 
 from terminallib.orm.system import System
 from terminallib.system import root, systemctl
@@ -78,6 +77,6 @@ def bind9cfgen():
     try:
         systemctl('restart', BIND9_SERVICE)
     except CalledProcessError:
-        exit(1)
+        return False
 
-    exit(0)
+    return True

@@ -38,3 +38,6 @@ def nagioscfgen():
         systemctl('restart', NAGIOS_SERVICE)
     except CalledProcessError:
         LOGGER.error('Restarting nagios failed.')
+        return False
+
+    return True

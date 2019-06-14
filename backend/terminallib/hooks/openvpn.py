@@ -3,7 +3,6 @@
 from logging import getLogger
 from pathlib import Path
 from subprocess import CalledProcessError
-from sys import exit    # pylint: disable=W0622
 
 from terminallib.config import CONFIG
 from terminallib.orm.system import System
@@ -54,6 +53,6 @@ def openvpncfgen():
     try:
         systemctl('restart', OPENVPN_SERVICE)
     except CalledProcessError:
-        exit(1)
+        return False
 
-    exit(0)
+    return True
