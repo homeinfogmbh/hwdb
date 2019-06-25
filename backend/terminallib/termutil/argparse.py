@@ -34,7 +34,7 @@ def _add_parser_list_systems(subparsers):
         '-D', '--deployed', type=int, metavar='deployed',
         help='filter for deployed or undeployed systems')
     parser.add_argument(
-        '-d', '--deployment', nargs='+', type=int, metavar='deployed',
+        '-d', '--deployment', nargs='+', type=int, metavar='deployment',
         help='filter for the given deployments')
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=OperatingSystem,
