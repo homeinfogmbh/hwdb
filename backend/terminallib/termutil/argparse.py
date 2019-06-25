@@ -2,6 +2,8 @@
 
 from argparse import ArgumentParser
 
+from mdb import Customer
+
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
 from terminallib.tools.deployment import DeploymentField
@@ -10,6 +12,15 @@ from terminallib.tools.system import SystemField
 
 
 __all__ = ['get_args']
+
+
+def customer(value):
+    """Returns the respective customer."""
+
+    try:
+        return Customer.find(value).get()
+    except Customer.DoesNotExist:
+        raise ValueError('No such customer.')
 
 
 def _add_parser_list_systems(subparsers):
@@ -27,7 +38,10 @@ def _add_parser_list_systems(subparsers):
         help='filter for the given deployments')
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=OperatingSystem,
-        metavar='os', help='filter for the respective operating systems')
+        metavar='os', help='filter for the given operating systems')
+    parser.add_argument(
+        '-m', '--manufacturer', nargs='+', type=customer,
+        metavar='manufacturer', help='filter for the given manufacturers')
     parser.add_argument(
         '-f', '--fields', type=SystemField, nargs='+', default=SYSTEM_FIELDS,
         metavar='field', help='specifies the fields to print')

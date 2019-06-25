@@ -34,6 +34,9 @@ def get_systems(args):
     if args.operating_system:
         select &= System.operating_system << args.operating_system
 
+    if args.manufacturer:
+        select &= System.manufacturer << args.manufacturer
+
     return System.select().where(select)
 
 
