@@ -44,7 +44,7 @@ FIELDS = {
         lambda sys: sys.created.isoformat(), 'Created', size=24),
     SystemField.CONFIGURED: FieldFormatter(
         lambda sys: sys.configured.isoformat() if sys.configured else None,
-        'Created', size=24),
+        'Configured', size=24),
     SystemField.OS: FieldFormatter(
         lambda sys: sys.operating_system.value, 'OS', size=25),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
