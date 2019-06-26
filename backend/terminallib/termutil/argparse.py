@@ -35,13 +35,13 @@ def _add_parser_list_systems(subparsers):
         help='filter for deployed or undeployed systems')
     parser.add_argument(
         '-d', '--deployment', nargs='+', type=int, metavar='deployment',
-        help='filter for the given deployments')
+        help='filter for the respective deployments')
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=OperatingSystem,
-        metavar='os', help='filter for the given operating systems')
+        metavar='os', help='filter for the respective operating systems')
     parser.add_argument(
         '-m', '--manufacturer', nargs='+', type=customer,
-        metavar='manufacturer', help='filter for the given manufacturers')
+        metavar='manufacturer', help='filter for the respective manufacturers')
     parser.add_argument(
         '-f', '--fields', type=SystemField, nargs='+', default=SYSTEM_FIELDS,
         metavar='field', help='specifies the fields to print')
@@ -53,8 +53,8 @@ def _add_parser_list_deployments(subparsers):
     parser = subparsers.add_parser('dep', help='list deployments')
     parser.add_argument('id', nargs='*', type=int, metavar='id')
     parser.add_argument(
-        '-C', '--customer', type=int, metavar='customer',
-        help='filter for the respective customer')
+        '-C', '--customer', nargs='+', type=int, metavar='customer',
+        help='filter for the respective customers')
     parser.add_argument(
         '--testing', type=int, metavar='testing',
         help='filter for testing deployments')
