@@ -17,7 +17,7 @@ __all__ = ['OpenVPN']
 
 NETBASE = CONFIG['OpenVPN']['network']
 NETMASK = CONFIG['OpenVPN']['netmask']
-NETWORK = IPv4Network('{}/{}'.format(NETBASE, NETMASK))
+NETWORK = IPv4Network(f'{NETBASE}/{NETMASK}')
 RESERVED = {addr for index, addr in enumerate(NETWORK) if index <= 10}
 
 

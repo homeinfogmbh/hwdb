@@ -34,10 +34,10 @@ class Deployment(BaseModel):
         """Returns a human readable string."""
         string = f'{self.type.value} of {self.customer.id} at {self.address}'
 
-        if self.annotation is not None:
-            return ' '.join((string, f'({self.annotation})'))
+        if self.annotation is None:
+            return string
 
-        return string
+        return f'{string} ({self.annotation})'
 
     def to_json(self, systems=False, **kwargs):
         """Returns a JSON-ish dict."""
