@@ -53,7 +53,7 @@ def _add_parser_list_deployments(subparsers):
     parser = subparsers.add_parser('dep', help='list deployments')
     parser.add_argument('id', nargs='*', type=int, metavar='id')
     parser.add_argument(
-        '-C', '--customer', nargs='+', type=int, metavar='customer',
+        '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for the respective customers')
     parser.add_argument(
         '--testing', type=int, metavar='testing',
