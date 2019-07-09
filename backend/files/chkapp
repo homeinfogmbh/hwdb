@@ -37,7 +37,7 @@ def main(options):
     enabled = ctrl.execute(SYSTEMCTL, 'is-enabled', UNIT)
     running = ctrl.execute(SYSTEMCTL, 'is-active', UNIT)
 
-    if 255 in (enabled.returncode, running.returncode):
+    if 255 in {enabled.returncode, running.returncode}:
         print('Cannot connect to system.')
         exit(3)
 
