@@ -22,12 +22,15 @@ def add(args):
     select = Deployment.address == address
     select &= Deployment.customer == args.customer
     select &= Deployment.type == args.type
+    select &= Deployment.connection == args.connection
+    select &= Deployment.annotation == args.annotation
 
     try:
         deployment = Deployment.get(select)
     except Deployment.DoesNotExist:
         deployment = Deployment(
-            customer=args.customer, type=args.type, address=address)
+            customer=args.customer, type=args.type, address=address,
+            annotation=args.annotation, connection=args.connection)
         deployment.save()
         LOGGER.info('Added deployment #%i.', deployment.id)
     else:
