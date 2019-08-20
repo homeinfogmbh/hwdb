@@ -49,6 +49,7 @@ def openvpncfgen():
     """Runs the OpenVPN config generator."""
 
     LOGGER.info('Generating configuration.')
+    generate_config()
 
     try:
         systemctl('restart', OPENVPN_SERVICE)
