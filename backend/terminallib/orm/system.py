@@ -90,8 +90,6 @@ class System(BaseModel):
         skip = set(skip) if skip else set()
 
         if brief:
-            skip.add('openvpn')
-            skip.add('wireguard')
-            skip.add('manufacturer')
+            skip |= {'openvpn', 'wireguard', 'manufacturer'}
 
         return super().to_json(skip=skip, **kwargs)
