@@ -103,9 +103,9 @@ terminallib.sorting.compareAddress = function (alice, bob) {
 /*
     Returns a sort function to sort by terminal ID.
 */
-terminallib.sorting.sortByTID = function (descending) {
+terminallib.sorting.sortByID = function (descending) {
     return function (alice, bob) {
-        const result = alice.tid - bob.tid;
+        const result = alice.id - bob.id;
         return descending ? -result : result;
     };
 };
@@ -152,17 +152,6 @@ terminallib.sorting.sortByAddress = function (descending) {
 
 
 /*
-    Returns a compare function to sort by deployment date.
-*/
-terminallib.sorting.sortByDeployed = function (descending) {
-    return function (alice, bob) {
-        const result = terminallib.sorting.compareSize(alice.deployed, bob.deployed);
-        return descending ? -result : result;
-    };
-};
-
-
-/*
     Returns a compare function to sort by testing flag.
 */
 terminallib.sorting.sortByTesting = function (descending) {
@@ -182,16 +171,14 @@ terminallib.sorting.getSorter = function (field, descending) {
     }
 
     switch (field.toLowerCase()) {
-    case 'tid':
-        return terminallib.sorting.sortByTID(descending);
+    case 'id':
+        return terminallib.sorting.sortByID(descending);
     case 'cid':
         return terminallib.sorting.sortByCID(descending);
     case 'customer':
         return terminallib.sorting.sortByCustomerName(descending);
     case 'address':
         return terminallib.sorting.sortByAddress(descending);
-    case 'deployed':
-        return terminallib.sorting.sortByDeployed(descending);
     case 'testing':
         return terminallib.sorting.sortByTesting(descending);
     }
