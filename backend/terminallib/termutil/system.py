@@ -45,7 +45,8 @@ def find(args):
 
     try:
         system = get(
-            args.pattern, house_number=args.house_number, annotation=pattern)
+            args.pattern, house_number=args.house_number,
+			annotation=args.pattern)
     except AmbiguityError as ambiguous:
         LOGGER.warning('Ambiguous systems.')
 
