@@ -6,3 +6,6 @@ build
 setup.cfg
 dist
 .buildconfig
+.anjuta/
+.anjuta_sym_db.db
+*.anjuta

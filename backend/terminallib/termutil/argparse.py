@@ -90,13 +90,10 @@ def _add_parser_find_systems(subparsers):
 
     parser = subparsers.add_parser('sys', help='find digital signage systems')
     parser.add_argument(
-        'street', help='filter for systems of the respective street')
+        'pattern', help='filter for systems of the respective pattern')
     parser.add_argument(
         'house_number', nargs='?',
         help='filter for systems of the respective house number')
-    parser.add_argument(
-        'annotation', nargs='?',
-        help='filter for systems of the respective annotation')
 
 
 def _add_parser_find(subparsers):

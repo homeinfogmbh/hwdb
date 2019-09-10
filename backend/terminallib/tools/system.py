@@ -70,7 +70,7 @@ def find(street, house_number=None, annotation=None):
         selection &= Address.house_number ** f'%{house_number}%'
 
     if annotation is not None:
-        selection &= Deployment.annotation ** f'%{annotation}%'
+        selection |= Deployment.annotation ** f'%{annotation}%'
 
     join_condition = Address.id == Deployment.address
     join = System.select().join(Deployment).join(Address, on=join_condition)
