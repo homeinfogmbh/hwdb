@@ -1,0 +1,16 @@
+[Anjuta]
+Maximized=1
+Geometry=1920x983+0+0
+
+[File Loader]
+Files=../../backend/terminallib/enumerations.py#27%%%../../backend/terminallib/ctrl.py#25%%%../../backend/files/termutil#9%%%../../backend/terminallib/termutil/system.py#49%%%../../backend/terminallib/system.py#1%%%../../backend/terminallib/tools/system.py#82%%%../../backend/terminallib/termutil/argparse.py#94
+
+[Document Manager]
+bookmarks=<?xml version="1.0" encoding="UTF-8"?>\n<bookmarks/>\n
+
+[Execution]
+Run in terminal=2
+Working directories=../../.
+
+[Debugger]
+Stop at beginning=2
