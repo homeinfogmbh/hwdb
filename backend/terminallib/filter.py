@@ -1,7 +1,6 @@
 """Terminal filters."""
 
 from terminallib.config import LOGGER
-from terminallib.ctrl import is_online
 from terminallib.orm import Deployment, System
 
 
@@ -37,7 +36,7 @@ def filter_online(systems):
     """Yields online systems."""
 
     for system in systems:
-        if is_online(system):
+        if system.is_online:
             yield system
 
 
@@ -45,7 +44,7 @@ def filter_offline(systems):
     """Yields offline systems."""
 
     for system in systems:
-        if not is_online(system):
+        if not system.is_online:
             yield system
 
 

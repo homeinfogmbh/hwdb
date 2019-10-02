@@ -11,6 +11,7 @@ from mdb import Customer
 from peeweeplus import EnumField
 
 from terminallib.config import CONFIG, LOGGER
+from terminallib.ctrl import RemoteControllerMixin
 from terminallib.enumerations import OperatingSystem
 from terminallib.orm.common import BaseModel
 from terminallib.orm.deployment import Deployment
@@ -21,7 +22,7 @@ from terminallib.orm.wireguard import WireGuard
 __all__ = ['System']
 
 
-class System(BaseModel):
+class System(BaseModel, RemoteControllerMixin):
     """A physical terminal out in the field."""
 
     deployment = ForeignKeyField(
