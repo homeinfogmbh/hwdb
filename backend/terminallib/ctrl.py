@@ -1,5 +1,6 @@
 """Library for terminal remote control."""
 
+from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from requests import ConnectionError, Timeout, put  # pylint: disable=W0622
@@ -11,7 +12,7 @@ from terminallib.exceptions import SystemOffline, TerminalConfigError
 __all__ = ['RemoteControllerMixin']
 
 
-class RemoteControllerMixin:
+class BasicControllerMixin:
     """Controls a terminal remotely."""
 
     @property
@@ -50,7 +51,7 @@ class RemoteControllerMixin:
 
         try:
             return put(url, json=json)
-        except (ConnectionError, Timeout):
+        except ConnectionError:
             raise SystemOffline()
 
     def exec(self, command, **kwargs):
@@ -58,3 +59,28 @@ class RemoteControllerMixin:
         json = dict(kwargs)
         json['command'] = command
         return self.put(json)
+
+
+class RemoteControllerMixin(BasicControllerMixin):
+    """Enhanced controller functions."""
+
+    def beep(self, *args):
+        """Beeps the system."""
+        return self.exec('beep', args=args)
+
+    def unlock_pacman(self):
+        """Safely removes the pacman lockfile."""
+        return self.exec('unlock-pacman')
+
+    def reboot(self):
+        """Reboots the system."""
+        with suppress(Timeout):
+            return self.exec('reboot')
+
+    def application(self, state=None):
+        """Manages the application.
+        state=True: Enables the application
+        state=False: Disables the application
+        state=None: Queries the application state.
+        """
+        return self.exec('application', state=state)
