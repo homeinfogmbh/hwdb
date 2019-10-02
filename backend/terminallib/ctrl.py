@@ -12,6 +12,9 @@ from terminallib.exceptions import SystemOffline, TerminalConfigError
 __all__ = ['RemoteControllerMixin']
 
 
+PORT = 8000
+
+
 class BasicControllerMixin:
     """Controls a terminal remotely."""
 
@@ -26,7 +29,7 @@ class BasicControllerMixin:
     @property
     def url(self):
         """Returns the system's URL."""
-        return f'http://{self.ipv4address}'
+        return f'http://{self.ipv4address}:{PORT}'
 
     @property
     def is_online(self):
