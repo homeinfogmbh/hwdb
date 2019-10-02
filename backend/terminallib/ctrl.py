@@ -19,7 +19,7 @@ class BasicControllerMixin:
     def ipv4address(self):
         """Returns the system's IPv4 address."""
         try:
-            return self.system.openvpn.ipv4address
+            return self.openvpn.ipv4address
         except AttributeError:
             raise TerminalConfigError('Terminal has no OpenVPN address.')
 
