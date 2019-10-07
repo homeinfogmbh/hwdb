@@ -32,8 +32,8 @@ class BasicControllerMixin:
         return f'http://{self.ipv4address}:{PORT}'
 
     @property
-    def is_online(self):
-        """Pings the system."""
+    def online(self):
+        """Checks whether the system is online."""
         try:
             self.ping()
         except CalledProcessError:
