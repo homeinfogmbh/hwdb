@@ -3,9 +3,9 @@
   <layout name="__default__">
     <dock name="__dock_1" floating="no" width="-1" height="-1" floatx="0" floaty="0" skip-taskbar="yes">
       <paned orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" position="520">
-        <paned orientation="horizontal" resize="yes" locked="no" iconified="no" closed="no" position="270">
+        <paned orientation="horizontal" resize="yes" locked="no" iconified="no" closed="no" position="263">
           <paned orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" position="448">
-            <paned orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" position="197">
+            <paned orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" position="186">
               <item name="AnjutaProjectManager" orientation="vertical" resize="yes" locked="no" iconified="no" closed="no"/>
               <notebook orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" page="0">
                 <item name="AnjutaFileManager" orientation="vertical" resize="yes" locked="no" iconified="no" closed="no"/>
@@ -25,7 +25,7 @@
             <paned orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" position="200">
               <notebook orientation="vertical" resize="yes" locked="no" iconified="no" closed="yes" page="-1"/>
               <paned orientation="horizontal" resize="yes" locked="no" iconified="no" closed="no" position="777">
-                <paned orientation="horizontal" resize="yes" locked="no" iconified="no" closed="no" position="769">
+                <paned orientation="horizontal" resize="yes" locked="no" iconified="no" closed="no" position="749">
                   <notebook orientation="vertical" resize="yes" locked="no" iconified="no" closed="no" page="1">
                     <item name="AnjutaStarter" orientation="horizontal" resize="yes" locked="no" iconified="no" closed="yes"/>
                     <item name="AnjutaDocumentManager" orientation="vertical" resize="yes" locked="no" iconified="no" closed="no"/>
