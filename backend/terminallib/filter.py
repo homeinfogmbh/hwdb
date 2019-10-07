@@ -36,7 +36,7 @@ def filter_online(systems):
     """Yields online systems."""
 
     for system in systems:
-        if system.is_online:
+        if system.online:
             yield system
 
 
@@ -44,7 +44,7 @@ def filter_offline(systems):
     """Yields offline systems."""
 
     for system in systems:
-        if not system.is_online:
+        if not system.online:
             yield system
 
 
