@@ -17,7 +17,6 @@ setup(
         'terminallib.tools'],
     scripts=[
         'files/chkapp',
-        'files/chksync',
         'files/termadm',
         'files/termutil'],
     data_files=[

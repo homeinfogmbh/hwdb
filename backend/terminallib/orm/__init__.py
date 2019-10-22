@@ -2,7 +2,6 @@
 
 from terminallib.orm.deployment import Deployment
 from terminallib.orm.openvpn import OpenVPN
-from terminallib.orm.synchronization import Synchronization
 from terminallib.orm.system import System
 from terminallib.orm.wireguard import WireGuard
 
@@ -12,12 +11,12 @@ __all__ = [
     'create_tables',
     'Deployment',
     'OpenVPN',
-    'Synchronization',
     'System',
-    'WireGuard']
+    'WireGuard'
+]
 
 
-MODELS = (Deployment, OpenVPN, WireGuard, System, Synchronization)
+MODELS = (Deployment, OpenVPN, WireGuard, System)
 
 
 def create_tables(models=MODELS):

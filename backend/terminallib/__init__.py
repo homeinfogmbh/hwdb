@@ -9,7 +9,6 @@ from terminallib.exceptions import SystemOffline
 from terminallib.filter import get_deployments, get_systems
 from terminallib.orm import Deployment
 from terminallib.orm import OpenVPN
-from terminallib.orm import Synchronization
 from terminallib.orm import System
 from terminallib.orm import WireGuard
 
@@ -27,7 +26,6 @@ __all__ = [
     'Type',
     'Deployment',
     'OpenVPN',
-    'Synchronization',
     'System',
     'WireGuard'
 ]
