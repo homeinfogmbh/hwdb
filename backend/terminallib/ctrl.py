@@ -57,11 +57,11 @@ class BasicControllerMixin:
         except ConnectionError:
             raise SystemOffline()
 
-    def exec(self, command, **kwargs):
+    def exec(self, command, *, _timeout=10, **kwargs):
         """Runs the respective command."""
         json = dict(kwargs)
         json['command'] = command
-        return self.put(json)
+        return self.put(json, timeout=_timeout)
 
 
 class RemoteControllerMixin(BasicControllerMixin):
