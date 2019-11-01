@@ -47,13 +47,13 @@ class BasicControllerMixin:
             CONFIG['binaries']['PING'], '-qc', str(count),
             str(self.ipv4address)), stdout=DEVNULL, stderr=DEVNULL)
 
-    def put(self, json):
+    def put(self, json, *, timeout=10):
         """Executes a PUT request."""
         url = self.url
         LOGGER.debug('Executing PUT request on %s with JSON:\n%s', url, json)
 
         try:
-            return put(url, json=json)
+            return put(url, json=json, timeout=timeout)
         except ConnectionError:
             raise SystemOffline()
 
