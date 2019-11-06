@@ -1,35 +1,16 @@
 """Command line argument parsing."""
 
 from argparse import ArgumentParser
-from datetime import datetime
-
-from mdb import Customer
 
 from terminallib.enumerations import Connection, OperatingSystem, Type
-from terminallib.hooks import HOOKS, bind9cfgen, nagioscfgen, openvpncfgen
-from terminallib.orm.deployment import Deployment
-from terminallib.orm.system import System
+from terminallib.functions import customer, date, deployment, hook, system
+from terminallib.hooks import bind9cfgen, nagioscfgen, openvpncfgen
 
 
 __all__ = ['get_args']
 
 
 DEFAULT_HOOKS = (bind9cfgen, nagioscfgen, openvpncfgen)
-
-
-def date(string):
-    """Parses a date."""
-
-    return datetime.strptime(string, '%Y-%m-%d').date()
-
-
-def hook(name):
-    """Returns the respective hook."""
-
-    try:
-        return HOOKS[name]
-    except KeyError:
-        raise ValueError(f'No such hook: {name}.')
 
 
 def _add_new_system_parser(subparsers):
@@ -39,13 +20,13 @@ def _add_new_system_parser(subparsers):
     parser.add_argument(
         '-n', '--amount', type=int, default=1, help='amount of systems to add')
     parser.add_argument(
-        '-d', '--deployment', type=Deployment.__getitem__,
+        '-d', '--deployment', type=deployment,
         help='the deployment of the system')
     parser.add_argument('--key', help='the OpenVPN key to use')
     parser.add_argument(
         '--mtu', type=int, help='the MTU for the OpenVPN tunnel')
     parser.add_argument(
-        '-m', '--manufacturer', type=Customer.__getitem__,
+        '-m', '--manufacturer', type=customer,
         help="the system's manufacturer")
     parser.add_argument(
         '-o', '--operating-system', type=OperatingSystem,
@@ -63,8 +44,7 @@ def _add_new_deployment_parser(subparsers):
 
     parser = subparsers.add_parser('dep', help='add new deployments')
     parser.add_argument(
-        'customer', type=Customer.__getitem__,
-        help='the owner of the deployment')
+        'customer', type=customer, help='the owner of the deployment')
     parser.add_argument('street', help='the street name')
     parser.add_argument('house_number', help='the house number')
     parser.add_argument('zip_code', help='the ZIP code')
@@ -94,10 +74,9 @@ def _add_deploy_parser(subparsers):
     """Adds a parser for deployment of systems."""
 
     parser = subparsers.add_parser('deploy', help='deploy systems')
+    parser.add_argument('system', type=system, help='the system to deploy')
     parser.add_argument(
-        'system', type=System.__getitem__, help='the system to deploy')
-    parser.add_argument(
-        'deployment', type=Deployment.__getitem__, help='the deployment site')
+        'deployment', type=deployment, help='the deployment site')
 
 
 def _add_undeploy_parser(subparsers):
@@ -105,8 +84,7 @@ def _add_undeploy_parser(subparsers):
 
     parser = subparsers.add_parser('undeploy', help='undeploy systems')
     parser.add_argument(
-        'system', nargs='+', type=System.__getitem__,
-        help='the system to deploy')
+        'system', nargs='+', type=system, help='the system to deploy')
 
 
 def _add_hooks_parser(subparsers):
