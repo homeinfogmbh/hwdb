@@ -22,7 +22,7 @@ from terminallib.orm.wireguard import WireGuard
 __all__ = ['System']
 
 
-class System(BaseModel, RemoteControllerMixin):
+class System(BaseModel, RemoteControllerMixin):     # pylint: disable=R0901
     """A physical terminal out in the field."""
 
     deployment = ForeignKeyField(
@@ -43,6 +43,7 @@ class System(BaseModel, RemoteControllerMixin):
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
     model = CharField(255, null=True)   # Hardware model.
+    last_sync = DateTimeField(null=True)
 
     @classmethod
     def monitored(cls):
