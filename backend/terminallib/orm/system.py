@@ -49,8 +49,7 @@ class System(BaseModel, RemoteControllerMixin):     # pylint: disable=R0901
     def monitored(cls):
         """Yields monitored systems."""
         explicit = System.monitor == 1
-        implicit = System.monitor >> None
-        implicit &= ~(System.deployment >> None)
+        implicit = (System.monitor >> None) & ~(System.deployment >> None)
         return cls.select().where(explicit | implicit)
 
     @property
