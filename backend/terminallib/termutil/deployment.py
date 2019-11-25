@@ -42,8 +42,8 @@ def find(args):
 
     try:
         deployment = get(
-            args.street, house_number=args.house_number,
-            annotation=args.annotation)
+            args.pattern, house_number=args.house_number,
+            annotation=args.pattern)
     except AmbiguityError as ambiguous:
         LOGGER.warning('Ambiguous deployments.')
 
