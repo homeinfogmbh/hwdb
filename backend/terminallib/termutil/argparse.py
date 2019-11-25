@@ -86,12 +86,24 @@ def _add_parser_find_systems(subparsers):
         help='filter for systems of the respective house number')
 
 
+def _add_parser_find_deployments(subparsers):
+    """Adds a parser to find deployments."""
+
+    parser = subparsers.add_parser('dep', help='find deployments')
+    parser.add_argument(
+        'pattern', help='filter for deployments of the respective pattern')
+    parser.add_argument(
+        'house_number', nargs='?',
+        help='filter for deployments of the respective house number')
+
+
 def _add_parser_find(subparsers):
     """Adds a parser for searching."""
 
     parser = subparsers.add_parser('find', help='find records')
     target = parser.add_subparsers(dest='target')
     _add_parser_find_systems(target)
+    _add_parser_find_deployments(target)
 
 
 def get_args():
