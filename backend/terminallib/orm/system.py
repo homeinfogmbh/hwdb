@@ -50,7 +50,9 @@ class System(BaseModel, RemoteControllerMixin):     # pylint: disable=R0901
         """Yields monitored systems."""
         explicit = System.monitor == 1
         implicit = (System.monitor >> None) & ~(System.deployment >> None)
-        return cls.select().where(explicit | implicit)
+        excluded = System.monitor == 0
+        condition = (explicit | implicit) & (~ excluded)
+        return cls.select().where(condition)
 
     @property
     def vpn_hostname(self):
