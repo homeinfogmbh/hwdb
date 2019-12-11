@@ -3,13 +3,13 @@
 from logging import getLogger
 from subprocess import CalledProcessError
 
-from nagioslib import get_systems
 from nagioslib import write_contactgroups
 from nagioslib import write_contacts
 from nagioslib import write_hostgroups
 from nagioslib import write_hosts
 from nagioslib import write_services
 
+from terminallib.orm import System
 from terminallib.system import root, systemctl
 
 
@@ -21,7 +21,7 @@ NAGIOS_SERVICE = 'nagios4'
 def nagioscfgen():
     """Runs the configuration generation."""
 
-    systems = get_systems()
+    systems = System.monitored()
     LOGGER.info('Writing contacts.')
     write_contacts()
     LOGGER.info('Writing contactgroups.')
