@@ -5,7 +5,7 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 
 from requests import ConnectionError, Timeout, put  # pylint: disable=W0622
 
-from terminallib.config import CONFIG, LOGGER
+from terminallib.config import CONFIG
 from terminallib.exceptions import SystemOffline, TerminalConfigError
 
 
@@ -49,11 +49,8 @@ class BasicControllerMixin:
 
     def put(self, json, *, timeout=10):
         """Executes a PUT request."""
-        url = self.url
-        LOGGER.debug('Executing PUT request on %s with JSON:\n%s', url, json)
-
         try:
-            return put(url, json=json, timeout=timeout)
+            return put(self.url, json=json, timeout=timeout)
         except ConnectionError:
             raise SystemOffline()
 
