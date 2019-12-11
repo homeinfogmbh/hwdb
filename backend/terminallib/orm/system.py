@@ -48,9 +48,9 @@ class System(BaseModel, RemoteControllerMixin):     # pylint: disable=R0901
     @classmethod
     def monitored(cls):
         """Yields monitored systems."""
-        explicit = (~ System.monitor >> None) & (System.monitor == 1)
+        explicit = (System.monitor == 1) & ~(System.monitor >> None)
         implicit = (System.monitor >> None) & ~(System.deployment >> None)
-        excluded = (~ System.monitor >> None) & (System.monitor == 0)
+        excluded = (System.monitor == 0) & ~(System.monitor >> None)
         condition = (explicit | implicit) & (~ excluded)
         return cls.select().where(condition)
 
