@@ -14,6 +14,9 @@ from terminallib.orm import System
 from terminallib.system import root, systemctl
 
 
+__all__ = ['nagioscfgen']
+
+
 LOGGER = getLogger('nagios')
 NAGIOS_SERVICE = 'nagios4'
 
