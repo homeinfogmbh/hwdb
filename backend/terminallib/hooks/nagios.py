@@ -30,20 +30,6 @@ def pidof(name):
         raise
 
 
-def wait_for_nagios_to_die():
-    """Wait for all nagios4 processes to vanish."""
-
-    while pidof('nagios4'):
-        LOGGER.info('Waiting for nagios process to die.')
-
-        try:
-            sleep(1)
-        except KeyboardInterrupt:
-            return False
-
-    return True
-
-
 @root(LOGGER)
 def nagioscfgen():
     """Runs the configuration generation."""
@@ -64,7 +50,21 @@ def nagioscfgen():
     try:
         systemctl('stop', NAGIOS_SERVICE)
     except CalledProcessError:
-        LOGGER.error('Restarting nagios failed.')
+        LOGGER.error('Stopping nagios failed.')
         return False
 
-    return wait_for_nagios_to_die()
+    while pidof('nagios4'):
+        LOGGER.info('Waiting for nagios process to die.')
+
+        try:
+            sleep(1)
+        except KeyboardInterrupt:
+            return False
+
+    try:
+        systemctl('start', NAGIOS_SERVICE)
+    except CalledProcessError:
+        LOGGER.error('Starting nagios failed.')
+        return False
+
+    return True
