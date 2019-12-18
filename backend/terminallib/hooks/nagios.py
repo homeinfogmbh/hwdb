@@ -1,7 +1,8 @@
 """Nagios configuration generation."""
 
 from logging import getLogger
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, check_output
+from time import sleep
 
 from nagioslib import write_contactgroups
 from nagioslib import write_contacts
@@ -15,6 +16,32 @@ from terminallib.system import root, systemctl
 
 LOGGER = getLogger('nagios')
 NAGIOS_SERVICE = 'nagios4'
+
+
+def pidof(name):
+    """Determines whether the respective process is running."""
+
+    try:
+        return check_output(('/bin/pidof', name), text=True).split()
+    except CalledProcessError as error:
+        if error.returncode == 1:
+            return []
+
+        raise
+
+
+def wait_for_nagios_to_die():
+    """Wait for all nagios4 processes to vanish."""
+
+    while pidof('nagios4'):
+        LOGGER.info('Waiting for nagios process to die.')
+
+        try:
+            sleep(1)
+        except KeyboardInterrupt:
+            return False
+
+    return True
 
 
 @root(LOGGER)
@@ -35,9 +62,9 @@ def nagioscfgen():
     LOGGER.info('Restarting nagios4 service.')
 
     try:
-        systemctl('restart', NAGIOS_SERVICE)
+        systemctl('stop', NAGIOS_SERVICE)
     except CalledProcessError:
         LOGGER.error('Restarting nagios failed.')
         return False
 
-    return True
+    return wait_for_nagios_to_die()
