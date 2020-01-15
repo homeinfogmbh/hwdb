@@ -4,13 +4,13 @@ from argparse import ArgumentParser
 
 from terminallib.enumerations import Connection, OperatingSystem, Type
 from terminallib.functions import customer, date, deployment, hook, system
-from terminallib.hooks import bind9cfgen, nagioscfgen, openvpncfgen
+from terminallib.hooks import bind9cfgen, openvpncfgen
 
 
 __all__ = ['get_args']
 
 
-DEFAULT_HOOKS = (bind9cfgen, nagioscfgen, openvpncfgen)
+DEFAULT_HOOKS = (bind9cfgen, openvpncfgen)
 
 
 def _add_new_system_parser(subparsers):

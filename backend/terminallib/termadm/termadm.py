@@ -6,7 +6,7 @@ from sys import exit    # pylint: disable=W0622
 from syslib import script
 
 from terminallib.config import LOG_FORMAT
-from terminallib.hooks import bind9cfgen, nagioscfgen, openvpncfgen
+from terminallib.hooks import bind9cfgen, openvpncfgen
 from terminallib.termadm.argparse import get_args
 from terminallib.termadm.deployment import add as add_deploment
 from terminallib.termadm.system import add as add_system, deploy, undeploy
@@ -37,13 +37,11 @@ def main():
                 add_system(args)
 
             success = True
-            hooks = (bind9cfgen, nagioscfgen, openvpncfgen)
+            hooks = (bind9cfgen, openvpncfgen)
     elif args.action == 'deploy':
         success = deploy(args)
-        hooks = [nagioscfgen]
     elif args.action == 'undeploy':
         success = undeploy(args)
-        hooks = [nagioscfgen]
     elif args.action == 'run-hooks':
         hooks = args.hooks
 

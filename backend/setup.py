@@ -15,10 +15,7 @@ setup(
         'terminallib.termadm',
         'terminallib.termutil',
         'terminallib.tools'],
-    scripts=[
-        'files/chkapp',
-        'files/termadm',
-        'files/termutil'],
+    scripts=['files/termadm', 'files/termutil'],
     data_files=[
         ('/usr/share/terminals', [
             'files/openvpn.conf.temp',
