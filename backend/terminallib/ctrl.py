@@ -3,7 +3,8 @@
 from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_call
 
-from requests import ConnectionError, Timeout, put  # pylint: disable=W0622
+from requests import Timeout, put
+from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 from terminallib.config import CONFIG
 from terminallib.exceptions import SystemOffline, TerminalConfigError
@@ -52,6 +53,8 @@ class BasicControllerMixin:
         try:
             return put(self.url, json=json, timeout=timeout)
         except ConnectionError:
+            raise SystemOffline()
+        except ChunkedEncodingError:
             raise SystemOffline()
 
     def exec(self, command, *args, _timeout=10, **kwargs):
