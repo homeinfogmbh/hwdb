@@ -10,7 +10,7 @@ from wgtools import Keypair, keypair    # pylint: disable=C0411
 
 from terminallib.config import CONFIG
 from terminallib.iptools import used_ipv4addresses, get_ipv4address
-from terminallib.orm.common import BaseModel, LegacyIPv4AddressField
+from terminallib.orm.common import BaseModel
 
 
 __all__ = ['WireGuard']
@@ -25,8 +25,7 @@ PSK_FILE = KEYS_DIR.joinpath('terminals.psk')
 class WireGuard(BaseModel):
     """WireGuard configuration."""
 
-    ipv4address = LegacyIPv4AddressField()
-    ipv4address_ = IPv4AddressField()
+    ipv4address = IPv4AddressField()
     pubkey = FixedCharField(44)
 
     def __str__(self):

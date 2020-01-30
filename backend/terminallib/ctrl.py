@@ -4,7 +4,8 @@ from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_call
 
 from requests import Timeout, put
-from requests.exceptions import ChunkedEncodingError, ConnectionError
+from requests.exceptions import ChunkedEncodingError
+from requests.exceptions import ConnectionError     # pylint: disable=W0622
 
 from terminallib.config import CONFIG
 from terminallib.exceptions import SystemOffline, TerminalConfigError

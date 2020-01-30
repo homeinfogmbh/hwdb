@@ -3,6 +3,7 @@
 from functools import wraps
 from os import geteuid
 from subprocess import check_call
+from sys import exit    # pylint: disable=W0622
 
 
 __all__ = ['SYSTEMCTL', 'root', 'systemctl']

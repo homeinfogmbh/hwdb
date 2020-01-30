@@ -9,7 +9,7 @@ from peeweeplus import IPv4AddressField
 
 from terminallib.config import CONFIG
 from terminallib.iptools import used_ipv4addresses, get_ipv4address
-from terminallib.orm.common import BaseModel, LegacyIPv4AddressField
+from terminallib.orm.common import BaseModel
 
 
 __all__ = ['OpenVPN']
@@ -24,8 +24,7 @@ RESERVED = {addr for index, addr in enumerate(NETWORK) if index <= 10}
 class OpenVPN(BaseModel):
     """OpenVPN settings."""
 
-    ipv4address = LegacyIPv4AddressField()
-    ipv4address_ = IPv4AddressField()
+    ipv4address = IPv4AddressField()
     key = CharField(36, null=True)
     mtu = IntegerField(null=True)
 
