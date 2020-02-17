@@ -10,6 +10,7 @@ from peewee import ForeignKeyField
 from mdb import Customer
 from peeweeplus import EnumField
 
+from terminallib.ansible import AnsibleMixin
 from terminallib.config import CONFIG, LOGGER
 from terminallib.ctrl import RemoteControllerMixin
 from terminallib.enumerations import OperatingSystem
@@ -22,7 +23,8 @@ from terminallib.orm.wireguard import WireGuard
 __all__ = ['System']
 
 
-class System(BaseModel, RemoteControllerMixin):     # pylint: disable=R0901
+# pylint: disable=R0901
+class System(BaseModel, RemoteControllerMixin, AnsibleMixin):
     """A physical terminal out in the field."""
 
     deployment = ForeignKeyField(
