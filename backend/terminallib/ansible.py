@@ -32,7 +32,7 @@ class AnsibleMixin:
             if system.deployment:
                 if system.deployment.type == Type.DDB:
                     groups['DDB'].append(system)
-                else:   # Probably an E-TV.
+                else:   # Probably an E-TV or E-TV touch.
                     groups['E-TV'].append(system)
 
             if block_size is not None:
