@@ -19,7 +19,7 @@ class AnsibleMixin:
     def ansible_groups(cls, block_size=BLOCK_SIZE):
         """Returns ansible groups."""
         groups = defaultdict(list)
-        block = 0
+        ddb_block = 0
 
         for index, system in enumerate(cls, start=1):
             groups['systems'].append(system)
@@ -32,14 +32,14 @@ class AnsibleMixin:
             if system.deployment:
                 if system.deployment.type == Type.DDB:
                     groups['DDB'].append(system)
+
+                    if block_size is not None:
+                        if index % block_size == 0:
+                            ddb_block += 1
+
+                        groups[f'ddb-block-{ddb_block}'].append(system)
                 else:   # Probably an E-TV or E-TV touch.
                     groups['E-TV'].append(system)
-
-            if block_size is not None:
-                if index % block_size == 0:
-                    block += 1
-
-                groups[f'block-{block}'].append(system)
 
         return groups
 
@@ -55,6 +55,6 @@ class AnsibleMixin:
             config_parser.add_section(group)
 
             for system in systems:
-                config_parser.set(group, str(system.openvpn.ipv4address))
+                config_parser.set(group, system.vpn_hostname)
 
         return config_parser
