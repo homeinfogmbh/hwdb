@@ -49,7 +49,9 @@ class AnsibleMixin:
         if not config_parser:
             config_parser = ConfigParser(allow_no_value=True)
 
-        for group, systems in cls.ansible_groups(block_size=block_size):
+        groups = cls.ansible_groups(block_size=block_size)
+
+        for group, systems in groups.items():
             config_parser.add_section(group)
 
             for system in systems:
