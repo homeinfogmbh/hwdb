@@ -68,6 +68,14 @@ class System(BaseModel, RemoteControllerMixin, AnsibleMixin):
         domain = CONFIG['WireGuard']['domain']
         return f'{self.id}.{domain}'
 
+    @property
+    def ipv4address(self):
+        """Returns the WireGuard (preferred) or OpenVPN IPv4 address."""
+        if self.wireguard and self.wireguard.pubkey:
+            return self.wireguard.ipv4address
+
+        return self.openvpn.ipv4address
+
     def deploy(self, deployment, *, exclusive=False):
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
