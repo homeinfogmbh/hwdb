@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 
-from terminallib.enumerations import Connection, OperatingSystem, Type
+from terminallib.enumerations import connection, operating_system, type_
 from terminallib.functions import customer
 from terminallib.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
 from terminallib.tools.deployment import DeploymentField
@@ -27,7 +27,7 @@ def _add_parser_list_systems(subparsers):
         '-d', '--deployment', nargs='+', type=int, metavar='deployment',
         help='filter for the respective deployments')
     parser.add_argument(
-        '-o', '--operating-system', nargs='+', type=OperatingSystem,
+        '-o', '--operating-system', nargs='+', type=operating_system,
         metavar='os', help='filter for the respective operating systems')
     parser.add_argument(
         '-m', '--manufacturer', nargs='+', type=customer,
@@ -49,10 +49,10 @@ def _add_parser_list_deployments(subparsers):
         '--testing', type=int, metavar='testing',
         help='filter for testing deployments')
     parser.add_argument(
-        '-t', '--type', nargs='+', type=Type, metavar='type',
+        '-t', '--type', nargs='+', type=type_, metavar='type',
         help='filter for the respective types')
     parser.add_argument(
-        '-c', '--connection', nargs='+', type=Connection,
+        '-c', '--connection', nargs='+', type=connection,
         metavar='connection', help='filter for the respective connections')
     parser.add_argument(
         '-f', '--fields', type=DeploymentField, nargs='+',

@@ -2,7 +2,12 @@
 
 from argparse import ArgumentParser
 
-from terminallib.enumerations import Connection, OperatingSystem, Type
+from terminallib.enumerations import connection
+from terminallib.enumerations import operating_system
+from terminallib.enumerations import type_
+from terminallib.enumerations import Connection
+from terminallib.enumerations import OperatingSystem
+from terminallib.enumerations import Type
 from terminallib.functions import customer, date, deployment, hook, system
 from terminallib.hooks import bind9cfgen, openvpncfgen
 
@@ -29,7 +34,7 @@ def _add_new_system_parser(subparsers):
         '-m', '--manufacturer', type=customer,
         help="the system's manufacturer")
     parser.add_argument(
-        '-o', '--operating-system', type=OperatingSystem,
+        '-o', '--operating-system', type=operating_system,
         default=OperatingSystem.ARCH_LINUX,
         help='the installed operating system')
     parser.add_argument(
@@ -49,9 +54,10 @@ def _add_new_deployment_parser(subparsers):
     parser.add_argument('house_number', help='the house number')
     parser.add_argument('zip_code', help='the ZIP code')
     parser.add_argument('city', help='the city')
-    parser.add_argument('-t', '--type', type=Type, help='the system type')
     parser.add_argument(
-        '-c', '--connection', type=Connection, default=Connection.DSL,
+        '-t', '--type', type=type_, default=Type.DDB, help='the system type')
+    parser.add_argument(
+        '-c', '--connection', type=connection, default=Connection.DSL,
         help='the internet connection on site')
     parser.add_argument(
         '-s', '--scheduled', type=date, help='the scheduled date')
