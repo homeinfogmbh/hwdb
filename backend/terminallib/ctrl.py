@@ -8,7 +8,7 @@ from requests.exceptions import ChunkedEncodingError
 from requests.exceptions import ConnectionError     # pylint: disable=W0622
 
 from terminallib.config import CONFIG
-from terminallib.exceptions import SystemOffline, TerminalConfigError
+from terminallib.exceptions import SystemOffline
 
 
 __all__ = ['RemoteControllerMixin']
@@ -19,14 +19,6 @@ PORT = 8000
 
 class BasicControllerMixin:
     """Controls a terminal remotely."""
-
-    @property
-    def ipv4address(self):
-        """Returns the system's IPv4 address."""
-        try:
-            return self.openvpn.ipv4address
-        except AttributeError:
-            raise TerminalConfigError('Terminal has no OpenVPN address.')
 
     @property
     def url(self):
