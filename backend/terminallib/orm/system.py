@@ -11,11 +11,12 @@ from mdb import Customer
 from peeweeplus import EnumField
 
 from terminallib.ansible import AnsibleMixin
-from terminallib.config import CONFIG, LOGGER
+from terminallib.config import LOGGER
 from terminallib.ctrl import RemoteControllerMixin
 from terminallib.enumerations import OperatingSystem
 from terminallib.orm.common import BaseModel
 from terminallib.orm.deployment import Deployment
+from terminallib.orm.mixins import DNSMixin
 from terminallib.orm.openvpn import OpenVPN
 from terminallib.orm.wireguard import WireGuard
 
@@ -24,7 +25,7 @@ __all__ = ['System']
 
 
 # pylint: disable=R0901
-class System(BaseModel, RemoteControllerMixin, AnsibleMixin):
+class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     """A physical terminal out in the field."""
 
     deployment = ForeignKeyField(
@@ -55,18 +56,6 @@ class System(BaseModel, RemoteControllerMixin, AnsibleMixin):
         excluded = (System.monitor == 0) & ~(System.monitor >> None)
         condition = (explicit | implicit) & (~ excluded)
         return cls.select().where(condition)
-
-    @property
-    def vpn_hostname(self):
-        """Returns a host name for the OpenVPN network."""
-        domain = CONFIG['OpenVPN']['domain']
-        return f'{self.id}.{domain}'
-
-    @property
-    def wg_hostname(self):
-        """Returns the respective host name."""
-        domain = CONFIG['WireGuard']['domain']
-        return f'{self.id}.{domain}'
 
     @property
     def ipv4address(self):

@@ -43,6 +43,13 @@ def terminal_hosts():
 
     for system in System:
         try:
+            ipv4address = system.ipv4address
+        except AttributeError:
+            LOGGER.warning('No IPv4 address for #%i.', system.id)
+        else:
+            yield IN_A_RECORD.format(system.hostname, ipv4address)
+
+        try:
             ipv4address = system.openvpn.ipv4address
         except AttributeError:
             LOGGER.warning('No OpenVPN config for #%i.', system.id)
