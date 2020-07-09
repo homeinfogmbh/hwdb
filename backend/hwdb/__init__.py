@@ -1,4 +1,4 @@
-"""HOMEINFO's terminal library."""
+"""HOMEINFO's hardware database library."""
 
 from hwdb.config import CONFIG
 from hwdb.enumerations import Connection, OperatingSystem, Type
