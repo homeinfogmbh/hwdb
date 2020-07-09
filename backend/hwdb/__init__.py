@@ -8,6 +8,7 @@ from hwdb.exceptions import AmbiguityError
 from hwdb.exceptions import SystemOffline
 from hwdb.filter import get_deployments, get_systems
 from hwdb.orm import Deployment
+from hwdb.orm import Display
 from hwdb.orm import OpenVPN
 from hwdb.orm import System
 from hwdb.orm import WireGuard
@@ -25,6 +26,7 @@ __all__ = [
     'OperatingSystem',
     'Type',
     'Deployment',
+    'Display',
     'OpenVPN',
     'System',
     'WireGuard'
