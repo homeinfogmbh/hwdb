@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 """Hardware database query utility."""
 
-from hwdb.hwadm import main
+from hwdb.hwutil import main
 
 
 if __name__ == '__main__':
