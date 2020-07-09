@@ -1,6 +1,6 @@
 """Terminal database query utility."""
 
-from hwdb.termutil.termutil import main
+from hwdb.hwutil.hwutil import main
 
 
 __all__ = ['main']

@@ -11,14 +11,14 @@ setup(
     packages=[
         'hwdb',
         'hwdb.hooks',
+        'hwdb.hwadm',
+        'hwdb.hwutil',
         'hwdb.orm',
-        'hwdb.termadm',
-        'hwdb.termutil',
         'hwdb.tools'],
-    scripts=['files/termadm', 'files/termutil'],
+    scripts=['files/hwadm', 'files/hwutil'],
     data_files=[
         ('/usr/share/terminals', [
             'files/openvpn.conf.temp',
             'files/pacman.conf.temp',
             'files/homeinfo.intranet.zone.temp'])],
-    description=("HOMEINFO's terminal libary."))
+    description=("HOMEINFO's hardware libary."))

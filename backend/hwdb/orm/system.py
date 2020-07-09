@@ -26,7 +26,7 @@ __all__ = ['System']
 
 # pylint: disable=R0901
 class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
-    """A physical terminal out in the field."""
+    """A physical computer system out in the field."""
 
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
