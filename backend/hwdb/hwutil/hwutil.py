@@ -6,11 +6,11 @@ from sys import exit    # pylint: disable=W0622
 from syslib import script, B64LZMA
 
 from hwdb.config import LOG_FORMAT
-from hwdb.termutil.argparse import get_args
-from hwdb.termutil.deployment import find as find_deployment
-from hwdb.termutil.deployment import list as list_deployments
-from hwdb.termutil.system import find as find_system
-from hwdb.termutil.system import list as list_systems
+from hwdb.hwutil.argparse import get_args
+from hwdb.hwutil.deployment import find as find_deployment
+from hwdb.hwutil.deployment import list as list_deployments
+from hwdb.hwutil.system import find as find_system
+from hwdb.hwutil.system import list as list_systems
 
 
 __all__ = ['main']

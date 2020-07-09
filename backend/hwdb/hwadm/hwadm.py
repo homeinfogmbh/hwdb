@@ -7,9 +7,9 @@ from syslib import script
 
 from hwdb.config import LOG_FORMAT
 from hwdb.hooks import bind9cfgen, openvpncfgen
-from hwdb.termadm.argparse import get_args
-from hwdb.termadm.deployment import add as add_deploment
-from hwdb.termadm.system import add as add_system, deploy, undeploy
+from hwdb.hwadm.argparse import get_args
+from hwdb.hwadm.deployment import add as add_deploment
+from hwdb.hwadm.system import add as add_system, deploy, undeploy
 
 
 __all__ = ['main']
