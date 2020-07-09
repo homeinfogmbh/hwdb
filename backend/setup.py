@@ -3,18 +3,18 @@
 from distutils.core import setup
 
 setup(
-    name='terminallib',
+    name='hwdb',
     author='HOMEINFO - Digitale Informationssysteme GmbH',
     author_email='info@homeinfo.de',
     maintainer='Richard Neumann',
     maintainer_email='r.neumann@homeinfo.de',
     packages=[
-        'terminallib',
-        'terminallib.hooks',
-        'terminallib.orm',
-        'terminallib.termadm',
-        'terminallib.termutil',
-        'terminallib.tools'],
+        'hwdb',
+        'hwdb.hooks',
+        'hwdb.orm',
+        'hwdb.termadm',
+        'hwdb.termutil',
+        'hwdb.tools'],
     scripts=['files/termadm', 'files/termutil'],
     data_files=[
         ('/usr/share/terminals', [
