@@ -5,7 +5,7 @@ from sys import stderr
 
 from hwdb.tools.system import get, listsys, printsys
 from hwdb.exceptions import AmbiguityError, TerminalError
-from hwdb.orm.system import System
+from hwdb.orm import Deployment, System
 
 
 __all__ = ['find', 'list']
@@ -17,27 +17,32 @@ LOGGER = getLogger('termutil')
 def get_systems(args):
     """Yields systems selected by the CLI arguments."""
 
-    select = True
+    select = System.select()
+    condition = True
 
     if args.id:
-        select &= System.id << args.id
+        condition &= System.id << args.id
+
+    if args.customer:
+        select = select.join(Deployment)
+        condition &= Deployment.customer << args.customer
 
     if args.deployment:
-        select &= System.deployment << args.deployment
+        condition &= System.deployment << args.deployment
 
     if args.deployed is not None:
         if args.deployed:
-            select &= ~(System.deployment >> None)
+            condition &= ~(System.deployment >> None)
         else:
-            select &= System.deployment >> None
+            condition &= System.deployment >> None
 
     if args.operating_system:
-        select &= System.operating_system << args.operating_system
+        condition &= System.operating_system << args.operating_system
 
     if args.manufacturer:
-        select &= System.manufacturer << args.manufacturer
+        condition &= System.manufacturer << args.manufacturer
 
-    return System.select().where(select)
+    return select.where(condition)
 
 
 def find(args):

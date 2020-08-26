@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 
 from hwdb.enumerations import connection, operating_system, type_
-from hwdb.functions import customer
+from hwdb.functions import customer, deployment, system
 from hwdb.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
 from hwdb.tools.deployment import DeploymentField
 from hwdb.tools.system import DEFAULT_FIELDS as SYSTEM_FIELDS
@@ -21,10 +21,13 @@ def _add_parser_list_systems(subparsers):
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems of the respective customer')
     parser.add_argument(
+        '-C', '--customer', nargs='+', type=customer, metavar='customer',
+        help='filter for the respective customers')
+    parser.add_argument(
         '-D', '--deployed', type=int, metavar='deployed',
         help='filter for deployed or undeployed systems')
     parser.add_argument(
-        '-d', '--deployment', nargs='+', type=int, metavar='deployment',
+        '-d', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for the respective deployments')
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=operating_system,
@@ -54,6 +57,9 @@ def _add_parser_list_deployments(subparsers):
     parser.add_argument(
         '-c', '--connection', nargs='+', type=connection,
         metavar='connection', help='filter for the respective connections')
+    parser.add_argument(
+        '-s', '--system', nargs='+', type=system,
+        metavar='system', help='filter for the respective systems')
     parser.add_argument(
         '-f', '--fields', type=DeploymentField, nargs='+',
         default=DEPLOYMENT_FIELDS, metavar='field',

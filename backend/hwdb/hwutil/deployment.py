@@ -3,8 +3,10 @@
 from logging import getLogger
 from sys import stderr
 
+from peewee import JOIN
+
 from hwdb.exceptions import AmbiguityError, TerminalError
-from hwdb.orm.deployment import Deployment
+from hwdb.orm import Deployment, System
 from hwdb.tools.deployment import get, listdep, printdep
 
 
@@ -17,24 +19,29 @@ LOGGER = getLogger('termutil')
 def get_deployments(args):
     """Yields deployments selected by the CLI."""
 
-    select = True
+    select = Deployment.select()
+    condition = True
 
     if args.id:
-        select &= Deployment.id << args.id
+        condition &= Deployment.id << args.id
 
     if args.customer:
-        select &= Deployment.customer << args.customer
+        condition &= Deployment.customer << args.customer
 
     if args.testing is not None:
-        select &= Deployment.testing == bool(args.testing)
+        condition &= Deployment.testing == bool(args.testing)
 
     if args.type:
-        select &= Deployment.type << args.type
+        condition &= Deployment.type << args.type
 
     if args.connection:
-        select &= Deployment.connection << args.connection
+        condition &= Deployment.connection << args.connection
 
-    return Deployment.select().where(select)
+    if args.system:
+        select = select.join(System, JOIN.LEFT_OUTER)
+        condition &= System.id << args.system
+
+    return select.where(condition)
 
 
 def find(args):
