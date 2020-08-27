@@ -29,7 +29,12 @@ def date(string):
 def deployment(ident):
     """Returns the respective deployment."""
 
-    return Deployment[ident]
+    ident = int(ident)
+
+    try:
+        return Deployment[ident]
+    except Deployment.DoesNotExist:
+        return ValueError('No such deployment.')
 
 
 def hook(name):
@@ -38,10 +43,15 @@ def hook(name):
     try:
         return HOOKS[name]
     except KeyError:
-        raise ValueError(f'No such hook: {name}.')
+        raise ValueError('No such hook.')
 
 
 def system(ident):
     """Returns the respective system."""
 
-    return System[ident]
+    ident = int(ident)
+
+    try:
+        return System[ident]
+    except System.DoesNotExist:
+        raise ValueError('No such system.')
