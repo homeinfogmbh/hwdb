@@ -19,16 +19,20 @@ def _add_parser_list_systems(subparsers):
     parser = subparsers.add_parser('sys', help='list systems')
     parser.add_argument(
         'id', nargs='*', type=int, metavar='id',
-        help='filter for systems of the respective customer')
+        help='filter for systems with the respective IDs')
     parser.add_argument(
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for the respective customers')
     parser.add_argument(
-        '-D', '--deployed', type=int, metavar='deployed',
-        help='filter for deployed or undeployed systems')
-    parser.add_argument(
-        '-d', '--deployment', nargs='+', type=deployment, metavar='deployment',
+        '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for the respective deployments')
+    parser.add_argument(
+        '-d', '--deployed', action='store_true', dest='deployed',
+        help='filter for deployed systems')
+    parser.add_argument(
+        '-u', '--undeployed', action='store_false', dest='deployed',
+        help='filter for undeployed systems')
+    parser.set_defaults(deployed=None)
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=operating_system,
         metavar='os', help='filter for the respective operating systems')
@@ -44,7 +48,9 @@ def _add_parser_list_deployments(subparsers):
     """Adds a parser to list deployments."""
 
     parser = subparsers.add_parser('dep', help='list deployments')
-    parser.add_argument('id', nargs='*', type=int, metavar='id')
+    parser.add_argument(
+        'id', nargs='*', type=int, metavar='id',
+        help='filter for deployments with the respective IDs')
     parser.add_argument(
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for the respective customers')
