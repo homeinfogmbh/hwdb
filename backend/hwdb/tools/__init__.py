@@ -1,1 +1,1 @@
-"""Command line interfaces."""
+"""Command line I/O tools."""
