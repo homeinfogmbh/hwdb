@@ -8,8 +8,8 @@ from hwdb.enumerations import type_
 from hwdb.enumerations import Connection
 from hwdb.enumerations import OperatingSystem
 from hwdb.enumerations import Type
-from hwdb.functions import customer, date, deployment, hook, system
 from hwdb.hooks import bind9cfgen, openvpncfgen
+from hwdb.pseudotypes import customer, date, deployment, hook, system
 
 
 __all__ = ['get_args']
