@@ -24,13 +24,13 @@ def _add_parser_list_systems(subparsers):
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for the respective customers')
     parser.add_argument(
-        '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
+        '-d', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for the respective deployments')
     parser.add_argument(
-        '-d', '--deployed', action='store_true', dest='deployed',
+        '--deployed', action='store_true', dest='deployed',
         help='filter for deployed systems')
     parser.add_argument(
-        '-u', '--undeployed', action='store_false', dest='deployed',
+        '--undeployed', action='store_false', dest='deployed',
         help='filter for undeployed systems')
     parser.set_defaults(deployed=None)
     parser.add_argument(
