@@ -34,7 +34,7 @@ def deployment(ident):
     try:
         return Deployment[ident]
     except Deployment.DoesNotExist:
-        return ValueError('No such deployment.')
+        raise ValueError('No such deployment.')
 
 
 def hook(name):
