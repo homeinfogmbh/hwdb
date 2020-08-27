@@ -45,9 +45,7 @@ class BasicControllerMixin:
         """Executes a PUT request."""
         try:
             return put(self.url, json=json, timeout=timeout)
-        except ConnectionError:
-            raise SystemOffline()
-        except ChunkedEncodingError:
+        except (ConnectionError, ChunkedEncodingError):
             raise SystemOffline()
 
     def exec(self, command, *args, _timeout=10, **kwargs):
