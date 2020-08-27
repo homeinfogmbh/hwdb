@@ -1,4 +1,4 @@
-"""Pseudo types for argparse."""
+"""Type-like functions for argparse."""
 
 from datetime import datetime
 
