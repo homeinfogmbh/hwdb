@@ -3,12 +3,7 @@
 from enum import Enum
 
 
-__all__ = [
-    'from_string',
-    'Connection',
-    'OperatingSystem',
-    'Type'
-]
+__all__ = ['from_string', 'Connection', 'OperatingSystem', 'Type']
 
 
 def from_string(enum, value):
