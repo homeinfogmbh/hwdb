@@ -2,14 +2,16 @@
 
 from argparse import ArgumentParser
 
-from hwdb.enumerations import connection
-from hwdb.enumerations import operating_system
-from hwdb.enumerations import type_
-from hwdb.enumerations import Connection
-from hwdb.enumerations import OperatingSystem
-from hwdb.enumerations import Type
+from hwdb.enumerations import Connection, OperatingSystem, Type
 from hwdb.hooks import bind9cfgen, openvpncfgen
-from hwdb.pseudotypes import customer, date, deployment, hook, system
+from hwdb.pseudotypes import connection
+from hwdb.pseudotypes import customer
+from hwdb.pseudotypes import date
+from hwdb.pseudotypes import deployment
+from hwdb.pseudotypes import hook
+from hwdb.pseudotypes import operating_system
+from hwdb.pseudotypes import type_
+from hwdb.pseudotypes import system
 
 
 __all__ = ['get_args']

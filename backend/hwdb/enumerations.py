@@ -5,9 +5,6 @@ from enum import Enum
 
 __all__ = [
     'from_string',
-    'connection',
-    'operating_system',
-    'type_',
     'Connection',
     'OperatingSystem',
     'Type'
@@ -21,24 +18,6 @@ def from_string(enum, value):
         return enum(value)
     except ValueError:
         return enum[value]
-
-
-def connection(value):
-    """Returns a connection."""
-
-    return from_string(Connection, value)
-
-
-def operating_system(value):
-    """Returns a connection."""
-
-    return from_string(OperatingSystem, value)
-
-
-def type_(value):
-    """Returns a connection."""
-
-    return from_string(Type, value)
 
 
 class Connection(Enum):

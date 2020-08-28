@@ -4,11 +4,27 @@ from datetime import datetime
 
 from mdb import Customer
 
+from hwdb.enumerations import from_string, Connection, OperatingSystem, Type
 from hwdb.hooks import HOOKS
 from hwdb.orm import Deployment, System
 
 
-__all__ = ['customer', 'date', 'deployment', 'hook', 'system']
+__all__ = [
+    'connection',
+    'customer',
+    'date',
+    'deployment',
+    'hook',
+    'operating_system',
+    'system',
+    'type_'
+]
+
+
+def connection(value):
+    """Returns a connection."""
+
+    return from_string(Connection, value)
 
 
 def customer(value):
@@ -46,6 +62,12 @@ def hook(name):
         raise ValueError('No such hook.')
 
 
+def operating_system(value):
+    """Returns a connection."""
+
+    return from_string(OperatingSystem, value)
+
+
 def system(ident):
     """Returns the respective system."""
 
@@ -55,3 +77,9 @@ def system(ident):
         return System[ident]
     except System.DoesNotExist:
         raise ValueError('No such system.')
+
+
+def type_(value):
+    """Returns a connection."""
+
+    return from_string(Type, value)

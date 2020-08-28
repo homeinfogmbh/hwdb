@@ -2,8 +2,12 @@
 
 from argparse import ArgumentParser
 
-from hwdb.enumerations import connection, operating_system, type_
-from hwdb.pseudotypes import customer, deployment, system
+from hwdb.pseudotypes import connection
+from hwdb.pseudotypes import customer
+from hwdb.pseudotypes import operating_system
+from hwdb.pseudotypes import type_
+from hwdb.pseudotypes import deployment
+from hwdb.pseudotypes import system
 from hwdb.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
 from hwdb.tools.deployment import DeploymentField
 from hwdb.tools.system import DEFAULT_FIELDS as SYSTEM_FIELDS
