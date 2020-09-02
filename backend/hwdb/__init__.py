@@ -12,6 +12,14 @@ from hwdb.orm import Display
 from hwdb.orm import OpenVPN
 from hwdb.orm import System
 from hwdb.orm import WireGuard
+from hwdb.pseudotypes import connection
+from hwdb.pseudotypes import customer
+from hwdb.pseudotypes import date
+from hwdb.pseudotypes import deployment
+from hwdb.pseudotypes import hook
+from hwdb.pseudotypes import operating_system
+from hwdb.pseudotypes import system
+from hwdb.pseudotypes import type_
 
 
 __all__ = [
@@ -22,6 +30,14 @@ __all__ = [
     'SystemOffline',
     'get_deployments',
     'get_systems',
+    'connection',
+    'customer',
+    'date',
+    'deployment',
+    'hook',
+    'operating_system',
+    'system',
+    'type_',
     'Connection',
     'OperatingSystem',
     'Type',
