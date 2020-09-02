@@ -1,6 +1,11 @@
 """HOMEINFO's hardware database library."""
 
 from hwdb.config import CONFIG
+from hwdb.config import OPENVPN_NETBASE
+from hwdb.config import OPENVPN_NETMASK
+from hwdb.config import OPENVPN_NETWORK
+from hwdb.config import WIREGUARD_NETWORK
+from hwdb.config import WIREGUARD_SERVER
 from hwdb.enumerations import Connection, OperatingSystem, Type
 from hwdb.exceptions import TerminalError
 from hwdb.exceptions import TerminalConfigError
@@ -24,6 +29,11 @@ from hwdb.pseudotypes import type_
 
 __all__ = [
     'CONFIG',
+    'OPENVPN_NETBASE',
+    'OPENVPN_NETMASK',
+    'OPENVPN_NETWORK',
+    'WIREGUARD_NETWORK',
+    'WIREGUARD_SERVER',
     'TerminalError',
     'TerminalConfigError',
     'AmbiguityError',
