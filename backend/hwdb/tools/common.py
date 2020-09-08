@@ -17,7 +17,7 @@ def iterprint(iterable):
         return False
     except KeyboardInterrupt:
         if stdout.isatty():
-            print('\nAborted...')
+            print('\nAborted...', flush=True)
 
         return False
 
