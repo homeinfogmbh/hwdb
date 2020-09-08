@@ -11,7 +11,7 @@ def iterprint(iterable):
 
     try:
         for item in iterable:
-            print(item, flush=True)
+            print(item, flush=not stdout.isatty())
     except BrokenPipeError:
         stderr.close()
         return False
