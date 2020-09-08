@@ -52,11 +52,11 @@ class FieldFormatter:
     def format(self, terminal):
         """Formats the respective field of the given terminal record."""
         if stdout.isatty():
-            return to_string(self.getter(terminal))
+            return justify(
+                to_string(self.getter(terminal)), self.max,
+                leftbound=self.leftbound)
 
-        return justify(
-            to_string(self.getter(terminal)), self.max,
-            leftbound=self.leftbound)
+        return to_string(self.getter(terminal))
 
     @property
     def max(self):
