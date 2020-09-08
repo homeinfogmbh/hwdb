@@ -91,7 +91,7 @@ def get(street, house_number=None, annotation=None):
 
 
 def listdep(deployments, fields=DEFAULT_FIELDS):
-    """Yields formatted deployment for console outoput."""
+    """Yields formatted deployment for console output."""
 
     return formatiter(deployments, FIELDS, fields)
 

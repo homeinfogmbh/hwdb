@@ -93,7 +93,7 @@ def get(street, house_number=None, annotation=None):
 
 
 def listsys(systems, fields=DEFAULT_FIELDS):
-    """Yields formatted systems for console outoput."""
+    """Yields formatted systems for console output."""
 
     return formatiter(systems, FIELDS, fields)
 

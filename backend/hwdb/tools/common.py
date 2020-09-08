@@ -7,7 +7,7 @@ __all__ = ['formatiter', 'iterprint', 'FieldFormatter']
 
 
 def formatiter(items, mapping, keys):
-    """Yields formatted deployment for console outoput."""
+    """Yields formatted items for console output."""
 
     formatters = [mapping[key] for key in keys]
     sep = ' ' if stdout.isatty() else '\t'
