@@ -71,9 +71,7 @@ def list(args):     # pylint: disable=W0622
 
     fields = args.fields
 
-    for line in listdep(
-            get_deployments(args), header=not args.no_header, fields=fields,
-            sep=args.separator):
+    for line in listdep(get_deployments(args), fields=fields):
         try:
             print(line, flush=True)
         except BrokenPipeError:

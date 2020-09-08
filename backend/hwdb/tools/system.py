@@ -1,7 +1,7 @@
 """Systems handling."""
 
 from enum import Enum
-from sys import stderr
+from sys import stderr, stdout
 
 from mdb import Address
 
@@ -92,12 +92,14 @@ def get(street, house_number=None, annotation=None):
     return system
 
 
-def listsys(systems, header=True, fields=DEFAULT_FIELDS, sep='  '):
+def listsys(systems, fields=DEFAULT_FIELDS):
     """Yields formatted systems for console outoput."""
 
+    sep = ' '
     formatters = [FIELDS[field] for field in fields]
 
-    if header:
+    if stdout.isatty():
+        sep = '\t'
         yield sep.join(str(frmtr) for frmtr in formatters)
 
     for system in systems:

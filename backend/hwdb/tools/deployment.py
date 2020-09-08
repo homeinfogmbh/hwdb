@@ -1,7 +1,7 @@
 """Deployments handling."""
 
 from enum import Enum
-from sys import stderr
+from sys import stderr, stdout
 
 from mdb import Address
 
@@ -90,12 +90,14 @@ def get(street, house_number=None, annotation=None):
     return deployment
 
 
-def listdep(deployments, header=True, fields=DEFAULT_FIELDS, sep='  '):
+def listdep(deployments, fields=DEFAULT_FIELDS):
     """Yields formatted deployment for console outoput."""
 
+    sep = ' '
     formatters = [FIELDS[field] for field in fields]
 
-    if header:
+    if stdout.isatty():
+        sep = '\t'
         yield sep.join(str(frmtr) for frmtr in formatters)
 
     for deployment in deployments:

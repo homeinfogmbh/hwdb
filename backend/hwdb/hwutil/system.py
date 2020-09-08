@@ -72,9 +72,7 @@ def list(args):     # pylint: disable=W0622
 
     fields = args.fields
 
-    for line in listsys(
-            get_systems(args), header=not args.no_header, fields=fields,
-            sep=args.separator):
+    for line in listsys(get_systems(args), fields=fields):
         try:
             print(line, flush=True)
         except BrokenPipeError:

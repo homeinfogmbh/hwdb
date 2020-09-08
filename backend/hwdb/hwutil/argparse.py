@@ -80,12 +80,6 @@ def _add_parser_list(subparsers):
     """Adds listing args."""
 
     parser = subparsers.add_parser('ls', help='list records')
-    parser.add_argument(
-        '-s', '--separator', default='  ', metavar='separator',
-        help='specifies the fields separator')
-    parser.add_argument(
-        '-n', '--no-header', action='store_true',
-        help='do not print table header')
     target = parser.add_subparsers(dest='target')
     _add_parser_list_systems(target)
     _add_parser_list_deployments(target)
