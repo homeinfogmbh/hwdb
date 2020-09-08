@@ -17,13 +17,13 @@ def justify(string, size, leftbound=False):
     return string[0:size].rjust(size)
 
 
-def to_string(value, tty=True):
+def to_string(value):
     """Applies builtin str() to value unless value is None, True or
     False, in which case it will return none, true respectively false
     from the keyword arguments.
     """
 
-    if tty:
+    if stdout.isatty():
         none, true, false = ('-', '✓', '✗')
     else:
         none, true, false = ('', '1', '0')
@@ -61,7 +61,7 @@ class FieldFormatter:
                 to_string(self.getter(terminal)), self.max,
                 leftbound=self.leftbound)
 
-        return to_string(self.getter(terminal), tty=False)
+        return to_string(self.getter(terminal))
 
     @property
     def max(self):
