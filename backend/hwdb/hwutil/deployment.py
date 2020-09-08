@@ -1,12 +1,12 @@
 """Deployment actions."""
 
 from logging import getLogger
-from sys import stderr
 
 from peewee import JOIN
 
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
+from hwdb.tools.common import iterprint
 from hwdb.tools.deployment import get, listdep, printdep
 
 
@@ -69,13 +69,4 @@ def find(args):
 def list(args):     # pylint: disable=W0622
     """Lists deployments."""
 
-    fields = args.fields
-
-    for line in listdep(get_deployments(args), fields=fields):
-        try:
-            print(line, flush=True)
-        except BrokenPipeError:
-            stderr.close()
-            break
-
-    return True
+    return iterprint(listdep(get_deployments(args), fields=args.fields))

@@ -1,11 +1,11 @@
 """System related actions."""
 
 from logging import getLogger
-from sys import stderr
 
-from hwdb.tools.system import get, listsys, printsys
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
+from hwdb.tools.common import iterprint
+from hwdb.tools.system import get, listsys, printsys
 
 
 __all__ = ['find', 'list']
@@ -70,13 +70,4 @@ def find(args):
 def list(args):     # pylint: disable=W0622
     """Lists systems."""
 
-    fields = args.fields
-
-    for line in listsys(get_systems(args), fields=fields):
-        try:
-            print(line, flush=True)
-        except BrokenPipeError:
-            stderr.close()
-            break
-
-    return True
+    return iterprint(listsys(get_systems(args), fields=args.fields))

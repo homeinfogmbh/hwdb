@@ -1,9 +1,27 @@
 """Command line interface utilities."""
 
-from sys import stdout
+from sys import stderr, stdout
 
 
-__all__ = ['FieldFormatter']
+__all__ = ['iterprint', 'FieldFormatter']
+
+
+def iterprint(iterable):
+    """Prints items line by line, handling multiple possible I/O errors."""
+
+    try:
+        for item in iterable:
+            print(item, flush=True)
+    except BrokenPipeError:
+        stderr.close()
+        return False
+    except KeyboardInterrupt:
+        if stdout.isatty():
+            print('\nAborted...')
+
+        return False
+
+    return True
 
 
 def justify(string, size, leftbound=False):

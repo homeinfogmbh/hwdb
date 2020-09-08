@@ -35,14 +35,9 @@ def main():
 
     if args.action == 'ls':
         if args.target == 'sys':
-            ls_func = list_systems
+            success = list_systems(args)
         elif args.target == 'dep':
-            ls_func = list_deployments
-
-        try:
-            success = ls_func(args)
-        except KeyboardInterrupt:
-            print('\nAborted...')
+            success = list_deployments(args)
     elif args.action == 'find':
         if args.target == 'sys':
             success = find_system(args)
