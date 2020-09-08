@@ -23,10 +23,7 @@ def to_string(value):
     from the keyword arguments.
     """
 
-    if stdout.isatty():
-        none, true, false = ('-', '✓', '✗')
-    else:
-        none, true, false = ('', '1', '0')
+    none, true, false = ('-', '✓', '✗') if stdout.isatty() else ('', '1', '0')
 
     if value is None:
         return none
