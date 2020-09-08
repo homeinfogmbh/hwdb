@@ -5,7 +5,7 @@ from sys import stdout
 from blessings import Terminal
 
 
-__all__ = ['justify', 'to_string', 'FieldFormatter']
+__all__ = ['FieldFormatter']
 
 
 def justify(string, size, leftbound=False):
@@ -17,11 +17,16 @@ def justify(string, size, leftbound=False):
     return string[0:size].rjust(size)
 
 
-def to_string(value, none='-', true='✓', false='✗'):
+def to_string(value):
     """Applies builtin str() to value unless value is None, True or
     False, in which case it will return none, true respectively false
     from the keyword arguments.
     """
+
+    if stdout.isatty():
+        none, true, false = ('-', '✓', '✗')
+    else:
+        none, true, false = ('', '1', '0')
 
     if value is None:
         return none
