@@ -14,7 +14,7 @@ def iterprint(iterable):
             print(item, flush=not stdout.isatty())
     except BrokenPipeError:
         stderr.close()
-        return False
+        return True
     except KeyboardInterrupt:
         if stdout.isatty():
             print('\nAborted...', flush=True)
