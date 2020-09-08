@@ -5,7 +5,7 @@ from sys import stderr, stdout
 
 from mdb import Address
 
-from hwdb.tools.common import FieldFormatter
+from hwdb.tools.common import formatiter, FieldFormatter
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
 
@@ -95,14 +95,7 @@ def get(street, house_number=None, annotation=None):
 def listsys(systems, fields=DEFAULT_FIELDS):
     """Yields formatted systems for console outoput."""
 
-    formatters = [FIELDS[field] for field in fields]
-    sep = ' ' if stdout.isatty() else '\t'
-
-    if stdout.isatty():
-        yield sep.join(str(frmtr) for frmtr in formatters)
-
-    for system in systems:
-        yield sep.join(frmtr.format(system) for frmtr in formatters)
+    return formatiter(systems, FIELDS, fields)
 
 
 def printsys(system):

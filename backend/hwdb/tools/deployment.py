@@ -5,7 +5,7 @@ from sys import stderr, stdout
 
 from mdb import Address
 
-from hwdb.tools.common import FieldFormatter
+from hwdb.tools.common import formatiter, FieldFormatter
 from hwdb.exceptions import TerminalError, AmbiguityError
 from hwdb.orm import Deployment
 
@@ -93,14 +93,7 @@ def get(street, house_number=None, annotation=None):
 def listdep(deployments, fields=DEFAULT_FIELDS):
     """Yields formatted deployment for console outoput."""
 
-    formatters = [FIELDS[field] for field in fields]
-    sep = ' ' if stdout.isatty() else '\t'
-
-    if stdout.isatty():
-        yield sep.join(str(frmtr) for frmtr in formatters)
-
-    for deployment in deployments:
-        yield sep.join(frmtr.format(deployment) for frmtr in formatters)
+    return formatiter(deployments, FIELDS, fields)
 
 
 def printdep(deployment):

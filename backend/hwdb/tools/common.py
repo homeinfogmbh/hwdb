@@ -3,7 +3,20 @@
 from sys import stderr, stdout
 
 
-__all__ = ['iterprint', 'FieldFormatter']
+__all__ = ['formatiter', 'iterprint', 'FieldFormatter']
+
+
+def formatiter(items, mapping, keys):
+    """Yields formatted deployment for console outoput."""
+
+    formatters = [mapping[key] for key in keys]
+    sep = ' ' if stdout.isatty() else '\t'
+
+    if stdout.isatty():
+        yield sep.join(str(formatter) for formatter in formatters)
+
+    for item in items:
+        yield sep.join(formatter.format(item) for formatter in formatters)
 
 
 def iterprint(iterable):
