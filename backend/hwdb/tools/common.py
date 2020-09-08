@@ -2,10 +2,11 @@
 
 from sys import stdout
 
-from blessings import Terminal
-
 
 __all__ = ['FieldFormatter']
+
+
+bold = '\033[1m{}\033[0m'.format
 
 
 def justify(string, size, leftbound=False):
@@ -49,7 +50,7 @@ class FieldFormatter:
 
     def __str__(self):
         """Returns the formatted caption."""
-        return Terminal().bold(self.header)
+        return bold(self.header)
 
     def format(self, terminal):
         """Formats the respective field of the given terminal record."""
