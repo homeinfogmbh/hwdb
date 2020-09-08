@@ -93,11 +93,10 @@ def get(street, house_number=None, annotation=None):
 def listdep(deployments, fields=DEFAULT_FIELDS):
     """Yields formatted deployment for console outoput."""
 
-    sep = '\t'
     formatters = [FIELDS[field] for field in fields]
+    sep = ' ' if stdout.isatty() else '\t'
 
     if stdout.isatty():
-        sep = ' '
         yield sep.join(str(frmtr) for frmtr in formatters)
 
     for deployment in deployments:

@@ -95,11 +95,10 @@ def get(street, house_number=None, annotation=None):
 def listsys(systems, fields=DEFAULT_FIELDS):
     """Yields formatted systems for console outoput."""
 
-    sep = '\t'
     formatters = [FIELDS[field] for field in fields]
+    sep = ' ' if stdout.isatty() else '\t'
 
     if stdout.isatty():
-        sep = ' '
         yield sep.join(str(frmtr) for frmtr in formatters)
 
     for system in systems:
