@@ -1,7 +1,7 @@
 """Deployments handling."""
 
 from enum import Enum
-from sys import stderr, stdout
+from sys import stderr
 
 from mdb import Address
 
@@ -62,17 +62,16 @@ DEFAULT_FIELDS = (
 def find(street, house_number=None, annotation=None):
     """Finds systems at the specified address."""
 
-    selection = Address.street ** f'%{street}%'
+    condition = Address.street ** f'%{street}%'
 
     if house_number is not None:
-        selection &= Address.house_number ** f'%{house_number}%'
+        condition &= Address.house_number ** f'%{house_number}%'
 
     if annotation is not None:
-        selection |= Deployment.annotation ** f'%{annotation}%'
+        condition |= Deployment.annotation ** f'%{annotation}%'
 
-    join_condition = Address.id == Deployment.address
-    join = Deployment.select().join(Address, on=join_condition)
-    return join.where(selection)
+    predicate = Address.id == Deployment.address
+    return Deployment.select().join(Address, on=predicate).where(condition)
 
 
 def get(street, house_number=None, annotation=None):
