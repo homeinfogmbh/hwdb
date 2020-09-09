@@ -21,6 +21,7 @@ def _add_parser_list_systems(subparsers):
     """Adds args to list systems."""
 
     parser = subparsers.add_parser('sys', help='list systems')
+    parser.set_defaults(deployed=None, configured=None)
     parser.add_argument(
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems with the respective IDs')
@@ -30,7 +31,6 @@ def _add_parser_list_systems(subparsers):
     parser.add_argument(
         '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for the respective deployments')
-    parser.set_defaults(deployed=None)
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=operating_system,
         metavar='os', help='filter for the respective operating systems')
