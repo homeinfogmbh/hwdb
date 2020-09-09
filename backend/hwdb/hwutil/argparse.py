@@ -28,14 +28,8 @@ def _add_parser_list_systems(subparsers):
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for the respective customers')
     parser.add_argument(
-        '-d', '--deployment', nargs='+', type=deployment, metavar='deployment',
+        '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for the respective deployments')
-    parser.add_argument(
-        '--deployed', action='store_true', dest='deployed',
-        help='filter for deployed systems')
-    parser.add_argument(
-        '--undeployed', action='store_false', dest='deployed',
-        help='filter for undeployed systems')
     parser.set_defaults(deployed=None)
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=operating_system,
@@ -43,6 +37,18 @@ def _add_parser_list_systems(subparsers):
     parser.add_argument(
         '-m', '--manufacturer', nargs='+', type=customer,
         metavar='manufacturer', help='filter for the respective manufacturers')
+    parser.add_argument(
+        '-c', '--configured', action='store_true', dest='configured',
+        help='filter for configured systems')
+    parser.add_argument(
+        '-a', '--available', action='store_false', dest='configured',
+        help='filter for available systems')
+    parser.add_argument(
+        '-d', '--deployed', action='store_true', dest='deployed',
+        help='filter for deployed systems')
+    parser.add_argument(
+        '-u', '--undeployed', action='store_false', dest='deployed',
+        help='filter for undeployed systems')
     parser.add_argument(
         '-f', '--fields', type=SystemField, nargs='+', default=SYSTEM_FIELDS,
         metavar='field', help='specifies the fields to print')

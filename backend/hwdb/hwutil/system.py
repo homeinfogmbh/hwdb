@@ -42,6 +42,9 @@ def get_systems(args):
     if args.manufacturer:
         condition &= System.manufacturer << args.manufacturer
 
+    if args.configured is not None:
+        condition &= System.configured == args.configured
+
     return select.where(condition)
 
 
