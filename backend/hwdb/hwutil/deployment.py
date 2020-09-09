@@ -13,7 +13,7 @@ from hwdb.tools.deployment import get, listdep, printdep
 __all__ = ['find', 'list']
 
 
-LOGGER = getLogger('termutil')
+LOGGER = getLogger('hwutil')
 
 
 def get_deployments(args):

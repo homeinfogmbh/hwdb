@@ -16,7 +16,7 @@ __all__ = ['main']
 
 
 DESCRIPTION = 'Command line tool to administer HOMEINFO terminals.'
-LOGGER = getLogger('termadm')
+LOGGER = getLogger('hwadm')
 TERMGR_USER = 'termgr'
 
 

@@ -22,7 +22,7 @@ ARNIE = B64LZMA(
     'CVXevyza2ZXmT21h0aDCiPYjN4ltUrrguxqC4Lwn0XwvoWRxpXGb0wAyV//ppegMFpCqvR3y/'
     'l6gnu1zzfCVOISaOCOjHXq2NiJ3ZUMv76UcKZjfFEnW11r/P35yFKGo4AAJxj7ZVSD0rZAAHL'
     'AYUEAADP/ZRYscRn+wIAAAAABFla')
-LOGGER = getLogger('termutil')
+LOGGER = getLogger('hwutil')
 
 
 @script

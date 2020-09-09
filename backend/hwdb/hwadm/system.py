@@ -12,7 +12,7 @@ from hwdb.system import root
 __all__ = ['add', 'deploy', 'undeploy']
 
 
-LOGGER = getLogger('termadm')
+LOGGER = getLogger('hwadm')
 
 
 @root(LOGGER)   # Needed to write WireGuard private keys.

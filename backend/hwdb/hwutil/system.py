@@ -11,7 +11,7 @@ from hwdb.tools.system import get, listsys, printsys
 __all__ = ['find', 'list']
 
 
-LOGGER = getLogger('termutil')
+LOGGER = getLogger('hwutil')
 
 
 def get_systems(args):

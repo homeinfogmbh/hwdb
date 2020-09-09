@@ -10,7 +10,7 @@ from hwdb.orm.deployment import Deployment
 __all__ = ['add']
 
 
-LOGGER = getLogger('termadm')
+LOGGER = getLogger('hwadm')
 
 
 def add(args):
