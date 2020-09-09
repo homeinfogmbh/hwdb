@@ -30,6 +30,12 @@ def get_systems(args):
     if args.deployment:
         condition &= System.deployment << args.deployment
 
+    if args.configured is not None:
+        if args.configured:
+            condition &= ~(System.configured >> None)
+        else:
+            condition &= System.configured >> None
+
     if args.deployed is not None:
         if args.deployed:
             condition &= ~(System.deployment >> None)
@@ -41,9 +47,6 @@ def get_systems(args):
 
     if args.manufacturer:
         condition &= System.manufacturer << args.manufacturer
-
-    if args.configured is not None:
-        condition &= System.configured == args.configured
 
     return select.where(condition)
 
