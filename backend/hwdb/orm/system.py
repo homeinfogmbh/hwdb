@@ -31,6 +31,9 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
+    dataset = ForeignKeyField(
+        Deployment, null=True, column_name='dataset', backref='systems',
+        on_delete='SET NULL', on_update='CASCADE')
     openvpn = ForeignKeyField(
         OpenVPN, null=True, column_name='openvpn', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
@@ -64,6 +67,11 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             return self.wireguard.ipv4address
 
         return self.openvpn.ipv4address
+
+    @property
+    def syncdep(self):
+        """Returns the deployment for synchronization."""
+        return self.dataset or self.deployment
 
     def deploy(self, deployment, *, exclusive=False):
         """Locates a system at the respective deployment."""
