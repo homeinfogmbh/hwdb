@@ -18,13 +18,14 @@ def get_systems(args):
     """Yields systems selected by the CLI arguments."""
 
     select = System.select()
+    predicate = System.deployment == Deployment.id
     condition = True
 
     if args.id:
         condition &= System.id << args.id
 
     if args.customer:
-        select = select.join(Deployment)
+        select = select.join(Deployment, on=predicate)
         condition &= Deployment.customer << args.customer
 
     if args.deployment:
