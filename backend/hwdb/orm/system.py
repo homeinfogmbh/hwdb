@@ -62,7 +62,9 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     @classmethod
     def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
         """Selects all columns and joins on the deployment."""
-        on = cls.deployment == Deployment.id if on is None else on
+        if on is None:
+            on = cls.deployment == Deployment.id
+
         return cls.select().join(Deployment, join_type=join_type, on=on)
 
     @property
