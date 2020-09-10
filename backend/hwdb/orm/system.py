@@ -54,11 +54,9 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     @classmethod
     def monitored(cls):
         """Yields monitored systems."""
-        explicit = (System.monitor == 1) & ~(System.monitor >> None)
-        implicit = (System.monitor >> None) & ~(System.deployment >> None)
-        excluded = (System.monitor == 0) & ~(System.monitor >> None)
-        condition = (explicit | implicit) & (~ excluded)
-        return cls.select().where(condition)
+        explicit = System.monitor == 1
+        implicit = (System.monitor >> None) & (~(System.deployment >> None))
+        return cls.select().where(explicit | implicit)
 
     @classmethod
     def depjoin(cls):
