@@ -60,6 +60,12 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         condition = (explicit | implicit) & (~ excluded)
         return cls.select().where(condition)
 
+    @classmethod
+    def depjoin(cls):
+        """Selects all columns and joins on the deployment."""
+        predicate = cls.deployment == Deployment.id
+        return cls.select().join(Deployment, on=predicate)
+
     @property
     def ipv4address(self):
         """Returns the WireGuard (preferred) or OpenVPN IPv4 address."""
