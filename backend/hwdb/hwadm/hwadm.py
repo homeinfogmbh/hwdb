@@ -9,7 +9,7 @@ from hwdb.config import LOG_FORMAT
 from hwdb.hooks import bind9cfgen, openvpncfgen
 from hwdb.hwadm.argparse import get_args
 from hwdb.hwadm.deployment import add as add_deploment
-from hwdb.hwadm.system import add as add_system, deploy, undeploy
+from hwdb.hwadm.system import add as add_system, dataset, deploy
 
 
 __all__ = ['main']
@@ -40,8 +40,8 @@ def main():
             hooks = (bind9cfgen, openvpncfgen)
     elif args.action == 'deploy':
         success = deploy(args)
-    elif args.action == 'undeploy':
-        success = undeploy(args)
+    elif args.action == 'dataset':
+        success = dataset(args)
     elif args.action == 'run-hooks':
         hooks = args.hooks
 

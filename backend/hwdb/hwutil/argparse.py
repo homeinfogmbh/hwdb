@@ -27,16 +27,19 @@ def _add_parser_list_systems(subparsers):
         help='filter for systems with the respective IDs')
     parser.add_argument(
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
-        help='filter for the respective customers')
+        help='filter for systems of the respective customers')
     parser.add_argument(
         '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
-        help='filter for the respective deployments')
+        help='filter for systems with the respective deployments')
+    parser.add_argument(
+        '-s', '--dataset', nargs='+', type=deployment, metavar='deployment',
+        help='filter for systems with the respective datasets')
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=operating_system,
         metavar='os', help='filter for the respective operating systems')
     parser.add_argument(
-        '-m', '--manufacturer', nargs='+', type=customer,
-        metavar='manufacturer', help='filter for the respective manufacturers')
+        '-m', '--manufacturer', nargs='+', type=customer, metavar='customer',
+        help='filter for systems of the respective manufacturers')
     parser.add_argument(
         '-c', '--configured', action='store_true', dest='configured',
         help='filter for configured systems')

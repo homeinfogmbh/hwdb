@@ -29,6 +29,9 @@ def get_systems(args):
     if args.deployment:
         condition &= System.deployment << args.deployment
 
+    if args.dataset:
+        condition &= System.dataset << args.dataset
+
     if args.configured is not None:
         if args.configured:
             condition &= ~(System.configured >> None)

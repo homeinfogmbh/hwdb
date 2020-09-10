@@ -9,7 +9,7 @@ from hwdb.orm.wireguard import WireGuard
 from hwdb.system import root
 
 
-__all__ = ['add', 'deploy', 'undeploy']
+__all__ = ['add', 'dataset', 'deploy']
 
 
 LOGGER = getLogger('hwadm')
@@ -43,19 +43,35 @@ def add(args):
     return True
 
 
+def dataset(args):
+    """Manage system dataset."""
+
+    if args.remove:
+        if args.dataset:
+            LOGGER.warning('Dataset ignored when removing it.')
+
+        args.system.dataset = None
+        return args.system.save()
+
+    if args.dataset:
+        args.system.dataset = args.dataset
+        return args.system.save()
+
+    LOGGER.info("System's current dataset: %s", args.system.dataset)
+    return True
+
+
 def deploy(args):
-    """Deploys a system."""
+    """Manage system deployment."""
 
-    if args.system.deploy(args.deployment):
-        return True
+    if args.remove:
+        if args.deployment:
+            LOGGER.warning('Deployment ignored when removing it.')
 
-    return False
+        return args.system.deploy(None)
 
+    if args.deployment:
+        return args.system.deploy(args.deployment)
 
-def undeploy(args):
-    """Removed deployment of terminals."""
-
-    for system in args.system:
-        system.deploy(None)
-
+    LOGGER.info('System is currently deployed at: %s', args.system.deployment)
     return True

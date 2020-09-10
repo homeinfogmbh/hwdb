@@ -81,18 +81,23 @@ def _add_new_parser(subparsers):
 def _add_deploy_parser(subparsers):
     """Adds a parser for deployment of systems."""
 
-    parser = subparsers.add_parser('deploy', help='deploy systems')
-    parser.add_argument('system', type=system, help='the system to deploy')
+    parser = subparsers.add_parser('deploy', help='manage system deployment')
+    parser.add_argument('system', type=system, help='the system to modify')
+    parser.add_argument(
+        '-r', '--remove', action='store_true', help='remove the deployment')
     parser.add_argument(
         'deployment', type=deployment, help='the deployment site')
 
 
-def _add_undeploy_parser(subparsers):
-    """Adds a parser for undeploying systems."""
+def _add_dataset_parser(subparsers):
+    """Adds a parser for dataset of systems."""
 
-    parser = subparsers.add_parser('undeploy', help='undeploy systems')
+    parser = subparsers.add_parser('dataset', help='manage system dataset')
+    parser.add_argument('system', type=system, help='the system to modify')
     parser.add_argument(
-        'system', nargs='+', type=system, help='the system to deploy')
+        '-r', '--remove', action='store_true', help='remove the dataset')
+    parser.add_argument(
+        'dataset', type=deployment, nargs='?', help='the dataset')
 
 
 def _add_hooks_parser(subparsers):
@@ -117,6 +122,6 @@ def get_args():
     subparsers = parser.add_subparsers(dest='action')
     _add_new_parser(subparsers)
     _add_deploy_parser(subparsers)
-    _add_undeploy_parser(subparsers)
+    _add_dataset_parser(subparsers)
     _add_hooks_parser(subparsers)
     return parser.parse_args()
