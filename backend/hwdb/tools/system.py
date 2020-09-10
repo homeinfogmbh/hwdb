@@ -72,11 +72,8 @@ def find(street, house_number=None, annotation=None):
     if annotation is not None:
         condition |= Deployment.annotation ** f'%{annotation}%'
 
-    predicate = System.id == Deployment.id
-    select = System.select().join(Deployment, on=predicate)
     predicate = Address.id == Deployment.address
-    select = select.join(Deployment).join(Address, on=predicate)
-    return select.where(condition)
+    return System.depjoin().join(Address, on=predicate).where(condition)
 
 
 def get(street, house_number=None, annotation=None):

@@ -17,15 +17,13 @@ LOGGER = getLogger('hwutil')
 def get_systems(args):
     """Yields systems selected by the CLI arguments."""
 
-    select = System.select()
-    predicate = System.deployment == Deployment.id
+    select = System.depjoin() if args.customer else System.select()
     condition = True
 
     if args.id:
         condition &= System.id << args.id
 
     if args.customer:
-        select = select.join(Deployment, on=predicate)
         condition &= Deployment.customer << args.customer
 
     if args.deployment:
