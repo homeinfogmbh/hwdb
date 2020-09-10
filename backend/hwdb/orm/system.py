@@ -2,6 +2,7 @@
 
 from datetime import datetime
 
+from peewee import JOIN
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
@@ -59,10 +60,10 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return cls.select().where(explicit | implicit)
 
     @classmethod
-    def depjoin(cls, on=None):  # pylint: disable=C0103
+    def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
         """Selects all columns and joins on the deployment."""
         on = cls.deployment == Deployment.id if on is None else on
-        return cls.select().join(Deployment, on=on)
+        return cls.select().join(Deployment, join_type=join_type, on=on)
 
     @property
     def ipv4address(self):
