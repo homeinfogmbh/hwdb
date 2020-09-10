@@ -86,7 +86,7 @@ def _add_deploy_parser(subparsers):
     parser.add_argument(
         '-r', '--remove', action='store_true', help='remove the deployment')
     parser.add_argument(
-        'deployment', type=deployment, help='the deployment site')
+        'deployment', type=deployment, nargs='?', help='the deployment site')
 
 
 def _add_dataset_parser(subparsers):
