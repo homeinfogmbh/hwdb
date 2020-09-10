@@ -59,10 +59,10 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return cls.select().where(explicit | implicit)
 
     @classmethod
-    def depjoin(cls):
+    def depjoin(cls, on=None):  # pylint: disable=C0103
         """Selects all columns and joins on the deployment."""
-        predicate = cls.deployment == Deployment.id
-        return cls.select().join(Deployment, on=predicate)
+        on = cls.deployment == Deployment.id if on is None else on
+        return cls.select().join(Deployment, on=on)
 
     @property
     def ipv4address(self):
