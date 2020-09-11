@@ -33,7 +33,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     dataset = ForeignKeyField(
-        Deployment, null=True, column_name='dataset', backref='systems',
+        Deployment, null=True, column_name='dataset', backref='data_systems',
         on_delete='SET NULL', on_update='CASCADE')
     openvpn = ForeignKeyField(
         OpenVPN, null=True, column_name='openvpn', backref='systems',
