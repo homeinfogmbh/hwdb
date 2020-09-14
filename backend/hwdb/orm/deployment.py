@@ -39,6 +39,26 @@ class Deployment(BaseModel):
 
         return f'{string} ({self.annotation})'
 
+    def checkdupes(self):
+        """Returns duplicates of this deployment in the database."""
+        cls = type(self)
+        condition = cls.customer == self.customer
+        condition &= cls.type == self.type
+        condition &= cls.connection == self.connection
+        condition &= cls.address == self.address
+
+        if self.annotation is None:
+            condition &= cls.annotation >> None
+        else:
+            condition &= cls.annotation == self.annotation
+
+        condition &= cls.testing == self.testing
+
+        if self.id is not None:
+            condition &= cls.id != self.id
+
+        return cls.select().where(condition)
+
     def to_json(self, systems=False, **kwargs):
         """Returns a JSON-ish dict."""
         json = super().to_json(**kwargs)
