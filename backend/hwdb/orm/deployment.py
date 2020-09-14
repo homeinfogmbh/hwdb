@@ -46,13 +46,12 @@ class Deployment(BaseModel):
         condition &= cls.type == self.type
         condition &= cls.connection == self.connection
         condition &= cls.address == self.address
+        condition &= cls.testing == self.testing
 
         if self.annotation is None:
             condition &= cls.annotation >> None
         else:
             condition &= cls.annotation == self.annotation
-
-        condition &= cls.testing == self.testing
 
         if self.id is not None:
             condition &= cls.id != self.id
