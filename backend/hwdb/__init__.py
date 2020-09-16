@@ -6,7 +6,7 @@ from hwdb.config import OPENVPN_NETMASK
 from hwdb.config import OPENVPN_NETWORK
 from hwdb.config import WIREGUARD_NETWORK
 from hwdb.config import WIREGUARD_SERVER
-from hwdb.enumerations import Connection, Module, OperatingSystem, Type
+from hwdb.enumerations import Connection, OperatingSystem, Type
 from hwdb.exceptions import TerminalError
 from hwdb.exceptions import TerminalConfigError
 from hwdb.exceptions import AmbiguityError
@@ -49,7 +49,6 @@ __all__ = [
     'system',
     'type_',
     'Connection',
-    'Module',
     'OperatingSystem',
     'Type',
     'Deployment',

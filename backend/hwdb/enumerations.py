@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-__all__ = ['from_string', 'Connection', 'Module', 'OperatingSystem', 'Type']
+__all__ = ['from_string', 'Connection', 'OperatingSystem', 'Type']
 
 
 def from_string(enum, value):
@@ -20,15 +20,6 @@ class Connection(Enum):
 
     DSL = 'DSL'
     LTE = 'LTE'
-
-
-class Module(Enum):
-    """Available software modules."""
-
-    TENANT_TO_TENANT = 'tenant-to-tenant'
-    CLEANING_PROOF = 'cleaning-proof'
-    LPT_TIMETABLES = 'lpt-timetables'
-    NEWS = 'news'
 
 
 class OperatingSystem(Enum):
