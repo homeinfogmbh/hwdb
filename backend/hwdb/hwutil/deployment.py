@@ -38,7 +38,12 @@ def get_deployments(args):
         condition &= Deployment.connection << args.connection
 
     if args.system:
-        select = select.join(System, JOIN.LEFT_OUTER)
+        select = select.join(
+            System, JOIN.LEFT_OUTER, on=Deployment.id == System.deployment
+        ).join_from(
+            Deployment, System, JOIN.LEFT_OUTER,
+            on=Deployment.id == System.dataset
+        )
         condition &= System.id << args.system
 
     return select.where(condition)
