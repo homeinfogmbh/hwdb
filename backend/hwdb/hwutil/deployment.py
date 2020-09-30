@@ -38,13 +38,14 @@ def get_deployments(args):
         condition &= Deployment.connection << args.connection
 
     if args.system:
+        dataset = System.alias()
         select = select.join(
             System, JOIN.LEFT_OUTER, on=Deployment.id == System.deployment
         ).join_from(
-            Deployment, System, JOIN.LEFT_OUTER,
-            on=Deployment.id == System.dataset
+            Deployment, dataset, JOIN.LEFT_OUTER,
+            on=Deployment.id == dataset.dataset
         )
-        condition &= System.id << args.system
+        condition &= (System.id << args.system) | (dataset.id << args.system)
 
     return select.where(condition)
 
