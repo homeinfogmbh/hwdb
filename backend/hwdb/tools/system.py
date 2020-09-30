@@ -87,7 +87,7 @@ def get(street, house_number=None, annotation=None):
         system, *superfluous = find(
             street, house_number=house_number, annotation=annotation)
     except ValueError:
-        raise TerminalError('No system matching query.')
+        raise TerminalError('No system matching query.') from None
 
     if superfluous:
         raise AmbiguityError(system, superfluous)
