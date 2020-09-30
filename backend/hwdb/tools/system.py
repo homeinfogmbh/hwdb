@@ -18,6 +18,7 @@ class SystemField(Enum):
 
     CONFIGURED = 'configured'
     CREATED = 'created'
+    DATASET = 'dataset'
     DEPLOYMENT = 'deployment'
     ID = 'id'
     MANUFACTURER = 'manufacturer'
@@ -32,6 +33,8 @@ class SystemField(Enum):
 
 FIELDS = {
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
+    SystemField.DATASET: FieldFormatter(
+        lambda sys: sys.dataset_id, 'Dataset'),
     SystemField.DEPLOYMENT: FieldFormatter(
         lambda sys: sys.deployment_id, 'Deployment'),
     SystemField.OPENVPN: FieldFormatter(
@@ -56,8 +59,9 @@ FIELDS = {
     SystemField.ONLINE: FieldFormatter(lambda sys: sys.online, 'Online')
 }
 DEFAULT_FIELDS = (
-    SystemField.ID, SystemField.DEPLOYMENT, SystemField.OPENVPN,
-    SystemField.MANUFACTURER, SystemField.CONFIGURED, SystemField.OS
+    SystemField.ID, SystemField.DEPLOYMENT, SystemField.DATASET,
+    SystemField.OPENVPN, SystemField.MANUFACTURER, SystemField.CONFIGURED,
+    SystemField.OS
 )
 
 
