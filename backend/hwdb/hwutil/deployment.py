@@ -7,7 +7,7 @@ from peewee import JOIN
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
 from hwdb.tools.common import iterprint
-from hwdb.tools.deployment import get, listdep, printdep
+from hwdb.tools.deployment import get, listdep, printdep, DeploymentField
 
 
 __all__ = ['find', 'list']
@@ -74,5 +74,8 @@ def find(args):
 
 def list(args):     # pylint: disable=W0622
     """Lists deployments."""
+
+    if args.list_fields:
+        return iterprint(field.value for field in DeploymentField)
 
     return iterprint(listdep(get_deployments(args), fields=args.fields))

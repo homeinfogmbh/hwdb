@@ -26,6 +26,9 @@ def _add_parser_list_systems(subparsers):
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems with the respective IDs')
     parser.add_argument(
+        '-F', '--list-fields', action='store_true',
+        help='list available fields')
+    parser.add_argument(
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for systems of the respective customers')
     parser.add_argument(
@@ -70,6 +73,9 @@ def _add_parser_list_deployments(subparsers):
     parser.add_argument(
         'id', nargs='*', type=int, metavar='id',
         help='filter for deployments with the respective IDs')
+    parser.add_argument(
+        '-F', '--list-fields', action='store_true',
+        help='list available fields')
     parser.add_argument(
         '-C', '--customer', nargs='+', type=customer, metavar='customer',
         help='filter for the respective customers')

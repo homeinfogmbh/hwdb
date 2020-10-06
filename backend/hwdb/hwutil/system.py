@@ -5,7 +5,7 @@ from logging import getLogger
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
 from hwdb.tools.common import iterprint
-from hwdb.tools.system import get, listsys, printsys
+from hwdb.tools.system import get, listsys, printsys, SystemField
 
 
 __all__ = ['find', 'list']
@@ -80,5 +80,8 @@ def find(args):
 
 def list(args):     # pylint: disable=W0622
     """Lists systems."""
+
+    if args.list_fields:
+        return iterprint(field.value for field in SystemField)
 
     return iterprint(listsys(get_systems(args), fields=args.fields))
