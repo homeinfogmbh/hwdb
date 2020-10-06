@@ -58,12 +58,12 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         """Returns the condition for monitored systems."""
         return (
             (
-                (cls.monitor == 1)              # Monitoring is force-enabled.
+                (cls.monitor == 1)               # Monitoring is force-enabled.
             ) | (
-                (cls.monitor != 0)              # Monitoring is not disabled.
-                & (Deployment.testing == 0)     # Not a testing system.
-                & (~(cls.deployment >> None))   # System has a deployment.
-                & (~(cls.fitted >> None))       # System is fitted.
+                (cls.monitor != 0)               # Monitoring is not disabled.
+                & (Deployment.testing == 0)      # Not a testing system.
+                & (~(cls.deployment >> None))    # System has a deployment.
+                & (cls.fitted < datetime.now())  # System is fitted.
             )
         )
 
