@@ -61,15 +61,16 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
                 (cls.monitor == 1)              # Monitoring is force-enabled.
             ) | (
                 (cls.monitor != 0)              # Monitoring is not disabled.
+                & (Deployment.testing == 0)     # Not a testing system.
                 & (~(cls.deployment >> None))   # System has a deployment.
                 & (cls.fitted == 1)             # System is fitted.
             )
         )
 
     @classmethod
-    def monitored(cls):
+    def monitored(cls, *args, **kwargs):
         """Yields monitored systems."""
-        return cls.select().where(cls.monitoring_cond())
+        return cls.depjoin(*args, **kwargs).where(cls.monitoring_cond())
 
     @classmethod
     def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
