@@ -96,7 +96,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     def deploy(self, deployment, *, exclusive=False):
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
-        self.fitted = None
+        self.fitted = False     # Reset fitment flag.
 
         if old_deployment is None:
             LOGGER.info('Initially deployed system at "%s".', deployment)
