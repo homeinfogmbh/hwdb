@@ -45,10 +45,7 @@ def get_systems(args):  # pylint: disable=R0912
             condition &= System.deployment >> None
 
     if args.fitted is not None:
-        if args.fitted:
-            condition &= ~(System.fitted >> None)
-        else:
-            condition &= System.fitted >> None
+        condition &= System.fitted == args.fitted
 
     if args.operating_system:
         condition &= System.operating_system << args.operating_system
