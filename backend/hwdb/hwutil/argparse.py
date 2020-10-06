@@ -94,7 +94,7 @@ def _add_parser_list_deployments(subparsers):
 def _add_parser_list(subparsers):
     """Adds listing args."""
 
-    parser = subparsers.add_parser('ls', help='list records')
+    parser = subparsers.add_parser('ls', help='list and / or filter records')
     target = parser.add_subparsers(dest='target')
     _add_parser_list_systems(target)
     _add_parser_list_deployments(target)
@@ -103,7 +103,7 @@ def _add_parser_list(subparsers):
 def _add_parser_find_systems(subparsers):
     """Adds a parser to find systems."""
 
-    parser = subparsers.add_parser('sys', help='find digital signage systems')
+    parser = subparsers.add_parser('sys', help='find systems')
     parser.add_argument(
         'pattern', help='filter for systems of the respective pattern')
     parser.add_argument(
@@ -125,7 +125,7 @@ def _add_parser_find_deployments(subparsers):
 def _add_parser_find(subparsers):
     """Adds a parser for searching."""
 
-    parser = subparsers.add_parser('find', help='find records')
+    parser = subparsers.add_parser('find', help='find records by address')
     target = parser.add_subparsers(dest='target')
     _add_parser_find_systems(target)
     _add_parser_find_deployments(target)
