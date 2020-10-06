@@ -1,6 +1,5 @@
 """System related actions."""
 
-from datetime import datetime
 from logging import getLogger
 
 from hwdb.exceptions import AmbiguityError, TerminalError
@@ -47,7 +46,7 @@ def get_systems(args):  # pylint: disable=R0912
 
     if args.fitted is not None:
         if args.fitted:
-            condition &= System.fitted >= datetime.now()
+            condition &= ~(System.fitted >> None)
         else:
             condition &= System.fitted >> None
 
