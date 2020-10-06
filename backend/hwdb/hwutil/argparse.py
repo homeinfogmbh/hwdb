@@ -94,7 +94,7 @@ def _add_parser_list_deployments(subparsers):
 def _add_parser_list(subparsers):
     """Adds listing args."""
 
-    parser = subparsers.add_parser('ls', help='list and / or filter records')
+    parser = subparsers.add_parser('ls', help='list and filter records')
     target = parser.add_subparsers(dest='target')
     _add_parser_list_systems(target)
     _add_parser_list_deployments(target)
