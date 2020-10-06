@@ -53,7 +53,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     last_sync = DateTimeField(null=True)
 
     @classmethod
-    def monitoring_condition(cls):
+    def monitoring_cond(cls):
         """Returns the condition for monitored systems."""
         return (
             (
@@ -68,7 +68,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     @classmethod
     def monitored(cls):
         """Yields monitored systems."""
-        return cls.select().where(cls.monitoring_condition())
+        return cls.select().where(cls.monitoring_cond())
 
     @classmethod
     def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
