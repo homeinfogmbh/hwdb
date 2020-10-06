@@ -46,7 +46,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
-    fitted = DateTimeField(null=True)
+    fitted = BooleanField(default=False)
     operating_system = EnumField(OperatingSystem)
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
@@ -58,12 +58,12 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         """Returns the condition for monitored systems."""
         return (
             (
-                (cls.monitor == 1)               # Monitoring is force-enabled.
+                (cls.monitor == 1)              # Monitoring is force-enabled.
             ) | (
-                (cls.monitor != 0)               # Monitoring is not disabled.
-                & (Deployment.testing == 0)      # Not a testing system.
-                & (~(cls.deployment >> None))    # System has a deployment.
-                & (cls.fitted < datetime.now())  # System is fitted.
+                (cls.monitor != 0)              # Monitoring is not disabled.
+                & (Deployment.testing == 0)     # Not a testing system.
+                & (~(cls.deployment >> None))   # System has a deployment.
+                & (cls.fitted == 1)             # System is fitted.
             )
         )
 
