@@ -46,6 +46,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
+    fitted = DateTimeField(null=True)
     operating_system = EnumField(OperatingSystem)
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
@@ -61,7 +62,8 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             ) | (
                 (cls.monitor != 0)              # Monitoring is not disabled.
                 & (Deployment.testing == 0)     # Not a testing system.
-                & (~(cls.deployment >> None))   # System is deployed.
+                & (~(cls.deployment >> None))   # System has a deployment.
+                & (~(cls.fitted >> None))       # System is fitted.
             )
         )
 
@@ -94,6 +96,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     def deploy(self, deployment, *, exclusive=False):
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
+        self.fitted = None
 
         if old_deployment is None:
             LOGGER.info('Initially deployed system at "%s".', deployment)

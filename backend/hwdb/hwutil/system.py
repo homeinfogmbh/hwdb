@@ -1,5 +1,6 @@
 """System related actions."""
 
+from datetime import datetime
 from logging import getLogger
 
 from hwdb.exceptions import AmbiguityError, TerminalError
@@ -14,7 +15,7 @@ __all__ = ['find', 'list']
 LOGGER = getLogger('hwutil')
 
 
-def get_systems(args):
+def get_systems(args):  # pylint: disable=R0912
     """Yields systems selected by the CLI arguments."""
 
     select = System.depjoin() if args.customer else System.select()
@@ -43,6 +44,12 @@ def get_systems(args):
             condition &= ~(System.deployment >> None)
         else:
             condition &= System.deployment >> None
+
+    if args.fitted is not None:
+        if args.fitted:
+            condition &= System.fitted >= datetime.now()
+        else:
+            condition &= System.fitted >> None
 
     if args.operating_system:
         condition &= System.operating_system << args.operating_system

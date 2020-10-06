@@ -53,6 +53,12 @@ def _add_parser_list_systems(subparsers):
         '-u', '--undeployed', action='store_false', dest='deployed',
         help='filter for undeployed systems')
     parser.add_argument(
+        '--fitted', action='store_true', dest='fitted',
+        help='filter for fittet systems')
+    parser.add_argument(
+        '--unfitted', action='store_false', dest='fitted',
+        help='filter for not-fitted systems')
+    parser.add_argument(
         '-f', '--fields', type=SystemField, nargs='+', default=SYSTEM_FIELDS,
         metavar='field', help='specifies the fields to print')
 
