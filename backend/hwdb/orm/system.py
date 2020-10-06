@@ -68,9 +68,10 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         )
 
     @classmethod
-    def monitored(cls, *args, **kwargs):
+    def monitored(cls):
         """Yields monitored systems."""
-        return cls.depjoin(*args, **kwargs).where(cls.monitoring_cond())
+        return cls.depjoin(join_type=JOIN.LEFT_OUTER).where(
+            cls.monitoring_cond())
 
     @classmethod
     def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
