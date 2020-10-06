@@ -20,6 +20,7 @@ class SystemField(Enum):
     CREATED = 'created'
     DATASET = 'dataset'
     DEPLOYMENT = 'deployment'
+    FITTED = 'fitted'
     ID = 'id'
     MANUFACTURER = 'manufacturer'
     MODEL = 'model'
@@ -32,36 +33,36 @@ class SystemField(Enum):
 
 
 FIELDS = {
-    SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
+    SystemField.CONFIGURED: FieldFormatter(
+        lambda sys: sys.configured.isoformat() if sys.configured else None,
+        'Configured', size=24),
+    SystemField.CREATED: FieldFormatter(
+        lambda sys: sys.created.isoformat(), 'Created', size=24),
     SystemField.DATASET: FieldFormatter(
         lambda sys: sys.dataset_id, 'Dataset'),
     SystemField.DEPLOYMENT: FieldFormatter(
         lambda sys: sys.deployment_id, 'Deployment'),
-    SystemField.OPENVPN: FieldFormatter(
-        lambda sys: sys.openvpn, 'OpenVPN Address', size=14),
-    SystemField.WIREGUARD: FieldFormatter(
-        lambda sys: sys.wireguard, 'WireGuard Address', size=14),
+    SystemField.FITTED: FieldFormatter(lambda sys: sys.fitted, 'Fitted'),
+    SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
     SystemField.MANUFACTURER: FieldFormatter(
         lambda sys: sys.manufacturer, 'Manufacturer', size=24),
-    SystemField.CREATED: FieldFormatter(
-        lambda sys: sys.created.isoformat(), 'Created', size=24),
-    SystemField.CONFIGURED: FieldFormatter(
-        lambda sys: sys.configured.isoformat() if sys.configured else None,
-        'Configured', size=24),
+    SystemField.MODEL: FieldFormatter(
+        lambda sys: sys.model, 'Model', size=24, leftbound=True),
+    SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
+    SystemField.ONLINE: FieldFormatter(lambda sys: sys.online, 'Online'),
+    SystemField.OPENVPN: FieldFormatter(
+        lambda sys: sys.openvpn, 'OpenVPN Address', size=14),
     SystemField.OS: FieldFormatter(
         lambda sys: sys.operating_system.value, 'OS', size=25),
-    SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
     SystemField.SN: FieldFormatter(
         lambda sys: sys.serial_number, 'Serial Number', size=32),
-    SystemField.MODEL: FieldFormatter(
-        lambda sys: sys.model, 'Model', size=24,
-        leftbound=True),
-    SystemField.ONLINE: FieldFormatter(lambda sys: sys.online, 'Online')
+    SystemField.WIREGUARD: FieldFormatter(
+        lambda sys: sys.wireguard, 'WireGuard Address', size=14)
 }
 DEFAULT_FIELDS = (
     SystemField.ID, SystemField.DEPLOYMENT, SystemField.DATASET,
     SystemField.OPENVPN, SystemField.MANUFACTURER, SystemField.CONFIGURED,
-    SystemField.OS
+    SystemField.FITTED, SystemField.OS
 )
 
 
