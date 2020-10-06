@@ -21,7 +21,7 @@ def _add_parser_list_systems(subparsers):
     """Adds args to list systems."""
 
     parser = subparsers.add_parser('sys', help='list systems')
-    parser.set_defaults(deployed=None, configured=None)
+    parser.set_defaults(deployed=None, configured=None, fitted=None)
     parser.add_argument(
         'id', nargs='*', type=int, metavar='id',
         help='filter for systems with the respective IDs')
