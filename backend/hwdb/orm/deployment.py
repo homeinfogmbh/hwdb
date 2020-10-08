@@ -58,9 +58,18 @@ class Deployment(BaseModel):
 
         return cls.select().where(condition)
 
-    def to_json(self, systems=False, **kwargs):
+    def to_json(self, address=False, customer=False, systems=False, **kwargs):
         """Returns a JSON-ish dict."""
         json = super().to_json(**kwargs)
+
+        if address:
+            json['address'] = self.address.to_json()
+
+            if self.lpt_address is not None:
+                json['lptAddress'] = self.lpt_address.to_json()
+
+        if customer:
+            json['customer'] = self.customer.to_json()
 
         if systems:
             json['systems'] = [system.id for system in self.systems]
