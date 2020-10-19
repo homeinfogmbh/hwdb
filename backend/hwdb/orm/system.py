@@ -106,7 +106,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     def deploy(self, deployment, *, exclusive=False, fitted=False):
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
-        self.fitted = fitted
 
         if old_deployment is None:
             LOGGER.info('Initially deployed system at "%s".', deployment)
@@ -119,6 +118,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         if exclusive:
             type(self).undeploy_all(deployment)
 
+        self.fitted = fitted
         return self.save()
 
     def to_json(self, brief=False, skip=None, **kwargs):
