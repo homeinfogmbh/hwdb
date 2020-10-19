@@ -81,6 +81,15 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
 
         return cls.select().join(Deployment, join_type=join_type, on=on)
 
+    @classmethod
+    def undeploy_all(cls, deployment):
+        """Undeploy other systems."""
+        for system in cls.select().where(cls.deployment == deployment):
+            LOGGER.info('Un-deploying #%i.', system.id)
+            system.fitted = False
+            system.deployment = None
+            system.save()
+
     @property
     def ipv4address(self):
         """Returns the WireGuard (preferred) or OpenVPN IPv4 address."""
@@ -94,10 +103,10 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         """Returns the deployment for synchronization."""
         return self.dataset or self.deployment
 
-    def deploy(self, deployment, *, exclusive=False):
+    def deploy(self, deployment, *, exclusive=False, fitted=False):
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
-        self.fitted = False     # Reset fitment flag.
+        self.fitted = fitted
 
         if old_deployment is None:
             LOGGER.info('Initially deployed system at "%s".', deployment)
@@ -108,12 +117,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
                         old_deployment, deployment)
 
         if exclusive:
-            model = type(self)
-
-            for system in model.select().where(model.deployment == deployment):
-                LOGGER.info('Un-deploying #%i.', system.id)
-                system.deployment = None
-                system.save()
+            type(self).undeploy_all(deployment)
 
         return self.save()
 
