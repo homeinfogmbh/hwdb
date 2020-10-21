@@ -20,6 +20,7 @@
 */
 'use strict';
 
+import { includesIgnoreCase } from 'https://javascript.homeinfo.de/lib.js';
 import { addressToString } from 'https://javascript.homeinfo.de/mdb.js';
 
 
