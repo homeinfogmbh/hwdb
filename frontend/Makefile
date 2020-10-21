@@ -5,8 +5,7 @@ FILE_LIST = ./.installed_files.txt
 default: | install
 
 install:
-	@ install -dm 755 /srv/http/de/homeinfo/javascript/terminallib
-	@ install -m 644 *.js /srv/http/de/homeinfo/javascript/terminallib/
+	@ install -vm 644 -t /srv/http/de/homeinfo/javascript hwdb.js
 
 uninstall:
-	@ rm -rf /srv/http/de/homeinfo/javascript/terminallib
+	@ rm -f /srv/http/de/homeinfo/javascript/hwdb.js

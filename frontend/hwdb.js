@@ -20,168 +20,161 @@
 */
 'use strict';
 
-var terminallib = terminallib || {};
-terminallib.sorting = terminallib.sorting || {};
-
-
 /*
     Compares two nullable values.
     Returns the respective sort order if at
     least one object is null-ish, else null.
 */
-terminallib.sorting.compareNull = function (alice, bob) {
+function compareNull (alice, bob) {
     if (alice == null) {
-        if (bob == null) {
+        if (bob == null)
             return 0;
-        }
 
         return -1;
     }
 
-    if (bob == null) {
+    if (bob == null)
         return 1;
-    }
 
     return null;
-};
+}
 
 
 /*
     Compares the size of two objects that may be null.
 */
-terminallib.sorting.compareSize = function (alice, bob) {
-    const result = terminallib.sorting.compareNull(alice, bob);
+function compareSize (alice, bob) {
+    const result = compareNull(alice, bob);
 
-    if (result != null) {
+    if (result != null)
         return result;
-    }
 
-    if (alice > bob) {
+    if (alice > bob)
         return 1;
-    }
 
-    if (alice < bob) {
+    if (alice < bob)
         return -1;
-    }
 
     return 0;
-};
+}
 
 
 /*
     Compares two addresses.
 */
-terminallib.sorting.compareAddress = function (alice, bob) {
-    let result = terminallib.sorting.compareNull(alice, bob);
+function compareAddress (alice, bob) {
+    let result = compareNull(alice, bob);
 
-    if (result != null) {
+    if (result != null)
         return result;
-    }
 
     result = terminallib.sorting.compareSize(alice.zipCode, bob.zipCode);
 
-    if (result != 0) {
+    if (result != 0)
         return result;
-    }
 
     result = terminallib.sorting.compareSize(alice.city, bob.city);
 
-    if (result != 0) {
+    if (result != 0)
         return result;
-    }
 
     result = terminallib.sorting.compareSize(alice.street, bob.street);
 
-    if (result != 0) {
+    if (result != 0)
         return result;
-    }
 
     return terminallib.sorting.compareSize(alice.houseNumber, bob.houseNumber);
-};
+}
 
 
 /*
     Returns a sort function to sort by terminal ID.
 */
-terminallib.sorting.sortByID = function (descending) {
+function sortByID (descending) {
     return function (alice, bob) {
         const result = alice.id - bob.id;
         return descending ? -result : result;
     };
-};
+}
 
 
 /*
     Returns a sort function to sort by customer ID.
 */
-terminallib.sorting.sortByCID = function (descending) {
+function sortByCID (descending) {
     return function (alice, bob) {
         const result = alice.customer.id - bob.customer.id;
         return descending ? -result : result;
     };
-};
+}
 
 
 /*
     Returns a sort function to sort by customer name.
 */
-terminallib.sorting.sortByCustomerName = function (descending) {
+function sortByCustomerName (descending) {
     return function (alice, bob) {
         let result = 0;
 
-        if (alice.customer.company.name > bob.customer.company.name) {
+        if (alice.customer.company.name > bob.customer.company.name)
             result = 1;
-        } else if (alice.customer.company.name < bob.customer.company.name) {
+        else if (alice.customer.company.name < bob.customer.company.name)
             result = -1;
-        }
 
         return descending ? -result : result;
     };
-};
+}
 
 
 /*
     Returns a compare function to sort by address.
 */
-terminallib.sorting.sortByAddress = function (descending) {
+function sortByAddress (descending) {
     return function (alice, bob) {
         const result = terminallib.sorting.compareAddress(alice.address, bob.address);
         return descending ? -result : result;
     };
-};
+}
 
 
 /*
     Returns a compare function to sort by testing flag.
 */
-terminallib.sorting.sortByTesting = function (descending) {
+function sortByTesting (descending) {
     return function (alice, bob) {
         const result = terminallib.sorting.compareSize(alice.testing, bob.testing);
         return descending ? -result : result;
     };
-};
+}
 
 
 /*
     Returns an appropriate sorting function.
 */
-terminallib.sorting.getSorter = function (field, descending) {
-    if (field == null) {
+export function getSorter (field, descending) {
+    if (field == null)
         return null;
-    }
 
     switch (field.toLowerCase()) {
     case 'id':
-        return terminallib.sorting.sortByID(descending);
+        return sortByID(descending);
     case 'cid':
-        return terminallib.sorting.sortByCID(descending);
+        return sortByCID(descending);
     case 'customer':
-        return terminallib.sorting.sortByCustomerName(descending);
+        return sortByCustomerName(descending);
     case 'address':
-        return terminallib.sorting.sortByAddress(descending);
+        return sortByAddress(descending);
     case 'testing':
-        return terminallib.sorting.sortByTesting(descending);
+        return sortByTesting(descending);
     }
 
     return null;
-};
+}
+
+
+/*
+    Returns the respective deployment as a one-line string.
+*/
+export function deploymentToString (deployment) {
+    return deployment.id + ': ' + addressToString(deployment.address);
+}
