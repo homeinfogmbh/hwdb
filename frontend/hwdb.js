@@ -41,6 +41,34 @@ function compareNull (alice, bob) {
 
 
 /*
+    Compares two addresses.
+*/
+function compareAddress (alice, bob) {
+    let result = compareNull(alice, bob);
+
+    if (result != null)
+        return result;
+
+    result = compareSize(alice.zipCode, bob.zipCode);
+
+    if (result != 0)
+        return result;
+
+    result = compareSize(alice.city, bob.city);
+
+    if (result != 0)
+        return result;
+
+    result = compareSize(alice.street, bob.street);
+
+    if (result != 0)
+        return result;
+
+    return compareSize(alice.houseNumber, bob.houseNumber);
+}
+
+
+/*
     Compares the size of two objects that may be null.
 */
 function compareSize (alice, bob) {
@@ -56,34 +84,6 @@ function compareSize (alice, bob) {
         return -1;
 
     return 0;
-}
-
-
-/*
-    Compares two addresses.
-*/
-function compareAddress (alice, bob) {
-    let result = compareNull(alice, bob);
-
-    if (result != null)
-        return result;
-
-    result = terminallib.sorting.compareSize(alice.zipCode, bob.zipCode);
-
-    if (result != 0)
-        return result;
-
-    result = terminallib.sorting.compareSize(alice.city, bob.city);
-
-    if (result != 0)
-        return result;
-
-    result = terminallib.sorting.compareSize(alice.street, bob.street);
-
-    if (result != 0)
-        return result;
-
-    return terminallib.sorting.compareSize(alice.houseNumber, bob.houseNumber);
 }
 
 
@@ -108,11 +108,34 @@ function extractId (keyword) {
 
 
 /*
-    Returns a sort function to sort by terminal ID.
+    Matches a deployment.
 */
-function sortByID (descending) {
+function matchDeployment (deployment, keyword) {
+    const cid = '' + deployment.customer.id;
+
+    if (includesIgnoreCase(cid, keyword))
+        return true;
+
+    const customerName = deployment.customer.company.name;
+
+    if (includesIgnoreCase(customerName, keyword))
+        return true;
+
+    const address = addressToString(deployment.address);
+
+    if (includesIgnoreCase(address, keyword))
+        return true;
+
+    return false;
+}
+
+
+/*
+    Returns a compare function to sort by address.
+*/
+function sortByAddress (descending) {
     return function (alice, bob) {
-        const result = alice.id - bob.id;
+        const result = terminallib.sorting.compareAddress(alice.address, bob.address);
         return descending ? -result : result;
     };
 }
@@ -147,11 +170,11 @@ function sortByCustomerName (descending) {
 
 
 /*
-    Returns a compare function to sort by address.
+    Returns a sort function to sort by terminal ID.
 */
-function sortByAddress (descending) {
+function sortByID (descending) {
     return function (alice, bob) {
-        const result = terminallib.sorting.compareAddress(alice.address, bob.address);
+        const result = alice.id - bob.id;
         return descending ? -result : result;
     };
 }
@@ -162,7 +185,7 @@ function sortByAddress (descending) {
 */
 function sortByTesting (descending) {
     return function (alice, bob) {
-        const result = terminallib.sorting.compareSize(alice.testing, bob.testing);
+        const result = compareSize(alice.testing, bob.testing);
         return descending ? -result : result;
     };
 }
@@ -173,6 +196,33 @@ function sortByTesting (descending) {
 */
 export function deploymentToString (deployment) {
     return deployment.id + ': ' + addressToString(deployment.address);
+}
+
+
+/*
+    Filters the provided depoloyments by the respective keyword.
+*/
+export function *filterDeployments (deployments, keyword) {
+    const id = extractId(keyword);
+
+    for (const deployment of deployments) {
+        // Yield any deployment on empty keyword.
+        if (keyword == null || keyword == '') {
+            yield deployment;
+            continue;
+        }
+
+        // Exact ID matching.
+        if (id != null && id != NaN) {
+            if (deployment.id == id)
+                yield deployment;
+
+            continue;
+        }
+
+        if (matchDeployment(deployment, keyword))
+            yield deployment;
+    }
 }
 
 
