@@ -88,6 +88,26 @@ function compareAddress (alice, bob) {
 
 
 /*
+    Extracts the ID from a filter keyword.
+*/
+function extractId (keyword) {
+    let fragments = null;
+
+    if (keyword.startsWith('#')) {
+        fragments = keyword.split('#');
+        return parseInt(fragments[1]);
+    }
+
+    if (keyword.endsWith('!')) {
+        fragments = keyword.split('!');
+        return parseInt(fragments[0]);
+    }
+
+    return null;
+}
+
+
+/*
     Returns a sort function to sort by terminal ID.
 */
 function sortByID (descending) {
@@ -149,6 +169,46 @@ function sortByTesting (descending) {
 
 
 /*
+    Returns the respective deployment as a one-line string.
+*/
+export function deploymentToString (deployment) {
+    return deployment.id + ': ' + addressToString(deployment.address);
+}
+
+
+/*
+    Filters the provided systems by the respective keyword.
+*/
+export function *filterSystems (systems, keyword) {
+    const id = extractId(keyword);
+
+    for (const system of systems) {
+        // Yield any copy on empty keyword.
+        if (keyword == null || keyword == '') {
+            yield system;
+            continue;
+        }
+
+        // Exact ID matching.
+        if (id != null && id != NaN) {
+            if (system.id == id)
+                yield system;
+
+            continue;
+        }
+
+        let deployment = system.deployment;
+
+        if (deployment == null)
+            continue;
+
+        if (matchDeployment(deployment, keyword))
+            yield system;
+    }
+}
+
+
+/*
     Returns an appropriate sorting function.
 */
 export function getSorter (field, descending) {
@@ -169,12 +229,4 @@ export function getSorter (field, descending) {
     }
 
     return null;
-}
-
-
-/*
-    Returns the respective deployment as a one-line string.
-*/
-export function deploymentToString (deployment) {
-    return deployment.id + ': ' + addressToString(deployment.address);
 }
