@@ -125,6 +125,11 @@ function matchDeployment (deployment, keyword) {
     if (includesIgnoreCase(customerName, keyword))
         return true;
 
+    const customerAbbreviation = deployment.customer.company.abbreviation;
+
+    if (includesIgnoreCase(customerAbbreviation, keyword))
+        return true;
+
     const address = addressToString(deployment.address);
 
     if (includesIgnoreCase(address, keyword))
