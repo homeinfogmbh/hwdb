@@ -5,7 +5,7 @@ FILE_LIST = ./.installed_files.txt
 default: | install
 
 install:
-	@ install -vm 644 -t /srv/http/de/homeinfo/javascript hwdb.js
+	@ install -vm 644 -t /srv/http/de/homeinfo/javascript hwdb.mjs
 
 uninstall:
-	@ rm -f /srv/http/de/homeinfo/javascript/hwdb.js
+	@ rm -f /srv/http/de/homeinfo/javascript/hwdb.mjs
