@@ -35,7 +35,7 @@ def add(args):
         return False
 
     system = System(
-        openvpn=openvpn, wireguard=wireguard, manufacturer=args.manufacturer,
+        openvpn=openvpn, wireguard=wireguard, operator=args.operator,
         operating_system=args.operating_system,
         serial_number=args.serial_number, model=args.model)
     system.save()

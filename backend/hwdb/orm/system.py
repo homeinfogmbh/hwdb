@@ -126,6 +126,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         skip = set(skip) if skip else set()
 
         if brief:
-            skip |= {'openvpn', 'wireguard', 'manufacturer'}
+            skip |= {'openvpn', 'wireguard', 'operator'}
 
         return super().to_json(skip=skip, **kwargs)
