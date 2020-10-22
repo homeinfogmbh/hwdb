@@ -29,6 +29,9 @@ __all__ = ['System']
 class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     """A physical computer system out in the field."""
 
+    operator = ForeignKeyField(
+        Customer, column_name='operator', backref='systems',
+        on_delete='SET NULL', on_update='CASCADE')
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
@@ -40,9 +43,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         on_delete='SET NULL', on_update='CASCADE')
     wireguard = ForeignKeyField(
         WireGuard, null=True, column_name='wireguard', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE')
-    operator = ForeignKeyField(
-        Customer, null=True, column_name='operator', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
