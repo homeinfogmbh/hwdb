@@ -120,12 +120,12 @@ function matchDeployment (deployment, keyword) {
     if (includesIgnoreCase(cid, keyword))
         return true;
 
-    const customerName = deployment.customer.company.name;
+    const customerName = deployment.customer.company.name || null;
 
     if (includesIgnoreCase(customerName, keyword))
         return true;
 
-    const customerAbbreviation = deployment.customer.company.abbreviation;
+    const customerAbbreviation = deployment.customer.company.abbreviation || null;
 
     if (includesIgnoreCase(customerAbbreviation, keyword))
         return true;
