@@ -41,8 +41,8 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     wireguard = ForeignKeyField(
         WireGuard, null=True, column_name='wireguard', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
-    manufacturer = ForeignKeyField(
-        Customer, null=True, column_name='manufacturer', backref='systems',
+    operator = ForeignKeyField(
+        Customer, null=True, column_name='operator', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
