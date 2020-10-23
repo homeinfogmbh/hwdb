@@ -8,7 +8,7 @@ from requests.exceptions import ChunkedEncodingError
 from requests.exceptions import ConnectionError     # pylint: disable=W0622
 
 from hwdb.config import CONFIG
-from hwdb.exceptions import SystemOffline
+from hwdb.exceptions import RconError, SystemOffline
 
 
 __all__ = ['RemoteControllerMixin']
@@ -46,7 +46,7 @@ class BasicControllerMixin:
         try:
             return put(self.url, json=json, timeout=timeout)
         except (ConnectionError, ChunkedEncodingError):
-            raise SystemOffline()
+            raise SystemOffline() from None
 
     def exec(self, command, *args, _timeout=10, **kwargs):
         """Runs the respective command."""
@@ -79,3 +79,12 @@ class RemoteControllerMixin(BasicControllerMixin):
         state=None: Queries the application state.
         """
         return self.exec('application', state=state)
+
+    def screenshot(self, *args):
+        """Makes a screenshot."""
+        response = self.exec('screenshot', args=args)
+
+        if response.status_code == 200:
+            return response.content
+
+        raise RconError(response)
