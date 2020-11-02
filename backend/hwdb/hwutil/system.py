@@ -50,8 +50,8 @@ def get_systems(args):  # pylint: disable=R0912
     if args.operating_system:
         condition &= System.operating_system << args.operating_system
 
-    if args.manufacturer:
-        condition &= System.manufacturer << args.manufacturer
+    if args.operator:
+        condition &= System.operator << args.operator
 
     return select.where(condition)
 

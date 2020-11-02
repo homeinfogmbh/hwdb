@@ -24,6 +24,7 @@ def _add_new_system_parser(subparsers):
     """Adds a parser to add new systems."""
 
     parser = subparsers.add_parser('sys', help='add new systems')
+    parser.add_argument('operator', type=customer, help='the system operator')
     parser.add_argument(
         '-n', '--amount', type=int, default=1, help='amount of systems to add')
     parser.add_argument(
@@ -32,9 +33,6 @@ def _add_new_system_parser(subparsers):
     parser.add_argument('--key', help='the OpenVPN key to use')
     parser.add_argument(
         '--mtu', type=int, help='the MTU for the OpenVPN tunnel')
-    parser.add_argument(
-        '-m', '--manufacturer', type=customer,
-        help="the system's manufacturer")
     parser.add_argument(
         '-o', '--operating-system', type=operating_system,
         default=OperatingSystem.ARCH_LINUX,

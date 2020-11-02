@@ -29,6 +29,9 @@ __all__ = ['System']
 class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     """A physical computer system out in the field."""
 
+    operator = ForeignKeyField(
+        Customer, column_name='operator', backref='systems',
+        on_delete='SET NULL', on_update='CASCADE')
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
@@ -40,9 +43,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         on_delete='SET NULL', on_update='CASCADE')
     wireguard = ForeignKeyField(
         WireGuard, null=True, column_name='wireguard', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE')
-    manufacturer = ForeignKeyField(
-        Customer, null=True, column_name='manufacturer', backref='systems',
         on_delete='SET NULL', on_update='CASCADE')
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
@@ -70,8 +70,11 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     @classmethod
     def monitored(cls):
         """Yields monitored systems."""
-        return cls.depjoin(join_type=JOIN.LEFT_OUTER).where(
-            cls.monitoring_cond())
+        return cls.select().join(
+            Deployment, join_type=JOIN.LEFT_OUTER,
+            on=cls.deployment == Deployment.id).where(
+            cls.monitoring_cond()
+        )
 
     @classmethod
     def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
@@ -126,6 +129,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         skip = set(skip) if skip else set()
 
         if brief:
-            skip |= {'openvpn', 'wireguard', 'manufacturer'}
+            skip |= {'openvpn', 'wireguard', 'operator'}
 
         return super().to_json(skip=skip, **kwargs)

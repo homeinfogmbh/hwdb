@@ -20,8 +20,8 @@
 */
 'use strict';
 
-import { includesIgnoreCase } from 'https://javascript.homeinfo.de/lib.js';
-import { addressToString } from 'https://javascript.homeinfo.de/mdb.js';
+import { includesIgnoreCase } from 'https://javascript.homeinfo.de/lib.mjs';
+import { addressToString } from 'https://javascript.homeinfo.de/mdb.mjs';
 
 
 /*
@@ -126,9 +126,14 @@ function matchDeployment (deployment, keyword) {
     if (includesIgnoreCase(cid, keyword))
         return true;
 
-    const customerName = deployment.customer.company.name;
+    const customerName = deployment.customer.company.name || null;
 
     if (includesIgnoreCase(customerName, keyword))
+        return true;
+
+    const customerAbbreviation = deployment.customer.company.abbreviation || null;
+
+    if (includesIgnoreCase(customerAbbreviation, keyword))
         return true;
 
     const address = addressToString(deployment.address);

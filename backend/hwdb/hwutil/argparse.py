@@ -35,14 +35,14 @@ def _add_parser_list_systems(subparsers):
         '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for systems with the respective deployments')
     parser.add_argument(
+        '-O', '--operator', nargs='+', type=customer, metavar='customer',
+        help='filter for systems of the respective operators')
+    parser.add_argument(
         '-s', '--dataset', nargs='+', type=deployment, metavar='deployment',
         help='filter for systems with the respective datasets')
     parser.add_argument(
         '-o', '--operating-system', nargs='+', type=operating_system,
         metavar='os', help='filter for the respective operating systems')
-    parser.add_argument(
-        '-m', '--manufacturer', nargs='+', type=customer, metavar='customer',
-        help='filter for systems of the respective manufacturers')
     parser.add_argument(
         '-c', '--configured', action='store_true', dest='configured',
         help='filter for configured systems')

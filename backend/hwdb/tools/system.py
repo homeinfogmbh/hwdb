@@ -22,7 +22,7 @@ class SystemField(Enum):
     DEPLOYMENT = 'deployment'
     FITTED = 'fitted'
     ID = 'id'
-    MANUFACTURER = 'manufacturer'
+    OPERATOR = 'operator'
     MODEL = 'model'
     MONITOR = 'monitor'
     ONLINE = 'online'
@@ -44,14 +44,14 @@ FIELDS = {
         lambda sys: sys.deployment_id, 'Deployment'),
     SystemField.FITTED: FieldFormatter(lambda sys: sys.fitted, 'Fitted'),
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
-    SystemField.MANUFACTURER: FieldFormatter(
-        lambda sys: sys.manufacturer, 'Manufacturer', size=24),
     SystemField.MODEL: FieldFormatter(
         lambda sys: sys.model, 'Model', size=24, leftbound=True),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
     SystemField.ONLINE: FieldFormatter(lambda sys: sys.online, 'Online'),
     SystemField.OPENVPN: FieldFormatter(
         lambda sys: sys.openvpn, 'OpenVPN Address', size=14),
+    SystemField.OPERATOR: FieldFormatter(
+        lambda sys: sys.operator, 'Operator', size=24),
     SystemField.OS: FieldFormatter(
         lambda sys: sys.operating_system.value, 'OS', size=25),
     SystemField.SN: FieldFormatter(
@@ -61,7 +61,7 @@ FIELDS = {
 }
 DEFAULT_FIELDS = (
     SystemField.ID, SystemField.DEPLOYMENT, SystemField.DATASET,
-    SystemField.OPENVPN, SystemField.MANUFACTURER, SystemField.CONFIGURED,
+    SystemField.OPENVPN, SystemField.OPERATOR, SystemField.CONFIGURED,
     SystemField.FITTED, SystemField.OS
 )
 
