@@ -95,19 +95,25 @@ function compareSize (alice, bob) {
     Extracts the ID from a filter keyword.
 */
 function extractId (keyword) {
-    let fragments = null;
+    let fragments, id, empty;
 
     if (keyword.startsWith('#')) {
         fragments = keyword.split('#');
-        return parseInt(fragments[1]);
-    }
-
-    if (keyword.endsWith('!')) {
+        [empty, id] = fragments;
+    } else if (keyword.endsWith('!')) {
         fragments = keyword.split('!');
-        return parseInt(fragments[0]);
+        [id, empty] = fragments;
+    } else {
+        return null;
     }
 
-    return null;
+    if (fragments.length != 2)
+        return null;
+
+    if (empty != '')
+        return null;
+
+    return parseInt(id);
 }
 
 
