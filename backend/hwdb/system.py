@@ -12,8 +12,8 @@ __all__ = ['SYSTEMCTL', 'root', 'systemctl']
 SYSTEMCTL = '/bin/systemctl'
 
 
-def root(logger):
-    """Decorates a fucntion to require root privileges."""
+def root(logger, returncode=1):
+    """Decorates a function to require root privileges."""
 
     def decorator(function):
         """Decorates the function."""
@@ -22,7 +22,7 @@ def root(logger):
             """Wraps the original function."""
             if geteuid() != 0:
                 logger.error('You must be root to run %s.', function.__name__)
-                exit(1)
+                exit(returncode)
 
             function(*args, **kwargs)
 
@@ -34,4 +34,4 @@ def root(logger):
 def systemctl(*args):
     """Runs systemctl."""
 
-    return check_call((SYSTEMCTL,) + args)
+    return check_call([SYSTEMCTL, *args])
