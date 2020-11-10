@@ -69,11 +69,20 @@ def write_config_files(systems):
             LOGGER.error('System %i has no VPN configuration.', system.id)
 
 
+def remove_config_files():
+    """Removes all existing client config files."""
+
+    for file in CLIENTS_DIR.glob('*'):
+        if file.is_file():
+            file.unlink()
+
+
 @root(LOGGER)
 def openvpncfgen():
     """Runs the OpenVPN config generator."""
 
     LOGGER.info('Generating configuration.')
+    remove_config_files()
     write_config_files(System)
 
     try:
