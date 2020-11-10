@@ -23,28 +23,33 @@ ifconfig-push {ipv4address} {netmask}
 route 10.8.0.0 255.255.0.0
 route 10.200.200.0 255.255.255.0 {ipv4address}
 '''     # Mandatory empty line at end of file.
+CLIENTS_DIR = Path(CONFIG['OpenVPN']['clients_dir'])
 
 
-def generate_config():
+def generate_config(system):
+    """Returns the OpenVPN configuration for the respective system."""
+
+    openvpn = system.openvpn
+
+    if openvpn is None:
+        LOGGER.error('Terminal %i has no VPN configuration.', system.id)
+        return
+
+    config_text = TEMPLATE.format(
+        id=system.id, ipv4address=openvpn.ipv4address,
+        netmask=CONFIG['OpenVPN']['netmask'])
+    file_name = openvpn.key or str(openvpn.id)
+    file_path = CLIENTS_DIR.joinpath(file_name)
+
+    with file_path.open('w') as cfg:
+        cfg.write(config_text)
+
+
+def generate_configs():
     """Generates the respective configuration files."""
 
-    clients_dir = Path(CONFIG['OpenVPN']['clients_dir'])
-    netmask = CONFIG['OpenVPN']['netmask']
-
     for system in System:
-        openvpn = system.openvpn
-
-        if openvpn is None:
-            LOGGER.error('Terminal %i has no VPN configuration.', system.id)
-            continue
-
-        config_text = TEMPLATE.format(
-            id=system.id, ipv4address=openvpn.ipv4address, netmask=netmask)
-        file_name = openvpn.key or str(openvpn.id)
-        file_path = clients_dir.joinpath(file_name)
-
-        with file_path.open('w') as cfg:
-            cfg.write(config_text)
+        generate_config(system)
 
 
 @root(LOGGER)
@@ -52,7 +57,7 @@ def openvpncfgen():
     """Runs the OpenVPN config generator."""
 
     LOGGER.info('Generating configuration.')
-    generate_config()
+    generate_configs()
 
     try:
         systemctl('restart', OPENVPN_SERVICE)
