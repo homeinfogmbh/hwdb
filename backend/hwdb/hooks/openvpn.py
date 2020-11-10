@@ -31,13 +31,8 @@ push "route {network.network_address} {network.netmask}"
 '''
 
 
-def get_config(system):
+def get_config(system, openvpn):
     """Returns the OpenVPN configuration for the respective system."""
-
-    openvpn = system.openvpn
-
-    if openvpn is None:
-        raise NoConnection()
 
     ipaddress = openvpn.ipv4address
     config = TEMPLATE.format(
@@ -53,8 +48,15 @@ def get_config(system):
 def write_config_file(system):
     """Returns the OpenVPN configuration for the respective system."""
 
-    with CLIENTS_DIR.joinpath(str(system.id)).open('w') as cfg:
-        cfg.write(get_config(system))
+    openvpn = system.openvpn
+
+    if openvpn is None:
+        raise NoConnection()
+
+    filename = openvpn.key or str(openvpn.id)
+
+    with CLIENTS_DIR.joinpath(filename).open('w') as cfg:
+        cfg.write(get_config(system, openvpn))
 
 
 def write_config_files(systems):
