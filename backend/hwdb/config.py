@@ -1,6 +1,6 @@
 """Terminal setup configuration."""
 
-from ipaddress import IPv4Address, IPv4Network
+from ipaddress import ip_address, ip_network
 from logging import getLogger
 
 from configlib import loadcfg
@@ -10,9 +10,8 @@ __all__ = [
     'CONFIG',
     'LOGGER',
     'LOG_FORMAT',
-    'OPENVPN_NETBASE',
-    'OPENVPN_NETMASK',
     'OPENVPN_NETWORK',
+    'OPENVPN_SERVER',
     'WIREGUARD_NETWORK',
     'WIREGUARD_SERVER'
 ]
@@ -21,8 +20,7 @@ __all__ = [
 CONFIG = loadcfg('hwdb.conf')
 LOGGER = getLogger('hwdb')
 LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
-OPENVPN_NETBASE = CONFIG['OpenVPN']['network']
-OPENVPN_NETMASK = CONFIG['OpenVPN']['netmask']
-OPENVPN_NETWORK = IPv4Network(f'{OPENVPN_NETBASE}/{OPENVPN_NETMASK}')
-WIREGUARD_NETWORK = IPv4Network(CONFIG['WireGuard']['network'])
-WIREGUARD_SERVER = IPv4Address(CONFIG['WireGuard']['server'])
+OPENVPN_NETWORK = ip_network(CONFIG['OpenVPN']['network'])
+OPENVPN_SERVER = ip_address(CONFIG['OpenVPN']['server'])
+WIREGUARD_NETWORK = ip_network(CONFIG['WireGuard']['network'])
+WIREGUARD_SERVER = ip_address(CONFIG['WireGuard']['server'])
