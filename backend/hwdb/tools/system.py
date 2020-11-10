@@ -51,7 +51,7 @@ FIELDS = {
     SystemField.OPENVPN: FieldFormatter(
         lambda sys: sys.openvpn, 'OpenVPN Address', size=14),
     SystemField.OPERATOR: FieldFormatter(
-        lambda sys: sys.operator, 'Operator', size=24),
+        lambda sys: sys.operator_id, 'Operator', size=24),
     SystemField.OS: FieldFormatter(
         lambda sys: sys.operating_system.value, 'OS', size=25),
     SystemField.SN: FieldFormatter(
