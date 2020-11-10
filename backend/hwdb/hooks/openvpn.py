@@ -53,9 +53,7 @@ def write_config_file(system):
     if openvpn is None:
         raise NoConnection()
 
-    filename = openvpn.key or str(openvpn.id)
-
-    with CLIENTS_DIR.joinpath(filename).open('w') as cfg:
+    with CLIENTS_DIR.joinpath(openvpn.filename).open('w') as cfg:
         cfg.write(get_config(system, openvpn))
 
 

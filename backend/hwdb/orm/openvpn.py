@@ -36,3 +36,8 @@ class OpenVPN(BaseModel):
         record = cls(ipv4address=ipv4address, key=key, mtu=mtu)
         record.save()
         return record
+
+    @property
+    def filename(self):
+        """Returns the CCD file name."""
+        return self.key or str(self.id)
