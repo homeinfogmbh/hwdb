@@ -81,7 +81,7 @@ def get(street, house_number=None, annotation=None):
         deployment, *superfluous = find(
             street, house_number=house_number, annotation=annotation)
     except ValueError:
-        raise TerminalError('No deployment matching query.')
+        raise TerminalError('No deployment matching query.') from None
 
     if superfluous:
         raise AmbiguityError(deployment, superfluous)

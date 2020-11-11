@@ -4,9 +4,10 @@ from peewee import CharField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
 
+from mdb import Address
+
 from hwdb.orm.common import BaseModel
 from hwdb.orm.system import System
-from mdb import Address
 
 
 __all__ = ['Display']

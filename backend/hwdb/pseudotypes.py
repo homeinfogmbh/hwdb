@@ -33,7 +33,7 @@ def customer(value):
     try:
         return Customer.find(value).get()
     except Customer.DoesNotExist:
-        raise ValueError('No such customer.')
+        raise ValueError('No such customer.') from None
 
 
 def date(string):
@@ -50,7 +50,7 @@ def deployment(ident):
     try:
         return Deployment[ident]
     except Deployment.DoesNotExist:
-        raise ValueError('No such deployment.')
+        raise ValueError('No such deployment.') from None
 
 
 def hook(name):
@@ -59,7 +59,7 @@ def hook(name):
     try:
         return HOOKS[name]
     except KeyError:
-        raise ValueError('No such hook.')
+        raise ValueError('No such hook.') from None
 
 
 def operating_system(value):
@@ -76,7 +76,7 @@ def system(ident):
     try:
         return System[ident]
     except System.DoesNotExist:
-        raise ValueError('No such system.')
+        raise ValueError('No such system.') from None
 
 
 def type_(value):
