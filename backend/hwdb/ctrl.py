@@ -8,7 +8,7 @@ from requests.exceptions import ChunkedEncodingError
 from requests.exceptions import ConnectionError     # pylint: disable=W0622
 
 from hwdb.config import CONFIG
-from hwdb.exceptions import RconError, SystemOffline
+from hwdb.exceptions import SystemOffline
 
 
 __all__ = ['RemoteControllerMixin']
@@ -82,9 +82,4 @@ class RemoteControllerMixin(BasicControllerMixin):
 
     def screenshot(self, *args):
         """Makes a screenshot."""
-        response = self.exec('screenshot', args=args)
-
-        if response.status_code == 200:
-            return response.content
-
-        raise RconError(response)
+        return self.exec('screenshot', args=args)

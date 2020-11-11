@@ -6,7 +6,6 @@ __all__ = [
     'TerminalConfigError',
     'NoConnection',
     'AmbiguityError',
-    'RconError',
     'SystemOffline'
 ]
 
@@ -40,19 +39,6 @@ class AmbiguityError(TerminalError):
         """Yields the systems."""
         yield self.object
         yield from self.ambiguous
-
-
-class RconError(TerminalError):
-    """An error during remote control."""
-
-    def __init__(self, response):
-        """Sets the requests HTTP response."""
-        super().__init__()
-        self.response = response
-
-    def __getattr__(self, attr):
-        """Delegates to the response."""
-        return getattr(self.response, attr)
 
 
 class SystemOffline(TerminalError):
