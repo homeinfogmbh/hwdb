@@ -80,6 +80,6 @@ class RemoteControllerMixin(BasicControllerMixin):
         """
         return self.exec('application', state=state)
 
-    def screenshot(self, *args):
+    def screenshot(self):
         """Makes a screenshot."""
-        return self.exec('screenshot', args=args)
+        return self.exec('screenshot')
