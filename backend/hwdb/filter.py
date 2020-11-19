@@ -1,6 +1,13 @@
 """Terminal filters."""
 
+from typing import Generator, Iterable
+
+from peewee import JOIN, Expression, ModelBase, ModelSelect
+
+from mdb import Customer
+
 from hwdb.config import LOGGER
+from hwdb.enumerations import Connection, OperatingSystem, Type
 from hwdb.orm import Deployment, System
 
 
@@ -12,7 +19,7 @@ __all__ = [
 ]
 
 
-def _parse_ids(idents):
+def _parse_ids(idents: Iterable[str]) -> Generator[int, None, None]:
     """Yields system IDs."""
 
     for ident in idents:
@@ -22,7 +29,7 @@ def _parse_ids(idents):
             LOGGER.warning('Ignoring invalid system ID: %s', ident)
 
 
-def _parse(ids, model):
+def _get_expression(ids: Iterable[str], model: ModelBase) -> Expression:
     """Returns a peewee.Expression for the respective systems selection."""
 
     if not ids:
@@ -32,7 +39,7 @@ def _parse(ids, model):
     return model.id << ids
 
 
-def filter_online(systems):
+def filter_online(systems: Iterable[System]) -> Generator[System, None, None]:
     """Yields online systems."""
 
     for system in systems:
@@ -40,7 +47,7 @@ def filter_online(systems):
             yield system
 
 
-def filter_offline(systems):
+def filter_offline(systems: Iterable[System]) -> Generator[System, None, None]:
     """Yields offline systems."""
 
     for system in systems:
@@ -48,50 +55,101 @@ def filter_offline(systems):
             yield system
 
 
-def get_deployments(ids, customer=None, testing=None, types=None,
-                    connections=None):
+def get_deployments(ids: Iterable[int] = None,
+                    customers: Iterable[Customer] = None,
+                    testing: bool = None,
+                    types: Iterable[Type] = None,
+                    connections: Iterable[Connection] = None,
+                    systems: Iterable[System] = None
+                    ) -> ModelSelect:
     """Yields deployments."""
 
-    select = _parse(ids, Deployment)
+    select = Deployment.select()
+    condition = True
 
-    if customer is not None:
-        select &= Deployment.customer == customer
+    if ids:
+        condition &= Deployment.id << ids
+
+    if customers:
+        condition &= Deployment.customer << customers
 
     if testing is not None:
-        select &= Deployment.testing == testing
+        condition &= Deployment.testing == bool(testing)
 
     if types:
-        select &= Deployment.types << types
+        condition &= Deployment.type << types
 
     if connections:
-        select &= Deployment.connection << connections
+        condition &= Deployment.connection << connections
 
-    return Deployment.select().where(select)
+    if systems:
+        dataset = System.alias()
+        select = select.join(
+            System, JOIN.LEFT_OUTER, on=Deployment.id == System.deployment
+        ).join_from(
+            Deployment, dataset, JOIN.LEFT_OUTER,
+            on=Deployment.id == dataset.dataset
+        )
+        condition &= (System.id << systems) | (dataset.id << systems)
+
+    return select.where(condition)
 
 
-def get_systems(ids, deployments=None, deployed=None, oss=None, online=None):
+def get_systems(ids: Iterable[int],
+                customers: Iterable[Customer] = None,
+                deployments: Iterable[Deployment] = None,
+                datasets: Iterable[Deployment] = None,
+                configured: bool = None,
+                deployed: bool = None,
+                fitted: bool = None,
+                operating_systems: Iterable[OperatingSystem] = None,
+                operators: Iterable[Customer] = None,
+                online: bool = None
+                ) -> Generator[System, None, None]:
     """Yields systems for the respective expressions and filters."""
 
-    select = _parse(ids, System)
+    select = System.depjoin() if customers else System.select()
+    condition = True
 
-    if deployments is not None:
-        select &= System.deployment << deployments
+    if ids:
+        condition &= System.id << ids
+
+    if customers:
+        condition &= Deployment.customer << customers
+
+    if deployments:
+        condition &= System.deployment << deployments
+
+    if datasets:
+        condition &= System.dataset << datasets
+
+    if configured is not None:
+        if configured:
+            condition &= ~(System.configured >> None)
+        else:
+            condition &= System.configured >> None
 
     if deployed is not None:
         if deployed:
-            select &= ~(System.deployment >> None)
+            condition &= ~(System.deployment >> None)
         else:
-            select &= System.deployment >> None
+            condition &= System.deployment >> None
 
-    if oss:
-        select &= System.operating_system << oss
+    if fitted is not None:
+        condition &= System.fitted == fitted
 
-    systems = System.select().where(select)
+    if operating_systems:
+        condition &= System.operating_system << operating_systems
 
-    if online is not None:
-        if online:
-            return filter_online(systems)
+    if operators:
+        condition &= System.operator << operators
 
-        return filter_offline(systems)
+    select = select.where(condition)
 
-    return systems
+    if online is None:
+        return select
+
+    if online:
+        return filter_online(select)
+
+    return filter_offline(select)

@@ -1,12 +1,12 @@
 """Common enumerations."""
 
-from enum import Enum
+from enum import Enum, EnumMeta
 
 
 __all__ = ['from_string', 'Connection', 'OperatingSystem', 'Type']
 
 
-def from_string(enum, value):
+def from_string(enum: EnumMeta, value: str) -> Enum:
     """Returns an enumeration from a text value."""
 
     try:

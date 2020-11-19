@@ -1,11 +1,13 @@
 """Deployment actions."""
 
+from argparse import Namespace
 from logging import getLogger
+from typing import Generator
 
-from peewee import JOIN
+from peewee import ModelSelect
 
 from hwdb.exceptions import AmbiguityError, TerminalError
-from hwdb.orm import Deployment, System
+from hwdb.filter import get_deployments
 from hwdb.tools.common import iterprint
 from hwdb.tools.deployment import get, listdep, printdep, DeploymentField
 
@@ -16,41 +18,15 @@ __all__ = ['find', 'list']
 LOGGER = getLogger('hwutil')
 
 
-def get_deployments(args):
+def _get_deployments(args: Namespace) -> ModelSelect:
     """Yields deployments selected by the CLI."""
 
-    select = Deployment.select()
-    condition = True
-
-    if args.id:
-        condition &= Deployment.id << args.id
-
-    if args.customer:
-        condition &= Deployment.customer << args.customer
-
-    if args.testing is not None:
-        condition &= Deployment.testing == bool(args.testing)
-
-    if args.type:
-        condition &= Deployment.type << args.type
-
-    if args.connection:
-        condition &= Deployment.connection << args.connection
-
-    if args.system:
-        dataset = System.alias()
-        select = select.join(
-            System, JOIN.LEFT_OUTER, on=Deployment.id == System.deployment
-        ).join_from(
-            Deployment, dataset, JOIN.LEFT_OUTER,
-            on=Deployment.id == dataset.dataset
-        )
-        condition &= (System.id << args.system) | (dataset.id << args.system)
-
-    return select.where(condition)
+    return get_deployments(
+        ids=args.id, customers=args.customer, testing=args.testing,
+        types=args.type, connections=args.connection, systems=args.system)
 
 
-def find(args):
+def find(args: Namespace) -> bool:
     """Finds a deployment."""
 
     try:
@@ -72,10 +48,10 @@ def find(args):
     return True
 
 
-def list(args):     # pylint: disable=W0622
+def list(args: Namespace) -> Generator[str, None, None]:
     """Lists deployments."""
 
     if args.list_fields:
         return iterprint(field.value for field in DeploymentField)
 
-    return iterprint(listdep(get_deployments(args), fields=args.fields))
+    return iterprint(listdep(_get_deployments(args), fields=args.fields))

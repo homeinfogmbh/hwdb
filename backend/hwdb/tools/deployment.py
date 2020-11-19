@@ -2,6 +2,9 @@
 
 from enum import Enum
 from sys import stderr
+from typing import Generator, Iterable
+
+from peewee import ModelSelect
 
 from mdb import Address
 
@@ -59,7 +62,8 @@ DEFAULT_FIELDS = (
 )
 
 
-def find(street, house_number=None, annotation=None):
+def find(street: str, house_number: str = None,
+         annotation: str = None) -> ModelSelect:
     """Finds systems at the specified address."""
 
     condition = Address.street ** f'%{street}%'
@@ -74,7 +78,8 @@ def find(street, house_number=None, annotation=None):
     return Deployment.select().join(Address, on=predicate).where(condition)
 
 
-def get(street, house_number=None, annotation=None):
+def get(street: str, house_number: str = None,
+        annotation: str = None) -> Deployment:
     """Finds a deployment by its address."""
 
     try:
@@ -89,13 +94,15 @@ def get(street, house_number=None, annotation=None):
     return deployment
 
 
-def listdep(deployments, fields=DEFAULT_FIELDS):
+def listdep(deployments: Iterable[Deployment],
+            fields: Iterable[DeploymentField] = DEFAULT_FIELDS
+            ) -> Generator[str, None, None]:
     """Yields formatted deployment for console output."""
 
     return formatiter(deployments, FIELDS, fields)
 
 
-def printdep(deployment):
+def printdep(deployment: Deployment):
     """Prints the respective system."""
 
     print(deployment, file=stderr)

@@ -5,9 +5,11 @@ from logging import getLogger
 from os import linesep
 from pathlib import Path
 from subprocess import CalledProcessError
+from typing import Iterable
 
 from hwdb.config import CONFIG, OPENVPN_NETWORK
 from hwdb.exceptions import NoConnection
+from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.system import System
 from hwdb.system import root, systemctl
 
@@ -31,7 +33,7 @@ push "route {network.network_address} {network.netmask}"
 '''
 
 
-def get_config(system, openvpn):
+def get_config(system: System, openvpn: OpenVPN) -> str:
     """Returns the OpenVPN configuration for the respective system."""
 
     ipaddress = openvpn.ipv4address
@@ -45,7 +47,7 @@ def get_config(system, openvpn):
     return config
 
 
-def write_config_file(system):
+def write_config_file(system: System):
     """Returns the OpenVPN configuration for the respective system."""
 
     openvpn = system.openvpn
@@ -57,7 +59,7 @@ def write_config_file(system):
         cfg.write(get_config(system, openvpn))
 
 
-def write_config_files(systems):
+def write_config_files(systems: Iterable[System]):
     """Generates the respective configuration files."""
 
     for system in systems:
@@ -76,7 +78,7 @@ def remove_config_files():
 
 
 @root(LOGGER)
-def openvpncfgen():
+def openvpncfgen() -> bool:
     """Runs the OpenVPN config generator."""
 
     LOGGER.info('Generating configuration.')

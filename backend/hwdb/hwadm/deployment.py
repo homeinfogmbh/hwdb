@@ -1,5 +1,6 @@
 """Handles deployments."""
 
+from argparse import Namespace
 from logging import getLogger
 
 from mdb import Address
@@ -13,7 +14,7 @@ __all__ = ['add']
 LOGGER = getLogger('hwadm')
 
 
-def add(args):
+def add(args: Namespace) -> bool:
     """Adds a deployment."""
 
     address = (args.street, args.house_number, args.zip_code, args.city)

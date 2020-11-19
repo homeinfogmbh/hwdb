@@ -1,5 +1,6 @@
 """System handling."""
 
+from argparse import Namespace
 from logging import getLogger
 
 from hwdb.exceptions import TerminalConfigError
@@ -16,7 +17,7 @@ LOGGER = getLogger('hwadm')
 
 
 @root(LOGGER)   # Needed to write WireGuard private keys.
-def add(args):
+def add(args: Namespace) -> bool:
     """Adds a new system."""
 
     if args.key is not None:
@@ -43,7 +44,7 @@ def add(args):
     return True
 
 
-def dataset(args):
+def dataset(args: Namespace) -> bool:
     """Manage system dataset."""
 
     if args.remove:
@@ -61,7 +62,7 @@ def dataset(args):
     return True
 
 
-def deploy(args):
+def deploy(args: Namespace) -> bool:
     """Manage system deployment."""
 
     if args.remove:

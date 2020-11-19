@@ -11,7 +11,7 @@ __all__ = ['DATABASE', 'BaseModel']
 DATABASE = MySQLDatabase.from_config(CONFIG['Database'])
 
 
-class BaseModel(JSONModel):
+class BaseModel(JSONModel):     # pylint: disable=R0903
     """Terminal manager basic Model."""
 
     class Meta:     # pylint: disable=C0111,R0903

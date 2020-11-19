@@ -1,12 +1,15 @@
 """Digital signage systems."""
 
 from datetime import datetime
+from ipaddress import IPv4Address
 
 from peewee import JOIN
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import Expression
 from peewee import ForeignKeyField
+from peewee import ModelSelect
 
 from mdb import Customer
 from peeweeplus import EnumField
@@ -54,7 +57,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     last_sync = DateTimeField(null=True)
 
     @classmethod
-    def monitoring_cond(cls):
+    def monitoring_cond(cls) -> Expression:
         """Returns the condition for monitored systems."""
         return (
             (
@@ -68,7 +71,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         )
 
     @classmethod
-    def monitored(cls):
+    def monitored(cls) -> ModelSelect:
         """Yields monitored systems."""
         return cls.select().join(
             Deployment, join_type=JOIN.LEFT_OUTER,
@@ -77,7 +80,8 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         )
 
     @classmethod
-    def depjoin(cls, join_type=JOIN.INNER, on=None):    # pylint: disable=C0103
+    def depjoin(cls, join_type: str = JOIN.INNER,   # pylint: disable=C0103
+                on: Expression = None) -> ModelSelect:
         """Selects all columns and joins on the deployment."""
         if on is None:
             on = cls.deployment == Deployment.id
@@ -85,7 +89,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return cls.select().join(Deployment, join_type=join_type, on=on)
 
     @classmethod
-    def undeploy_all(cls, deployment):
+    def undeploy_all(cls, deployment: Deployment):
         """Undeploy other systems."""
         for system in cls.select().where(cls.deployment == deployment):
             LOGGER.info('Un-deploying #%i.', system.id)
@@ -94,7 +98,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             system.save()
 
     @property
-    def ipv4address(self):
+    def ipv4address(self) -> IPv4Address:
         """Returns the WireGuard (preferred) or OpenVPN IPv4 address."""
         if self.wireguard and self.wireguard.pubkey:
             return self.wireguard.ipv4address
@@ -102,11 +106,12 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return self.openvpn.ipv4address
 
     @property
-    def syncdep(self):
+    def syncdep(self) -> Deployment:
         """Returns the deployment for synchronization."""
         return self.dataset or self.deployment
 
-    def deploy(self, deployment, *, exclusive=False, fitted=False):
+    def deploy(self, deployment: Deployment, *, exclusive: bool = False,
+               fitted: bool = False) -> int:
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
 
@@ -124,7 +129,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         self.fitted = fitted
         return self.save()
 
-    def to_json(self, brief=False, skip=None, **kwargs):
+    def to_json(self, brief: bool = False, skip: set = None, **kwargs) -> dict:
         """Returns a JSON-like dictionary."""
         skip = set(skip) if skip else set()
 

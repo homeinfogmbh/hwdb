@@ -1,11 +1,13 @@
 """WireGuard configuration for terminals."""
 
+from __future__ import annotations
+
 from peewee import FixedCharField
 
 from peeweeplus import IPv4AddressField
 
 from hwdb.config import WIREGUARD_NETWORK, WIREGUARD_SERVER
-from hwdb.iptools import used_ipv4addresses, get_ipv4address
+from hwdb.iptools import get_address, used_ipv4addresses
 from hwdb.orm.common import BaseModel
 
 
@@ -23,11 +25,11 @@ class WireGuard(BaseModel):
         return str(self.ipv4address)
 
     @classmethod
-    def generate(cls):
+    def generate(cls) -> WireGuard:
         """Adds a new WireGuard configuration."""
-        used = used_ipv4addresses(cls)
-        ipv4address = get_ipv4address(
-            WIREGUARD_NETWORK, used=used, reserved={WIREGUARD_SERVER})
-        record = cls(ipv4address=ipv4address)
+        record = cls(ipv4address=get_address(
+            WIREGUARD_NETWORK, used=used_ipv4addresses(cls),
+            reserved={WIREGUARD_SERVER})
+        )
         record.save()
         return record

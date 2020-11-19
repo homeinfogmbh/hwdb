@@ -5,6 +5,7 @@ from peewee import CharField
 from peewee import DateField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
+from peewee import ModelSelect
 
 from mdb import Customer, Address
 from peeweeplus import EnumField
@@ -39,7 +40,7 @@ class Deployment(BaseModel):
 
         return f'{string} ({self.annotation})'
 
-    def checkdupes(self):
+    def checkdupes(self) -> ModelSelect:
         """Returns duplicates of this deployment in the database."""
         cls = type(self)
         condition = cls.customer == self.customer
@@ -58,7 +59,8 @@ class Deployment(BaseModel):
 
         return cls.select().where(condition)
 
-    def to_json(self, address=False, customer=False, systems=False, **kwargs):
+    def to_json(self, address: bool = False, customer: bool = False,
+                systems: bool = False, **kwargs) -> dict:
         """Returns a JSON-ish dict."""
         json = super().to_json(**kwargs)
 

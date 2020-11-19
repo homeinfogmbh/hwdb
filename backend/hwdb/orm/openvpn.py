@@ -1,12 +1,14 @@
 """OpenVPN connections."""
 
+from __future__ import annotations
+
 from peewee import CharField
 from peewee import IntegerField
 
 from peeweeplus import IPv4AddressField
 
 from hwdb.config import OPENVPN_NETWORK
-from hwdb.iptools import used_ipv4addresses, get_ipv4address
+from hwdb.iptools import get_address, used_ipv4addresses
 from hwdb.orm.common import BaseModel
 
 
@@ -28,16 +30,15 @@ class OpenVPN(BaseModel):
         return str(self.ipv4address)
 
     @classmethod
-    def generate(cls, key=None, mtu=None):
+    def generate(cls, key: str = None, mtu: int = None) -> OpenVPN:
         """Adds a record for the terminal."""
-        used = used_ipv4addresses(cls)
-        ipv4address = get_ipv4address(
-            OPENVPN_NETWORK, used=used, reserved=RESERVED)
+        ipv4address = get_address(
+            OPENVPN_NETWORK, used=used_ipv4addresses(cls), reserved=RESERVED)
         record = cls(ipv4address=ipv4address, key=key, mtu=mtu)
         record.save()
         return record
 
     @property
-    def filename(self):
+    def filename(self) -> str:
         """Returns the CCD file name."""
         return self.key or str(self.id)

@@ -4,6 +4,7 @@ from logging import getLogger
 from os import linesep
 from pathlib import Path
 from subprocess import CalledProcessError
+from typing import Generator
 
 from hwdb.orm.system import System
 from hwdb.system import root, systemctl
@@ -20,7 +21,7 @@ LOCAL_HOSTS_LIST = Path('/usr/local/etc/local_hosts')
 LOGGER = getLogger('bind9')
 
 
-def management_hosts():
+def management_hosts() -> Generator[str, None, None]:
     """Renders management network hosts."""
 
     try:
@@ -36,7 +37,7 @@ def management_hosts():
         return
 
 
-def terminal_hosts():
+def terminal_hosts() -> Generator[str, None, None]:
     """Renders terminal network hosts."""
 
     yield ';# Terminal network hosts\n'
@@ -65,7 +66,7 @@ def terminal_hosts():
 
 
 @root(LOGGER)
-def bind9cfgen():
+def bind9cfgen() -> bool:
     """Runs generates the confi files."""
 
     with DNS_TEMPLATE.open('r') as temp:

@@ -1,9 +1,12 @@
 """System related actions."""
 
+from argparse import Namespace
 from logging import getLogger
+from typing import Generator
 
 from hwdb.exceptions import AmbiguityError, TerminalError
-from hwdb.orm import Deployment, System
+from hwdb.filter import get_systems
+from hwdb.orm.system import System
 from hwdb.tools.common import iterprint
 from hwdb.tools.system import get, listsys, printsys, SystemField
 
@@ -14,49 +17,17 @@ __all__ = ['find', 'list']
 LOGGER = getLogger('hwutil')
 
 
-def get_systems(args):  # pylint: disable=R0912
+def _get_systems(args: Namespace) -> Generator[System, None, None]:
     """Yields systems selected by the CLI arguments."""
 
-    select = System.depjoin() if args.customer else System.select()
-    condition = True
-
-    if args.id:
-        condition &= System.id << args.id
-
-    if args.customer:
-        condition &= Deployment.customer << args.customer
-
-    if args.deployment:
-        condition &= System.deployment << args.deployment
-
-    if args.dataset:
-        condition &= System.dataset << args.dataset
-
-    if args.configured is not None:
-        if args.configured:
-            condition &= ~(System.configured >> None)
-        else:
-            condition &= System.configured >> None
-
-    if args.deployed is not None:
-        if args.deployed:
-            condition &= ~(System.deployment >> None)
-        else:
-            condition &= System.deployment >> None
-
-    if args.fitted is not None:
-        condition &= System.fitted == args.fitted
-
-    if args.operating_system:
-        condition &= System.operating_system << args.operating_system
-
-    if args.operator:
-        condition &= System.operator << args.operator
-
-    return select.where(condition)
+    return get_systems(
+        ids=args.id, customers=args.customer, deployments=args.deployment,
+        datasets=args.dataset, configured=args.configured,
+        deployed=args.deployed, fitted=args.fitted,
+        operating_systems=args.operating_system, operators=args.operator)
 
 
-def find(args):
+def find(args: Namespace) -> bool:
     """Finds a system."""
 
     try:
@@ -78,10 +49,10 @@ def find(args):
     return True
 
 
-def list(args):     # pylint: disable=W0622
+def list(args: Namespace) -> Generator[str, None, None]:
     """Lists systems."""
 
     if args.list_fields:
         return iterprint(field.value for field in SystemField)
 
-    return iterprint(listsys(get_systems(args), fields=args.fields))
+    return iterprint(listsys(_get_systems(args), fields=args.fields))

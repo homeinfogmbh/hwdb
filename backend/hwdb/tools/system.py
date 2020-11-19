@@ -2,6 +2,9 @@
 
 from enum import Enum
 from sys import stderr
+from typing import Generator, Iterable
+
+from peewee import ModelSelect
 
 from mdb import Address
 
@@ -66,7 +69,8 @@ DEFAULT_FIELDS = (
 )
 
 
-def find(street, house_number=None, annotation=None):
+def find(street: str, house_number: str = None,
+         annotation: str = None) -> ModelSelect:
     """Finds systems at the specified address."""
 
     condition = Address.street ** f'%{street}%'
@@ -81,7 +85,8 @@ def find(street, house_number=None, annotation=None):
     return System.depjoin().join(Address, on=predicate).where(condition)
 
 
-def get(street, house_number=None, annotation=None):
+def get(street: str, house_number: str = None,
+        annotation: str = None) -> System:
     """Finds a system by its address."""
 
     try:
@@ -96,13 +101,15 @@ def get(street, house_number=None, annotation=None):
     return system
 
 
-def listsys(systems, fields=DEFAULT_FIELDS):
+def listsys(systems: Iterable[System],
+            fields: Iterable[SystemField] = DEFAULT_FIELDS
+            ) -> Generator[str, None, None]:
     """Yields formatted systems for console output."""
 
     return formatiter(systems, FIELDS, fields)
 
 
-def printsys(system):
+def printsys(system: System):
     """Prints the respective system."""
 
     if system.deployment is not None:

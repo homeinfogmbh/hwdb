@@ -1,6 +1,6 @@
 """Arguments parsing for termutil."""
 
-from argparse import ArgumentParser
+from argparse import _SubParsersAction, ArgumentParser, Namespace
 
 from hwdb.pseudotypes import connection
 from hwdb.pseudotypes import customer
@@ -17,7 +17,7 @@ from hwdb.tools.system import SystemField
 __all__ = ['get_args']
 
 
-def _add_parser_list_systems(subparsers):
+def _add_parser_list_systems(subparsers: _SubParsersAction):
     """Adds args to list systems."""
 
     parser = subparsers.add_parser('sys', help='list systems')
@@ -66,7 +66,7 @@ def _add_parser_list_systems(subparsers):
         metavar='field', help='specifies the fields to print')
 
 
-def _add_parser_list_deployments(subparsers):
+def _add_parser_list_deployments(subparsers: _SubParsersAction):
     """Adds a parser to list deployments."""
 
     parser = subparsers.add_parser('dep', help='list deployments')
@@ -97,7 +97,7 @@ def _add_parser_list_deployments(subparsers):
         help='specifies the fields to print')
 
 
-def _add_parser_list(subparsers):
+def _add_parser_list(subparsers: _SubParsersAction):
     """Adds listing args."""
 
     parser = subparsers.add_parser('ls', help='list and filter records')
@@ -106,7 +106,7 @@ def _add_parser_list(subparsers):
     _add_parser_list_deployments(target)
 
 
-def _add_parser_find_systems(subparsers):
+def _add_parser_find_systems(subparsers: _SubParsersAction):
     """Adds a parser to find systems."""
 
     parser = subparsers.add_parser('sys', help='find systems')
@@ -117,7 +117,7 @@ def _add_parser_find_systems(subparsers):
         help='filter for systems of the respective house number')
 
 
-def _add_parser_find_deployments(subparsers):
+def _add_parser_find_deployments(subparsers: _SubParsersAction):
     """Adds a parser to find deployments."""
 
     parser = subparsers.add_parser('dep', help='find deployments')
@@ -128,7 +128,7 @@ def _add_parser_find_deployments(subparsers):
         help='filter for deployments of the respective house number')
 
 
-def _add_parser_find(subparsers):
+def _add_parser_find(subparsers: _SubParsersAction):
     """Adds a parser for searching."""
 
     parser = subparsers.add_parser('find', help='find records by address')
@@ -137,7 +137,7 @@ def _add_parser_find(subparsers):
     _add_parser_find_deployments(target)
 
 
-def get_args():
+def get_args() -> Namespace:
     """Returns the CLI options."""
 
     parser = ArgumentParser(description='Terminal database query utility.')

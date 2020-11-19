@@ -1,6 +1,7 @@
 """Type-like functions for argparse."""
 
-from datetime import datetime
+from datetime import date as Date, datetime
+from typing import Callable
 
 from mdb import Customer
 
@@ -21,39 +22,37 @@ __all__ = [
 ]
 
 
-def connection(value):
+def connection(name: str) -> Connection:
     """Returns a connection."""
 
-    return from_string(Connection, value)
+    return from_string(Connection, name)
 
 
-def customer(value):
+def customer(string: str) -> Customer:
     """Returns the respective customer."""
 
     try:
-        return Customer.find(value).get()
+        return Customer.find(string).get()
     except Customer.DoesNotExist:
         raise ValueError('No such customer.') from None
 
 
-def date(string):
+def date(string: str) -> Date:
     """Parses a date."""
 
     return datetime.strptime(string, '%Y-%m-%d').date()
 
 
-def deployment(ident):
+def deployment(ident: str) -> Deployment:
     """Returns the respective deployment."""
 
-    ident = int(ident)
-
     try:
-        return Deployment[ident]
+        return Deployment[int(ident)]
     except Deployment.DoesNotExist:
         raise ValueError('No such deployment.') from None
 
 
-def hook(name):
+def hook(name: str) -> Callable:
     """Returns the respective hook."""
 
     try:
@@ -62,24 +61,22 @@ def hook(name):
         raise ValueError('No such hook.') from None
 
 
-def operating_system(value):
+def operating_system(name: str) -> OperatingSystem:
     """Returns a connection."""
 
-    return from_string(OperatingSystem, value)
+    return from_string(OperatingSystem, name)
 
 
-def system(ident):
+def system(ident: str) -> System:
     """Returns the respective system."""
 
-    ident = int(ident)
-
     try:
-        return System[ident]
+        return System[int(ident)]
     except System.DoesNotExist:
         raise ValueError('No such system.') from None
 
 
-def type_(value):
+def type_(string: str) -> Type:
     """Returns a connection."""
 
-    return from_string(Type, value)
+    return from_string(Type, string)

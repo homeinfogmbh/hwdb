@@ -1,5 +1,7 @@
 """Common exceptions."""
 
+from typing import Iterable
+
 
 __all__ = [
     'TerminalError',
@@ -29,15 +31,15 @@ class AmbiguityError(TerminalError):
     terminal yielded ambiguous terminals.
     """
 
-    def __init__(self, object, ambiguous):  # pylint: disable=W0622
+    def __init__(self, target: object, ambiguous: Iterable[object]):
         """Sets the respective systems."""
         super().__init__()
-        self.object = object
+        self.target = target
         self.ambiguous = ambiguous
 
     def __iter__(self):
         """Yields the systems."""
-        yield self.object
+        yield self.target
         yield from self.ambiguous
 
 

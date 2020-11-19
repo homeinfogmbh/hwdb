@@ -1,6 +1,6 @@
 """Command line argument parsing."""
 
-from argparse import ArgumentParser
+from argparse import _SubParsersAction, ArgumentParser, Namespace
 
 from hwdb.enumerations import Connection, OperatingSystem, Type
 from hwdb.hooks import bind9cfgen, openvpncfgen
@@ -20,7 +20,7 @@ __all__ = ['get_args']
 DEFAULT_HOOKS = (bind9cfgen, openvpncfgen)
 
 
-def _add_new_system_parser(subparsers):
+def _add_new_system_parser(subparsers: _SubParsersAction):
     """Adds a parser to add new systems."""
 
     parser = subparsers.add_parser('sys', help='add new systems')
@@ -44,7 +44,7 @@ def _add_new_system_parser(subparsers):
     parser.add_argument('--model', help='the hardware model')
 
 
-def _add_new_deployment_parser(subparsers):
+def _add_new_deployment_parser(subparsers: _SubParsersAction):
     """Adds a deployment parser."""
 
     parser = subparsers.add_parser('dep', help='add new deployments')
@@ -67,7 +67,7 @@ def _add_new_deployment_parser(subparsers):
         help='flag the deployment as testing')
 
 
-def _add_new_parser(subparsers):
+def _add_new_parser(subparsers: _SubParsersAction):
     """Adds a parser for adding records."""
 
     parser = subparsers.add_parser('add', help='add new records')
@@ -76,7 +76,7 @@ def _add_new_parser(subparsers):
     _add_new_deployment_parser(subparsers)
 
 
-def _add_deploy_parser(subparsers):
+def _add_deploy_parser(subparsers: _SubParsersAction):
     """Adds a parser for deployment of systems."""
 
     parser = subparsers.add_parser('deploy', help='manage system deployment')
@@ -87,7 +87,7 @@ def _add_deploy_parser(subparsers):
         'deployment', type=deployment, nargs='?', help='the deployment site')
 
 
-def _add_dataset_parser(subparsers):
+def _add_dataset_parser(subparsers: _SubParsersAction):
     """Adds a parser for dataset of systems."""
 
     parser = subparsers.add_parser('dataset', help='manage system dataset')
@@ -98,7 +98,7 @@ def _add_dataset_parser(subparsers):
         'dataset', type=deployment, nargs='?', help='the dataset')
 
 
-def _add_hooks_parser(subparsers):
+def _add_hooks_parser(subparsers: _SubParsersAction):
     """Adds a parser for running hooks."""
 
     parser = subparsers.add_parser(
@@ -108,7 +108,7 @@ def _add_hooks_parser(subparsers):
         help='a list of hooks to run')
 
 
-def get_args():
+def get_args() -> Namespace:
     """Parses the CLI arguments."""
 
     parser = ArgumentParser(description='Terminal database administration.')
