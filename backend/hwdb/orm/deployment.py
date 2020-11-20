@@ -1,5 +1,7 @@
 """Terminal deployments."""
 
+from xml.etree.ElementTree import Element, SubElement
+
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateField
@@ -15,6 +17,9 @@ from hwdb.orm.common import BaseModel
 
 
 __all__ = ['Deployment']
+
+
+HTML_HEADERS = ('ID', 'Customer', 'Type', 'Address')
 
 
 class Deployment(BaseModel):
@@ -58,6 +63,26 @@ class Deployment(BaseModel):
             condition &= cls.id != self.id
 
         return cls.select().where(condition)
+
+    def to_html(self, border: bool = True) -> Element:
+        """Returns an HTML table."""
+        table = Element('table', attrib={'border': '1' if border else '0'})
+        header_row = SubElement(table, 'tr')
+
+        for header in HTML_HEADERS:
+            header_col = SubElement(header_row, 'th')
+            header_col.text = header
+
+        value_row = SubElement(table, 'tr')
+        id_col = SubElement(value_row, 'td')
+        id_col.text = str(self.id)
+        customer_col = SubElement(value_row, 'td')
+        customer_col.text = str(self.customer)
+        type_col = SubElement(value_row, 'td')
+        type_col.text = self.type.value
+        address_col = SubElement(value_row, 'td')
+        address_col.text = str(self.address)
+        return table
 
     def to_json(self, address: bool = False, customer: bool = False,
                 systems: bool = False, **kwargs) -> dict:

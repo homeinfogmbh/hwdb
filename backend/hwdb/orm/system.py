@@ -89,13 +89,18 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return cls.select().join(Deployment, join_type=join_type, on=on)
 
     @classmethod
-    def undeploy_all(cls, deployment: Deployment):
+    def undeploy_all(cls, deployment: Deployment) -> list:
         """Undeploy other systems."""
+        changes = []
+
         for system in cls.select().where(cls.deployment == deployment):
             LOGGER.info('Un-deploying #%i.', system.id)
             system.fitted = False
-            system.deployment = None
+            system.deployment, old_deployment = None, system.deployment
             system.save()
+            changes.append((system, old_deployment))
+
+        return changes
 
     @property
     def ipv4address(self) -> IPv4Address:
@@ -111,7 +116,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return self.dataset or self.deployment
 
     def deploy(self, deployment: Deployment, *, exclusive: bool = False,
-               fitted: bool = False) -> int:
+               fitted: bool = False) -> list:
         """Locates a system at the respective deployment."""
         self.deployment, old_deployment = deployment, self.deployment
 
@@ -123,11 +128,14 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             LOGGER.info('Relocated system from "%s" to "%s".',
                         old_deployment, deployment)
 
+        changes = [(self, old_deployment)]
+
         if exclusive:
-            type(self).undeploy_all(deployment)
+            changes += type(self).undeploy_all(deployment)
 
         self.fitted = fitted
-        return self.save()
+        self.save()
+        return changes
 
     def to_json(self, brief: bool = False, skip: set = None, **kwargs) -> dict:
         """Returns a JSON-like dictionary."""
