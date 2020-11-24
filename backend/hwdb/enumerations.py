@@ -10,9 +10,9 @@ def from_string(enum: EnumMeta, value: str) -> Enum:
     """Returns an enumeration from a text value."""
 
     try:
-        return enum(value)
-    except ValueError:
         return enum[value]
+    except KeyError:
+        return enum(value)
 
 
 class Connection(Enum):
