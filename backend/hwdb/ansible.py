@@ -3,7 +3,7 @@
 from collections import defaultdict
 from configparser import ConfigParser
 
-from hwdb.enumerations import OperatingSystem, Type
+from hwdb.enumerations import OperatingSystem, DeploymentType
 
 
 __all__ = ['AnsibleMixin']
@@ -30,7 +30,7 @@ class AnsibleMixin:
                 groups['windows-systems'].append(system)
 
             if system.deployment:
-                if system.deployment.type == Type.DDB:
+                if system.deployment.type == DeploymentType.DDB:
                     groups['DDB'].append(system)
 
                     if block_size is not None:

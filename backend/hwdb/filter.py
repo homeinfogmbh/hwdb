@@ -7,7 +7,7 @@ from peewee import JOIN, Expression, ModelBase, ModelSelect
 from mdb import Customer
 
 from hwdb.config import LOGGER
-from hwdb.enumerations import Connection, OperatingSystem, Type
+from hwdb.enumerations import Connection, DeploymentType, OperatingSystem
 from hwdb.orm import Deployment, System
 
 
@@ -58,7 +58,7 @@ def filter_offline(systems: Iterable[System]) -> Generator[System, None, None]:
 def get_deployments(ids: Iterable[int] = None,
                     customers: Iterable[Customer] = None,
                     testing: bool = None,
-                    types: Iterable[Type] = None,
+                    types: Iterable[DeploymentType] = None,
                     connections: Iterable[Connection] = None,
                     systems: Iterable[System] = None
                     ) -> ModelSelect:

@@ -5,7 +5,10 @@ from typing import Callable
 
 from mdb import Customer
 
-from hwdb.enumerations import from_string, Connection, OperatingSystem, Type
+from hwdb.enumerations import from_string
+from hwdb.enumerations import Connection
+from hwdb.enumerations import DeploymentType
+from hwdb.enumerations import OperatingSystem
 from hwdb.hooks import HOOKS
 from hwdb.orm import Deployment, System
 
@@ -18,7 +21,7 @@ __all__ = [
     'hook',
     'operating_system',
     'system',
-    'type_'
+    'deployment_type'
 ]
 
 
@@ -76,7 +79,7 @@ def system(ident: str) -> System:
         raise ValueError('No such system.') from None
 
 
-def type_(string: str) -> Type:
+def deployment_type(string: str) -> DeploymentType:
     """Returns a connection."""
 
-    return from_string(Type, string)
+    return from_string(DeploymentType, string)

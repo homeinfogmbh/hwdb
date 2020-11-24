@@ -12,7 +12,7 @@ from peewee import ModelSelect
 from mdb import Customer, Address
 from peeweeplus import EnumField
 
-from hwdb.enumerations import Connection, Type
+from hwdb.enumerations import Connection, DeploymentType
 from hwdb.orm.common import BaseModel
 
 
@@ -26,7 +26,7 @@ class Deployment(BaseModel):
     """A customer-specific deployment of a terminal."""
 
     customer = ForeignKeyField(Customer, column_name='customer')
-    type = EnumField(Type)
+    type = EnumField(DeploymentType)
     connection = EnumField(Connection)
     address = ForeignKeyField(Address, column_name='address')
     lpt_address = ForeignKeyField(  # Address for local public transport.

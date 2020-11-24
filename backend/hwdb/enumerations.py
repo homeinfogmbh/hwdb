@@ -3,7 +3,13 @@
 from enum import Enum, EnumMeta
 
 
-__all__ = ['from_string', 'Connection', 'OperatingSystem', 'Type']
+__all__ = [
+    'from_string',
+    'Connection',
+    'DeploymentType',
+    'HardwareType',
+    'OperatingSystem'
+]
 
 
 def from_string(enum: EnumMeta, value: str) -> Enum:
@@ -22,6 +28,20 @@ class Connection(Enum):
     LTE = 'LTE'
 
 
+class DeploymentType(Enum):
+    """Terminal classes."""
+
+    DDB = 'Das Digitale Brett'
+    ETV = 'Exposé TV'
+    ETV_TOUCH = 'Exposé TV touch'
+
+
+class HardwareType(Enum):
+    """Generic hardware type."""
+
+    POWER_SUPPLY = 'power supply'
+
+
 class OperatingSystem(Enum):
     """Operating systems."""
 
@@ -34,11 +54,3 @@ class OperatingSystem(Enum):
     WINDOWS8 = 'Windows 8'
     WINDOWS81 = 'Windows 8.1'
     WINDOWS10 = 'Windows 10'
-
-
-class Type(Enum):
-    """Terminal classes."""
-
-    DDB = 'Das Digitale Brett'
-    ETV = 'Exposé TV'
-    ETV_TOUCH = 'Exposé TV touch'

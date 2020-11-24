@@ -2,7 +2,7 @@
 
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 
-from hwdb.enumerations import Connection, OperatingSystem, Type
+from hwdb.enumerations import Connection, DeploymentType, OperatingSystem
 from hwdb.hooks import bind9cfgen, openvpncfgen
 from hwdb.pseudotypes import connection
 from hwdb.pseudotypes import customer
@@ -10,7 +10,7 @@ from hwdb.pseudotypes import date
 from hwdb.pseudotypes import deployment
 from hwdb.pseudotypes import hook
 from hwdb.pseudotypes import operating_system
-from hwdb.pseudotypes import type_
+from hwdb.pseudotypes import deployment_type
 from hwdb.pseudotypes import system
 
 
@@ -55,7 +55,8 @@ def _add_new_deployment_parser(subparsers: _SubParsersAction):
     parser.add_argument('zip_code', help='the ZIP code')
     parser.add_argument('city', help='the city')
     parser.add_argument(
-        '-t', '--type', type=type_, default=Type.DDB, help='the system type')
+        '-t', '--type', type=deployment_type, default=DeploymentType.DDB,
+        help='the system type')
     parser.add_argument(
         '-c', '--connection', type=connection, default=Connection.DSL,
         help='the internet connection on site')

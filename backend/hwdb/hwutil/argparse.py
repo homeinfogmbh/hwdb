@@ -4,9 +4,9 @@ from argparse import _SubParsersAction, ArgumentParser, Namespace
 
 from hwdb.pseudotypes import connection
 from hwdb.pseudotypes import customer
-from hwdb.pseudotypes import operating_system
-from hwdb.pseudotypes import type_
 from hwdb.pseudotypes import deployment
+from hwdb.pseudotypes import deployment_type
+from hwdb.pseudotypes import operating_system
 from hwdb.pseudotypes import system
 from hwdb.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
 from hwdb.tools.deployment import DeploymentField
@@ -83,7 +83,7 @@ def _add_parser_list_deployments(subparsers: _SubParsersAction):
         '--testing', type=int, metavar='testing',
         help='filter for testing deployments')
     parser.add_argument(
-        '-t', '--type', nargs='+', type=type_, metavar='type',
+        '-t', '--type', nargs='+', type=deployment_type, metavar='type',
         help='filter for the respective types')
     parser.add_argument(
         '-c', '--connection', nargs='+', type=connection,
