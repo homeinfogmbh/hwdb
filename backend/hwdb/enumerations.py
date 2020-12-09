@@ -34,6 +34,7 @@ class DeploymentType(Enum):
     DDB = 'Das Digitale Brett'
     ETV = 'Exposé TV'
     ETV_TOUCH = 'Exposé TV touch'
+    KIOSK = 'Kiosk browser'
 
 
 class HardwareType(Enum):
