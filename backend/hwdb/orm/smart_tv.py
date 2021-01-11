@@ -16,7 +16,7 @@ class SmartTV(BaseModel):
 
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='smart_tvs',
-        on_delete='SET_NULL', lazy_load=False)
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     make = CharField(255, null=True)   # Hardware make.
     model = CharField(255, null=True)   # Hardware model.
     serial_number = CharField(255, null=True)
