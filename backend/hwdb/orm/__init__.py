@@ -4,6 +4,7 @@ from hwdb.orm.deployment import Deployment
 from hwdb.orm.display import Display
 from hwdb.orm.generic import GenericHardware
 from hwdb.orm.openvpn import OpenVPN
+from hwdb.orm.smart_tv import SmartTV
 from hwdb.orm.system import System
 from hwdb.orm.wireguard import WireGuard
 
@@ -15,12 +16,15 @@ __all__ = [
     'Display',
     'GenericHardware',
     'OpenVPN',
+    'SmartTV',
     'System',
     'WireGuard'
 ]
 
 
-MODELS = (Deployment, OpenVPN, WireGuard, System, Display, GenericHardware)
+MODELS = (
+    Deployment, SmartTV, OpenVPN, WireGuard, System, Display, GenericHardware
+)
 
 
 def create_tables(models=MODELS):

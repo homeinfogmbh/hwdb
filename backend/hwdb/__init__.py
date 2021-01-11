@@ -18,6 +18,7 @@ from hwdb.orm import Deployment
 from hwdb.orm import Display
 from hwdb.orm import GenericHardware
 from hwdb.orm import OpenVPN
+from hwdb.orm import SmartTV
 from hwdb.orm import System
 from hwdb.orm import WireGuard
 from hwdb.parsers import connection
@@ -48,6 +49,7 @@ __all__ = [
     'HardwareType',
     'OperatingSystem',
     'OpenVPN',
+    'SmartTV',
     'System',
     'WireGuard',
     'connection',
