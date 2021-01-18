@@ -19,7 +19,10 @@ def from_address(args: Namespace, address: Tuple[str, str, str, str]) -> None:
     """Adds a deployment from an address."""
 
     address = Address.add_by_address(address)
-    breakpoint()
+
+    if address.id is None:
+        address.save()
+
     select = Deployment.address == address
     select &= Deployment.customer == args.customer
     select &= Deployment.type == args.type
