@@ -19,6 +19,7 @@ def from_address(args: Namespace, address: Tuple[str, str, str, str]) -> None:
     """Adds a deployment from an address."""
 
     address = Address.add_by_address(address)
+    breakpoint()
     select = Deployment.address == address
     select &= Deployment.customer == args.customer
     select &= Deployment.type == args.type
@@ -53,9 +54,9 @@ def batch_add(args: Namespace) -> bool:
                 match = args.regex.fullmatch(line)
 
                 if match is not None:
-                    groups = match.groups()
-                    LOGGER.info('Adding deployment for address: %s', groups)
-                    from_address(args, groups)
+                    address = match.groups()
+                    LOGGER.info('Adding deployment for address: %s', address)
+                    from_address(args, address)
                 else:
                     LOGGER.error('Could not parse address from: %s', line)
                     result = False
