@@ -20,7 +20,7 @@ __all__ = ['get_args']
 
 
 DEFAULT_HOOKS = (bind9cfgen, openvpncfgen)
-DEFAULT_DEPLOYMENT_REGEX = Regex(
+DEFAULT_ADDRESS_REGEX = Regex(
     '([\\w\\s\\-/]+)\\s+(\\d+[\\s\\-/]*\\w*),'
     '?\\s+((?:[A-Z]+\\-)?\\d+)\\s+([\\w\\s\\-/]+)'
 )
@@ -90,8 +90,8 @@ def _batch_add_new_deployment_parser(subparsers: _SubParsersAction):
         'file', type=Path, nargs='+', metavar='file', help='source files')
     parser.add_argument(
         '-r', '--regex', type=Regex, metavar='expression',
-        default=DEFAULT_DEPLOYMENT_REGEX,
-        help='regular expression to extraxt address data from the files')
+        default=DEFAULT_ADDRESS_REGEX,
+        help='regular expression to extract address data from the files')
     _add_deployment_add_args(parser)
 
 
