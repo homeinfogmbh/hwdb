@@ -1,6 +1,8 @@
 """Command line argument parsing."""
 
 from argparse import _SubParsersAction, ArgumentParser, Namespace
+from pathlib import Path
+from re import compile as Regex
 
 from hwdb.enumerations import Connection, DeploymentType, OperatingSystem
 from hwdb.hooks import bind9cfgen, openvpncfgen
@@ -18,6 +20,10 @@ __all__ = ['get_args']
 
 
 DEFAULT_HOOKS = (bind9cfgen, openvpncfgen)
+DEFAULT_DEPLOYMENT_REGEX = Regex(
+    '([\\w\\s\\-/]+)\\s+(\\d+[\\s\\-/]*\\w*),'
+    '?\\s+((?:[A-Z]+\\-)?\\d+)\\s+([\\w\\s\\-/]+)'
+)
 
 
 def _add_new_system_parser(subparsers: _SubParsersAction):
@@ -44,16 +50,9 @@ def _add_new_system_parser(subparsers: _SubParsersAction):
     parser.add_argument('--model', help='the hardware model')
 
 
-def _add_new_deployment_parser(subparsers: _SubParsersAction):
-    """Adds a deployment parser."""
+def _add_deployment_add_args(parser: ArgumentParser):
+    """Adds arguments to parser to add deployments."""
 
-    parser = subparsers.add_parser('dep', help='add new deployments')
-    parser.add_argument(
-        'customer', type=customer, help='the owner of the deployment')
-    parser.add_argument('street', help='the street name')
-    parser.add_argument('house_number', help='the house number')
-    parser.add_argument('zip_code', help='the ZIP code')
-    parser.add_argument('city', help='the city')
     parser.add_argument(
         '-t', '--type', type=deployment_type, default=DeploymentType.DDB,
         help='the system type')
@@ -68,6 +67,34 @@ def _add_new_deployment_parser(subparsers: _SubParsersAction):
         help='flag the deployment as testing')
 
 
+def _add_new_deployment_parser(subparsers: _SubParsersAction):
+    """Adds a deployment parser."""
+
+    parser = subparsers.add_parser('dep', help='add new deployments')
+    parser.add_argument(
+        'customer', type=customer, help='the owner of the deployment')
+    parser.add_argument('street', help='the street name')
+    parser.add_argument('house_number', help='the house number')
+    parser.add_argument('zip_code', help='the ZIP code')
+    parser.add_argument('city', help='the city')
+    _add_deployment_add_args(parser)
+
+
+def _batch_add_new_deployment_parser(subparsers: _SubParsersAction):
+    """Adds a parser to batch-add deployments."""
+
+    parser = subparsers.add_parser('deps', help='batch-adds new deployments')
+    parser.add_argument(
+        'customer', type=customer, help='the owner of the deployment')
+    parser.add_argument(
+        'file', type=Path, nargs='+', metavar='file', help='source files')
+    parser.add_argument(
+        '-r', '--regex', type=Regex, metavar='expression',
+        default=DEFAULT_DEPLOYMENT_REGEX,
+        help='regular expression to extraxt address data from the files')
+    _add_deployment_add_args(parser)
+
+
 def _add_new_parser(subparsers: _SubParsersAction):
     """Adds a parser for adding records."""
 
@@ -75,6 +102,7 @@ def _add_new_parser(subparsers: _SubParsersAction):
     subparsers = parser.add_subparsers(dest='target')
     _add_new_system_parser(subparsers)
     _add_new_deployment_parser(subparsers)
+    _batch_add_new_deployment_parser(subparsers)
 
 
 def _add_deploy_parser(subparsers: _SubParsersAction):

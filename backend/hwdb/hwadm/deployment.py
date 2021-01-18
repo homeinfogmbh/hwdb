@@ -8,18 +8,15 @@ from mdb import Address
 from hwdb.orm.deployment import Deployment
 
 
-__all__ = ['add']
+__all__ = ['add', 'batch_add']
 
 
 LOGGER = getLogger('hwadm')
 
 
-def add(args: Namespace) -> bool:
-    """Adds a deployment."""
+def from_address(args: Namespace, address: Address) -> None:
+    """Adds a deployment from an address."""
 
-    address = (args.street, args.house_number, args.zip_code, args.city)
-    address = Address.add_by_address(address)
-    address.save()
     select = Deployment.address == address
     select &= Deployment.customer == args.customer
     select &= Deployment.type == args.type
@@ -37,4 +34,26 @@ def add(args: Namespace) -> bool:
     else:
         LOGGER.info('Using existing deployment #%i.', deployment.id)
 
-    return True
+
+def batch_add(args: Namespace) -> None:
+    """Adds multiple deployments from a file matching a regex."""
+
+    for path in args.file:
+        with path.open('r') as file:
+            for line in file:
+                if not (line := line.strip()) or line.startswith('#'):
+                    continue
+
+                if match := args.regex.fullmatch(line):
+                    address = Address.add_by_address(*match.groups())
+                    from_address(args, address)
+                else:
+                    LOGGER.error('Could not parse address from: %s', line)
+
+
+def add(args: Namespace) -> None:
+    """Adds a deployment."""
+
+    address = (args.street, args.house_number, args.zip_code, args.city)
+    address = Address.add_by_address(address)
+    from_address(args, address)
