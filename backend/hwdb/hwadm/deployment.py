@@ -2,6 +2,7 @@
 
 from argparse import Namespace
 from logging import getLogger
+from typing import Tuple
 
 from mdb import Address
 
@@ -14,7 +15,7 @@ __all__ = ['add', 'batch_add']
 LOGGER = getLogger('hwadm')
 
 
-def from_address(args: Namespace, address: tuple[str, str, str, str]) -> None:
+def from_address(args: Namespace, address: Tuple[str, str, str, str]) -> None:
     """Adds a deployment from an address."""
 
     address = Address.add_by_address(address)
