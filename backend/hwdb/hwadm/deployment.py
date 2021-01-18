@@ -46,7 +46,9 @@ def batch_add(args: Namespace) -> None:
                 if not line or line.startswith('#'):
                     continue
 
-                if match := args.regex.fullmatch(line):
+                match = args.regex.fullmatch(line)
+
+                if match is not None:
                     address = Address.add_by_address(*match.groups())
                     from_address(args, address)
                 else:
