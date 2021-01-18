@@ -41,7 +41,9 @@ def batch_add(args: Namespace) -> None:
     for path in args.file:
         with path.open('r') as file:
             for line in file:
-                if not (line := line.strip()) or line.startswith('#'):
+                line = line.strip()
+
+                if not line or line.startswith('#'):
                     continue
 
                 if match := args.regex.fullmatch(line):
