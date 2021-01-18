@@ -53,7 +53,9 @@ def batch_add(args: Namespace) -> bool:
                 match = args.regex.fullmatch(line)
 
                 if match is not None:
-                    from_address(args, match.groups())
+                    groups = match.groups()
+                    LOGGER.info('Adding deployment for address: %s', groups)
+                    from_address(args, groups)
                 else:
                     LOGGER.error('Could not parse address from: %s', line)
                     result = False
