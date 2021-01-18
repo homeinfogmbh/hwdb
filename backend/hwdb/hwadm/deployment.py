@@ -14,9 +14,10 @@ __all__ = ['add', 'batch_add']
 LOGGER = getLogger('hwadm')
 
 
-def from_address(args: Namespace, address: Address) -> None:
+def from_address(args: Namespace, address: tuple[str, str, str, str]) -> None:
     """Adds a deployment from an address."""
 
+    address = Address.add_by_address(address)
     select = Deployment.address == address
     select &= Deployment.customer == args.customer
     select &= Deployment.type == args.type
@@ -51,8 +52,7 @@ def batch_add(args: Namespace) -> bool:
                 match = args.regex.fullmatch(line)
 
                 if match is not None:
-                    address = Address.add_by_address(*match.groups())
-                    from_address(args, address)
+                    from_address(args, match.groups())
                 else:
                     LOGGER.error('Could not parse address from: %s', line)
                     result = False
@@ -64,6 +64,5 @@ def add(args: Namespace) -> bool:
     """Adds a deployment."""
 
     address = (args.street, args.house_number, args.zip_code, args.city)
-    address = Address.add_by_address(address)
     from_address(args, address)
     return True
