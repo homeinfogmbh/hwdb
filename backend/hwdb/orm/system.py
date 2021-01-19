@@ -34,19 +34,19 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
 
     operator = ForeignKeyField(
         Customer, column_name='operator', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     dataset = ForeignKeyField(
         Deployment, null=True, column_name='dataset', backref='data_systems',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     openvpn = ForeignKeyField(
         OpenVPN, null=True, column_name='openvpn', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     wireguard = ForeignKeyField(
         WireGuard, null=True, column_name='wireguard', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
     fitted = BooleanField(default=False)

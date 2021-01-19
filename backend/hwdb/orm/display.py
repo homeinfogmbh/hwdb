@@ -18,11 +18,11 @@ class Display(BaseModel):   # pylint: disable=R0903
 
     address = ForeignKeyField(
         Address, null=True, column_name='address', backref='displays',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     annotation = CharField(255, null=True)
     system = ForeignKeyField(
         System, null=True, column_name='system', backref='displays',
-        on_delete='SET NULL', on_update='CASCADE')
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     installed = DateTimeField(null=True)
     make = CharField(255, null=True)   # Hardware make.
     model = CharField(255, null=True)   # Hardware model.

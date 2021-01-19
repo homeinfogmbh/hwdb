@@ -15,7 +15,8 @@ __all__ = ['GenericHardware']
 class GenericHardware(BaseModel):   # pylint: disable=R0903
     """Generic hardware table."""
 
-    customer = ForeignKeyField(Customer, column_name='customer')
+    customer = ForeignKeyField(
+        Customer, column_name='customer', lazy_load=False)
     type = EnumField(HardwareType)
     serial_number = CharField(null=True)
     dim_x = DecimalField(null=True)

@@ -25,12 +25,13 @@ HTML_HEADERS = ('ID', 'Customer', 'Type', 'Address')
 class Deployment(BaseModel):
     """A customer-specific deployment of a terminal."""
 
-    customer = ForeignKeyField(Customer, column_name='customer')
+    customer = ForeignKeyField(
+        Customer, column_name='customer', lazy_load=False)
     type = EnumField(DeploymentType)
     connection = EnumField(Connection)
-    address = ForeignKeyField(Address, column_name='address')
+    address = ForeignKeyField(Address, column_name='address', lazy_load=False)
     lpt_address = ForeignKeyField(  # Address for local public transport.
-        Address, null=True, column_name='lpt_address')
+        Address, null=True, column_name='lpt_address', lazy_load=False)
     scheduled = DateField(null=True)
     annotation = CharField(255, null=True)
     testing = BooleanField(default=False)
