@@ -1,9 +1,13 @@
 #! /usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='hwdb',
+    use_scm_version={
+        "local_scheme": "node-and-timestamp"
+    },
+    setup_requires=['setuptools_scm'],
     author='HOMEINFO - Digitale Informationssysteme GmbH',
     author_email='info@homeinfo.de',
     maintainer='Richard Neumann',
@@ -14,11 +18,28 @@ setup(
         'hwdb.hwadm',
         'hwdb.hwutil',
         'hwdb.orm',
-        'hwdb.tools'],
-    scripts=['files/hwadm', 'files/hwutil'],
+        'hwdb.tools'
+    ],
+    requires=[
+        'configlib',
+        'mdb',
+        'peewee',
+        'peeweeplus',
+        'requests',
+        'syslib'
+    ],
+    entry_points={
+        'console_scripts': [
+            'hwadm = hwdb.hwadm:main',
+            'hwutil =  hwdb.hwutil:main'
+        ]
+    },
     data_files=[
         ('/usr/share/terminals', [
             'files/openvpn.conf.temp',
             'files/pacman.conf.temp',
-            'files/homeinfo.intranet.zone.temp'])],
-    description=("HOMEINFO's hardware libary."))
+            'files/homeinfo.intranet.zone.temp'
+        ])
+    ],
+    description="HOMEINFO's hardware libary."
+)
