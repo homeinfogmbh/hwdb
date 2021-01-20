@@ -22,7 +22,7 @@ setup(
         'hwdb.orm',
         'hwdb.tools'
     ],
-    requires=[
+    install_requires=[
         'configlib',
         'mdb',
         'peewee',
