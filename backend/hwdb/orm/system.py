@@ -83,15 +83,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         )
 
     @classmethod
-    def depjoin(cls, join_type: str = JOIN.INNER,   # pylint: disable=C0103
-                on: Expression = None) -> ModelSelect:
-        """Selects all columns and joins on the deployment."""
-        if on is None:
-            on = cls.deployment == Deployment.id
-
-        return cls.select().join(Deployment, join_type=join_type, on=on)
-
-    @classmethod
     def undeploy_all(cls, deployment: Deployment) -> list:
         """Undeploy other systems."""
         changes = []
