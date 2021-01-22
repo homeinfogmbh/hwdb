@@ -2,6 +2,7 @@
 
 from xml.etree.ElementTree import Element, SubElement
 
+from peewee import JOIN
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateField
@@ -9,7 +10,7 @@ from peewee import DateTimeField
 from peewee import ForeignKeyField
 from peewee import ModelSelect
 
-from mdb import Customer, Address
+from mdb import Address, Company, Customer
 from peeweeplus import EnumField
 
 from hwdb.enumerations import Connection, DeploymentType
@@ -45,6 +46,20 @@ class Deployment(BaseModel):
             return string
 
         return f'{string} ({self.annotation})'
+
+    @classmethod
+    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+        """Selects deployments."""
+        if not cascade:
+            return super().select(*args, **kwargs)
+
+        lpt_address = Address.alias()
+        args = {cls, Customer, Company, Address, lpt_address, *args}
+        return cls.select(*args, **kwargs).join(
+            Customer).join(Company).join_from(
+            cls, Address, on=cls.address == Address.id).join_from(
+            cls, lpt_address, on=cls.lpt_address == lpt_address.id,
+            join_type=JOIN.LEFT_OUTER)
 
     def checkdupes(self) -> ModelSelect:
         """Returns duplicates of this deployment in the database."""

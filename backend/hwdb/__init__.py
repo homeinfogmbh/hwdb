@@ -20,14 +20,14 @@ from hwdb.orm import GenericHardware
 from hwdb.orm import OpenVPN
 from hwdb.orm import System
 from hwdb.orm import WireGuard
-from hwdb.pseudotypes import connection
-from hwdb.pseudotypes import customer
-from hwdb.pseudotypes import date
-from hwdb.pseudotypes import deployment
-from hwdb.pseudotypes import deployment_type
-from hwdb.pseudotypes import hook
-from hwdb.pseudotypes import operating_system
-from hwdb.pseudotypes import system
+from hwdb.parsers import connection
+from hwdb.parsers import customer
+from hwdb.parsers import date
+from hwdb.parsers import deployment
+from hwdb.parsers import deployment_type
+from hwdb.parsers import hook
+from hwdb.parsers import operating_system
+from hwdb.parsers import system
 
 
 __all__ = [

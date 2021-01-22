@@ -1,8 +1,12 @@
 """Table for generic hardware."""
 
-from peewee import CharField, DecimalField, ForeignKeyField, TextField
+from peewee import CharField
+from peewee import DecimalField
+from peewee import ForeignKeyField
+from peewee import ModelSelect
+from peewee import TextField
 
-from mdb import Customer
+from mdb import Company, Customer
 from peeweeplus import EnumField
 
 from hwdb.enumerations import HardwareType
@@ -23,3 +27,12 @@ class GenericHardware(BaseModel):   # pylint: disable=R0903
     dim_y = DecimalField(null=True)
     dim_z = DecimalField(null=True)
     description = TextField(null=True)
+
+    @classmethod
+    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+        """Selects generic hardware."""
+        if not cascade:
+            return super().select(*args, **kwargs)
+
+        args = {cls, Customer, Company, *args}
+        return cls.select(*args, **kwargs).join(Customer).join(Company)

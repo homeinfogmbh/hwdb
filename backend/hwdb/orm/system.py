@@ -11,7 +11,7 @@ from peewee import Expression
 from peewee import ForeignKeyField
 from peewee import ModelSelect
 
-from mdb import Customer
+from mdb import Address, Company, Customer
 from peeweeplus import EnumField
 
 from hwdb.ansible import AnsibleMixin
@@ -81,6 +81,52 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         ).where(
             cls.monitoring_cond()
         )
+
+    @classmethod
+    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+        """Selects systems."""
+        if not cascade:
+            return super().select(*args, **kwargs)
+
+        dep_customer = Customer.alias()
+        dep_company = Company.alias()
+        lpt_address = Address.alias()
+        dataset = Deployment.alias()
+        ds_customer = Customer.alias()
+        ds_company = Company.alias()
+        ds_address = Address.alias()
+        ds_lpt_address = Address.alias()
+        args = {
+            cls, Customer, Company, Deployment, dep_customer, dep_company,
+            Address, lpt_address, dataset, ds_customer, ds_company, ds_address,
+            ds_lpt_address, OpenVPN, WireGuard, *args
+        }
+        return cls.select(*args, **kwargs).join(
+            # Operator
+            Customer).join(Company).join_from(
+            # Deployment
+            cls, Deployment, on=cls.deployment == Deployment.id,
+            join_type=JOIN.LEFT_OUTER).join(
+            dep_customer, join_type=JOIN.LEFT_OUTER).join(
+            dep_company, join_type=JOIN.LEFT_OUTER).join_from(
+            Deployment, Address, on=Deployment.address == Address.id,
+            join_type=JOIN.LEFT_OUTER).join_from(
+            Deployment, lpt_address,
+            on=Deployment.lpt_address == lpt_address.id,
+            join_type=JOIN.LEFT_OUTER).join_from(
+            # Dataset
+            cls, dataset, on=cls.dataset == dataset.id,
+            join_type=JOIN.LEFT_OUTER).join(
+            ds_customer, join_type=JOIN.LEFT_OUTER).join(
+            ds_company, join_type=JOIN.LEFT_OUTER).join_from(
+            dataset, ds_address, on=dataset.address == ds_address.id,
+            join_type=JOIN.LEFT_OUTER).join_from(
+            dataset, ds_lpt_address, on=dataset.lpt_address == ds_lpt_address,
+            join_type=JOIN.LEFT_OUTER).join_from(
+            # OpenVPN
+            cls, OpenVPN, join_type=JOIN.LEFT_OUTER).join_from(
+            # WireGuard
+            cls, WireGuard, join_type=JOIN.LEFT_OUTER)
 
     @classmethod
     def undeploy_all(cls, deployment: Deployment) -> list:
