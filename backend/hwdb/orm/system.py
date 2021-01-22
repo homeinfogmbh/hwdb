@@ -101,7 +101,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             Address, lpt_address, dataset, ds_customer, ds_company, ds_address,
             ds_lpt_address, OpenVPN, WireGuard, *args
         }
-        return cls.select(*args, **kwargs).join(
+        return super().select(*args, **kwargs).join(
             # Operator
             Customer).join(Company).join_from(
             # Deployment

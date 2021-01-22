@@ -53,7 +53,7 @@ class Display(BaseModel):   # pylint: disable=R0903
             dep_company, dep_address, lpt_address, dataset, ds_customer,
             ds_company, ds_address, ds_lpt_address, OpenVPN, WireGuard, *args
         }
-        return cls.select(*args, **kwargs).join(
+        return super().select(*args, **kwargs).join(
             # Address
             Address, join_type=JOIN.LEFT_OUTER).join_from(
             # System

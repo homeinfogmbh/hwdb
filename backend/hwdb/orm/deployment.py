@@ -55,7 +55,7 @@ class Deployment(BaseModel):
 
         lpt_address = Address.alias()
         args = {cls, Customer, Company, Address, lpt_address, *args}
-        return cls.select(*args, **kwargs).join(
+        return super().select(*args, **kwargs).join(
             Customer).join(Company).join_from(
             cls, Address, on=cls.address == Address.id).join_from(
             cls, lpt_address, on=cls.lpt_address == lpt_address.id,

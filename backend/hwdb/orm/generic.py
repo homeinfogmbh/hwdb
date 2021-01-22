@@ -35,4 +35,4 @@ class GenericHardware(BaseModel):   # pylint: disable=R0903
             return super().select(*args, **kwargs)
 
         args = {cls, Customer, Company, *args}
-        return cls.select(*args, **kwargs).join(Customer).join(Company)
+        return super().select(*args, **kwargs).join(Customer).join(Company)
