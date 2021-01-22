@@ -3,7 +3,9 @@
 from datetime import date as Date, datetime
 from typing import Callable
 
-from mdb import Customer
+from peewee import JOIN
+
+from mdb import Address, Company, Customer
 
 from hwdb.enumerations import from_string
 from hwdb.enumerations import Connection
@@ -49,8 +51,18 @@ def date(string: str) -> Date:
 def deployment(ident: str) -> Deployment:
     """Returns the respective deployment."""
 
+    lpt_address = Address.alias()
+    select = Deployment.select(
+        Deployment, Customer, Company, Address, lpt_address
+    ).join(Deployment, Customer).join(Company).join_from(
+        Deployment, Address, on=Deployment.address == Address.id
+    ).join_from(
+        Deployment, lpt_address, on=Deployment.lpt_address == lpt_address,
+        join_type=JOIN.LEFT_OUTER
+    )
+
     try:
-        return Deployment[int(ident)]
+        return select.where(Deployment.id == int(ident))
     except Deployment.DoesNotExist:
         raise ValueError('No such deployment.') from None
 

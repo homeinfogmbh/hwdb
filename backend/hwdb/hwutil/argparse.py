@@ -2,12 +2,12 @@
 
 from argparse import _SubParsersAction, ArgumentParser, Namespace
 
-from hwdb.pseudotypes import connection
-from hwdb.pseudotypes import customer
-from hwdb.pseudotypes import deployment
-from hwdb.pseudotypes import deployment_type
-from hwdb.pseudotypes import operating_system
-from hwdb.pseudotypes import system
+from hwdb.parsers import connection
+from hwdb.parsers import customer
+from hwdb.parsers import deployment
+from hwdb.parsers import deployment_type
+from hwdb.parsers import operating_system
+from hwdb.parsers import system
 from hwdb.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
 from hwdb.tools.deployment import DeploymentField
 from hwdb.tools.system import DEFAULT_FIELDS as SYSTEM_FIELDS
