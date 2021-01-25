@@ -121,7 +121,8 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             ds_company, join_type=JOIN.LEFT_OUTER).join_from(
             dataset, ds_address, on=dataset.address == ds_address.id,
             join_type=JOIN.LEFT_OUTER).join_from(
-            dataset, ds_lpt_address, on=dataset.lpt_address == ds_lpt_address,
+            dataset, ds_lpt_address,
+            on=dataset.lpt_address == ds_lpt_address.id,
             join_type=JOIN.LEFT_OUTER).join_from(
             # OpenVPN
             cls, OpenVPN, join_type=JOIN.LEFT_OUTER).join_from(
