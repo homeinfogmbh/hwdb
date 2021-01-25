@@ -3,9 +3,7 @@
 from datetime import date as Date, datetime
 from typing import Callable
 
-from peewee import JOIN
-
-from mdb import Address, Company, Customer
+from mdb import Address, Customer
 
 from hwdb.enumerations import from_string
 from hwdb.enumerations import Connection
@@ -48,21 +46,20 @@ def date(string: str) -> Date:
     return datetime.strptime(string, '%Y-%m-%d').date()
 
 
-def deployment(ident: str) -> Deployment:
+def deployment(text: str) -> Deployment:
     """Returns the respective deployment."""
 
-    lpt_address = Address.alias()
-    select = Deployment.select(
-        Deployment, Customer, Company, Address, lpt_address
-    ).join(Deployment, Customer).join(Company).join_from(
-        Deployment, Address, on=Deployment.address == Address.id
-    ).join_from(
-        Deployment, lpt_address, on=Deployment.lpt_address == lpt_address,
-        join_type=JOIN.LEFT_OUTER
-    )
+    try:
+        ident = int(text)
+    except ValueError:
+        street, houseno = text.rsplit(maxsplit=1)
+        condition = Address.street ** f'%{street}%'
+        condition = Address.house_number ** f'%{houseno}%'
+    else:
+        condition = Deployment.id == ident
 
     try:
-        return select.where(Deployment.id == int(ident))
+        return Deployment.select(cascade=True).where(condition).get()
     except Deployment.DoesNotExist:
         raise ValueError('No such deployment.') from None
 
@@ -86,7 +83,7 @@ def system(ident: str) -> System:
     """Returns the respective system."""
 
     try:
-        return System[int(ident)]
+        return System.select(cascade=True).where(System.id == ident).get()
     except System.DoesNotExist:
         raise ValueError('No such system.') from None
 
