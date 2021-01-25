@@ -3,7 +3,7 @@
 from datetime import date as Date, datetime
 from typing import Callable
 
-from mdb import Address, Customer
+from mdb import Customer
 
 from hwdb.enumerations import from_string
 from hwdb.enumerations import Connection
@@ -46,20 +46,12 @@ def date(string: str) -> Date:
     return datetime.strptime(string, '%Y-%m-%d').date()
 
 
-def deployment(text: str) -> Deployment:
+def deployment(ident: str) -> Deployment:
     """Returns the respective deployment."""
 
     try:
-        ident = int(text)
-    except ValueError:
-        street, houseno = text.rsplit(maxsplit=1)
-        condition = Address.street ** f'%{street}%'
-        condition = Address.house_number ** f'%{houseno}%'
-    else:
-        condition = Deployment.id == ident
-
-    try:
-        return Deployment.select(cascade=True).where(condition).get()
+        return Deployment.select(cascade=True).where(
+            Deployment.id == ident).get()
     except Deployment.DoesNotExist:
         raise ValueError('No such deployment.') from None
 
