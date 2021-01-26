@@ -35,6 +35,7 @@ class DeploymentType(Enum):
     ETV = 'Exposé TV'
     ETV_TOUCH = 'Exposé TV touch'
     KIOSK = 'Kiosk browser'
+    SMART_TV = 'Smart TV'
 
 
 class HardwareType(Enum):
