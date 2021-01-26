@@ -14,6 +14,9 @@ __all__ = ['SmartTV']
 class SmartTV(BaseModel):
     """A smart TV."""
 
+    class Meta:
+        table_name = 'smart_tv'
+
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='smart_tvs',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
