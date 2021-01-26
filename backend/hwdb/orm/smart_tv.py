@@ -14,7 +14,7 @@ __all__ = ['SmartTV']
 class SmartTV(BaseModel):
     """A smart TV."""
 
-    class Meta:
+    class Meta:     # pylint: disable=C0115,R0903
         table_name = 'smart_tv'
 
     deployment = ForeignKeyField(
