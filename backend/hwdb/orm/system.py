@@ -73,14 +73,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     @classmethod
     def monitored(cls) -> ModelSelect:
         """Yields monitored systems."""
-        return cls.select(
-            cls, Deployment
-        ).join(
-            Deployment, on=cls.deployment == Deployment.id,
-            join_type=JOIN.LEFT_OUTER
-        ).where(
-            cls.monitoring_cond()
-        )
+        return cls.select(cascade=True).where(cls.monitoring_cond())
 
     @classmethod
     def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
