@@ -2,7 +2,7 @@
 
 from argparse import Namespace
 from logging import getLogger
-from typing import Generator
+from typing import Iterator
 
 from peewee import ModelSelect
 
@@ -48,7 +48,7 @@ def find(args: Namespace) -> bool:
     return True
 
 
-def list(args: Namespace) -> Generator[str, None, None]:
+def list(args: Namespace) -> Iterator[str]:
     """Lists deployments."""
 
     if args.list_fields:

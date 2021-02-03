@@ -2,7 +2,7 @@
 
 from argparse import Namespace
 from logging import getLogger
-from typing import Generator
+from typing import Iterator
 
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.filter import get_systems
@@ -17,7 +17,7 @@ __all__ = ['find', 'list']
 LOGGER = getLogger('hwutil')
 
 
-def _get_systems(args: Namespace) -> Generator[System, None, None]:
+def _get_systems(args: Namespace) -> Iterator[System]:
     """Yields systems selected by the CLI arguments."""
 
     return get_systems(
@@ -49,7 +49,7 @@ def find(args: Namespace) -> bool:
     return True
 
 
-def list(args: Namespace) -> Generator[str, None, None]:
+def list(args: Namespace) -> Iterator[str]:
     """Lists systems."""
 
     if args.list_fields:

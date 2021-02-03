@@ -1,14 +1,14 @@
 """Command line interface utilities."""
 
 from sys import stderr, stdout
-from typing import Callable, Dict, Generator, Iterable
+from typing import Callable, Dict, Iterable, Iterator
 
 
 __all__ = ['formatiter', 'iterprint', 'FieldFormatter']
 
 
 def formatiter(items: Iterable, mapping: Dict[object, Callable],
-               keys: Iterable) -> Generator[str, None, None]:
+               keys: Iterable) -> Iterator[str]:
     """Yields formatted items for console output."""
 
     formatters = [mapping[key] for key in keys]

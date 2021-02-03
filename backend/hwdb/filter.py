@@ -1,6 +1,6 @@
 """Terminal filters."""
 
-from typing import Generator, Iterable
+from typing import Iterable, Iterator
 
 from peewee import JOIN, Expression, ModelBase, ModelSelect
 
@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-def _parse_ids(idents: Iterable[str]) -> Generator[int, None, None]:
+def _parse_ids(idents: Iterable[str]) -> Iterator[int]:
     """Yields system IDs."""
 
     for ident in idents:
@@ -39,7 +39,7 @@ def _get_expression(ids: Iterable[str], model: ModelBase) -> Expression:
     return model.id << ids
 
 
-def filter_online(systems: Iterable[System]) -> Generator[System, None, None]:
+def filter_online(systems: Iterable[System]) -> Iterator[System]:
     """Yields online systems."""
 
     for system in systems:
@@ -47,7 +47,7 @@ def filter_online(systems: Iterable[System]) -> Generator[System, None, None]:
             yield system
 
 
-def filter_offline(systems: Iterable[System]) -> Generator[System, None, None]:
+def filter_offline(systems: Iterable[System]) -> Iterator[System]:
     """Yields offline systems."""
 
     for system in systems:
@@ -105,7 +105,7 @@ def get_systems(ids: Iterable[int],
                 operating_systems: Iterable[OperatingSystem] = None,
                 operators: Iterable[Customer] = None,
                 online: bool = None
-                ) -> Generator[System, None, None]:
+                ) -> Iterator[System]:
     """Yields systems for the respective expressions and filters."""
 
     condition = True
@@ -143,7 +143,7 @@ def get_systems(ids: Iterable[int],
     if operators:
         condition &= System.operator << operators
 
-    select = System.select(cascade=True).where(condition)
+    select = System.select(cascade=True).where(condition).iterator()
 
     if online is None:
         return select

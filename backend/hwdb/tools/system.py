@@ -2,7 +2,7 @@
 
 from enum import Enum
 from sys import stderr
-from typing import Generator, Iterable
+from typing import Iterable, Iterator
 
 from peewee import ModelSelect
 
@@ -101,8 +101,7 @@ def get(street: str, house_number: str = None,
 
 
 def listsys(systems: Iterable[System],
-            fields: Iterable[SystemField] = DEFAULT_FIELDS
-            ) -> Generator[str, None, None]:
+            fields: Iterable[SystemField] = DEFAULT_FIELDS) -> Iterator[str]:
     """Yields formatted systems for console output."""
 
     return formatiter(systems, FIELDS, fields)

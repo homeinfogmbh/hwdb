@@ -2,7 +2,7 @@
 
 from enum import Enum
 from sys import stderr
-from typing import Generator, Iterable
+from typing import Iterable, Iterator
 
 from peewee import ModelSelect
 
@@ -96,7 +96,7 @@ def get(street: str, house_number: str = None,
 
 def listdep(deployments: Iterable[Deployment],
             fields: Iterable[DeploymentField] = DEFAULT_FIELDS
-            ) -> Generator[str, None, None]:
+            ) -> Iterator[str]:
     """Yields formatted deployment for console output."""
 
     return formatiter(deployments, FIELDS, fields)
