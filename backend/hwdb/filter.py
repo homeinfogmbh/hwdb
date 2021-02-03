@@ -108,7 +108,6 @@ def get_systems(ids: Iterable[int],
                 ) -> Generator[System, None, None]:
     """Yields systems for the respective expressions and filters."""
 
-    select = System.depjoin() if customers else System.select()
     condition = True
 
     if ids:
@@ -144,7 +143,7 @@ def get_systems(ids: Iterable[int],
     if operators:
         condition &= System.operator << operators
 
-    select = select.where(condition)
+    select = System.select(cascade=True).where(condition)
 
     if online is None:
         return select

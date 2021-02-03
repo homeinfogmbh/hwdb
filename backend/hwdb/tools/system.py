@@ -81,8 +81,7 @@ def find(street: str, house_number: str = None,
     if annotation is not None:
         condition |= Deployment.annotation ** f'%{annotation}%'
 
-    predicate = Address.id == Deployment.address
-    return System.depjoin().join(Address, on=predicate).where(condition)
+    return System.select(cascade=True).where(condition)
 
 
 def get(street: str, house_number: str = None,
