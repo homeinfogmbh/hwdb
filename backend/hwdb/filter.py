@@ -64,7 +64,7 @@ def get_deployments(ids: Iterable[int] = None,
                     ) -> ModelSelect:
     """Yields deployments."""
 
-    select = Deployment.select()
+    select = Deployment.select(cascade=True)
     condition = True
 
     if ids:
