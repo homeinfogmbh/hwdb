@@ -1,9 +1,8 @@
 """Terminal database query utility."""
 
 from logging import DEBUG, INFO, basicConfig, getLogger
-from sys import exit    # pylint: disable=W0622
 
-from syslib import script, B64LZMA
+from syslib import B64LZMA
 
 from hwdb.config import LOG_FORMAT
 from hwdb.hwutil.argparse import get_args
@@ -25,8 +24,7 @@ ARNIE = B64LZMA(
 LOGGER = getLogger('hwutil')
 
 
-@script
-def main():
+def main() -> int:
     """Runs the system utility."""
 
     args = get_args()
@@ -47,4 +45,4 @@ def main():
         print(ARNIE)
         success = True
 
-    exit(0 if success else 1)
+    return 0 if success else 1

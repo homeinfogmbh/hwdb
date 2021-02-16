@@ -1,9 +1,6 @@
 """Terminals adminstration."""
 
 from logging import DEBUG, INFO, basicConfig, getLogger
-from sys import exit    # pylint: disable=W0622
-
-from syslib import script
 
 from hwdb.config import LOG_FORMAT
 from hwdb.hooks import bind9cfgen, openvpncfgen
@@ -21,8 +18,7 @@ LOGGER = getLogger('hwadm')
 TERMGR_USER = 'termgr'
 
 
-@script
-def main():
+def main() -> int:
     """Runs the terminal administration CLI."""
 
     args = get_args()
@@ -57,4 +53,4 @@ def main():
         for hook in hooks:
             hook()
 
-    exit(0 if success else 1)
+    return 0 if success else 1
