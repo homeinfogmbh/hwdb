@@ -42,7 +42,7 @@ def terminal_hosts() -> Iterator[str]:
 
     yield ';# Terminal network hosts\n'
 
-    for system in System:
+    for system in System.select(cascade=True).where(True):
         try:
             ipv4address = system.ipv4address
         except AttributeError:

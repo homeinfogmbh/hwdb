@@ -83,7 +83,7 @@ def openvpncfgen() -> bool:
 
     LOGGER.info('Generating configuration.')
     remove_config_files()
-    write_config_files(System)
+    write_config_files(System.select(cascade=True).where(True))
 
     try:
         systemctl('restart', OPENVPN_SERVICE)
