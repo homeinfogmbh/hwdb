@@ -48,6 +48,7 @@ class OperatingSystem(Enum):
     """Operating systems."""
 
     ARCH_LINUX = 'Arch Linux'
+    ARCH_LINUX_ARM = 'Arch Linux ARM'
     WINDOWS_XP = 'Windows XP'
     WINDOWS_XP_EMBEDDED = 'Windows XP Embedded'
     WINDOWS_EMBEDDED_STANDARD = 'Windows Embedded Standard'
