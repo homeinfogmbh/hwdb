@@ -17,6 +17,7 @@ from hwdb.filter import get_deployments, get_systems
 from hwdb.orm import Deployment
 from hwdb.orm import Display
 from hwdb.orm import GenericHardware
+from hwdb.orm import Group
 from hwdb.orm import OpenVPN
 from hwdb.orm import SmartTV
 from hwdb.orm import System
@@ -46,6 +47,7 @@ __all__ = [
     'DeploymentType',
     'Display',
     'GenericHardware',
+    'Group',
     'HardwareType',
     'OperatingSystem',
     'OpenVPN',

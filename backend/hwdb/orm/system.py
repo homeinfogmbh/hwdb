@@ -20,6 +20,7 @@ from hwdb.ctrl import RemoteControllerMixin
 from hwdb.enumerations import OperatingSystem
 from hwdb.orm.common import BaseModel
 from hwdb.orm.deployment import Deployment
+from hwdb.orm.group import Group
 from hwdb.orm.mixins import DNSMixin
 from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.wireguard import WireGuard
@@ -35,6 +36,9 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     operator = ForeignKeyField(
         Customer, column_name='operator', backref='systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
+    group = ForeignKeyField(
+        Group, column_name='Group', backref='systems', on_delete='SET NULL',
+        on_update='CASCADE', lazy_load=False)
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
@@ -90,13 +94,15 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         ds_address = Address.alias()
         ds_lpt_address = Address.alias()
         args = {
-            cls, Customer, Company, Deployment, dep_customer, dep_company,
-            Address, lpt_address, dataset, ds_customer, ds_company, ds_address,
-            ds_lpt_address, OpenVPN, WireGuard, *args
+            cls, Group, Customer, Company, Deployment, dep_customer,
+            dep_company, Address, lpt_address, dataset, ds_customer,
+            ds_company, ds_address, ds_lpt_address, OpenVPN, WireGuard, *args
         }
         return super().select(*args, **kwargs).join(
+            # Group
+            Group).join_from(
             # Operator
-            Customer).join(Company).join_from(
+            cls, Customer).join(Company).join_from(
             # Deployment
             cls, Deployment, on=cls.deployment == Deployment.id,
             join_type=JOIN.LEFT_OUTER).join(
