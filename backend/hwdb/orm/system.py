@@ -33,9 +33,6 @@ __all__ = ['System']
 class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     """A physical computer system out in the field."""
 
-    operator = ForeignKeyField(
-        Customer, column_name='operator', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     group = ForeignKeyField(
         Group, column_name='Group', backref='systems', on_delete='SET NULL',
         on_update='CASCADE', lazy_load=False)
@@ -85,8 +82,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         if not cascade:
             return super().select(*args, **kwargs)
 
-        dep_customer = Customer.alias()
-        dep_company = Company.alias()
         lpt_address = Address.alias()
         dataset = Deployment.alias()
         ds_customer = Customer.alias()
@@ -94,20 +89,18 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         ds_address = Address.alias()
         ds_lpt_address = Address.alias()
         args = {
-            cls, Group, Customer, Company, Deployment, dep_customer,
-            dep_company, Address, lpt_address, dataset, ds_customer,
-            ds_company, ds_address, ds_lpt_address, OpenVPN, WireGuard, *args
+            cls, Group, Customer, Company, Deployment, Address, lpt_address,
+            dataset, ds_customer, ds_company, ds_address, ds_lpt_address,
+            OpenVPN, WireGuard, *args
         }
         return super().select(*args, **kwargs).join(
             # Group
             Group).join_from(
-            # Operator
-            cls, Customer).join(Company).join_from(
             # Deployment
             cls, Deployment, on=cls.deployment == Deployment.id,
             join_type=JOIN.LEFT_OUTER).join(
-            dep_customer, join_type=JOIN.LEFT_OUTER).join(
-            dep_company, join_type=JOIN.LEFT_OUTER).join_from(
+            Customer, join_type=JOIN.LEFT_OUTER).join(
+            Company, join_type=JOIN.LEFT_OUTER).join_from(
             Deployment, Address, on=Deployment.address == Address.id,
             join_type=JOIN.LEFT_OUTER).join_from(
             Deployment, lpt_address,

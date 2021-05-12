@@ -35,8 +35,8 @@ def _add_parser_list_systems(subparsers: _SubParsersAction):
         '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for systems with the respective deployments')
     parser.add_argument(
-        '-O', '--operator', nargs='+', type=customer, metavar='customer',
-        help='filter for systems of the respective operators')
+        '-G', '--group', nargs='+', type=customer, metavar='group',
+        help='filter for systems of the respective groups')
     parser.add_argument(
         '-s', '--dataset', nargs='+', type=deployment, metavar='deployment',
         help='filter for systems with the respective datasets')

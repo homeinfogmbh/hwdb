@@ -8,7 +8,7 @@ from mdb import Customer
 
 from hwdb.config import LOGGER
 from hwdb.enumerations import Connection, DeploymentType, OperatingSystem
-from hwdb.orm import Deployment, System
+from hwdb.orm import Deployment, Group, System
 
 
 __all__ = [
@@ -103,7 +103,7 @@ def get_systems(ids: Iterable[int],
                 deployed: bool = None,
                 fitted: bool = None,
                 operating_systems: Iterable[OperatingSystem] = None,
-                operators: Iterable[Customer] = None,
+                groups: Iterable[Group] = None,
                 online: bool = None
                 ) -> Iterator[System]:
     """Yields systems for the respective expressions and filters."""
@@ -140,8 +140,8 @@ def get_systems(ids: Iterable[int],
     if operating_systems:
         condition &= System.operating_system << operating_systems
 
-    if operators:
-        condition &= System.operator << operators
+    if groups:
+        condition &= System.group << groups
 
     select = System.select(cascade=True).where(condition).iterator()
 

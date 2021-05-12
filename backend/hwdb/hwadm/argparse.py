@@ -30,7 +30,8 @@ def _add_new_system_parser(subparsers: _SubParsersAction):
     """Adds a parser to add new systems."""
 
     parser = subparsers.add_parser('sys', help='add new systems')
-    parser.add_argument('operator', type=customer, help='the system operator')
+    parser.add_argument(
+        'group', type=customer, nargs='?', help='the system group')
     parser.add_argument(
         '-n', '--amount', type=int, default=1, help='amount of systems to add')
     parser.add_argument(

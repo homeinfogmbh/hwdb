@@ -36,7 +36,7 @@ def add(args: Namespace) -> bool:
         return False
 
     system = System(
-        openvpn=openvpn, wireguard=wireguard, operator=args.operator,
+        openvpn=openvpn, wireguard=wireguard, group=args.group,
         operating_system=args.operating_system,
         serial_number=args.serial_number, model=args.model)
     system.save()

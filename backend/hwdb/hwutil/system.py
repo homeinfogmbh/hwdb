@@ -24,7 +24,7 @@ def _get_systems(args: Namespace) -> Iterator[System]:
         ids=args.id, customers=args.customer, deployments=args.deployment,
         datasets=args.dataset, configured=args.configured,
         deployed=args.deployed, fitted=args.fitted,
-        operating_systems=args.operating_system, operators=args.operator)
+        operating_systems=args.operating_system, groups=args.group)
 
 
 def find(args: Namespace) -> bool:
