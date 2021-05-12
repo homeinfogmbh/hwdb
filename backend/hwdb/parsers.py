@@ -10,7 +10,7 @@ from hwdb.enumerations import Connection
 from hwdb.enumerations import DeploymentType
 from hwdb.enumerations import OperatingSystem
 from hwdb.hooks import HOOKS
-from hwdb.orm import Deployment, System
+from hwdb.orm import Deployment, Group, System
 
 
 __all__ = [
@@ -18,6 +18,7 @@ __all__ = [
     'customer',
     'date',
     'deployment',
+    'group',
     'hook',
     'operating_system',
     'system',
@@ -54,6 +55,16 @@ def deployment(ident: str) -> Deployment:
             Deployment.id == ident).get()
     except Deployment.DoesNotExist:
         raise ValueError('No such deployment.') from None
+
+
+def group(ident: str) -> Group:
+    """Returns the respective group."""
+
+    try:
+        return Group.select().where(
+            (Group.id == ident) | (Group.name ** ident))
+    except Group.DoesNotExist:
+        raise ValueError('No such group.') from None
 
 
 def hook(name: str) -> Callable:

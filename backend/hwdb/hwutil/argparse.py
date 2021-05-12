@@ -6,6 +6,7 @@ from hwdb.parsers import connection
 from hwdb.parsers import customer
 from hwdb.parsers import deployment
 from hwdb.parsers import deployment_type
+from hwdb.parsers import group
 from hwdb.parsers import operating_system
 from hwdb.parsers import system
 from hwdb.tools.deployment import DEFAULT_FIELDS as DEPLOYMENT_FIELDS
@@ -35,7 +36,7 @@ def _add_parser_list_systems(subparsers: _SubParsersAction):
         '-D', '--deployment', nargs='+', type=deployment, metavar='deployment',
         help='filter for systems with the respective deployments')
     parser.add_argument(
-        '-G', '--group', nargs='+', type=customer, metavar='group',
+        '-G', '--group', nargs='+', type=group, metavar='group',
         help='filter for systems of the respective groups')
     parser.add_argument(
         '-s', '--dataset', nargs='+', type=deployment, metavar='deployment',

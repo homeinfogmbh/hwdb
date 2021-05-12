@@ -10,6 +10,7 @@ from hwdb.parsers import connection
 from hwdb.parsers import customer
 from hwdb.parsers import date
 from hwdb.parsers import deployment
+from hwdb.parsers import group
 from hwdb.parsers import hook
 from hwdb.parsers import operating_system
 from hwdb.parsers import deployment_type
@@ -31,7 +32,7 @@ def _add_new_system_parser(subparsers: _SubParsersAction):
 
     parser = subparsers.add_parser('sys', help='add new systems')
     parser.add_argument(
-        'group', type=customer, nargs='?', help='the system group')
+        'group', type=group, nargs='?', help='the system group')
     parser.add_argument(
         '-n', '--amount', type=int, default=1, help='amount of systems to add')
     parser.add_argument(
