@@ -40,7 +40,7 @@ class Deployment(BaseModel):
 
     def __str__(self):
         """Returns a human readable string."""
-        string = f'{self.type.value} of {self.customer.id} at {self.address}'
+        string = f'{self.type.value} of {self.customer_id} at {self.address}'
 
         if self.annotation is None:
             return string
