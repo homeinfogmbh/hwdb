@@ -118,7 +118,6 @@ class Deployment(BaseModel):
             json['customer'] = self.customer.to_json()
 
         if systems:
-            print('Deployment: ', dir(self))
-            json['systems'] = [system.id for system in self.system_set]
+            json['systems'] = [system.id for system in self.systems]
 
         return json
