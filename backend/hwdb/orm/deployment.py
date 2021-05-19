@@ -54,11 +54,14 @@ class Deployment(BaseModel):
             return super().select(*args, **kwargs)
 
         lpt_address = Address.alias()
-        args = {cls, Customer, Company, Address, lpt_address, *args}
+        system = cls.systems.rel_model
+        args = {cls, Customer, Company, Address, lpt_address, system, *args}
         return super().select(*args, **kwargs).join(
             Customer).join(Company).join_from(
             cls, Address, on=cls.address == Address.id).join_from(
             cls, lpt_address, on=cls.lpt_address == lpt_address.id,
+            join_type=JOIN.LEFT_OUTER).join_from(
+            cls, system, on=system.deployment == cls.id,
             join_type=JOIN.LEFT_OUTER)
 
     def checkdupes(self) -> ModelSelect:
@@ -115,6 +118,11 @@ class Deployment(BaseModel):
             json['customer'] = self.customer.to_json()
 
         if systems:
-            json['systems'] = [system.id for system in self.systems]
+            try:
+                systems = self.system_set   # From possible JOIN
+            except AttributeError:
+                systems = self.systems
+
+            json['systems'] = [system.id for system in systems]
 
         return json
