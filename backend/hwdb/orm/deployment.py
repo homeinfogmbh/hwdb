@@ -118,11 +118,6 @@ class Deployment(BaseModel):
             json['customer'] = self.customer.to_json()
 
         if systems:
-            try:
-                systems = self.system_set   # From possible JOIN
-            except AttributeError:
-                systems = self.systems
-
-            json['systems'] = [system.id for system in systems]
+            json['systems'] = [system.id for system in self.system_set]
 
         return json
