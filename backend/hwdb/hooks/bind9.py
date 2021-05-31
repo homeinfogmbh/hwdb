@@ -49,10 +49,10 @@ def terminal_hosts() -> Iterator[str]:
         except AttributeError:
             LOGGER.warning('No OpenVPN config for #%i.', system.id)
         else:
-            yield IN_A_RECORD.format(system.vpn_hostname, ipv4address)
+            yield IN_A_RECORD.format(system.hostname, ipv4address)
 
         if system.ipv6address is not None and system.pubkey is not None:
-            yield IN_AAAA_RECORD.format(system.wg_hostname, system.ipv6address)
+            yield IN_AAAA_RECORD.format(system.hostname, system.ipv6address)
         else:
             LOGGER.warning('No WireGuard config for #%i.', system.id)
 
