@@ -17,6 +17,7 @@ BIND9_SERVICE = 'bind9.service'
 DNS_CONFIG = Path('/etc/bind/homeinfo.intranet.zone')
 DNS_TEMPLATE = Path('/usr/share/terminals/homeinfo.intranet.zone.temp')
 IN_A_RECORD = '{}\tIN\tA\t{}'
+IN_AAAA_RECORD = '{}\tIN\tAAAA\t{}'
 LOCAL_HOSTS_LIST = Path('/usr/local/etc/local_hosts')
 LOGGER = getLogger('bind9')
 
@@ -44,25 +45,16 @@ def terminal_hosts() -> Iterator[str]:
 
     for system in System.select(cascade=True).where(True):
         try:
-            ipv4address = system.ipv4address
-        except AttributeError:
-            LOGGER.warning('No IPv4 address for #%i.', system.id)
-        else:
-            yield IN_A_RECORD.format(system.hostname, ipv4address)
-
-        try:
             ipv4address = system.openvpn.ipv4address
         except AttributeError:
             LOGGER.warning('No OpenVPN config for #%i.', system.id)
         else:
             yield IN_A_RECORD.format(system.vpn_hostname, ipv4address)
 
-        try:
-            ipv4address = system.wireguard.ipv4address
-        except AttributeError:
-            LOGGER.warning('No WireGuard config for #%i.', system.id)
+        if system.ipv6address is not None and system.pubkey is not None:
+            yield IN_AAAA_RECORD.format(system.wg_hostname, system.ipv6address)
         else:
-            yield IN_A_RECORD.format(system.wg_hostname, ipv4address)
+            LOGGER.warning('No WireGuard config for #%i.', system.id)
 
 
 @root(LOGGER)

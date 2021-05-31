@@ -12,7 +12,6 @@ from hwdb.orm.common import BaseModel
 from hwdb.orm.deployment import Deployment
 from hwdb.orm.system import System
 from hwdb.orm.openvpn import OpenVPN
-from hwdb.orm.wireguard import WireGuard
 
 
 __all__ = ['Display']
@@ -51,7 +50,7 @@ class Display(BaseModel):   # pylint: disable=R0903
         args = {
             cls, Address, System, Customer, Company, Deployment, dep_customer,
             dep_company, dep_address, lpt_address, dataset, ds_customer,
-            ds_company, ds_address, ds_lpt_address, OpenVPN, WireGuard, *args
+            ds_company, ds_address, ds_lpt_address, OpenVPN, *args
         }
         return super().select(*args, **kwargs).join(
             # Address
@@ -81,6 +80,4 @@ class Display(BaseModel):   # pylint: disable=R0903
             dataset, ds_lpt_address, on=dataset.lpt_address == ds_lpt_address,
             join_type=JOIN.LEFT_OUTER).join_from(
             # OpenVPN
-            System, OpenVPN, join_type=JOIN.LEFT_OUTER).join_from(
-            # WireGuard
-            System, WireGuard, join_type=JOIN.LEFT_OUTER)
+            System, OpenVPN, join_type=JOIN.LEFT_OUTER)

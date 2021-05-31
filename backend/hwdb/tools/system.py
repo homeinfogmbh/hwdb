@@ -32,7 +32,6 @@ class SystemField(Enum):
     OPENVPN = 'openvpn'
     OS = 'os'
     SN = 'sn'
-    WIREGUARD = 'wireguard'
 
 
 FIELDS = {
@@ -58,9 +57,7 @@ FIELDS = {
     SystemField.OS: FieldFormatter(
         lambda sys: sys.operating_system.value, 'OS', size=25),
     SystemField.SN: FieldFormatter(
-        lambda sys: sys.serial_number, 'Serial Number', size=32),
-    SystemField.WIREGUARD: FieldFormatter(
-        lambda sys: sys.wireguard, 'WireGuard Address', size=14)
+        lambda sys: sys.serial_number, 'Serial Number', size=32)
 }
 DEFAULT_FIELDS = (
     SystemField.ID, SystemField.DEPLOYMENT, SystemField.DATASET,

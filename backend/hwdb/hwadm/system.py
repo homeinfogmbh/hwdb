@@ -6,8 +6,6 @@ from logging import getLogger
 from hwdb.exceptions import TerminalConfigError
 from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.system import System
-from hwdb.orm.wireguard import WireGuard
-from hwdb.system import root
 
 
 __all__ = ['add', 'dataset', 'deploy']
@@ -16,7 +14,6 @@ __all__ = ['add', 'dataset', 'deploy']
 LOGGER = getLogger('hwadm')
 
 
-@root(LOGGER)   # Needed to write WireGuard private keys.
 def add(args: Namespace) -> bool:
     """Adds a new system."""
 
@@ -29,14 +26,8 @@ def add(args: Namespace) -> bool:
         LOGGER.error(tce)
         return False
 
-    try:
-        wireguard = WireGuard.generate()
-    except TerminalConfigError as tce:
-        LOGGER.error(tce)
-        return False
-
     system = System(
-        openvpn=openvpn, wireguard=wireguard, group=args.group,
+        openvpn=openvpn, group=args.group,
         operating_system=args.operating_system,
         serial_number=args.serial_number, model=args.model)
     system.save()

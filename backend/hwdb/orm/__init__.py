@@ -7,7 +7,6 @@ from hwdb.orm.group import Group
 from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.smart_tv import SmartTV
 from hwdb.orm.system import System
-from hwdb.orm.wireguard import WireGuard
 
 
 __all__ = [
@@ -19,14 +18,12 @@ __all__ = [
     'Group',
     'OpenVPN',
     'SmartTV',
-    'System',
-    'WireGuard'
+    'System'
 ]
 
 
 MODELS = (
-    Group, Deployment, SmartTV, OpenVPN, WireGuard, System, Display,
-    GenericHardware
+    Group, Deployment, SmartTV, OpenVPN, System, Display, GenericHardware
 )
 
 

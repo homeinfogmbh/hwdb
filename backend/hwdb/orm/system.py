@@ -24,7 +24,6 @@ from hwdb.orm.deployment import Deployment
 from hwdb.orm.group import Group
 from hwdb.orm.mixins import DNSMixin
 from hwdb.orm.openvpn import OpenVPN
-from hwdb.orm.wireguard import WireGuard
 
 
 __all__ = ['System']
@@ -45,9 +44,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     openvpn = ForeignKeyField(
         OpenVPN, null=True, column_name='openvpn', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
-    wireguard = ForeignKeyField(
-        WireGuard, null=True, column_name='wireguard', backref='systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
     ipv6address = IPv6AddressField(null=True, unique=True)
     pubkey = FixedCharField(44, null=True, unique=True)
@@ -94,7 +90,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         args = {
             cls, Group, Customer, Company, Deployment, Address, lpt_address,
             dataset, ds_customer, ds_company, ds_address, ds_lpt_address,
-            OpenVPN, WireGuard, *args
+            OpenVPN, *args
         }
         return super().select(*args, **kwargs).join(
             # Group
@@ -120,9 +116,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             on=dataset.lpt_address == ds_lpt_address.id,
             join_type=JOIN.LEFT_OUTER).join_from(
             # OpenVPN
-            cls, OpenVPN, join_type=JOIN.LEFT_OUTER).join_from(
-            # WireGuard
-            cls, WireGuard, join_type=JOIN.LEFT_OUTER)
+            cls, OpenVPN, join_type=JOIN.LEFT_OUTER)
 
     @classmethod
     def undeploy_all(cls, deployment: Deployment) -> list:
@@ -140,10 +134,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
 
     @property
     def ipv4address(self) -> IPv4Address:
-        """Returns the WireGuard (preferred) or OpenVPN IPv4 address."""
-        if self.wireguard and self.wireguard.pubkey:
-            return self.wireguard.ipv4address
-
+        """Returns the OpenVPN IPv4 address."""
         return self.openvpn.ipv4address
 
     @property
@@ -178,6 +169,6 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         skip = set(skip) if skip else set()
 
         if brief:
-            skip |= {'openvpn', 'wireguard', 'operator'}
+            skip |= {'openvpn', 'ipv6address', 'pubkey', 'operator'}
 
         return super().to_json(skip=skip, **kwargs)

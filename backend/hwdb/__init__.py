@@ -21,7 +21,6 @@ from hwdb.orm import Group
 from hwdb.orm import OpenVPN
 from hwdb.orm import SmartTV
 from hwdb.orm import System
-from hwdb.orm import WireGuard
 from hwdb.parsers import connection
 from hwdb.parsers import customer
 from hwdb.parsers import date
@@ -53,7 +52,6 @@ __all__ = [
     'OpenVPN',
     'SmartTV',
     'System',
-    'WireGuard',
     'connection',
     'customer',
     'date',
