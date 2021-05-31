@@ -49,8 +49,8 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     wireguard = ForeignKeyField(
         WireGuard, null=True, column_name='wireguard', backref='systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
-    ipv6address = IPv6AddressField(null=True)
-    pubkey = FixedCharField(44, null=True)
+    ipv6address = IPv6AddressField(null=True, unique=True)
+    pubkey = FixedCharField(44, null=True, unique=True)
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
     fitted = BooleanField(default=False)
