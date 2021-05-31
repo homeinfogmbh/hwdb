@@ -8,11 +8,12 @@ from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
 from peewee import Expression
+from peewee import FixedCharField
 from peewee import ForeignKeyField
 from peewee import ModelSelect
 
 from mdb import Address, Company, Customer
-from peeweeplus import EnumField
+from peeweeplus import EnumField, IPv6AddressField
 
 from hwdb.ansible import AnsibleMixin
 from hwdb.config import LOGGER
@@ -48,6 +49,8 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     wireguard = ForeignKeyField(
         WireGuard, null=True, column_name='wireguard', backref='systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
+    ipv6address = IPv6AddressField(null=True)
+    pubkey = FixedCharField(44, null=True)
     created = DateTimeField(default=datetime.now)
     configured = DateTimeField(null=True)
     fitted = BooleanField(default=False)
