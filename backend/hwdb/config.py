@@ -1,4 +1,4 @@
-"""Terminal setup configuration."""
+"""Hardware database configuration."""
 
 from ipaddress import ip_address, ip_network
 from logging import getLogger
