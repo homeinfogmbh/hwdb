@@ -19,6 +19,9 @@ __all__ = ['GenericHardware']
 class GenericHardware(BaseModel):   # pylint: disable=R0903
     """Generic hardware table."""
 
+    class Meta:     # pylint: disable=R0903,C0115
+        table_name = 'generic_hardware'
+
     customer = ForeignKeyField(
         Customer, column_name='customer', lazy_load=False)
     type = EnumField(HardwareType)
