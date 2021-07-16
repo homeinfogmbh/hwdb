@@ -164,10 +164,9 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         self.save()
         return changes
 
-    def to_json(self, brief: bool = False, skip: set = None, **kwargs) -> dict:
+    def to_json(self, brief: bool = False, skip: set = frozenset(),
+                **kwargs) -> dict:
         """Returns a JSON-like dictionary."""
-        skip = set(skip) if skip else set()
-
         if brief:
             skip |= {'openvpn', 'ipv6address', 'pubkey', 'operator'}
 
