@@ -164,7 +164,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         self.save()
         return changes
 
-    def to_json(self, brief: bool = False, skip: set = frozenset(),
+    def to_json(self, *, brief: bool = False, skip: set = frozenset(),
                 **kwargs) -> dict:
         """Returns a JSON-like dictionary."""
         if brief:
