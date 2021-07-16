@@ -103,7 +103,7 @@ class Deployment(BaseModel):
         address_col.text = str(self.address)
         return table
 
-    def to_json(self, address: bool = False, customer: bool = False,
+    def to_json(self, *, address: bool = False, customer: bool = False,
                 systems: bool = False, **kwargs) -> dict:
         """Returns a JSON-ish dict."""
         json = super().to_json(**kwargs)
