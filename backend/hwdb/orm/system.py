@@ -116,7 +116,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             on=dataset.lpt_address == ds_lpt_address.id,
             join_type=JOIN.LEFT_OUTER).join_from(
             # OpenVPN
-            cls, OpenVPN, join_type=JOIN.LEFT_OUTER)
+            cls, OpenVPN, join_type=JOIN.LEFT_OUTER).distinct()
 
     @classmethod
     def undeploy_all(cls, deployment: Deployment) -> list:
