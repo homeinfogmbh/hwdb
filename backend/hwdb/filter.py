@@ -90,7 +90,7 @@ def get_deployments(ids: Iterable[int] = None,
         )
         condition &= (System.id << systems) | (dataset.id << systems)
 
-    return select.where(condition).distinct()
+    return select.where(condition)
 
 
 def get_systems(ids: Iterable[int],

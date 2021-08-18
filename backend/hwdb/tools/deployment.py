@@ -74,7 +74,7 @@ def find(street: str, house_number: str = None,
     if annotation is not None:
         condition |= Deployment.annotation ** f'%{annotation}%'
 
-    return Deployment.select(cascade=True).where(condition).distinct()
+    return Deployment.select(cascade=True).where(condition)
 
 
 def get(street: str, house_number: str = None,

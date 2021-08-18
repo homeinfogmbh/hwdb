@@ -62,7 +62,7 @@ class Deployment(BaseModel):
             cls, lpt_address, on=cls.lpt_address == lpt_address.id,
             join_type=JOIN.LEFT_OUTER).join_from(
             cls, system, on=system.deployment == cls.id,
-            join_type=JOIN.LEFT_OUTER)
+            join_type=JOIN.LEFT_OUTER).distinct()
 
     def checkdupes(self) -> ModelSelect:
         """Returns duplicates of this deployment in the database."""
