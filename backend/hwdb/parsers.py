@@ -52,7 +52,7 @@ def deployment(ident: str) -> Deployment:
 
     try:
         return Deployment.select(cascade=True).where(
-            Deployment.id == ident).get()
+            Deployment.id == ident).distinct().get()
     except Deployment.DoesNotExist:
         raise ValueError('No such deployment.') from None
 
