@@ -55,7 +55,7 @@ class Deployment(BaseModel):
 
         lpt_address = Address.alias()
         system = cls.systems.rel_model
-        args = {cls, Customer, Company, Address, lpt_address, system, *args}
+        args = {cls, Customer, Company, Address, lpt_address, *args}
         return super().select(*args, **kwargs).join(
             Customer).join(Company).join_from(
             cls, Address, on=cls.address == Address.id).join_from(
