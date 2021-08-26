@@ -141,7 +141,7 @@ def _add_parser_find(subparsers: _SubParsersAction):
 def get_args() -> Namespace:
     """Returns the CLI options."""
 
-    parser = ArgumentParser(description='Terminal database query utility.')
+    parser = ArgumentParser(description='Hardware database query utility.')
     parser.add_argument(
         '-v', '--verbose', action='store_true', help='turn on verbose logging')
     subparsers = parser.add_subparsers(dest='action')

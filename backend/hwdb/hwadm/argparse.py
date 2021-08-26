@@ -142,7 +142,7 @@ def _add_hooks_parser(subparsers: _SubParsersAction):
 def get_args() -> Namespace:
     """Parses the CLI arguments."""
 
-    parser = ArgumentParser(description='Terminal database administration.')
+    parser = ArgumentParser(description='Hardware database administration.')
     parser.add_argument(
         '-n', '--no-hooks', action='store_true',
         help='do not run post-transaction hooks')
