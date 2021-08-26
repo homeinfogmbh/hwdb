@@ -72,7 +72,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
 
     @classmethod
     def monitored(cls) -> ModelSelect:
-        """Yields monitored systems."""
+        """Selects monitored systems."""
         return cls.select(cascade=True).where(cls.monitoring_cond())
 
     @classmethod
