@@ -21,6 +21,7 @@ from hwdb.orm import Group
 from hwdb.orm import OpenVPN
 from hwdb.orm import SmartTV
 from hwdb.orm import System
+from hwdb.orm import get_free_ipv6_address
 from hwdb.parsers import connection
 from hwdb.parsers import customer
 from hwdb.parsers import date
@@ -58,6 +59,7 @@ __all__ = [
     'deployment',
     'deployment_type',
     'get_deployments',
+    'get_free_ipv6_address',
     'get_systems',
     'hook',
     'operating_system',

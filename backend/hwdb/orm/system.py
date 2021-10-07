@@ -1,7 +1,8 @@
 """Digital signage systems."""
 
 from datetime import datetime
-from ipaddress import IPv4Address
+from ipaddress import IPv4Address, IPv6Address
+from typing import Iterator
 
 from peewee import JOIN
 from peewee import BooleanField
@@ -16,9 +17,10 @@ from mdb import Address, Company, Customer
 from peeweeplus import EnumField, IPv6AddressField
 
 from hwdb.ansible import AnsibleMixin
-from hwdb.config import LOGGER
+from hwdb.config import LOGGER, WIREGUARD_NETWORK
 from hwdb.ctrl import RemoteControllerMixin
 from hwdb.enumerations import OperatingSystem
+from hwdb.iptools import get_address
 from hwdb.orm.common import BaseModel
 from hwdb.orm.deployment import Deployment
 from hwdb.orm.group import Group
@@ -26,7 +28,13 @@ from hwdb.orm.mixins import DNSMixin
 from hwdb.orm.openvpn import OpenVPN
 
 
-__all__ = ['System']
+__all__ = ['System', 'get_free_ipv6_address']
+
+
+def get_free_ipv6_address() -> IPv6Address:
+    """Returns a free IPv6 address."""
+
+    return get_address(WIREGUARD_NETWORK, used=System.used_ipv6_addresses())
 
 
 # pylint: disable=R0901
