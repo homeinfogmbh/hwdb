@@ -34,7 +34,8 @@ __all__ = ['System', 'get_free_ipv6_address']
 def get_free_ipv6_address() -> IPv6Address:
     """Returns a free IPv6 address."""
 
-    return get_address(WIREGUARD_NETWORK, used=System.used_ipv6_addresses())
+    return get_address(WIREGUARD_NETWORK, used=System.used_ipv6_addresses(),
+                       reserved=[WIREGUARD_NETWORK[0]])
 
 
 # pylint: disable=R0901
