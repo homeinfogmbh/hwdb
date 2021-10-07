@@ -26,13 +26,11 @@ def management_hosts() -> Iterator[str]:
     """Renders management network hosts."""
 
     try:
-        with LOCAL_HOSTS_LIST.open('r') as file:
+        with LOCAL_HOSTS_LIST.open('r', encoding='utf-8') as file:
             yield ';# Management network hosts\n'
 
             for line in file:
-                line = line.strip()
-
-                if line and not line.startswith('#'):
+                if (line := line.strip()) and not line.startswith('#'):
                     yield IN_A_RECORD.format(*line.split())
     except FileNotFoundError:
         return
@@ -61,7 +59,7 @@ def terminal_hosts() -> Iterator[str]:
 def bind9cfgen() -> bool:
     """Runs generates the confi files."""
 
-    with DNS_TEMPLATE.open('r') as temp:
+    with DNS_TEMPLATE.open('r', encoding='utf-8') as temp:
         template = temp.read()
 
     management = linesep.join(management_hosts())
@@ -69,7 +67,7 @@ def bind9cfgen() -> bool:
     config = template.format(
         file=__file__, management=management, terminals=terminals)
 
-    with DNS_CONFIG.open('w') as dns_cfg:
+    with DNS_CONFIG.open('w', encoding='utf-8') as dns_cfg:
         dns_cfg.write(config)
 
     LOGGER.info('Restarting bind9 service.')
