@@ -57,6 +57,12 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     last_sync = DateTimeField(null=True)
 
     @classmethod
+    def used_ipv6_addresses(cls) -> Iterator[IPv6Address]:
+        """Yields used IPv6 addresses."""
+        for system in cls.select().where(~(cls.ipv6address >> None)):
+            yield system.ipv6address
+
+    @classmethod
     def monitoring_cond(cls) -> Expression:
         """Returns the condition for monitored systems."""
         return (
