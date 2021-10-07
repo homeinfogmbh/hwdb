@@ -1,6 +1,10 @@
 """Tools for IPv4 address pools handling."""
 
-from peewee import Model, ModelBase
+from contextlib import suppress
+from ipaddress import IPv4Address
+from typing import Iterator
+
+from peewee import ModelBase
 
 from hwdb.exceptions import TerminalConfigError
 from hwdb.types import IPAddress, IPAddresses, IPNetwork
@@ -24,8 +28,9 @@ def get_address(network: IPNetwork, used: IPAddresses = (),
     raise TerminalConfigError('Network exhausted!')
 
 
-def used_ipv4addresses(model: ModelBase) -> Model:
+def used_ipv4addresses(model: ModelBase) -> Iterator[IPv4Address]:
     """Yields all used IPv4 addresses."""
 
     for record in model:
-        yield record.ipv4address
+        with suppress(AttributeError):
+            yield record.ipv4address
