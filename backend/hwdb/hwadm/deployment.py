@@ -2,7 +2,6 @@
 
 from argparse import Namespace
 from logging import getLogger
-from typing import Tuple
 
 from mdb import Address
 
@@ -15,10 +14,11 @@ __all__ = ['add', 'batch_add']
 LOGGER = getLogger('hwadm')
 
 
-def from_address(args: Namespace, address: Tuple[str, str, str, str]) -> None:
+def from_address(args: Namespace, street: str, house_number: str,
+                 zip_code: str, city: str) -> None:
     """Adds a deployment from an address."""
 
-    address = Address.add(*address)
+    address = Address.add(street, house_number, zip_code, city)
 
     if address.id is None:
         address.save()
@@ -57,7 +57,7 @@ def batch_add(args: Namespace) -> bool:
                 match = args.regex.fullmatch(line)
 
                 if match is not None:
-                    from_address(args, match.groups())
+                    from_address(args, *match.groups())
                 else:
                     LOGGER.error('Could not parse address from: %s', line)
                     result = False
@@ -68,6 +68,6 @@ def batch_add(args: Namespace) -> bool:
 def add(args: Namespace) -> bool:
     """Adds a deployment."""
 
-    address = (args.street, args.house_number, args.zip_code, args.city)
-    from_address(args, address)
+    from_address(args, args.street, args.house_number, args.zip_code,
+                 args.city)
     return True
