@@ -18,7 +18,7 @@ LOGGER = getLogger('hwadm')
 def from_address(args: Namespace, address: Tuple[str, str, str, str]) -> None:
     """Adds a deployment from an address."""
 
-    address = Address.add_by_address(address)
+    address = Address.add(*address)
 
     if address.id is None:
         address.save()
