@@ -26,6 +26,7 @@ from hwdb.orm.deployment import Deployment
 from hwdb.orm.group import Group
 from hwdb.orm.mixins import DNSMixin
 from hwdb.orm.openvpn import OpenVPN
+from hwdb.types import IPAddress
 
 
 __all__ = ['System', 'get_free_ipv6_address']
@@ -151,6 +152,11 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     def ipv4address(self) -> IPv4Address:
         """Returns the OpenVPN IPv4 address."""
         return self.openvpn.ipv4address
+
+    @property
+    def ip_address(self) -> IPAddress:
+        """Returns the system's IP address."""
+        return self.ipv4address if self.pubkey is None else self.ipv6address
 
     @property
     def syncdep(self) -> Deployment:
