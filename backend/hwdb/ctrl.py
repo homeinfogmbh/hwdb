@@ -39,7 +39,7 @@ class BasicControllerMixin:
         """Pings the system."""
         return check_call((
             CONFIG['binaries']['PING'], '-qc', str(count),
-            str(self.ipv4address)), stdout=DEVNULL, stderr=DEVNULL)
+            str(self.ip_address)), stdout=DEVNULL, stderr=DEVNULL)
 
     def put(self, json: dict, *, timeout: int = 10) -> Response:
         """Executes a PUT request."""
