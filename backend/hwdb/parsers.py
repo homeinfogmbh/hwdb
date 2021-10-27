@@ -1,7 +1,7 @@
 """Type-like functions for argparse."""
 
 from datetime import date as Date, datetime
-from typing import Callable
+from typing import Callable, Optional
 
 from mdb import Customer
 
@@ -76,8 +76,13 @@ def hook(name: str) -> Callable:
         raise ValueError('No such hook.') from None
 
 
-def operating_system(name: str) -> OperatingSystem:
+def operating_system(name: Optional[str] = None, *,
+                     fallback: Optional[OperatingSystem] = None
+                     ) -> OperatingSystem:
     """Returns a connection."""
+
+    if name is None and fallback is not None:
+        return fallback
 
     return from_string(OperatingSystem, name)
 
