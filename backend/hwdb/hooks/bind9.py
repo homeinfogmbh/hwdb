@@ -49,7 +49,7 @@ def terminal_hosts() -> Iterator[str]:
         else:
             yield IN_A_RECORD.format(system.hostname, ipv4address)
 
-        if system.ipv6address is not None and system.pubkey is not None:
+        if system.ipv6address is not None:
             yield IN_AAAA_RECORD.format(system.hostname, system.ipv6address)
         else:
             LOGGER.warning('No WireGuard config for #%i.', system.id)
