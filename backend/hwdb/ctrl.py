@@ -9,6 +9,7 @@ from requests.exceptions import ConnectionError     # pylint: disable=W0622
 
 from hwdb.config import CONFIG
 from hwdb.exceptions import SystemOffline
+from hwdb.types import IPSocket
 
 
 __all__ = ['RemoteControllerMixin']
@@ -21,12 +22,14 @@ class BasicControllerMixin:
     """Controls a terminal remotely."""
 
     @property
+    def socket(self) -> IPSocket:
+        """Returns the IP socket."""
+        return IPSocket(self.ip_address, PORT)
+
+    @property
     def url(self) -> str:
         """Returns the system's URL."""
-        if self.pubkey is None:
-            return f'http://{self.ipv4address}:{PORT}'
-
-        return f'http://[{self.ipv6address}]:{PORT}'
+        return f'http://{self.socket}'
 
     @property
     def online(self) -> bool:
