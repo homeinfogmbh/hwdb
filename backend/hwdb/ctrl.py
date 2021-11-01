@@ -23,7 +23,10 @@ class BasicControllerMixin:
     @property
     def url(self) -> str:
         """Returns the system's URL."""
-        return f'http://{self.ipv4address}:{PORT}'
+        if self.pubkey is None:
+            return f'http://{self.ipv4address}:{PORT}'
+
+        return f'http://[{self.ipv6address}]:{PORT}'
 
     @property
     def online(self) -> bool:
