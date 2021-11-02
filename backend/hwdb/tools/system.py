@@ -52,7 +52,7 @@ FIELDS = {
         lambda sys: sys.group.id, 'Group', size=12),
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
     SystemField.IP: FieldFormatter(
-        lambda sys: sys.ip_address, 'IP address', size=39),
+        lambda sys: sys.ip_address, 'IP address', size=23),
     SystemField.MODEL: FieldFormatter(
         lambda sys: sys.model, 'Model', size=24, leftbound=True),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
@@ -64,7 +64,7 @@ FIELDS = {
     SystemField.SN: FieldFormatter(
         lambda sys: sys.serial_number, 'Serial Number', size=32),
     SystemField.WG_ADDR: FieldFormatter(
-        lambda sys: sys.ipv6address, 'WireGuard IPv6 address', size=39),
+        lambda sys: sys.ipv6address, 'WireGuard IPv6 address', size=23),
     SystemField.WG_PUBKEY: FieldFormatter(
         lambda sys: sys.pubkey, 'WireGuard pubkey', size=44)
 }
