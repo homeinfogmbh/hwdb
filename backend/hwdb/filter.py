@@ -102,7 +102,8 @@ def get_systems(ids: Iterable[int],
                 fitted: bool = None,
                 operating_systems: Iterable[OperatingSystem] = None,
                 groups: Iterable[Group] = None,
-                online: bool = None
+                online: bool = None,
+                sort: bool = False
                 ) -> Iterator[System]:
     """Yields systems for the respective expressions and filters."""
 
@@ -141,7 +142,12 @@ def get_systems(ids: Iterable[int],
     if groups:
         condition &= System.group << groups
 
-    select = System.select(cascade=True).where(condition).iterator()
+    select = System.select(cascade=True).where(condition)
+
+    if sort:
+        select = select.order_by(System.id)
+
+    select = select.iterator()
 
     if online is None:
         return select
