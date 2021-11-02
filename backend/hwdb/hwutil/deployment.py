@@ -23,7 +23,8 @@ def _get_deployments(args: Namespace) -> ModelSelect:
 
     return get_deployments(
         ids=args.id, customers=args.customer, testing=args.testing,
-        types=args.type, connections=args.connection, systems=args.system)
+        types=args.type, connections=args.connection, systems=args.system,
+        sort=True)
 
 
 def find(args: Namespace) -> bool:
