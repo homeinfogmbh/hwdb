@@ -60,7 +60,8 @@ def get_deployments(ids: Iterable[int] = None,
                     testing: bool = None,
                     types: Iterable[DeploymentType] = None,
                     connections: Iterable[Connection] = None,
-                    systems: Iterable[System] = None
+                    systems: Iterable[System] = None,
+                    sort: bool = False
                     ) -> ModelSelect:
     """Yields deployments."""
 
@@ -90,7 +91,12 @@ def get_deployments(ids: Iterable[int] = None,
         )
         condition &= (System.id << systems) | (dataset.id << systems)
 
-    return select.where(condition)
+    select = select.where(condition)
+
+    if sort:
+        select = select.order_by(Deployment.id)
+
+    return select
 
 
 def get_systems(ids: Iterable[int],
