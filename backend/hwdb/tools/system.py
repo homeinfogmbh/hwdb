@@ -26,12 +26,15 @@ class SystemField(Enum):
     FITTED = 'fitted'
     GROUP = 'group'
     ID = 'id'
+    IP = 'ip'
     MODEL = 'model'
     MONITOR = 'monitor'
     ONLINE = 'online'
     OPENVPN = 'openvpn'
     OS = 'os'
     SN = 'sn'
+    WG_ADDR = 'wg'
+    WG_PUBKEY = 'pubkey'
 
 
 FIELDS = {
@@ -48,6 +51,8 @@ FIELDS = {
     SystemField.GROUP: FieldFormatter(
         lambda sys: sys.group.id, 'Group', size=12),
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
+    SystemField.IP: FieldFormatter(
+        lambda sys: sys.ip_address, 'IP address', size=39),
     SystemField.MODEL: FieldFormatter(
         lambda sys: sys.model, 'Model', size=24, leftbound=True),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
@@ -57,11 +62,15 @@ FIELDS = {
     SystemField.OS: FieldFormatter(
         lambda sys: sys.operating_system.value, 'OS', size=25),
     SystemField.SN: FieldFormatter(
-        lambda sys: sys.serial_number, 'Serial Number', size=32)
+        lambda sys: sys.serial_number, 'Serial Number', size=32),
+    SystemField.WG_ADDR: FieldFormatter(
+        lambda sys: sys.ipv6address, 'WireGuard IPv6 address', size=39),
+    SystemField.WG_PUBKEY: FieldFormatter(
+        lambda sys: sys.pubkey, 'WireGuard pubkey', size=44)
 }
 DEFAULT_FIELDS = (
     SystemField.ID, SystemField.DEPLOYMENT, SystemField.DATASET,
-    SystemField.OPENVPN, SystemField.GROUP, SystemField.CONFIGURED,
+    SystemField.IP, SystemField.GROUP, SystemField.CONFIGURED,
     SystemField.FITTED, SystemField.OS
 )
 
