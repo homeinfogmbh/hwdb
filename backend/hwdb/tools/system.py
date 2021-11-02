@@ -49,7 +49,7 @@ FIELDS = {
         lambda sys: sys.deployment_id, 'Deployment'),
     SystemField.FITTED: FieldFormatter(lambda sys: sys.fitted, 'Fitted'),
     SystemField.GROUP: FieldFormatter(
-        lambda sys: sys.group_id, 'Group', size=12),
+        lambda sys: sys.group.id, 'Group', size=12),
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
     SystemField.IP: FieldFormatter(
         lambda sys: sys.ip_address, 'IP address', size=23),
