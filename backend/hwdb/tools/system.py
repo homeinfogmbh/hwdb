@@ -52,7 +52,7 @@ FIELDS = {
         lambda sys: sys.group.id, 'Group', size=12),
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
     SystemField.IP: FieldFormatter(
-        lambda sys: sys.ip_address, 'IP address', size=23),
+        lambda sys: sys.ip_address, 'IP address', size=24),
     SystemField.MODEL: FieldFormatter(
         lambda sys: sys.model, 'Model', size=24, leftbound=True),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
