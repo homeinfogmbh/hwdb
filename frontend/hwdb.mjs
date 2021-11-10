@@ -1,7 +1,7 @@
 /*
-  terminallib/sorting.js - Terminals sorting library.
+  hwdb.mjs - Hardware database library.
 
-  (C) 2017-2020 HOMEINFO - Digitale Informationssysteme GmbH
+  (C) 2017-2021 HOMEINFO - Digitale Informationssysteme GmbH
 
   This library is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ function matchDeployment (deployment, keyword) {
 */
 function sortByAddress (descending) {
     return function (alice, bob) {
-        const result = terminallib.sorting.compareAddress(alice.address, bob.address);
+        const result = compareAddress(alice.address, bob.address);
         return descending ? -result : result;
     };
 }
@@ -262,12 +262,10 @@ export function *filterSystems (systems, keyword) {
             continue;
         }
 
-        let deployment = system.deployment;
-
-        if (deployment == null)
+        if (system.deployment == null)
             continue;
 
-        if (matchDeployment(deployment, keyword))
+        if (matchDeployment(system.deployment, keyword))
             yield system;
     }
 }
