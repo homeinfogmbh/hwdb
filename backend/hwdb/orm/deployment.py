@@ -27,7 +27,7 @@ class Deployment(BaseModel):
     """A customer-specific deployment of a terminal."""
 
     customer = ForeignKeyField(
-        Customer, column_name='customer', lazy_load=False)
+        Customer, column_name='customer', on_delete='CASCADE', lazy_load=False)
     type = EnumField(DeploymentType)
     connection = EnumField(Connection)
     address = ForeignKeyField(Address, column_name='address', lazy_load=False)
