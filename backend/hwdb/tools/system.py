@@ -37,9 +37,6 @@ class SystemField(Enum):
     WG_PUBKEY = 'pubkey'
 
 
-IP_FIELD_LEN = max(
-    len(str(system.ipv6address)) for system in System.select().iterator()
-)
 FIELDS = {
     SystemField.CONFIGURED: FieldFormatter(
         lambda sys: sys.configured.isoformat() if sys.configured else None,
@@ -55,7 +52,7 @@ FIELDS = {
         lambda sys: sys.group.id, 'Group', size=12),
     SystemField.ID: FieldFormatter(lambda sys: sys.id, 'ID', size=5),
     SystemField.IP: FieldFormatter(
-        lambda sys: sys.ip_address, 'IP address', size=IP_FIELD_LEN),
+        lambda sys: sys.ip_address, 'IP address', size=24),
     SystemField.MODEL: FieldFormatter(
         lambda sys: sys.model, 'Model', size=24, leftbound=True),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
