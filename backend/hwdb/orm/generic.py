@@ -39,3 +39,11 @@ class GenericHardware(BaseModel):   # pylint: disable=R0903
 
         args = {cls, Customer, Company, *args}
         return super().select(*args, **kwargs).join(Customer).join(Company)
+
+    @property
+    def volume(self) -> float:
+        """Returns the volume if available."""
+        if any(item is None for item in (self.dim_x, self.dim_y, self.dim_z)):
+            raise ValueError('Not all dimensions have values.')
+
+        return self.dim_x * self.dim_y * self.dim_z
