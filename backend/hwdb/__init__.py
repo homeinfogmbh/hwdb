@@ -1,10 +1,9 @@
 """HOMEINFO's hardware database library."""
 
-from hwdb.config import CONFIG
-from hwdb.config import OPENVPN_NETWORK
-from hwdb.config import OPENVPN_SERVER
-from hwdb.config import WIREGUARD_NETWORK
-from hwdb.config import WIREGUARD_SERVER
+from hwdb.config import get_openvpn_network
+from hwdb.config import get_openvpn_server
+from hwdb.config import get_wireguard_network
+from hwdb.config import get_wireguard_server
 from hwdb.enumerations import Connection
 from hwdb.enumerations import DeploymentType
 from hwdb.enumerations import HardwareType
@@ -33,11 +32,6 @@ from hwdb.parsers import system
 
 
 __all__ = [
-    'CONFIG',
-    'OPENVPN_NETWORK',
-    'OPENVPN_SERVER',
-    'WIREGUARD_NETWORK',
-    'WIREGUARD_SERVER',
     'AmbiguityError',
     'SystemOffline',
     'TerminalConfigError',
@@ -62,6 +56,10 @@ __all__ = [
     'get_free_ipv6_address',
     'get_systems',
     'hook',
+    'get_openvpn_network',
+    'get_openvpn_server',
     'operating_system',
-    'system'
+    'system',
+    'get_wireguard_network',
+    'get_wireguard_server'
 ]

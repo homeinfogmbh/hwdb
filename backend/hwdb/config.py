@@ -1,26 +1,49 @@
 """Hardware database configuration."""
 
+from functools import cache, partial
 from ipaddress import ip_address, ip_network
 from logging import getLogger
 
-from configlib import loadcfg
+from configlib import load_config
+
+from hwdb.types import IPAddress, IPNetwork
 
 
 __all__ = [
-    'CONFIG',
     'LOGGER',
     'LOG_FORMAT',
-    'OPENVPN_NETWORK',
-    'OPENVPN_SERVER',
-    'WIREGUARD_NETWORK',
-    'WIREGUARD_SERVER'
+    'get_config',
+    'get_openvpn_network',
+    'get_openvpn_server',
+    'get_wireguard_network',
+    'get_wireguard_server'
 ]
 
 
-CONFIG = loadcfg('hwdb.conf')
 LOGGER = getLogger('hwdb')
 LOG_FORMAT = '[%(levelname)s] %(name)s: %(message)s'
-OPENVPN_NETWORK = ip_network(CONFIG['OpenVPN']['network'])
-OPENVPN_SERVER = ip_address(CONFIG['OpenVPN']['server'])
-WIREGUARD_NETWORK = ip_network(CONFIG['WireGuard']['network'])
-WIREGUARD_SERVER = ip_address(CONFIG['WireGuard']['server'])
+get_config = partial(cache(load_config), 'hwdb.conf')
+
+
+def get_openvpn_network() -> IPNetwork:
+    """Returns the OpenVPN network."""
+
+    return ip_network(get_config().get('OpenVPN', 'network'))
+
+
+def get_openvpn_server() -> IPAddress:
+    """Returns the OpenVPN server address."""
+
+    return ip_address(get_config().get('OpenVPN', 'server'))
+
+
+def get_wireguard_network() -> IPNetwork:
+    """Returns the WireGuard network."""
+
+    return ip_network(get_config().get('WireGuard', 'network'))
+
+
+def get_wireguard_server() -> IPAddress:
+    """Returns the WireGuard server address."""
+
+    return ip_address(get_config().get('WireGuard', 'server'))
