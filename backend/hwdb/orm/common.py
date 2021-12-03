@@ -1,14 +1,12 @@
 """Common ORM models."""
 
-from peeweeplus import JSONModel, MySQLDatabase
-
-from hwdb.config import CONFIG
+from peeweeplus import JSONModel, MySQLDatabaseProxy
 
 
 __all__ = ['DATABASE', 'BaseModel']
 
 
-DATABASE = MySQLDatabase.from_config(CONFIG['Database'])
+DATABASE = MySQLDatabaseProxy('hwdb')
 
 
 class BaseModel(JSONModel):     # pylint: disable=R0903

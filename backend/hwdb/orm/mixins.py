@@ -1,6 +1,6 @@
 """ORM model mixins."""
 
-from hwdb.config import CONFIG
+from hwdb.config import get_config
 
 
 __all__ = ['DNSMixin']
@@ -12,7 +12,7 @@ class DNSMixin:
     @property
     def domain(self) -> str:
         """Returns the domain."""
-        return CONFIG['net']['domain']
+        return get_config().get('net', 'domain')
 
     @property
     def hostname(self) -> str:
