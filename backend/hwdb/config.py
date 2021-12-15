@@ -15,6 +15,7 @@ __all__ = [
     'get_config',
     'get_openvpn_network',
     'get_openvpn_server',
+    'get_ping',
     'get_wireguard_network',
     'get_wireguard_server'
 ]
@@ -35,6 +36,12 @@ def get_openvpn_server() -> IPAddress:
     """Returns the OpenVPN server address."""
 
     return ip_address(get_config().get('OpenVPN', 'server'))
+
+
+def get_ping() -> str:
+    """Returns the ping binary path."""
+
+    return get_config().get('binaries', 'PING')
 
 
 def get_wireguard_network() -> IPNetwork:
