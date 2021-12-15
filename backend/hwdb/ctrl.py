@@ -7,7 +7,7 @@ from requests import Timeout, Response, put
 from requests.exceptions import ChunkedEncodingError
 from requests.exceptions import ConnectionError     # pylint: disable=W0622
 
-from hwdb.config import get_config
+from hwdb.config import get_ping
 from hwdb.exceptions import SystemOffline
 from hwdb.types import IPSocket
 
@@ -43,9 +43,10 @@ class BasicControllerMixin:
 
     def ping(self, *, count: int = 3) -> int:
         """Pings the system."""
-        return check_call((
-            get_config()['binaries']['PING'], '-qc', str(count),
-            str(self.ip_address)), stdout=DEVNULL, stderr=DEVNULL)
+        return check_call(
+            [get_ping(), '-qc', str(count), str(self.ip_address)],
+            stdout=DEVNULL, stderr=DEVNULL
+        )
 
     def put(self, json: dict, *, timeout: int = 10) -> Response:
         """Executes a PUT request."""
