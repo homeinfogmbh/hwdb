@@ -23,12 +23,12 @@ setup(
         'hwdb.tools'
     ],
     install_requires=[
+        'b64lzma',
         'configlib',
         'mdb',
         'peewee',
         'peeweeplus',
-        'requests',
-        'syslib'
+        'requests'
     ],
     entry_points={
         'console_scripts': [
