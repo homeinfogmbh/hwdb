@@ -2,7 +2,7 @@
 
 from logging import DEBUG, INFO, basicConfig, getLogger
 
-from syslib import B64LZMA
+from b64lzma import B64LZMA
 
 from hwdb.config import LOG_FORMAT
 from hwdb.hwutil.argparse import get_args
@@ -20,7 +20,8 @@ ARNIE = B64LZMA(
     'PqOjQ0VHvqxoXly1uRgtvfLn9pvnm1DrCgcJiPp8HhWiGzH7ssJqMiSKm0l67Why5BVT8apzO'
     'CVXevyza2ZXmT21h0aDCiPYjN4ltUrrguxqC4Lwn0XwvoWRxpXGb0wAyV//ppegMFpCqvR3y/'
     'l6gnu1zzfCVOISaOCOjHXq2NiJ3ZUMv76UcKZjfFEnW11r/P35yFKGo4AAJxj7ZVSD0rZAAHL'
-    'AYUEAADP/ZRYscRn+wIAAAAABFla')
+    'AYUEAADP/ZRYscRn+wIAAAAABFla'
+)
 LOGGER = getLogger('hwutil')
 
 
