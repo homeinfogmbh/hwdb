@@ -1,8 +1,9 @@
 """Digital signage systems."""
 
+from __future__ import annotations
 from datetime import datetime
 from ipaddress import IPv4Address, IPv6Address
-from typing import Iterator
+from typing import Iterator, NamedTuple, Optional
 
 from peewee import JOIN
 from peewee import BooleanField
@@ -29,7 +30,7 @@ from hwdb.orm.openvpn import OpenVPN
 from hwdb.types import IPAddress
 
 
-__all__ = ['System', 'get_free_ipv6_address']
+__all__ = ['System', 'DeploymentChange', 'get_free_ipv6_address']
 
 
 def get_free_ipv6_address() -> IPv6Address:
@@ -135,19 +136,32 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             # OpenVPN
             cls, OpenVPN, join_type=JOIN.LEFT_OUTER)
 
-    @classmethod
-    def undeploy_all(cls, deployment: Deployment) -> list:
+    def _undeploy_others(self) -> Iterator[DeploymentChange]:
         """Undeploy other systems."""
-        changes = []
-
-        for system in cls.select().where(cls.deployment == deployment):
+        for system in (cls := type(self)).select().where(
+                (cls.deployment == self.deployment)
+                & (cls.id != self.id)
+        ):
             LOGGER.info('Un-deploying #%i.', system.id)
             system.fitted = False
-            system.deployment, old_deployment = None, system.deployment
+            yield DeploymentChange(system, system.deployment, None)
+            system.deployment = None
             system.save()
-            changes.append((system, old_deployment))
 
-        return changes
+    def _change_deployment(
+            self, deployment: Deployment
+    ) -> Optional[DeploymentChange]:
+        """Changes the current deployment."""
+        if deployment == self.deployment:
+            return None
+
+        if (old := self.deployment) is None:
+            LOGGER.info('Initially deployed system at "%s".', deployment)
+        else:
+            LOGGER.info('Relocated system from "%s" to "%s".', old, deployment)
+
+        self.deployment = deployment
+        return DeploymentChange(self, old, deployment)
 
     @property
     def ipv4address(self) -> IPv4Address:
@@ -164,27 +178,19 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         """Returns the deployment for synchronization."""
         return self.dataset or self.deployment
 
-    def deploy(self, deployment: Deployment, *, exclusive: bool = False,
-               fitted: bool = False) -> list:
+    def deploy(
+            self, deployment: Deployment, *,
+            exclusive: bool = False,
+            fitted: bool = False
+    ) -> Iterator[DeploymentChange]:
         """Locates a system at the respective deployment."""
-        self.deployment, old_deployment = deployment, self.deployment
-
-        if old_deployment is None:
-            LOGGER.info('Initially deployed system at "%s".', deployment)
-        elif old_deployment == deployment:
-            LOGGER.info('System still deployed at "%s".', deployment)
-        else:
-            LOGGER.info('Relocated system from "%s" to "%s".',
-                        old_deployment, deployment)
-
-        changes = [(self, old_deployment)]
-
         if exclusive:
-            changes += type(self).undeploy_all(deployment)
+            yield from self._undeploy_others()
 
-        self.fitted = fitted
-        self.save()
-        return changes
+        if (change := self._change_deployment(deployment)) is not None:
+            self.fitted = fitted and deployment is not None
+            self.save()
+            yield change
 
     def to_json(self, *, brief: bool = False, skip: set = frozenset(),
                 **kwargs) -> dict:
@@ -193,3 +199,11 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             skip |= {'openvpn', 'ipv6address', 'pubkey', 'operator'}
 
         return super().to_json(skip=skip, **kwargs)
+
+
+class DeploymentChange(NamedTuple):
+    """Information about a changed deployment."""
+
+    system: System
+    old = Optional[Deployment] = None
+    new = Optional[Deployment] = None
