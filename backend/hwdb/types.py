@@ -1,7 +1,7 @@
 """Common types."""
 
 from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
-from typing import ForwardRef, Iterable, NamedTuple, Optional, Union
+from typing import Iterable, NamedTuple, Optional, Union
 
 
 __all__ = [
@@ -21,9 +21,9 @@ IPAddresses = Iterable[IPAddress]
 class DeploymentChange(NamedTuple):
     """Information about a changed deployment."""
 
-    system: ForwardRef('System')
-    old = Optional[ForwardRef('Deployment')] = None
-    new = Optional[ForwardRef('Deployment')] = None
+    system: 'System'
+    old: Optional['Deployment'] = None
+    new: Optional['Deployment'] = None
 
 
 class IPSocket(NamedTuple):
