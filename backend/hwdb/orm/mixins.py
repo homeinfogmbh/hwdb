@@ -18,7 +18,7 @@ class DeployingMixin:
     @classmethod
     def undeploy_all(
             cls, deployment: Deployment, *,
-            exclude: Optional[Union[System, int]] = None
+            exclude: Optional[Union['System', int]] = None
     ) -> Iterator[DeploymentChange]:
         """Undeploy other systems."""
         condition = cls.deployment == deployment
