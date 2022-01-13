@@ -136,32 +136,23 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             # OpenVPN
             cls, OpenVPN, join_type=JOIN.LEFT_OUTER)
 
-    def _undeploy_others(self) -> Iterator[DeploymentChange]:
+    @classmethod
+    def undeploy_all(
+            cls, deployment: Deployment, *,
+            exclude: Optional[Union[System, int]] = None
+    ) -> Iterator[DeploymentChange]:
         """Undeploy other systems."""
-        for system in (cls := type(self)).select().where(
-                (cls.deployment == self.deployment)
-                & (cls.id != self.id)
-        ):
+        condition = cls.deployment == deployment
+
+        if exclude is not None:
+            condition &= cls.id != exclude
+
+        for system in cls.select().where(condition):
             LOGGER.info('Un-deploying #%i.', system.id)
             system.fitted = False
             yield DeploymentChange(system, system.deployment, None)
             system.deployment = None
             system.save()
-
-    def _change_deployment(
-            self, deployment: Deployment
-    ) -> Optional[DeploymentChange]:
-        """Changes the current deployment."""
-        if deployment == self.deployment:
-            return None
-
-        if (old := self.deployment) is None:
-            LOGGER.info('Initially deployed system at "%s".', deployment)
-        else:
-            LOGGER.info('Relocated system from "%s" to "%s".', old, deployment)
-
-        self.deployment = deployment
-        return DeploymentChange(self, old, deployment)
 
     @property
     def ipv4address(self) -> IPv4Address:
@@ -178,6 +169,21 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         """Returns the deployment for synchronization."""
         return self.dataset or self.deployment
 
+    def change_deployment(
+            self, deployment: Deployment
+    ) -> Optional[DeploymentChange]:
+        """Changes the current deployment."""
+        if deployment == self.deployment:
+            return None
+
+        if (old := self.deployment) is None:
+            LOGGER.info('Initially deployed system at "%s".', deployment)
+        else:
+            LOGGER.info('Relocated system from "%s" to "%s".', old, deployment)
+
+        self.deployment = deployment
+        return DeploymentChange(self, old, deployment)
+
     def deploy(
             self, deployment: Deployment, *,
             exclusive: bool = False,
@@ -185,9 +191,9 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
     ) -> Iterator[DeploymentChange]:
         """Locates a system at the respective deployment."""
         if exclusive:
-            yield from self._undeploy_others()
+            yield from type(self).undeploy_all(deployment, exclude=self)
 
-        if (change := self._change_deployment(deployment)) is not None:
+        if (change := self.change_deployment(deployment)) is not None:
             self.fitted = fitted and deployment is not None
             self.save()
             yield change
