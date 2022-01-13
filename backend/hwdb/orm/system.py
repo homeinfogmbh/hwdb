@@ -185,7 +185,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         return DeploymentChange(self, old, deployment)
 
     def deploy(
-            self, deployment: Deployment, *,
+            self, deployment: Optional[Deployment], *,
             exclusive: bool = False,
             fitted: bool = False
     ) -> Iterator[DeploymentChange]:
