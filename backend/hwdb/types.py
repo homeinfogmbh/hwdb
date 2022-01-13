@@ -3,13 +3,28 @@
 from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 from typing import Iterable, NamedTuple, Union
 
+from hwdb.orm.deployment import Deployment
 
-__all__ = ['IPAddress', 'IPNetwork', 'IPAddresses', 'IPSocket']
+
+__all__ = [
+    'DeploymentChange',
+    'IPAddress',
+    'IPNetwork',
+    'IPAddresses',
+    'IPSocket'
+]
 
 
 IPAddress = Union[IPv4Address, IPv6Address]
 IPNetwork = Union[IPv4Network, IPv6Network]
 IPAddresses = Iterable[IPAddress]
+
+
+class DeploymentChange(NamedTuple):
+    """Represents a changed deployment."""
+
+    old: Deployment
+    new: Deployment
 
 
 class IPSocket(NamedTuple):
