@@ -3,7 +3,7 @@
 from __future__ import annotations
 from datetime import datetime
 from ipaddress import IPv4Address, IPv6Address
-from typing import Iterator, NamedTuple, Optional
+from typing import Iterator, NamedTuple, Optional, Union
 
 from peewee import JOIN
 from peewee import BooleanField
