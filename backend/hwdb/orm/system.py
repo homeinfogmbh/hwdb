@@ -190,7 +190,7 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
             fitted: bool = False
     ) -> Iterator[DeploymentChange]:
         """Locates a system at the respective deployment."""
-        if exclusive:
+        if exclusive and deployment is not None:
             yield from type(self).undeploy_all(deployment, exclude=self)
 
         if (change := self.change_deployment(deployment)) is not None:
