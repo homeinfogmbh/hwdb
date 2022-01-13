@@ -12,7 +12,7 @@ from peewee import DateTimeField
 from peewee import Expression
 from peewee import FixedCharField
 from peewee import ForeignKeyField
-from peewee import ModelSelect
+from peewee import Select
 
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField, IPv6AddressField
@@ -89,12 +89,12 @@ class System(BaseModel, DNSMixin, RemoteControllerMixin, AnsibleMixin):
         )
 
     @classmethod
-    def monitored(cls) -> ModelSelect:
+    def monitored(cls) -> Select:
         """Selects monitored systems."""
         return cls.select(cascade=True).where(cls.monitoring_cond())
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+    def select(cls, *args, cascade: bool = False, **kwargs) -> Select:
         """Selects systems."""
         if not cascade:
             return super().select(*args, **kwargs)
