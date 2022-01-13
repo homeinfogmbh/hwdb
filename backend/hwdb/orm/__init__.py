@@ -6,7 +6,7 @@ from hwdb.orm.generic import GenericHardware
 from hwdb.orm.group import Group
 from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.smart_tv import SmartTV
-from hwdb.orm.system import DeploymentChange, System, get_free_ipv6_address
+from hwdb.orm.system import System, get_free_ipv6_address
 
 
 __all__ = [
@@ -14,7 +14,6 @@ __all__ = [
     'create_tables',
     'get_free_ipv6_address',
     'Deployment',
-    'DeploymentChange',
     'Display',
     'GenericHardware',
     'Group',
