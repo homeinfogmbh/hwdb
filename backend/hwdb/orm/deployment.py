@@ -8,7 +8,7 @@ from peewee import CharField
 from peewee import DateField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
-from peewee import ModelSelect
+from peewee import Select
 
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField
@@ -48,7 +48,7 @@ class Deployment(BaseModel):
         return f'{string} ({self.annotation})'
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+    def select(cls, *args, cascade: bool = False, **kwargs) -> Select:
         """Selects deployments."""
         if not cascade:
             return super().select(*args, **kwargs)
@@ -64,7 +64,7 @@ class Deployment(BaseModel):
             cls, system, on=system.deployment == cls.id,
             join_type=JOIN.LEFT_OUTER).distinct()
 
-    def checkdupes(self) -> ModelSelect:
+    def checkdupes(self) -> Select:
         """Returns duplicates of this deployment in the database."""
         cls = type(self)
         condition = cls.customer == self.customer

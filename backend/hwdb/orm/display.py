@@ -4,7 +4,7 @@ from peewee import JOIN
 from peewee import CharField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
-from peewee import ModelSelect
+from peewee import Select
 
 from mdb import Address, Company, Customer
 
@@ -33,7 +33,7 @@ class Display(BaseModel):   # pylint: disable=R0903
     serial_number = CharField(255, null=True)
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+    def select(cls, *args, cascade: bool = False, **kwargs) -> Select:
         """Selects systems."""
         if not cascade:
             return super().select(*args, **kwargs)

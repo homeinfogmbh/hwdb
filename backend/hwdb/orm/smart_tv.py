@@ -1,6 +1,6 @@
 """Legacy smart TVs."""
 
-from peewee import JOIN, CharField, ForeignKeyField, ModelSelect
+from peewee import JOIN, CharField, ForeignKeyField, Select
 
 from mdb import Address, Company, Customer
 
@@ -25,7 +25,7 @@ class SmartTV(BaseModel):
     serial_number = CharField(255, null=True)
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+    def select(cls, *args, cascade: bool = False, **kwargs) -> Select:
         """Selects systems."""
         if not cascade:
             return super().select(*args, **kwargs)

@@ -3,7 +3,7 @@
 from peewee import CharField
 from peewee import DecimalField
 from peewee import ForeignKeyField
-from peewee import ModelSelect
+from peewee import Select
 from peewee import TextField
 
 from mdb import Company, Customer
@@ -32,7 +32,7 @@ class GenericHardware(BaseModel):   # pylint: disable=R0903
     description = TextField(null=True)
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> ModelSelect:
+    def select(cls, *args, cascade: bool = False, **kwargs) -> Select:
         """Selects generic hardware."""
         if not cascade:
             return super().select(*args, **kwargs)
