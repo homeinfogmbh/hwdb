@@ -29,9 +29,9 @@ class DeployingMixin:
         for system in cls.select().where(condition):
             LOGGER.info('Un-deploying #%i.', system.id)
             system.fitted = False
-            yield DeploymentChange(system, system.deployment, None)
             system.deployment = None
             system.save()
+            yield DeploymentChange(system, system.deployment, None)
 
     def change_deployment(
             self, deployment: Deployment
