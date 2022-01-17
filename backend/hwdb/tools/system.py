@@ -4,7 +4,7 @@ from enum import Enum
 from sys import stderr
 from typing import Iterable, Iterator
 
-from peewee import ModelSelect
+from peewee import Select
 
 from mdb import Address
 
@@ -83,7 +83,7 @@ DEFAULT_FIELDS = (
 
 
 def find(street: str, house_number: str = None,
-         annotation: str = None) -> ModelSelect:
+         annotation: str = None) -> Select:
     """Finds systems at the specified address."""
 
     condition = Address.street ** f'%{street}%'
