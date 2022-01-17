@@ -63,7 +63,9 @@ def deploy(args: Namespace) -> bool:
         return args.system.deploy(None)
 
     if args.deployment:
-        return args.system.deploy(args.deployment)
+        return args.system.deploy(
+            args.deployment, exclusive=args.exclusive, fitted=args.fitted
+        )
 
     LOGGER.info('System is currently deployed at: %s', args.system.deployment)
     return True

@@ -115,6 +115,13 @@ def _add_deploy_parser(subparsers: _SubParsersAction):
     parser.add_argument(
         '-r', '--remove', action='store_true', help='remove the deployment')
     parser.add_argument(
+        '-e', '--exclusive', action='store_true',
+        help='remove other systems from that deployment'
+    )
+    parser.add_argument(
+        '-f', '--fitted', action='store_true', help='mark the system as fitted'
+    )
+    parser.add_argument(
         'deployment', type=deployment, nargs='?', help='the deployment site')
 
 
