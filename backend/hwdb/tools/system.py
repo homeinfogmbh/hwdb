@@ -13,7 +13,14 @@ from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
 
 
-__all__ = ['DEFAULT_FIELDS', 'find', 'get', 'listsys', 'printsys']
+__all__ = [
+    'DEFAULT_FIELDS',
+    'SystemField',
+    'find',
+    'get',
+    'listsys',
+    'printsys'
+]
 
 
 class SystemField(Enum):

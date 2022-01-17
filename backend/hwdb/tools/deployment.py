@@ -13,7 +13,14 @@ from hwdb.exceptions import TerminalError, AmbiguityError
 from hwdb.orm import Deployment
 
 
-__all__ = ['DEFAULT_FIELDS', 'find', 'get', 'listdep', 'printdep']
+__all__ = [
+    'DEFAULT_FIELDS',
+    'DeploymentField',
+    'find',
+    'get',
+    'listdep',
+    'printdep'
+]
 
 
 class DeploymentField(Enum):
