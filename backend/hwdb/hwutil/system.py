@@ -7,7 +7,7 @@ from typing import Iterator
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.filter import get_systems
 from hwdb.orm.system import System
-from hwdb.tools.common import iterprint
+from hwdb.tools.common import iter_print
 from hwdb.tools.system import get, listsys, printsys, SystemField
 
 
@@ -49,10 +49,10 @@ def find(args: Namespace) -> bool:
     return True
 
 
-def list(args: Namespace) -> Iterator[str]:
+def list(args: Namespace) -> bool:
     """Lists systems."""
 
     if args.list_fields:
-        return iterprint(field.value for field in SystemField)
+        return iter_print(field.value for field in SystemField)
 
-    return iterprint(listsys(_get_systems(args), fields=args.fields))
+    return iter_print(listsys(_get_systems(args), fields=args.fields))

@@ -8,7 +8,7 @@ from peewee import Select
 
 from mdb import Address
 
-from hwdb.tools.common import formatiter, FieldFormatter
+from hwdb.tools.common import format_iter, FieldFormatter
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.orm import Deployment, System
 
@@ -61,7 +61,7 @@ FIELDS = {
     SystemField.IP: FieldFormatter(
         lambda sys: sys.ip_address, 'IP address', size=25),
     SystemField.MODEL: FieldFormatter(
-        lambda sys: sys.model, 'Model', size=24, leftbound=True),
+        lambda sys: sys.model, 'Model', size=24, align_left=True),
     SystemField.MONITOR: FieldFormatter(lambda sys: sys.monitor, 'Monitor'),
     SystemField.ONLINE: FieldFormatter(lambda sys: sys.online, 'Online'),
     SystemField.OPENVPN: FieldFormatter(
@@ -117,7 +117,7 @@ def listsys(systems: Iterable[System],
             fields: Iterable[SystemField] = DEFAULT_FIELDS) -> Iterator[str]:
     """Yields formatted systems for console output."""
 
-    return formatiter(systems, FIELDS, fields)
+    return format_iter(systems, FIELDS, fields)
 
 
 def printsys(system: System):

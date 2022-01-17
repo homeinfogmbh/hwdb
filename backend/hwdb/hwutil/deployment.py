@@ -8,7 +8,7 @@ from peewee import ModelSelect
 
 from hwdb.exceptions import AmbiguityError, TerminalError
 from hwdb.filter import get_deployments
-from hwdb.tools.common import iterprint
+from hwdb.tools.common import iter_print
 from hwdb.tools.deployment import get, listdep, printdep, DeploymentField
 
 
@@ -49,10 +49,10 @@ def find(args: Namespace) -> bool:
     return True
 
 
-def list(args: Namespace) -> Iterator[str]:
+def list(args: Namespace) -> bool:
     """Lists deployments."""
 
     if args.list_fields:
-        return iterprint(field.value for field in DeploymentField)
+        return iter_print(field.value for field in DeploymentField)
 
-    return iterprint(listdep(_get_deployments(args), fields=args.fields))
+    return iter_print(listdep(_get_deployments(args), fields=args.fields))

@@ -8,7 +8,7 @@ from peewee import Select
 
 from mdb import Address
 
-from hwdb.tools.common import formatiter, FieldFormatter
+from hwdb.tools.common import format_iter, FieldFormatter
 from hwdb.exceptions import TerminalError, AmbiguityError
 from hwdb.orm import Deployment
 
@@ -43,19 +43,19 @@ FIELDS = {
     DeploymentField.CUSTOMER: FieldFormatter(
         lambda dep: dep.customer_id, 'Customer', size=12),
     DeploymentField.TYPE: FieldFormatter(
-        lambda dep: dep.type.value, 'Type', size=18, leftbound=True),
+        lambda dep: dep.type.value, 'Type', size=18, align_left=True),
     DeploymentField.CONNECTION: FieldFormatter(
         lambda dep: dep.connection.value, 'Connection', size=8),
     DeploymentField.ADDRESS: FieldFormatter(
-        lambda dep: str(dep.address), 'Address', size=64, leftbound=True),
+        lambda dep: str(dep.address), 'Address', size=64, align_left=True),
     DeploymentField.LPT_ADDRESS: FieldFormatter(
         lambda dep: str(dep.lpt_address) if dep.lpt_address else None,
-        'Public Transport Address', size=64, leftbound=True),
+        'Public Transport Address', size=64, align_left=True),
     DeploymentField.SCHEDULED: FieldFormatter(
         lambda dep: dep.scheduled.isoformat() if dep.scheduled else None,
         'Scheduled', size=12),
     DeploymentField.ANNOTATION: FieldFormatter(
-        lambda dep: dep.annotation, 'Annotation', size=40, leftbound=True),
+        lambda dep: dep.annotation, 'Annotation', size=40, align_left=True),
     DeploymentField.TESTING: FieldFormatter(
         lambda dep: dep.testing, 'Testing'),
     DeploymentField.TIMESTAMP: FieldFormatter(
@@ -105,7 +105,7 @@ def listdep(deployments: Iterable[Deployment],
             ) -> Iterator[str]:
     """Yields formatted deployment for console output."""
 
-    return formatiter(deployments, FIELDS, fields)
+    return format_iter(deployments, FIELDS, fields)
 
 
 def printdep(deployment: Deployment):

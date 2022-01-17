@@ -4,11 +4,51 @@ from sys import stderr, stdout
 from typing import Callable, Dict, Iterable, Iterator
 
 
-__all__ = ['formatiter', 'iterprint', 'FieldFormatter']
+__all__ = ['format_iter', 'iter_print', 'FieldFormatter']
 
 
-def formatiter(items: Iterable, mapping: Dict[object, Callable],
-               keys: Iterable) -> Iterator[str]:
+class FieldFormatter:
+    """Wrapper to access terminal properties."""
+
+    def __init__(self, getter: Callable, caption: str, size: int = 0,
+                 align_left: bool = False):
+        """Sets the field's name"""
+        self.getter = getter
+        self.caption = caption
+        self.size = size
+        self.align_left = align_left
+
+    def __str__(self):
+        """Returns the formatted caption."""
+        return f'\033[1m{self.header}\033[0m'
+
+    def format(self, target: object) -> str:
+        """Formats the respective field for the given target."""
+        if stdout.isatty():
+            return justify(
+                to_string(self.getter(target)),
+                self.max,
+                align_left=self.align_left
+            )
+
+        return to_string(self.getter(target))
+
+    @property
+    def max(self) -> int:
+        """Returns the maximum size."""
+        return max(self.size, len(self.caption))
+
+    @property
+    def header(self) -> str:
+        """Returns the appropriate header text."""
+        return justify(self.caption, self.max, align_left=self.align_left)
+
+
+def format_iter(
+        items: Iterable,
+        mapping: Dict[object, Callable],
+        keys: Iterable
+) -> Iterator[str]:
     """Yields formatted items for console output."""
 
     formatters = [mapping[key] for key in keys]
@@ -21,7 +61,7 @@ def formatiter(items: Iterable, mapping: Dict[object, Callable],
         yield sep.join(formatter.format(item) for formatter in formatters)
 
 
-def iterprint(iterable: Iterable) -> bool:
+def iter_print(iterable: Iterable) -> bool:
     """Prints items line by line, handling multiple possible I/O errors."""
 
     try:
@@ -39,10 +79,10 @@ def iterprint(iterable: Iterable) -> bool:
     return True
 
 
-def justify(string: str, size: int, leftbound: bool = False) -> str:
+def justify(string: str, size: int, align_left: bool = False) -> str:
     """Justifies the string."""
 
-    if leftbound:
+    if align_left:
         return string[0:size].ljust(size)
 
     return string[0:size].rjust(size)
@@ -66,38 +106,3 @@ def to_string(value: object) -> str:
         return false
 
     return str(value)
-
-
-class FieldFormatter:
-    """Wrapper to access terminal properties."""
-
-    def __init__(self, getter: Callable, caption: str, size: int = 0,
-                 leftbound: bool = False):
-        """Sets the field's name"""
-        self.getter = getter
-        self.caption = caption
-        self.size = size
-        self.leftbound = leftbound
-
-    def __str__(self):
-        """Returns the formatted caption."""
-        return f'\033[1m{self.header}\033[0m'
-
-    def format(self, target: object) -> str:
-        """Formats the respective field for the given target."""
-        if stdout.isatty():
-            return justify(
-                to_string(self.getter(target)), self.max,
-                leftbound=self.leftbound)
-
-        return to_string(self.getter(target))
-
-    @property
-    def max(self) -> int:
-        """Returns the maximum size."""
-        return max(self.size, len(self.caption))
-
-    @property
-    def header(self) -> str:
-        """Returns the appropriate header text."""
-        return justify(self.caption, self.max, leftbound=self.leftbound)
