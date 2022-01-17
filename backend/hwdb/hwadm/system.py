@@ -61,11 +61,13 @@ def deploy(args: Namespace) -> bool:
             LOGGER.warning('Deployment ignored when removing it.')
 
         list(args.system.deploy(None))
+        return True
 
     if args.deployment:
         list(args.system.deploy(
             args.deployment, exclusive=args.exclusive, fitted=args.fitted
         ))
+        return True
 
     LOGGER.info('System is currently deployed at: %s', args.system.deployment)
     return True
