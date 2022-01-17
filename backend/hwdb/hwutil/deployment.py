@@ -24,7 +24,8 @@ def _get_deployments(args: Namespace) -> ModelSelect:
     return get_deployments(
         ids=args.id, customers=args.customer, testing=args.testing,
         types=args.type, connections=args.connection, systems=args.system,
-        sort=True)
+        sort=True
+    )
 
 
 def find(args: Namespace) -> bool:
@@ -33,7 +34,8 @@ def find(args: Namespace) -> bool:
     try:
         deployment = get(
             args.pattern, house_number=args.house_number,
-            annotation=args.pattern)
+            annotation=args.pattern
+        )
     except AmbiguityError as ambiguous:
         LOGGER.warning('Ambiguous deployments.')
 

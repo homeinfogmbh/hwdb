@@ -24,7 +24,8 @@ def _get_systems(args: Namespace) -> Iterator[System]:
         ids=args.id, customers=args.customer, deployments=args.deployment,
         datasets=args.dataset, configured=args.configured,
         deployed=args.deployed, fitted=args.fitted,
-        operating_systems=args.operating_system, groups=args.group, sort=True)
+        operating_systems=args.operating_system, groups=args.group, sort=True
+    )
 
 
 def find(args: Namespace) -> bool:
@@ -32,8 +33,10 @@ def find(args: Namespace) -> bool:
 
     try:
         system = get(
-            args.pattern, house_number=args.house_number,
-            annotation=args.pattern)
+            args.pattern,
+            house_number=args.house_number,
+            annotation=args.pattern
+        )
     except AmbiguityError as ambiguous:
         LOGGER.warning('Ambiguous systems.')
 
