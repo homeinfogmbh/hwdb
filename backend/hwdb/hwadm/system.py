@@ -55,7 +55,7 @@ def dataset(args: Namespace) -> None:
     LOGGER.info("System's current dataset: %s", args.system.dataset)
 
 
-def undeploy(system: System) -> None:
+def _undeploy(system: System) -> None:
     """Un-deploy a system."""
 
     for system, old, new in system.deploy(None):
@@ -65,7 +65,7 @@ def undeploy(system: System) -> None:
         )
 
 
-def deploy(args: Namespace) -> None:
+def _deploy(args: Namespace) -> None:
     """Deploy a system."""
 
     for system, old, new in args.system.deploy(
@@ -77,7 +77,7 @@ def deploy(args: Namespace) -> None:
         )
 
 
-def mark_fitted(system: System) -> None:
+def _fit(system: System) -> None:
     """Mark the system as fitted."""
 
     system.fitted = True
@@ -92,15 +92,15 @@ def deploy(args: Namespace) -> None:
         if args.deployment:
             LOGGER.warning('Deployment ignored when removing it.')
 
-        undeploy(args.system)
+        _undeploy(args.system)
         return
 
     if args.deployment:
-        deploy(args)
+        _deploy(args)
         return
 
     if args.fitted:
-        mark_fitted(args.system)
+        _fit(args.system)
         return
 
     LOGGER.info('System is currently deployed at: %s', args.system.deployment)
