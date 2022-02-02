@@ -4,7 +4,7 @@ from typing import Iterator, Optional, Union
 
 from peewee import Expression, Select
 
-from hwdb.config import LOGGER, get_config
+from hwdb.config import get_config
 from hwdb.orm.deployment import Deployment
 from hwdb.types import DeploymentChange
 
@@ -27,7 +27,6 @@ class DeployingMixin:
             condition &= cls.id != exclude
 
         for system in cls.select().where(condition):
-            LOGGER.info('Un-deploying #%i.', system.id)
             system.fitted = False
             system.deployment = None
             system.save()
@@ -40,12 +39,7 @@ class DeployingMixin:
         if deployment == self.deployment:
             return None
 
-        if (old := self.deployment) is None:
-            LOGGER.info('Initially deployed system at "%s".', deployment)
-        else:
-            LOGGER.info('Relocated system from "%s" to "%s".', old, deployment)
-
-        self.deployment = deployment
+        self.deployment, old = deployment, self.deployment
         return DeploymentChange(self, old, deployment)
 
     def deploy(
