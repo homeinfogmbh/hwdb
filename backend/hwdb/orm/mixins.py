@@ -58,7 +58,7 @@ class DeployingMixin:
             yield from type(self).undeploy_all(deployment, exclude=self)
 
         if (change := self.change_deployment(deployment)) is not None:
-            self.fitted = fitted and deployment is not None
+            self.fitted = fitted and (deployment is not None)
             self.save()
             yield change
 
