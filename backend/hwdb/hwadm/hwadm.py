@@ -38,9 +38,11 @@ def main() -> int:
             success = True
             hooks = (bind9cfgen, openvpncfgen)
     elif args.action == 'deploy':
-        success = deploy(args)
+        deploy(args)
+        success = True
     elif args.action == 'dataset':
-        success = dataset(args)
+        dataset(args)
+        success = True
     elif args.action == 'run-hooks':
         hooks = args.hooks
 

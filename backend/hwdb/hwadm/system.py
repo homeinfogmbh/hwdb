@@ -29,13 +29,14 @@ def add(args: Namespace) -> bool:
     system = System(
         openvpn=openvpn, group=args.group,
         operating_system=args.operating_system,
-        serial_number=args.serial_number, model=args.model)
+        serial_number=args.serial_number, model=args.model
+    )
     system.save()
     LOGGER.info('Added system: %i', system.id)
     return True
 
 
-def dataset(args: Namespace) -> bool:
+def dataset(args: Namespace) -> None:
     """Manage system dataset."""
 
     if args.remove:
@@ -43,31 +44,63 @@ def dataset(args: Namespace) -> bool:
             LOGGER.warning('Dataset ignored when removing it.')
 
         args.system.dataset = None
-        return args.system.save()
+        args.system.save()
+        return
 
     if args.dataset:
         args.system.dataset = args.dataset
-        return args.system.save()
+        args.system.save()
+        return
 
     LOGGER.info("System's current dataset: %s", args.system.dataset)
-    return True
 
 
-def deploy(args: Namespace) -> bool:
+def undeploy(system: System) -> None:
+    """Un-deploy a system."""
+
+    for system, old, new in system.deploy(None):
+        LOGGER.info(
+            'Change deployment of system "%s" from "%s" to "%s"',
+            system, old, new
+        )
+
+
+def deploy(args: Namespace) -> None:
+    """Deploy a system."""
+
+    for system, old, new in args.system.deploy(
+            args.deployment, exclusive=args.exclusive, fitted=args.fitted
+    ):
+        LOGGER.info(
+            'Change deployment of system "%s" from "%s" to "%s"',
+            system, old, new
+        )
+
+
+def mark_fitted(system: System) -> None:
+    """Mark the system as fitted."""
+
+    system.fitted = True
+    system.save()
+    LOGGER.info('System marked as fitted.')
+
+
+def deploy(args: Namespace) -> None:
     """Manage system deployment."""
 
     if args.remove:
         if args.deployment:
             LOGGER.warning('Deployment ignored when removing it.')
 
-        list(args.system.deploy(None))
-        return True
+        undeploy(args.system)
+        return
 
     if args.deployment:
-        list(args.system.deploy(
-            args.deployment, exclusive=args.exclusive, fitted=args.fitted
-        ))
-        return True
+        deploy(args)
+        return
+
+    if args.fitted:
+        mark_fitted(args.system)
+        return
 
     LOGGER.info('System is currently deployed at: %s', args.system.deployment)
-    return True
