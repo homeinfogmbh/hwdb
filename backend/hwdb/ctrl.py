@@ -2,6 +2,7 @@
 
 from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_call
+from typing import Optional
 
 from requests import Timeout, Response, put
 from requests.exceptions import ChunkedEncodingError
@@ -80,7 +81,7 @@ class RemoteControllerMixin(BasicControllerMixin):
         with suppress(Timeout):
             return self.exec('reboot')
 
-    def application(self, state: bool = None) -> Response:
+    def application(self, state: Optional[bool] = None) -> Response:
         """Manages the application.
         state=True: Enables the application
         state=False: Disables the application
