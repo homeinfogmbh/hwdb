@@ -5,8 +5,7 @@ from subprocess import DEVNULL, CalledProcessError, check_call
 from typing import Optional
 
 from requests import Timeout, Response, put
-from requests.exceptions import ChunkedEncodingError
-from requests.exceptions import ConnectionError     # pylint: disable=W0622
+from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 from hwdb.config import get_ping
 from hwdb.exceptions import SystemOffline
