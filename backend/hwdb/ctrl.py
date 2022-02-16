@@ -55,8 +55,11 @@ class BasicControllerMixin:
         except (ConnectionError, ChunkedEncodingError) as error:
             raise SystemOffline() from error
 
-    def exec(self, command: str, *args: str, _timeout: Optional[int] = 10,
-             **kwargs) -> Response:
+    def exec(
+            self, command: str, *args: str,
+            _timeout: Optional[int] = 10,
+            **kwargs
+    ) -> Response:
         """Runs the respective command."""
         json = {'args': args} if args else {}
         json.update(kwargs)
