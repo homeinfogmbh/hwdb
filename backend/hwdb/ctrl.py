@@ -48,14 +48,14 @@ class BasicControllerMixin:
             stdout=DEVNULL, stderr=DEVNULL
         )
 
-    def put(self, json: dict, *, timeout: int = 10) -> Response:
+    def put(self, json: dict, *, timeout: Optional[int] = 10) -> Response:
         """Executes a PUT request."""
         try:
             return put(self.url, json=json, timeout=timeout)
         except (ConnectionError, ChunkedEncodingError) as error:
             raise SystemOffline() from error
 
-    def exec(self, command: str, *args: str, _timeout: int = 10,
+    def exec(self, command: str, *args: str, _timeout: Optional[int] = 10,
              **kwargs) -> Response:
         """Runs the respective command."""
         json = {'args': args} if args else {}
