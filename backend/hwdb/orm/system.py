@@ -47,7 +47,7 @@ class System(BaseModel, DeployingMixin, DNSMixin, MonitoringMixin,
     """A physical computer system out in the field."""
 
     group = ForeignKeyField(
-        Group, column_name='Group', backref='systems', on_delete='SET NULL',
+        Group, column_name='group', backref='systems', on_delete='SET NULL',
         on_update='CASCADE', lazy_load=False)
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
