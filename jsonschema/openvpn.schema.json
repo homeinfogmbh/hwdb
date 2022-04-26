@@ -1,5 +1,5 @@
 {
-  "$id": "https://homeinfo.de/openvpn.schema.json",
+  "$id": "https://jsonschema.homeinfo.de/hwdb/openvpn.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "OpenVPN configuration of a system.",
   "type": "object",

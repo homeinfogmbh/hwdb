@@ -1,5 +1,5 @@
 {
-  "$id": "https://homeinfo.de/deployment.schema.json",
+  "$id": "https://jsonschema.homeinfo.de/hwdb/deployment.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "A deployment of a system.",
   "type": "object",
@@ -9,7 +9,7 @@
       "description": "ID of the deployment."
     },
     "customer": {
-      "type": "https://homeinfo.de/customer.schema.json",
+      "type": "https://jsonschema.homeinfo.de/mdb/customer.schema.json",
       "description": "Information about the customer of the deployment."
     },
     "type": {
@@ -21,11 +21,11 @@
       "description": "Internet connection type."
     },
     "address": {
-      "type": "https://homeinfo.de/address.schema.json",
+      "type": "https://jsonschema.homeinfo.de/mdb/address.schema.json",
       "description": "Address of the deployment."
     },
     "lptAddress": {
-      "type": ["https://homeinfo.de/address.schema.json", "null"],
+      "type": ["https://jsonschema.homeinfo.de/mdb/address.schema.json", "null"],
       "description": "Local public transport address of the deployment."
     },
     "scheduled": {

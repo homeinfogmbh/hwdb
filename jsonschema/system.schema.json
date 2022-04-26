@@ -1,5 +1,5 @@
 {
-  "$id": "https://homeinfo.de/checked-system.schema.json",
+  "$id": "https://jsonschema.homeinfo.de/hwdb/system.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "A hardware system.",
   "type": "object",
@@ -9,19 +9,34 @@
       "description": "The system ID."
     },
     "group": {
-      "type": ["https://homeinfo.de/group.schema.json", "integer"],
+      "type": [
+        "https://jsonschema.homeinfo.de/hwdb/group.schema.json",
+        "integer"
+      ],
       "description": "Group this system belongs to."
     },
     "deployment": {
-      "type": ["https://homeinfo.de/deployment.schema.json", "integer", "null"],
+      "type": [
+        "https://jsonschema.homeinfo.de/hwdb/deployment.schema.json",
+        "integer",
+        "null"
+      ],
       "description": "The system's deployment."
     },
     "dataset": {
-      "type": ["https://homeinfo.de/deployment.schema.json", "integer", "null"],
+      "type": [
+        "https://jsonschema.homeinfo.de/hwdb/deployment.schema.json",
+        "integer",
+        "null"
+      ],
       "description": "The system's dataset override."
     },
     "openvpn": {
-      "type": ["https://homeinfo.de/openvpn.schema.json", "integer", "null"],
+      "type": [
+        "https://jsonschema.homeinfo.de/hwdb/openvpn.schema.json",
+        "integer",
+        "null"
+      ],
       "description": "OpenVPN configuration."
     },
     "ipv6address": {
