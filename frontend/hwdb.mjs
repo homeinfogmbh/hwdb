@@ -25,6 +25,54 @@ import { addressToString } from 'https://javascript.homeinfo.de/mdb.mjs';
 
 
 /*
+    Object to represent information about a system.
+*/
+export class System {
+    constructor (
+        id, group, deployment, dataset, openvpn, ipv6address, pubkey, created,
+        configured, fitted, operatingSystem, monitor, serialNumber, model,
+        lastSync
+    ) {
+        this.id = id;
+        this.group = group;
+        this.deployment = deployment;
+        this.dataset = dataset;
+        this.openvpn = openvpn;
+        this.ipv6address = ipv6address;
+        this.pubkey = pubkey;
+        this.created = created;
+        this.configured = configured;
+        this.fitted = fitted;
+        this.operatingSystem = operatingSystem;
+        this.monitor = monitor;
+        this.serialNumber = serialNumber;
+        this.model = model;
+        this.lastSync = lastSync;
+    }
+
+    static fromJSON (json) {
+        return new this(
+            json.id,
+            json.group,
+            json.deployment || null,
+            json.dataset || null,
+            json.openvpn || null,
+            json.ipv6address || null,
+            json.pubkey || null,
+            new Date(json.created),
+            (json.configured == null) ? null : new Date(json.configured),
+            json.fitted,
+            json.operatingSystem,
+            json.monitor,
+            json.serialNumber || null,
+            json.model || null,
+            (json.lastSync == null) ? null : new Date(json.lastSync)
+        );
+    }
+}
+
+
+/*
     Compares two nullable values.
     Returns the respective sort order if at
     least one object is null-ish, else null.
