@@ -1,0 +1,68 @@
+{
+  "$id": "https://homeinfo.de/checked-system.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A hardware system.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "The system ID."
+    },
+    "group": {
+      "type": ["https://homeinfo.de/group.schema.json", "integer"],
+      "description": "Group this system belongs to."
+    },
+    "deployment": {
+      "type": ["https://homeinfo.de/deployment.schema.json", "integer", "null"],
+      "description": "The system's deployment."
+    },
+    "dataset": {
+      "type": ["https://homeinfo.de/deployment.schema.json", "integer", "null"],
+      "description": "The system's dataset override."
+    },
+    "openvpn": {
+      "type": ["https://homeinfo.de/openvpn.schema.json", "integer", "null"],
+      "description": "OpenVPN configuration."
+    },
+    "ipv6address": {
+      "type": ["string", "null"],
+      "description": "Assigned IPv6 address."
+    },
+    "pubkey": {
+      "type": ["string", "null"],
+      "description": "WireGuard public key."
+    },
+    "created": {
+      "type": ["string", "null"],
+      "description": "Date-time of creation in ISO format."
+    },
+    "configured": {
+      "type": ["string", "null"],
+      "description": "Date-time of configuration in ISO format."
+    },
+    "fitted": {
+      "type": ["string", "null"],
+      "description": "Date-time of fitting in ISO format."
+    },
+    "operatingSystem": {
+      "type": ["string"],
+      "description": "Name of the operating system in use."
+    },
+    "monitor": {
+      "type": ["boolean", "null"],
+      "description": "Flag on whether to monitor the system."
+    },
+    "serialNumber": {
+      "type": ["string", "null"],
+      "description": "The serial number of the system."
+    },
+    "model": {
+      "type": ["string", "null"],
+      "description": "Hardware model."
+    },
+    "lastSync": {
+      "type": ["string", "null"],
+      "description": "Date-time of last sync in ISO format."
+    }
+  }
+}

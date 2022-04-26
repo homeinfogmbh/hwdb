@@ -1,0 +1,24 @@
+{
+  "$id": "https://homeinfo.de/openvpn.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "OpenVPN configuration of a system.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "ID of the record."
+    },
+    "ipv4address": {
+      "type": "string",
+      "description": "IPv4 address of the system in the OpenVPN network."
+    },
+    "key": {
+      "type": ["string", "null"],
+      "description": "Deviating OpenVPN key name."
+    },
+    "mtu": {
+      "type": ["integer", "null"],
+      "description": "Deviating tunnel MTU value."
+    }
+  }
+}

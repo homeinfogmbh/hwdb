@@ -1,0 +1,16 @@
+{
+  "$id": "https://homeinfo.de/group.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "System group.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "ID of the group."
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the group."
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "$id": "https://homeinfo.de/deployment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A deployment of a system.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "ID of the deployment."
+    },
+    "customer": {
+      "type": "https://homeinfo.de/customer.schema.json",
+      "description": "Information about the customer of the deployment."
+    },
+    "type": {
+      "type": "string",
+      "description": "Product type."
+    },
+    "connection": {
+      "type": "string",
+      "description": "Internet connection type."
+    },
+    "address": {
+      "type": "https://homeinfo.de/address.schema.json",
+      "description": "Address of the deployment."
+    },
+    "lptAddress": {
+      "type": ["https://homeinfo.de/address.schema.json", "null"],
+      "description": "Local public transport address of the deployment."
+    },
+    "scheduled": {
+      "type": ["string", "null"],
+      "description": "Date-time ISO string of the deployment's scheduling."
+    },
+    "annotation": {
+      "type": ["string", "null"],
+      "description": "Optional annotation."
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Date-time ISO string of the deployment's creation."
+    },
+    "testing": {
+      "type": "boolean",
+      "description": "Flag, whether this is a testing system."
+    }
+  }
+}
