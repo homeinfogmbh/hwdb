@@ -3,5 +3,5 @@
 default: | install
 
 install:
-	@ mkdir -p /srv/http/de/homeinfo/jsonschema/mdb
-	@ install -t /srv/http/de/homeinfo/jsonschema/mdb *.schema.json
+	@ mkdir -p /srv/http/de/homeinfo/jsonschema/hwdb
+	@ install -t /srv/http/de/homeinfo/jsonschema/hwdb *.schema.json
