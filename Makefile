@@ -1,6 +1,6 @@
-.PHONY: pull backend frontend
+.PHONY: pull backend frontend jsonschema
 
-default: | pull backend frontend
+default: | pull backend frontend jsonschema
 
 pull:
 	@ git pull
@@ -10,3 +10,6 @@ backend:
 
 frontend:
 	@ make -C frontend
+
+jsonschema:
+	@ make -C jsonschema
