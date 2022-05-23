@@ -64,11 +64,14 @@ class Deployment(BaseModel):
         args = {cls, Customer, Company, Address, lpt_address, *args}
         return super().select(*args, **kwargs).join(
             Customer).join(Company).join_from(
-            cls, Address, on=cls.address == Address.id).join_from(
+            cls, Address, on=cls.address == Address.id
+        ).join_from(
             cls, lpt_address, on=cls.lpt_address == lpt_address.id,
-            join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join_from(
             cls, system, on=system.deployment == cls.id,
-            join_type=JOIN.LEFT_OUTER).distinct()
+            join_type=JOIN.LEFT_OUTER
+        ).distinct()
 
     @property
     def prepared(self) -> bool:
