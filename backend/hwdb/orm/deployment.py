@@ -11,7 +11,7 @@ from peewee import ForeignKeyField
 from peewee import Select
 
 from mdb import Address, Company, Customer
-from peeweeplus import EnumField
+from peeweeplus import EnumField, HTMLTextField
 
 from hwdb.enumerations import Connection, DeploymentType
 from hwdb.orm.common import BaseModel
@@ -37,6 +37,10 @@ class Deployment(BaseModel):
     annotation = CharField(255, null=True)
     testing = BooleanField(default=False)
     timestamp = DateTimeField(null=True)
+    # Checklist
+    construction_site_preparation_feedback = DateTimeField(null=True)
+    internet_connection = DateTimeField(null=True)
+    technitian_annotation = HTMLTextField(null=True)
 
     def __str__(self):
         """Returns a human readable string."""
@@ -63,6 +67,14 @@ class Deployment(BaseModel):
             join_type=JOIN.LEFT_OUTER).join_from(
             cls, system, on=system.deployment == cls.id,
             join_type=JOIN.LEFT_OUTER).distinct()
+
+    @property
+    def prepared(self) -> bool:
+        """Returns True iff the deployment is considered prepared for usage."""
+        return (
+            self.construction_site_preparation_feedback is not None
+            and self.internet_connection is not None
+        )
 
     def checkdupes(self) -> Select:
         """Returns duplicates of this deployment in the database."""
