@@ -42,7 +42,7 @@ class Deployment(BaseModel):
     # Checklist
     construction_site_preparation_feedback = DateTimeField(null=True)
     internet_connection = DateTimeField(null=True)
-    technitian_annotation = HTMLTextField(null=True)
+    technician_annotation = HTMLTextField(null=True)
 
     def __str__(self):
         """Returns a human-readable string."""
