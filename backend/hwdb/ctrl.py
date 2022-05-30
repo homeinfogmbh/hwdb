@@ -41,11 +41,11 @@ class BasicControllerMixin:
 
         return True
 
-    def ping(self, *, count: int = 3) -> int:
+    def ping(self, *, count: int = 3, timeout: Optional[int] = None) -> int:
         """Pings the system."""
         return check_call(
             [get_ping(), '-qc', str(count), str(self.ip_address)],
-            stdout=DEVNULL, stderr=DEVNULL
+            stdout=DEVNULL, stderr=DEVNULL, timeout=timeout
         )
 
     def put(self, json: dict, *, timeout: Optional[int] = 10) -> Response:
