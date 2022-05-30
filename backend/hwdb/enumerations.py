@@ -7,6 +7,7 @@ __all__ = [
     'from_string',
     'Connection',
     'DeploymentType',
+    'HardwareModel',
     'HardwareType',
     'OperatingSystem'
 ]
@@ -36,6 +37,16 @@ class DeploymentType(Enum):
     ETV_TOUCH = 'Exposé TV touch'
     KIOSK = 'Kiosk browser'
     SMART_TV = 'Smart TV'
+
+
+class HardwareModel(Enum):
+    """Ordered hardware model."""
+
+    STANDARD24 = 'Standard 24"'
+    STANDARD32 = 'Standard 32"'
+    PHOENIX = 'Phönix'
+    NEPTUN = 'Neptun'
+    OTHER = 'other'
 
 
 class HardwareType(Enum):

@@ -7,6 +7,7 @@ from hwdb.config import get_wireguard_server
 from hwdb.enumerations import Connection
 from hwdb.enumerations import DeploymentType
 from hwdb.enumerations import HardwareType
+from hwdb.enumerations import HardwareModel
 from hwdb.enumerations import OperatingSystem
 from hwdb.exceptions import TerminalError
 from hwdb.exceptions import TerminalConfigError
@@ -42,6 +43,7 @@ __all__ = [
     'Display',
     'GenericHardware',
     'Group',
+    'HardwareModel',
     'HardwareType',
     'OperatingSystem',
     'OpenVPN',
