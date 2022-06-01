@@ -6,7 +6,6 @@ from xml.etree.ElementTree import Element, SubElement
 from peewee import JOIN
 from peewee import BooleanField
 from peewee import CharField
-from peewee import DateField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
 from peewee import Select
@@ -14,7 +13,7 @@ from peewee import Select
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField, HTMLTextField
 
-from hwdb.enumerations import Connection, DeploymentType, HardwareModel
+from hwdb.enumerations import Connection, DeploymentType
 from hwdb.orm.common import BaseModel
 
 
