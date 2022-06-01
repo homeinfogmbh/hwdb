@@ -87,34 +87,44 @@ class System(BaseModel, DeployingMixin, DNSMixin, MonitoringMixin,
         ds_company = Company.alias()
         ds_address = Address.alias()
         ds_lpt_address = Address.alias()
-        args = {
+        return super().select(
             cls, Group, Customer, Company, Deployment, Address, lpt_address,
             dataset, ds_customer, ds_company, ds_address, ds_lpt_address,
             OpenVPN, *args
-        }
-        return super().select(*args).join(
+        ).join(
             # Group
-            Group).join_from(
+            Group
+        ).join_from(
             # Deployment
             cls, Deployment, on=cls.deployment == Deployment.id,
-            join_type=JOIN.LEFT_OUTER).join(
-            Customer, join_type=JOIN.LEFT_OUTER).join(
-            Company, join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join(
+            Customer, join_type=JOIN.LEFT_OUTER
+        ).join(
+            Company, join_type=JOIN.LEFT_OUTER
+        ).join_from(
             Deployment, Address, on=Deployment.address == Address.id,
-            join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join_from(
             Deployment, lpt_address,
             on=Deployment.lpt_address == lpt_address.id,
-            join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join_from(
             # Dataset
             cls, dataset, on=cls.dataset == dataset.id,
-            join_type=JOIN.LEFT_OUTER).join(
-            ds_customer, join_type=JOIN.LEFT_OUTER).join(
-            ds_company, join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join(
+            ds_customer, join_type=JOIN.LEFT_OUTER
+        ).join(
+            ds_company, join_type=JOIN.LEFT_OUTER
+        ).join_from(
             dataset, ds_address, on=dataset.address == ds_address.id,
-            join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join_from(
             dataset, ds_lpt_address,
             on=dataset.lpt_address == ds_lpt_address.id,
-            join_type=JOIN.LEFT_OUTER).join_from(
+            join_type=JOIN.LEFT_OUTER
+        ).join_from(
             # OpenVPN
             cls, OpenVPN, join_type=JOIN.LEFT_OUTER
         )
