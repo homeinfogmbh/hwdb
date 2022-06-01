@@ -13,7 +13,7 @@ from peewee import Select
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField, HTMLTextField
 
-from hwdb.enumerations import Connection, DeploymentType
+from hwdb.enumerations import Connection, DeploymentType, HardwareModel
 from hwdb.orm.common import BaseModel
 
 
@@ -30,6 +30,7 @@ class Deployment(BaseModel):
         Customer, column_name='customer', on_delete='CASCADE', lazy_load=False
     )
     type = EnumField(DeploymentType)
+    model = EnumField(HardwareModel, null=True)     # Desired model
     connection = EnumField(Connection)
     address = ForeignKeyField(Address, column_name='address', lazy_load=False)
     lpt_address = ForeignKeyField(  # Address for local public transport.
