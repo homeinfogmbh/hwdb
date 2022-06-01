@@ -55,16 +55,16 @@ class Deployment(BaseModel):
         return f'{string} ({self.annotation})'
 
     @classmethod
-    def select(cls, *args, cascade: bool = False, **kwargs) -> Select:
+    def select(cls, *args, cascade: bool = False) -> Select:
         """Selects deployments."""
         if not cascade:
-            return super().select(*args, **kwargs)
+            return super().select(*args)
 
         lpt_address = Address.alias()
         system = cls.systems.rel_model
-        args = {cls, Customer, Company, Address, lpt_address, *args}
-        return super().select(*args, **kwargs).join(
-            Customer).join(Company).join_from(
+        return super().select(
+            cls, Customer, Company, Address, lpt_address, *args
+        ).join(Customer).join(Company).join_from(
             cls, Address, on=cls.address == Address.id
         ).join_from(
             cls, lpt_address, on=cls.lpt_address == lpt_address.id,
