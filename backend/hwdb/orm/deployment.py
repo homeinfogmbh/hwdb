@@ -1,5 +1,6 @@
 """Terminal deployments."""
 
+from datetime import datetime
 from xml.etree.ElementTree import Element, SubElement
 
 from peewee import JOIN
@@ -35,10 +36,9 @@ class Deployment(BaseModel):
     lpt_address = ForeignKeyField(  # Address for local public transport.
         Address, null=True, column_name='lpt_address', lazy_load=False
     )
-    scheduled = DateField(null=True)
     annotation = CharField(255, null=True)
     testing = BooleanField(default=False)
-    timestamp = DateTimeField(null=True)
+    created = DateTimeField(default=datetime.now, null=True)
     # Checklist
     construction_site_preparation_feedback = DateTimeField(null=True)
     internet_connection = DateTimeField(null=True)
