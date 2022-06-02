@@ -52,7 +52,7 @@ class BasicControllerMixin:
         """Executes a PUT request."""
         try:
             return put(self.url, json=json, timeout=timeout)
-        except (ConnectionError, ChunkedEncodingError) as error:
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
             raise SystemOffline() from error
 
     def exec(
