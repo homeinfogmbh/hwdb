@@ -42,22 +42,28 @@ def get_free_ipv6_address() -> IPv6Address:
     )
 
 
-class System(BaseModel, DeployingMixin, DNSMixin, MonitoringMixin,
-             RemoteControllerMixin, AnsibleMixin):
+class System(
+    BaseModel, DeployingMixin, DNSMixin, MonitoringMixin,
+    RemoteControllerMixin, AnsibleMixin
+):
     """A physical computer system out in the field."""
 
     group = ForeignKeyField(
         Group, column_name='group', backref='systems', on_delete='SET NULL',
-        on_update='CASCADE', lazy_load=False)
+        on_update='CASCADE', lazy_load=False
+    )
     deployment = ForeignKeyField(
         Deployment, null=True, column_name='deployment', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False
+    )
     dataset = ForeignKeyField(
         Deployment, null=True, column_name='dataset', backref='data_systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False
+    )
     openvpn = ForeignKeyField(
         OpenVPN, null=True, column_name='openvpn', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False)
+        on_delete='SET NULL', on_update='CASCADE', lazy_load=False
+    )
     ipv6address = IPv6AddressField(null=True, unique=True)
     pubkey = FixedCharField(44, null=True, unique=True)
     created = DateTimeField(default=datetime.now)
