@@ -30,7 +30,7 @@ class OpenVPN(BaseModel):
     mtu = IntegerField(null=True)
 
     def __str__(self):
-        """Returns a human readable representation."""
+        """Returns a human-readable representation."""
         return str(self.ipv4address)
 
     @classmethod
