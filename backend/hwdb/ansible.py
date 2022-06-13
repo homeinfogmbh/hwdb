@@ -10,7 +10,7 @@ __all__ = ['AnsibleMixin']
 
 
 BLOCK_SIZE = 50
-LINUX_SYSTEMS = {OperatingSystem.ARCH_LINUX, OperatingSystem.ARCH_LINUX_ARM}
+LINUX = {OperatingSystem.ARCH_LINUX, OperatingSystem.ARCH_LINUX_ARM}
 
 
 class AnsibleMixin:
@@ -25,7 +25,7 @@ class AnsibleMixin:
         for index, system in enumerate(cls, start=1):
             groups['systems'].append(system)
 
-            if system.operating_system in LINUX_SYSTEMS:
+            if system.operating_system in LINUX:
                 groups['linux-systems'].append(system)
             else:   # Probably a Windows system.
                 groups['windows-systems'].append(system)
