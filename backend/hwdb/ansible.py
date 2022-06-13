@@ -17,7 +17,7 @@ class AnsibleMixin:
     """Mixin for providing methods for ansible configuration."""
 
     @classmethod
-    def ansible_groups(cls, block_size: int = BLOCK_SIZE) -> dict:
+    def ansible_groups(cls, *, block_size: int = BLOCK_SIZE) -> dict:
         """Returns ansible groups."""
         groups = defaultdict(list)
         ddb_block = 0
@@ -52,6 +52,7 @@ class AnsibleMixin:
     @classmethod
     def ansible_hosts(
             cls,
+            *,
             block_size: int = BLOCK_SIZE,
             config_parser: ConfigParser = None
     ) -> ConfigParser:
