@@ -36,7 +36,7 @@ class AnsibleMixin:
             groups[str(deployment.customer.id)].append(system)
             groups[deployment.customer.abbreviation].append(system)
 
-            if system.deployment.type == DeploymentType.DDB:
+            if deployment.type == DeploymentType.DDB:
                 groups['DDB'].append(system)
 
                 if block_size is not None:
