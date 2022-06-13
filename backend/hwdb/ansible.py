@@ -56,6 +56,6 @@ class AnsibleMixin:
             config_parser.add_section(group)
 
             for system in systems:
-                config_parser.set(group, system.vpn_hostname)
+                config_parser.set(group, system.hostname)
 
         return config_parser
