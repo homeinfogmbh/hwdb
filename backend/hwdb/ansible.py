@@ -34,7 +34,6 @@ class AnsibleMixin:
                 continue
 
             groups[str(deployment.customer.id)].append(system)
-            groups[deployment.customer.abbreviation].append(system)
 
             if deployment.type == DeploymentType.DDB:
                 groups['DDB'].append(system)
