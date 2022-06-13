@@ -26,14 +26,16 @@ class AnsibleMixin:
             groups['systems'].append(system)
 
             if system.operating_system in LINUX:
-                groups['linux-systems'].append(system)
+                groups['linux'].append(system)
             else:   # Probably a Windows system.
-                groups['windows-systems'].append(system)
+                groups['windows'].append(system)
 
             if not (deployment := system.deployment):
                 continue
 
-            groups[str(deployment.customer.id)].append(system)
+            groups[
+                deployment.customer.abbreviation.replace('-', '')
+            ].append(system)
 
             if deployment.type == DeploymentType.DDB:
                 groups['DDB'].append(system)
@@ -42,9 +44,9 @@ class AnsibleMixin:
                     if index % block_size == 0:
                         ddb_block += 1
 
-                    groups[f'ddb-block-{ddb_block}'].append(system)
+                    groups[f'ddb_block_{ddb_block}'].append(system)
             else:   # Probably an E-TV or E-TV touch.
-                groups['E-TV'].append(system)
+                groups['ETV'].append(system)
 
         return groups
 
