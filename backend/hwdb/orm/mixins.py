@@ -12,6 +12,9 @@ from hwdb.types import DeploymentChange
 __all__ = ['DeployingMixin', 'DNSMixin', 'MonitoringMixin']
 
 
+DOMAIN = 'homeinfo.intra'
+
+
 class DeployingMixin:
     """Mixin for deploying systems."""
 
@@ -64,6 +67,11 @@ class DNSMixin:
     def domain(self) -> str:
         """Returns the domain."""
         return get_config().get('net', 'domain')
+
+    @property
+    def fqdn(self) -> str:
+        """Returns the fully qualified domain name."""
+        return f'{self.hostname}.{DOMAIN}'
 
     @property
     def hostname(self) -> str:
