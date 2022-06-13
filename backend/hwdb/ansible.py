@@ -30,17 +30,22 @@ class AnsibleMixin:
             else:   # Probably a Windows system.
                 groups['windows-systems'].append(system)
 
-            if system.deployment:
-                if system.deployment.type == DeploymentType.DDB:
-                    groups['DDB'].append(system)
+            if not (deployment := system.deployment):
+                continue
 
-                    if block_size is not None:
-                        if index % block_size == 0:
-                            ddb_block += 1
+            groups[str(deployment.customer.id)].append(system)
+            groups[deployment.customer.abbreviation].append(system)
 
-                        groups[f'ddb-block-{ddb_block}'].append(system)
-                else:   # Probably an E-TV or E-TV touch.
-                    groups['E-TV'].append(system)
+            if system.deployment.type == DeploymentType.DDB:
+                groups['DDB'].append(system)
+
+                if block_size is not None:
+                    if index % block_size == 0:
+                        ddb_block += 1
+
+                    groups[f'ddb-block-{ddb_block}'].append(system)
+            else:   # Probably an E-TV or E-TV touch.
+                groups['E-TV'].append(system)
 
         return groups
 
