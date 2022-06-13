@@ -45,8 +45,11 @@ class AnsibleMixin:
         return groups
 
     @classmethod
-    def ansible_hosts(cls, block_size: int = BLOCK_SIZE,
-                      config_parser: ConfigParser = None) -> ConfigParser:
+    def ansible_hosts(
+            cls,
+            block_size: int = BLOCK_SIZE,
+            config_parser: ConfigParser = None
+    ) -> ConfigParser:
         """Returns a config parser for ansible hosts."""
         if not config_parser:
             config_parser = ConfigParser(allow_no_value=True)
