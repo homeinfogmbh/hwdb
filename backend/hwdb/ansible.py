@@ -33,9 +33,9 @@ class AnsibleMixin:
             if not (deployment := system.deployment):
                 continue
 
-            groups[
-                deployment.customer.abbreviation.replace('-', '')
-            ].append(system)
+            groups['_'.join(
+                deployment.customer.abbreviation.replace('-', '').split()
+            )].append(system)
 
             if deployment.type == DeploymentType.DDB:
                 groups['DDB'].append(system)
