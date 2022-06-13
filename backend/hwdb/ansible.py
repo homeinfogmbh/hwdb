@@ -13,7 +13,8 @@ BLOCK_SIZE = 50
 CANONICALIZE = str.maketrans({
     '-': '',
     '(': '_',
-    ')': ''
+    ')': '',
+    '&': 'und'
 })
 LINUX = {OperatingSystem.ARCH_LINUX, OperatingSystem.ARCH_LINUX_ARM}
 
