@@ -22,7 +22,7 @@ class AnsibleMixin:
         groups = defaultdict(list)
         ddb_block = 0
 
-        for index, system in enumerate(cls, start=1):
+        for index, system in enumerate(cls.select(cascade=True), start=1):
             groups['systems'].append(system)
 
             if system.operating_system in LINUX:
