@@ -10,6 +10,11 @@ __all__ = ['AnsibleMixin']
 
 
 BLOCK_SIZE = 50
+CANONICALIZE = str.maketrans({
+    '-': '',
+    '(': '_',
+    ')': ''
+})
 LINUX = {OperatingSystem.ARCH_LINUX, OperatingSystem.ARCH_LINUX_ARM}
 
 
@@ -33,9 +38,9 @@ class AnsibleMixin:
             if not (deployment := system.deployment):
                 continue
 
-            groups['_'.join(
-                deployment.customer.abbreviation.replace('-', '').split()
-            )].append(system)
+            groups[canonicalize(deployment.customer.abbreviation)].append(
+                system
+            )
 
             if deployment.type == DeploymentType.DDB:
                 groups['DDB'].append(system)
@@ -70,3 +75,9 @@ class AnsibleMixin:
                 config_parser.set(group, system.fqdn)
 
         return config_parser
+
+
+def canonicalize(name: str) -> str:
+    """Canonicalize the customer name."""
+
+    return '_'.join(name.translate(CANONICALIZE).split())
