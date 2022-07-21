@@ -113,3 +113,8 @@ def toggle_updating(systems: Iterable[System]) -> None:
     for system in systems:
         system.updating = not system.updating
         system.save()
+        LOGGER.info(
+            'System #%s is %s.',
+            system.id,
+            'updating' if system.updating else 'not updating'
+        )
