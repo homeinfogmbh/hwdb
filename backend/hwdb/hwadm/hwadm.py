@@ -55,6 +55,7 @@ def main() -> int:
             success = True
     elif args.action == 'toggle-updating':
         toggle_updating(args.system)
+        success = True
 
     if success and hooks and not args.no_hooks:
         for hook in hooks:
