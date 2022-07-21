@@ -74,6 +74,7 @@ class System(
     serial_number = CharField(255, null=True)
     model = CharField(255, null=True)   # Hardware model.
     last_sync = DateTimeField(null=True)
+    updating = BooleanField(default=False)
 
     @classmethod
     def used_ipv6_addresses(cls) -> Iterator[IPv6Address]:

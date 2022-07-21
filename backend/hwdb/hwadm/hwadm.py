@@ -7,7 +7,10 @@ from hwdb.hooks import bind9cfgen, openvpncfgen
 from hwdb.hwadm.argparse import get_args
 from hwdb.hwadm.deployment import add as add_deploment
 from hwdb.hwadm.deployment import batch_add as add_deploments
-from hwdb.hwadm.system import add as add_system, dataset, deploy
+from hwdb.hwadm.system import add as add_system
+from hwdb.hwadm.system import dataset
+from hwdb.hwadm.system import deploy
+from hwdb.hwadm.system import toggle_updating
 
 
 __all__ = ['main']
@@ -50,6 +53,8 @@ def main() -> int:
             LOGGER.error('Are you kidding me?')
         else:
             success = True
+    elif args.action == 'toggle-updating':
+        toggle_updating(args.system)
 
     if success and hooks and not args.no_hooks:
         for hook in hooks:

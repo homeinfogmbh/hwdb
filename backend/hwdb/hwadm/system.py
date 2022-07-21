@@ -2,13 +2,14 @@
 
 from argparse import Namespace
 from logging import getLogger
+from typing import Iterable
 
 from hwdb.exceptions import TerminalConfigError
 from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.system import System
 
 
-__all__ = ['add', 'dataset', 'deploy']
+__all__ = ['add', 'dataset', 'deploy', 'toggle_updating']
 
 
 LOGGER = getLogger('hwadm')
@@ -104,3 +105,11 @@ def deploy(args: Namespace) -> None:
         return
 
     LOGGER.info('System is currently deployed at: %s', args.system.deployment)
+
+
+def toggle_updating(systems: Iterable[System]) -> None:
+    """Toggle the updating flag on the given systems.."""
+
+    for system in systems:
+        system.updating = not system.updating
+        system.save()

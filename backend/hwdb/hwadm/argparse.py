@@ -167,6 +167,17 @@ def _add_hooks_parser(subparsers: _SubParsersAction):
     )
 
 
+def _add_toggle_updating_parser(subparsers: _SubParsersAction):
+    """Parses systems toggling actions."""
+
+    parser = subparsers.add_parser(
+        'toggle-updating', help='toggle updating flag on the given systems'
+    )
+    parser.add_argument(
+        'system', nargs='*', type=system, help='systems to toggle'
+    )
+
+
 def get_args() -> Namespace:
     """Parses the CLI arguments."""
 
@@ -183,4 +194,5 @@ def get_args() -> Namespace:
     _add_deploy_parser(subparsers)
     _add_dataset_parser(subparsers)
     _add_hooks_parser(subparsers)
+    _add_toggle_updating_parser(subparsers)
     return parser.parse_args()
