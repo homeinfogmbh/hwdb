@@ -5,8 +5,8 @@ from logging import DEBUG, INFO, basicConfig, getLogger
 from hwdb.config import LOG_FORMAT
 from hwdb.hooks import bind9cfgen, openvpncfgen
 from hwdb.hwadm.argparse import get_args
-from hwdb.hwadm.deployment import add as add_deploment
-from hwdb.hwadm.deployment import batch_add as add_deploments
+from hwdb.hwadm.deployment import add as add_deployment
+from hwdb.hwadm.deployment import batch_add as add_deployments
 from hwdb.hwadm.system import add as add_system
 from hwdb.hwadm.system import dataset
 from hwdb.hwadm.system import deploy
@@ -31,9 +31,9 @@ def main() -> int:
 
     if args.action == 'add':
         if args.target == 'dep':
-            success = add_deploment(args)
+            success = add_deployment(args)
         if args.target == 'deps':
-            success = add_deploments(args)
+            success = add_deployments(args)
         elif args.target == 'sys':
             for _ in range(args.amount):
                 add_system(args)
