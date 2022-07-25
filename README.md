@@ -10,4 +10,13 @@ This hardware database provides ORM models, functions and utility programs to re
 
 ## Notable Models
 
-The most notable models are `Deployment` and `System`. They represent location / customer mappings of where hardware is deployment and information about digital signage systems, i.e. computers, respectively.
+### Deployment
+Information about a system deployment. Contains address and customer 
+information as well as information about the type of digital signage system.
+
+### System
+Information about a computer. Contains information about the VPN addresses, 
+OS, and deployment status.
+
+### Display
+Information about a display or screen.
