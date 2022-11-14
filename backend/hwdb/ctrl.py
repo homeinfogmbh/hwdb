@@ -8,6 +8,7 @@ from requests import Timeout, Response, put
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 from hwdb.config import get_ping
+from hwdb.enumerations import ApplicationMode
 from hwdb.exceptions import SystemOffline
 from hwdb.types import IPSocket
 
@@ -83,13 +84,15 @@ class RemoteControllerMixin(BasicControllerMixin):
         with suppress(Timeout):
             return self.exec('reboot')
 
-    def application(self, state: Optional[bool] = None) -> Response:
+    def application(self, mode: Optional[ApplicationMode] = None) -> Response:
         """Manages the application.
-        state=True: Enables the application
-        state=False: Disables the application
         state=None: Queries the application state.
+        state=<else>: Set active application.
         """
-        return self.exec('application', state=state)
+        if mode is not None:
+            mode = mode.name
+
+        return self.exec('application', mode=mode)
 
     def screenshot(self) -> Response:
         """Makes a screenshot."""

@@ -5,6 +5,7 @@ from enum import Enum, EnumMeta
 
 __all__ = [
     'from_string',
+    'ApplicationMode',
     'Connection',
     'DeploymentType',
     'HardwareModel',
@@ -20,6 +21,15 @@ def from_string(enum: EnumMeta, value: str) -> Enum:
         return enum[value]
     except KeyError:
         return enum(value)
+
+
+class ApplicationMode(str, Enum):
+    """Application modes."""
+
+    PRODUCTIVE = 'productive'
+    INSTALLATION_INSTRUCTIONS = 'installation instructions'
+    NOT_CONFIGURED = 'not configured'
+    OFF = 'off'
 
 
 class Connection(Enum):
