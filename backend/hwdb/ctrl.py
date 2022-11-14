@@ -57,7 +57,9 @@ class BasicControllerMixin:
             raise SystemOffline() from error
 
     def exec(
-            self, command: str, *args: str,
+            self,
+            command: str,
+            *args: str,
             _timeout: Optional[int] = 10,
             **kwargs
     ) -> Response:
