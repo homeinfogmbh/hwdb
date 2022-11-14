@@ -4,6 +4,7 @@ from hwdb.config import get_openvpn_network
 from hwdb.config import get_openvpn_server
 from hwdb.config import get_wireguard_network
 from hwdb.config import get_wireguard_server
+from hwdb.enumerations import ApplicationMode
 from hwdb.enumerations import Connection
 from hwdb.enumerations import DeploymentType
 from hwdb.enumerations import HardwareType
@@ -37,6 +38,7 @@ __all__ = [
     'SystemOffline',
     'TerminalConfigError',
     'TerminalError',
+    'ApplicationMode',
     'Connection',
     'Deployment',
     'DeploymentType',
