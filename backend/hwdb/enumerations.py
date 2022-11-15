@@ -28,7 +28,6 @@ class ApplicationMode(str, Enum):
 
     PRODUCTIVE = 'productive'
     INSTALLATION_INSTRUCTIONS = 'installation instructions'
-    NOT_CONFIGURED = 'not configured'
     OFF = 'off'
 
 
