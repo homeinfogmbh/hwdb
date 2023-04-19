@@ -101,6 +101,7 @@ def system(ident: str) -> System:
 def systems(
         idents: Iterable[int],
         *,
+        strict: bool = False,
         logger: Logger = getLogger(__file__)
 ) -> Iterable[System]:
     """Returns the respective system."""
@@ -109,7 +110,10 @@ def systems(
         System.id << (idents := set(idents))
     )
 
-    for ident in idents - {sys.id for sys in records}:
+    for ident in (missing := idents - {sys.id for sys in records}):
+        if strict:
+            raise ValueError('No such systems:', missing)
+
         logger.warning('No such system: %i', ident)
 
     return records
