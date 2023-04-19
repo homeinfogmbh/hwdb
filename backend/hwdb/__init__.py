@@ -31,6 +31,7 @@ from hwdb.parsers import deployment_type
 from hwdb.parsers import hook
 from hwdb.parsers import operating_system
 from hwdb.parsers import system
+from hwdb.parsers import systems
 
 
 __all__ = [
@@ -64,6 +65,7 @@ __all__ = [
     'get_openvpn_server',
     'operating_system',
     'system',
+    'systems',
     'get_wireguard_network',
     'get_wireguard_server'
 ]
