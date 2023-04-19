@@ -101,8 +101,8 @@ def system(ident: str) -> System:
 def systems(
         idents: Iterable[int],
         *,
-        strict: bool = False,
-        logger: Logger = getLogger(__file__)
+        logger: Logger = getLogger(__file__),
+        strict: bool = False
 ) -> Iterable[System]:
     """Returns the respective systems."""
 
