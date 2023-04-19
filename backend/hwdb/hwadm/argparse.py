@@ -174,7 +174,7 @@ def _add_toggle_updating_parser(subparsers: _SubParsersAction):
         'toggle-updating', help='toggle updating flag on the given systems'
     )
     parser.add_argument(
-        'system', nargs='*', type=system, help='systems to toggle'
+        'system', nargs='*', type=int, help='systems to toggle'
     )
 
 

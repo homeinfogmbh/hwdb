@@ -11,6 +11,7 @@ from hwdb.hwadm.system import add as add_system
 from hwdb.hwadm.system import dataset
 from hwdb.hwadm.system import deploy
 from hwdb.hwadm.system import toggle_updating
+from hwdb.parsers import systems
 
 
 __all__ = ['main']
@@ -54,7 +55,7 @@ def main() -> int:
         else:
             success = True
     elif args.action == 'toggle-updating':
-        toggle_updating(args.system)
+        toggle_updating(systems(args.system))
         success = True
 
     if success and hooks and not args.no_hooks:
