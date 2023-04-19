@@ -55,7 +55,7 @@ def main() -> int:
         else:
             success = True
     elif args.action == 'toggle-updating':
-        toggle_updating(systems(args.system))
+        toggle_updating(systems(args.system, logger=LOGGER, strict=False))
         success = True
 
     if success and hooks and not args.no_hooks:
