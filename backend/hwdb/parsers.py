@@ -28,9 +28,6 @@ __all__ = [
 ]
 
 
-LOGGER = getLogger(__file__)
-
-
 def connection(name: str) -> Connection:
     """Returns a connection."""
 
@@ -104,7 +101,7 @@ def system(ident: str) -> System:
 def systems(
         idents: Iterable[int],
         *,
-        logger: Logger = LOGGER
+        logger: Logger = getLogger(__file__)
 ) -> Iterable[System]:
     """Returns the respective system."""
 
