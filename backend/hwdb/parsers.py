@@ -104,7 +104,7 @@ def systems(
         strict: bool = False,
         logger: Logger = getLogger(__file__)
 ) -> Iterable[System]:
-    """Returns the respective system."""
+    """Returns the respective systems."""
 
     records = System.select(cascade=True).where(
         System.id << (idents := set(idents))
