@@ -1,7 +1,8 @@
 """Type-like functions for argparse."""
 
 from datetime import date as Date, datetime
-from typing import Callable, Optional
+from logging import Logger, getLogger
+from typing import Callable, Iterable, Optional
 
 from mdb import Customer
 
@@ -22,8 +23,12 @@ __all__ = [
     'hook',
     'operating_system',
     'system',
+    'systems',
     'deployment_type'
 ]
+
+
+LOGGER = getLogger(__file__)
 
 
 def connection(name: str) -> Connection:
@@ -94,6 +99,23 @@ def system(ident: str) -> System:
         return System.select(cascade=True).where(System.id == ident).get()
     except System.DoesNotExist:
         raise ValueError('No such system.') from None
+
+
+def systems(
+        idents: Iterable[int],
+        *,
+        logger: Logger = LOGGER
+) -> Iterable[System]:
+    """Returns the respective system."""
+
+    records = System.select(cascade=True).where(
+        System.id << (idents := set(idents))
+    )
+
+    for ident in idents - {sys.id for sys in records}:
+        logger.warning('No such system: %i', ident)
+
+    return records
 
 
 def deployment_type(string: str) -> DeploymentType:
