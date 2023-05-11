@@ -11,6 +11,7 @@ from peewee import CharField
 from peewee import DateTimeField
 from peewee import FixedCharField
 from peewee import ForeignKeyField
+from peewee import IntegerField
 from peewee import Select
 
 from mdb import Address, Company, Customer
@@ -56,6 +57,7 @@ class System(
         Deployment, null=True, column_name='deployment', backref='systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False
     )
+    typo3_deployment_uid = IntegerField(null=True)
     dataset = ForeignKeyField(
         Deployment, null=True, column_name='dataset', backref='data_systems',
         on_delete='SET NULL', on_update='CASCADE', lazy_load=False
