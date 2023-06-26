@@ -96,6 +96,6 @@ class RemoteControllerMixin(BasicControllerMixin):
 
         return self.exec('application', mode=mode)
 
-    def screenshot(self) -> Response:
+    def screenshot(self, *, timeout: Optional[int] = 15) -> Response:
         """Makes a screenshot."""
-        return self.exec('screenshot', _timeout=None)
+        return self.exec('screenshot', _timeout=timeout)
