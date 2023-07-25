@@ -30,7 +30,7 @@ from hwdb.orm.openvpn import OpenVPN
 from hwdb.types import IPAddress
 
 
-__all__ = ['System', 'get_free_ipv6_address']
+__all__ = ["System", "get_free_ipv6_address"]
 
 
 def get_free_ipv6_address() -> IPv6Address:
@@ -39,32 +39,55 @@ def get_free_ipv6_address() -> IPv6Address:
     return get_address(
         wireguard_network := get_wireguard_network(),
         used=System.used_ipv6_addresses(),
-        reserved=[wireguard_network[0]]
+        reserved=[wireguard_network[0]],
     )
 
 
 class System(
-    BaseModel, DeployingMixin, DNSMixin, MonitoringMixin,
-    RemoteControllerMixin, AnsibleMixin
+    BaseModel,
+    DeployingMixin,
+    DNSMixin,
+    MonitoringMixin,
+    RemoteControllerMixin,
+    AnsibleMixin,
 ):
     """A physical computer system out in the field."""
 
     group = ForeignKeyField(
-        Group, column_name='group', backref='systems', on_delete='SET NULL',
-        on_update='CASCADE', lazy_load=False
+        Group,
+        column_name="group",
+        backref="systems",
+        on_delete="SET NULL",
+        on_update="CASCADE",
+        lazy_load=False,
     )
     deployment = ForeignKeyField(
-        Deployment, null=True, column_name='deployment', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False
+        Deployment,
+        null=True,
+        column_name="deployment",
+        backref="systems",
+        on_delete="SET NULL",
+        on_update="CASCADE",
+        lazy_load=False,
     )
     typo3_deployment_uid = IntegerField(null=True)
     dataset = ForeignKeyField(
-        Deployment, null=True, column_name='dataset', backref='data_systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False
+        Deployment,
+        null=True,
+        column_name="dataset",
+        backref="data_systems",
+        on_delete="SET NULL",
+        on_update="CASCADE",
+        lazy_load=False,
     )
     openvpn = ForeignKeyField(
-        OpenVPN, null=True, column_name='openvpn', backref='systems',
-        on_delete='SET NULL', on_update='CASCADE', lazy_load=False
+        OpenVPN,
+        null=True,
+        column_name="openvpn",
+        backref="systems",
+        on_delete="SET NULL",
+        on_update="CASCADE",
+        lazy_load=False,
     )
     ipv6address = IPv6AddressField(null=True, unique=True)
     pubkey = FixedCharField(44, null=True, unique=True)
@@ -74,7 +97,7 @@ class System(
     operating_system = EnumField(OperatingSystem)
     monitor = BooleanField(null=True)
     serial_number = CharField(255, null=True)
-    model = CharField(255, null=True)   # Hardware model.
+    model = CharField(255, null=True)  # Hardware model.
     last_sync = DateTimeField(null=True)
     updating = BooleanField(default=False)
 
@@ -96,46 +119,76 @@ class System(
         ds_company = Company.alias()
         ds_address = Address.alias()
         ds_lpt_address = Address.alias()
-        return super().select(
-            cls, Group, Customer, Company, Deployment, Address, lpt_address,
-            dataset, ds_customer, ds_company, ds_address, ds_lpt_address,
-            OpenVPN, *args
-        ).join(
-            # Group
-            Group
-        ).join_from(
-            # Deployment
-            cls, Deployment, on=cls.deployment == Deployment.id,
-            join_type=JOIN.LEFT_OUTER
-        ).join(
-            Customer, join_type=JOIN.LEFT_OUTER
-        ).join(
-            Company, join_type=JOIN.LEFT_OUTER
-        ).join_from(
-            Deployment, Address, on=Deployment.address == Address.id,
-            join_type=JOIN.LEFT_OUTER
-        ).join_from(
-            Deployment, lpt_address,
-            on=Deployment.lpt_address == lpt_address.id,
-            join_type=JOIN.LEFT_OUTER
-        ).join_from(
-            # Dataset
-            cls, dataset, on=cls.dataset == dataset.id,
-            join_type=JOIN.LEFT_OUTER
-        ).join(
-            ds_customer, join_type=JOIN.LEFT_OUTER
-        ).join(
-            ds_company, join_type=JOIN.LEFT_OUTER
-        ).join_from(
-            dataset, ds_address, on=dataset.address == ds_address.id,
-            join_type=JOIN.LEFT_OUTER
-        ).join_from(
-            dataset, ds_lpt_address,
-            on=dataset.lpt_address == ds_lpt_address.id,
-            join_type=JOIN.LEFT_OUTER
-        ).join_from(
-            # OpenVPN
-            cls, OpenVPN, join_type=JOIN.LEFT_OUTER
+        return (
+            super()
+            .select(
+                cls,
+                Group,
+                Customer,
+                Company,
+                Deployment,
+                Address,
+                lpt_address,
+                dataset,
+                ds_customer,
+                ds_company,
+                ds_address,
+                ds_lpt_address,
+                OpenVPN,
+                *args,
+            )
+            .join(
+                # Group
+                Group
+            )
+            .join_from(
+                # Deployment
+                cls,
+                Deployment,
+                on=cls.deployment == Deployment.id,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join(Customer, join_type=JOIN.LEFT_OUTER)
+            .join(Company, join_type=JOIN.LEFT_OUTER)
+            .join_from(
+                Deployment,
+                Address,
+                on=Deployment.address == Address.id,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join_from(
+                Deployment,
+                lpt_address,
+                on=Deployment.lpt_address == lpt_address.id,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join_from(
+                # Dataset
+                cls,
+                dataset,
+                on=cls.dataset == dataset.id,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join(ds_customer, join_type=JOIN.LEFT_OUTER)
+            .join(ds_company, join_type=JOIN.LEFT_OUTER)
+            .join_from(
+                dataset,
+                ds_address,
+                on=dataset.address == ds_address.id,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join_from(
+                dataset,
+                ds_lpt_address,
+                on=dataset.lpt_address == ds_lpt_address.id,
+                join_type=JOIN.LEFT_OUTER,
+            )
+            .join_from(
+                # OpenVPN
+                cls,
+                OpenVPN,
+                join_type=JOIN.LEFT_OUTER,
+            )
         )
 
     @property
@@ -153,10 +206,11 @@ class System(
         """Returns the deployment for synchronization."""
         return self.dataset or self.deployment
 
-    def to_json(self, *, brief: bool = False, skip: set = frozenset(),
-                **kwargs) -> dict:
+    def to_json(
+        self, *, brief: bool = False, skip: set = frozenset(), **kwargs
+    ) -> dict:
         """Returns a JSON-like dictionary."""
         if brief:
-            skip |= {'openvpn', 'ipv6address', 'pubkey', 'operator'}
+            skip |= {"openvpn", "ipv6address", "pubkey", "operator"}
 
         return super().to_json(skip=skip, **kwargs)

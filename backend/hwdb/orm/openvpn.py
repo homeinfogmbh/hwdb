@@ -13,7 +13,7 @@ from hwdb.orm.common import BaseModel
 from hwdb.types import IPAddress, IPNetwork
 
 
-__all__ = ['OpenVPN']
+__all__ = ["OpenVPN"]
 
 
 def get_reserved_addresses(openvpn_network: IPNetwork) -> set[IPAddress]:
@@ -39,7 +39,7 @@ class OpenVPN(BaseModel):
         ipv4address = get_address(
             openvpn_network := get_openvpn_network(),
             used=used_ipv4addresses(cls),
-            reserved=get_reserved_addresses(openvpn_network)
+            reserved=get_reserved_addresses(openvpn_network),
         )
         record = cls(ipv4address=ipv4address, key=key, mtu=mtu)
         record.save()

@@ -9,10 +9,10 @@ from hwdb.orm.deployment import Deployment
 from hwdb.types import DeploymentChange
 
 
-__all__ = ['DeployingMixin', 'DNSMixin', 'MonitoringMixin']
+__all__ = ["DeployingMixin", "DNSMixin", "MonitoringMixin"]
 
 
-DOMAIN = 'homeinfo.intra'
+DOMAIN = "homeinfo.intra"
 
 
 class DeployingMixin:
@@ -20,8 +20,7 @@ class DeployingMixin:
 
     @classmethod
     def undeploy_all(
-            cls, deployment: Deployment, *,
-            exclude: Optional[Union['System', int]] = None
+        cls, deployment: Deployment, *, exclude: Optional[Union["System", int]] = None
     ) -> Iterator[DeploymentChange]:
         """Undeploy other systems."""
         condition = cls.deployment == deployment
@@ -35,9 +34,7 @@ class DeployingMixin:
             system.save()
             yield DeploymentChange(system, system.deployment, None)
 
-    def change_deployment(
-            self, deployment: Deployment
-    ) -> Optional[DeploymentChange]:
+    def change_deployment(self, deployment: Deployment) -> Optional[DeploymentChange]:
         """Changes the current deployment."""
         if deployment == self.deployment:
             return None
@@ -46,9 +43,11 @@ class DeployingMixin:
         return DeploymentChange(self, old, deployment)
 
     def deploy(
-            self, deployment: Optional[Deployment], *,
-            exclusive: bool = False,
-            fitted: bool = False
+        self,
+        deployment: Optional[Deployment],
+        *,
+        exclusive: bool = False,
+        fitted: bool = False,
     ) -> Iterator[DeploymentChange]:
         """Locates a system at the respective deployment."""
         if exclusive and deployment is not None:
@@ -66,27 +65,27 @@ class DNSMixin:
     @property
     def domain(self) -> str:
         """Returns the domain."""
-        return get_config().get('net', 'domain')
+        return get_config().get("net", "domain")
 
     @property
     def fqdn(self) -> str:
         """Returns the fully qualified domain name."""
-        return f'{self.hostname}.{DOMAIN}'
+        return f"{self.hostname}.{DOMAIN}"
 
     @property
     def hostname(self) -> str:
         """Returns a host name for the OpenVPN network."""
-        return f'{self.id}.{self.domain}'
+        return f"{self.id}.{self.domain}"
 
     @property
     def vpn_hostname(self) -> str:
         """Returns a host name for the OpenVPN network."""
-        return f'{self.id}.openvpn.{self.domain}'
+        return f"{self.id}.openvpn.{self.domain}"
 
     @property
     def wg_hostname(self) -> str:
         """Returns the respective host name."""
-        return f'{self.id}.wireguard.{self.domain}'
+        return f"{self.id}.wireguard.{self.domain}"
 
 
 class MonitoringMixin:
@@ -95,15 +94,11 @@ class MonitoringMixin:
     @classmethod
     def monitoring_cond(cls) -> Expression:
         """Returns the condition for monitored systems."""
-        return (
-            (
-                (cls.monitor == 1)              # Monitoring is force-enabled.
-            ) | (
-                (cls.monitor >> None)           # Monitoring is not disabled.
-                & (Deployment.testing == 0)     # Not a testing system.
-                & (~(cls.deployment >> None))   # System has a deployment.
-                & (cls.fitted == 1)             # System is fitted.
-            )
+        return ((cls.monitor == 1)) | (  # Monitoring is force-enabled.
+            (cls.monitor >> None)  # Monitoring is not disabled.
+            & (Deployment.testing == 0)  # Not a testing system.
+            & (~(cls.deployment >> None))  # System has a deployment.
+            & (cls.fitted == 1)  # System is fitted.
         )
 
     @classmethod

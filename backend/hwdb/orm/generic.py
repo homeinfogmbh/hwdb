@@ -13,17 +13,16 @@ from hwdb.enumerations import HardwareType
 from hwdb.orm.common import BaseModel
 
 
-__all__ = ['GenericHardware']
+__all__ = ["GenericHardware"]
 
 
-class GenericHardware(BaseModel):   # pylint: disable=R0903
+class GenericHardware(BaseModel):  # pylint: disable=R0903
     """Generic hardware table."""
 
-    class Meta:     # pylint: disable=R0903,C0115
-        table_name = 'generic_hardware'
+    class Meta:  # pylint: disable=R0903,C0115
+        table_name = "generic_hardware"
 
-    customer = ForeignKeyField(
-        Customer, column_name='customer', lazy_load=False)
+    customer = ForeignKeyField(Customer, column_name="customer", lazy_load=False)
     type = EnumField(HardwareType)
     serial_number = CharField(null=True)
     dim_x = DecimalField(null=True)
@@ -44,6 +43,6 @@ class GenericHardware(BaseModel):   # pylint: disable=R0903
     def volume(self) -> float:
         """Returns the volume if available."""
         if any(item is None for item in (self.dim_x, self.dim_y, self.dim_z)):
-            raise ValueError('Not all dimensions have values.')
+            raise ValueError("Not all dimensions have values.")
 
         return self.dim_x * self.dim_y * self.dim_z

@@ -12,19 +12,23 @@ from hwdb.tools.common import iter_print
 from hwdb.tools.deployment import get, listdep, printdep, DeploymentField
 
 
-__all__ = ['find', 'list']
+__all__ = ["find", "list"]
 
 
-LOGGER = getLogger('hwutil')
+LOGGER = getLogger("hwutil")
 
 
 def _get_deployments(args: Namespace) -> ModelSelect:
     """Yields deployments selected by the CLI."""
 
     return get_deployments(
-        ids=args.id, customers=args.customer, testing=args.testing,
-        types=args.type, connections=args.connection, systems=args.system,
-        sort=True
+        ids=args.id,
+        customers=args.customer,
+        testing=args.testing,
+        types=args.type,
+        connections=args.connection,
+        systems=args.system,
+        sort=True,
     )
 
 
@@ -33,11 +37,10 @@ def find(args: Namespace) -> bool:
 
     try:
         deployment = get(
-            args.pattern, house_number=args.house_number,
-            annotation=args.pattern
+            args.pattern, house_number=args.house_number, annotation=args.pattern
         )
     except AmbiguityError as ambiguous:
-        LOGGER.warning('Ambiguous deployments.')
+        LOGGER.warning("Ambiguous deployments.")
 
         for deployment in ambiguous:
             printdep(deployment)

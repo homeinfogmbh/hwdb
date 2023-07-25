@@ -15,16 +15,16 @@ from hwdb.orm import Deployment, Group, System
 
 
 __all__ = [
-    'connection',
-    'customer',
-    'date',
-    'deployment',
-    'group',
-    'hook',
-    'operating_system',
-    'system',
-    'systems',
-    'deployment_type'
+    "connection",
+    "customer",
+    "date",
+    "deployment",
+    "group",
+    "hook",
+    "operating_system",
+    "system",
+    "systems",
+    "deployment_type",
 ]
 
 
@@ -40,33 +40,31 @@ def customer(string: str) -> Customer:
     try:
         return Customer.find(string).get()
     except Customer.DoesNotExist:
-        raise ValueError('No such customer.') from None
+        raise ValueError("No such customer.") from None
 
 
 def date(string: str) -> Date:
     """Parses a date."""
 
-    return datetime.strptime(string, '%Y-%m-%d').date()
+    return datetime.strptime(string, "%Y-%m-%d").date()
 
 
 def deployment(ident: str) -> Deployment:
     """Returns the respective deployment."""
 
     try:
-        return Deployment.select(cascade=True).where(
-            Deployment.id == ident).get()
+        return Deployment.select(cascade=True).where(Deployment.id == ident).get()
     except Deployment.DoesNotExist:
-        raise ValueError('No such deployment.') from None
+        raise ValueError("No such deployment.") from None
 
 
 def group(ident: str) -> Group:
     """Returns the respective group."""
 
     try:
-        return Group.select().where(
-            (Group.id == ident) | (Group.name ** ident))
+        return Group.select().where((Group.id == ident) | (Group.name**ident))
     except Group.DoesNotExist:
-        raise ValueError('No such group.') from None
+        raise ValueError("No such group.") from None
 
 
 def hook(name: str) -> Callable:
@@ -75,12 +73,12 @@ def hook(name: str) -> Callable:
     try:
         return HOOKS[name]
     except KeyError:
-        raise ValueError('No such hook.') from None
+        raise ValueError("No such hook.") from None
 
 
-def operating_system(name: Optional[str] = None, *,
-                     fallback: Optional[OperatingSystem] = None
-                     ) -> OperatingSystem:
+def operating_system(
+    name: Optional[str] = None, *, fallback: Optional[OperatingSystem] = None
+) -> OperatingSystem:
     """Returns a connection."""
 
     if name is None and fallback is not None:
@@ -95,26 +93,21 @@ def system(ident: str) -> System:
     try:
         return System.select(cascade=True).where(System.id == ident).get()
     except System.DoesNotExist:
-        raise ValueError('No such system.') from None
+        raise ValueError("No such system.") from None
 
 
 def systems(
-        idents: Iterable[int],
-        *,
-        logger: Logger = getLogger(__file__),
-        strict: bool = False
+    idents: Iterable[int], *, logger: Logger = getLogger(__file__), strict: bool = False
 ) -> Iterable[System]:
     """Returns the respective systems."""
 
-    records = System.select(cascade=True).where(
-        System.id << (idents := set(idents))
-    )
+    records = System.select(cascade=True).where(System.id << (idents := set(idents)))
 
     for ident in (missing := idents - {sys.id for sys in records}):
         if strict:
-            raise ValueError('No such systems:', missing)
+            raise ValueError("No such systems:", missing)
 
-        logger.warning('No such system: %i', ident)
+        logger.warning("No such system: %i", ident)
 
     return records
 

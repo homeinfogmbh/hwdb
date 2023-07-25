@@ -14,12 +14,12 @@ from hwdb.hwadm.system import toggle_updating
 from hwdb.parsers import systems
 
 
-__all__ = ['main']
+__all__ = ["main"]
 
 
-DESCRIPTION = 'Command line tool to administer HOMEINFO terminals.'
-LOGGER = getLogger('hwadm')
-TERMGR_USER = 'termgr'
+DESCRIPTION = "Command line tool to administer HOMEINFO terminals."
+LOGGER = getLogger("hwadm")
+TERMGR_USER = "termgr"
 
 
 def main() -> int:
@@ -30,31 +30,31 @@ def main() -> int:
     success = False
     hooks = None
 
-    if args.action == 'add':
-        if args.target == 'dep':
+    if args.action == "add":
+        if args.target == "dep":
             success = add_deployment(args)
-        if args.target == 'deps':
+        if args.target == "deps":
             success = add_deployments(args)
-        elif args.target == 'sys':
+        elif args.target == "sys":
             for _ in range(args.amount):
                 add_system(args)
 
             success = True
             hooks = (bind9cfgen, openvpncfgen)
-    elif args.action == 'deploy':
+    elif args.action == "deploy":
         deploy(args)
         success = True
-    elif args.action == 'dataset':
+    elif args.action == "dataset":
         dataset(args)
         success = True
-    elif args.action == 'run-hooks':
+    elif args.action == "run-hooks":
         hooks = args.hooks
 
         if args.no_hooks:
-            LOGGER.error('Are you kidding me?')
+            LOGGER.error("Are you kidding me?")
         else:
             success = True
-    elif args.action == 'toggle-updating':
+    elif args.action == "toggle-updating":
         toggle_updating(systems(args.system, logger=LOGGER, strict=False))
         success = True
 

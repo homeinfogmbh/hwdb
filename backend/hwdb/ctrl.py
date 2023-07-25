@@ -13,7 +13,7 @@ from hwdb.exceptions import SystemOffline
 from hwdb.types import IPSocket
 
 
-__all__ = ['RemoteControllerMixin']
+__all__ = ["RemoteControllerMixin"]
 
 
 PORT = 8000
@@ -30,7 +30,7 @@ class BasicControllerMixin:
     @property
     def url(self) -> str:
         """Returns the system's URL."""
-        return f'http://{self.socket}'
+        return f"http://{self.socket}"
 
     @property
     def online(self) -> bool:
@@ -45,8 +45,10 @@ class BasicControllerMixin:
     def ping(self, *, count: int = 3, timeout: Optional[int] = None) -> int:
         """Pings the system."""
         return check_call(
-            [get_ping(), '-qc', str(count), str(self.ip_address)],
-            stdout=DEVNULL, stderr=DEVNULL, timeout=timeout
+            [get_ping(), "-qc", str(count), str(self.ip_address)],
+            stdout=DEVNULL,
+            stderr=DEVNULL,
+            timeout=timeout,
         )
 
     def put(self, json: dict, *, timeout: Optional[int] = 10) -> Response:
@@ -57,16 +59,12 @@ class BasicControllerMixin:
             raise SystemOffline() from error
 
     def exec(
-            self,
-            command: str,
-            *args: str,
-            _timeout: Optional[int] = 10,
-            **kwargs
+        self, command: str, *args: str, _timeout: Optional[int] = 10, **kwargs
     ) -> Response:
         """Runs the respective command."""
-        json = {'args': args} if args else {}
+        json = {"args": args} if args else {}
         json.update(kwargs)
-        json['command'] = command
+        json["command"] = command
         return self.put(json, timeout=_timeout)
 
 
@@ -75,16 +73,16 @@ class RemoteControllerMixin(BasicControllerMixin):
 
     def beep(self, *args: str) -> Response:
         """Beeps the system."""
-        return self.exec('beep', args=args)
+        return self.exec("beep", args=args)
 
     def unlock_pacman(self) -> Response:
         """Safely removes the pacman lockfile."""
-        return self.exec('unlock-pacman')
+        return self.exec("unlock-pacman")
 
     def reboot(self) -> Response:
         """Reboots the system."""
         with suppress(Timeout):
-            return self.exec('reboot')
+            return self.exec("reboot")
 
     def application(self, mode: Optional[ApplicationMode] = None) -> Response:
         """Manages the application.
@@ -94,8 +92,8 @@ class RemoteControllerMixin(BasicControllerMixin):
         if mode is not None:
             mode = mode.name
 
-        return self.exec('application', mode=mode)
+        return self.exec("application", mode=mode)
 
     def screenshot(self, *, timeout: Optional[int] = 15) -> Response:
         """Makes a screenshot."""
-        return self.exec('screenshot', _timeout=timeout)
+        return self.exec("screenshot", _timeout=timeout)

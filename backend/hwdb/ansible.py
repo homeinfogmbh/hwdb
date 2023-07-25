@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from hwdb.enumerations import OperatingSystem, DeploymentType
 
 
-__all__ = ['AnsibleMixin']
+__all__ = ["AnsibleMixin"]
 
 
 BLOCK_SIZE = 50
@@ -23,37 +23,34 @@ class AnsibleMixin:
         ddb_block = 0
 
         for index, system in enumerate(cls.select(cascade=True), start=1):
-            groups['systems'].append(system)
+            groups["systems"].append(system)
 
             if system.operating_system in LINUX:
-                groups['linux'].append(system)
-            else:   # Probably a Windows system.
-                groups['windows'].append(system)
+                groups["linux"].append(system)
+            else:  # Probably a Windows system.
+                groups["windows"].append(system)
 
             if not (deployment := system.deployment):
                 continue
 
-            groups[f'c{deployment.customer.id}'].append(system)
+            groups[f"c{deployment.customer.id}"].append(system)
 
             if deployment.type == DeploymentType.DDB:
-                groups['DDB'].append(system)
+                groups["DDB"].append(system)
 
                 if block_size is not None:
                     if index % block_size == 0:
                         ddb_block += 1
 
-                    groups[f'ddb_block_{ddb_block}'].append(system)
-            else:   # Probably an E-TV or E-TV touch.
-                groups['ETV'].append(system)
+                    groups[f"ddb_block_{ddb_block}"].append(system)
+            else:  # Probably an E-TV or E-TV touch.
+                groups["ETV"].append(system)
 
         return groups
 
     @classmethod
     def ansible_hosts(
-            cls,
-            *,
-            block_size: int = BLOCK_SIZE,
-            config_parser: ConfigParser = None
+        cls, *, block_size: int = BLOCK_SIZE, config_parser: ConfigParser = None
     ) -> ConfigParser:
         """Returns a config parser for ansible hosts."""
         if not config_parser:

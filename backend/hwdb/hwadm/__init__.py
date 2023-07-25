@@ -3,4 +3,4 @@
 from hwdb.hwadm.hwadm import main
 
 
-__all__ = ['main']
+__all__ = ["main"]

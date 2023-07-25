@@ -11,12 +11,7 @@ from hwdb.enumerations import Connection, DeploymentType, OperatingSystem
 from hwdb.orm import Deployment, Group, System
 
 
-__all__ = [
-    'filter_online',
-    'filter_offline',
-    'get_deployments',
-    'get_systems'
-]
+__all__ = ["filter_online", "filter_offline", "get_deployments", "get_systems"]
 
 
 def _parse_ids(idents: Iterable[str]) -> Iterator[int]:
@@ -26,7 +21,7 @@ def _parse_ids(idents: Iterable[str]) -> Iterator[int]:
         try:
             yield int(ident)
         except ValueError:
-            LOGGER.warning('Ignoring invalid system ID: %s', ident)
+            LOGGER.warning("Ignoring invalid system ID: %s", ident)
 
 
 def _get_expression(ids: Iterable[str], model: ModelBase) -> Expression:
@@ -55,14 +50,15 @@ def filter_offline(systems: Iterable[System]) -> Iterator[System]:
             yield system
 
 
-def get_deployments(ids: Iterable[int] = None,
-                    customers: Iterable[Customer] = None,
-                    testing: bool = None,
-                    types: Iterable[DeploymentType] = None,
-                    connections: Iterable[Connection] = None,
-                    systems: Iterable[System] = None,
-                    sort: bool = False
-                    ) -> ModelSelect:
+def get_deployments(
+    ids: Iterable[int] = None,
+    customers: Iterable[Customer] = None,
+    testing: bool = None,
+    types: Iterable[DeploymentType] = None,
+    connections: Iterable[Connection] = None,
+    systems: Iterable[System] = None,
+    sort: bool = False,
+) -> ModelSelect:
     """Yields deployments."""
 
     select = Deployment.select(cascade=True)
@@ -86,8 +82,7 @@ def get_deployments(ids: Iterable[int] = None,
     if systems:
         dataset = System.alias()
         select = select.join_from(
-            Deployment, dataset, JOIN.LEFT_OUTER,
-            on=Deployment.id == dataset.dataset
+            Deployment, dataset, JOIN.LEFT_OUTER, on=Deployment.id == dataset.dataset
         )
         condition &= (System.id << systems) | (dataset.id << systems)
 
@@ -99,18 +94,19 @@ def get_deployments(ids: Iterable[int] = None,
     return select
 
 
-def get_systems(ids: Iterable[int],
-                customers: Iterable[Customer] = None,
-                deployments: Iterable[Deployment] = None,
-                datasets: Iterable[Deployment] = None,
-                configured: bool = None,
-                deployed: bool = None,
-                fitted: bool = None,
-                operating_systems: Iterable[OperatingSystem] = None,
-                groups: Iterable[Group] = None,
-                online: bool = None,
-                sort: bool = False
-                ) -> Iterator[System]:
+def get_systems(
+    ids: Iterable[int],
+    customers: Iterable[Customer] = None,
+    deployments: Iterable[Deployment] = None,
+    datasets: Iterable[Deployment] = None,
+    configured: bool = None,
+    deployed: bool = None,
+    fitted: bool = None,
+    operating_systems: Iterable[OperatingSystem] = None,
+    groups: Iterable[Group] = None,
+    online: bool = None,
+    sort: bool = False,
+) -> Iterator[System]:
     """Yields systems for the respective expressions and filters."""
 
     condition = True

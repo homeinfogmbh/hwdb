@@ -9,10 +9,10 @@ from hwdb.orm.openvpn import OpenVPN
 from hwdb.orm.system import System
 
 
-__all__ = ['add', 'dataset', 'deploy', 'toggle_updating']
+__all__ = ["add", "dataset", "deploy", "toggle_updating"]
 
 
-LOGGER = getLogger('hwadm')
+LOGGER = getLogger("hwadm")
 
 
 def add(args: Namespace) -> bool:
@@ -28,12 +28,14 @@ def add(args: Namespace) -> bool:
         return False
 
     system = System(
-        openvpn=openvpn, group=args.group,
+        openvpn=openvpn,
+        group=args.group,
         operating_system=args.operating_system,
-        serial_number=args.serial_number, model=args.model
+        serial_number=args.serial_number,
+        model=args.model,
     )
     system.save()
-    LOGGER.info('Added system: %i', system.id)
+    LOGGER.info("Added system: %i", system.id)
     return True
 
 
@@ -42,7 +44,7 @@ def dataset(args: Namespace) -> None:
 
     if args.remove:
         if args.dataset:
-            LOGGER.warning('Dataset ignored when removing it.')
+            LOGGER.warning("Dataset ignored when removing it.")
 
         args.system.dataset = None
         args.system.save()
@@ -61,8 +63,7 @@ def _undeploy(system: System) -> None:
 
     for system, old, new in system.deploy(None):
         LOGGER.info(
-            'Change deployment of system "%s" from "%s" to "%s"',
-            system, old, new
+            'Change deployment of system "%s" from "%s" to "%s"', system, old, new
         )
 
 
@@ -70,11 +71,10 @@ def _deploy(args: Namespace) -> None:
     """Deploy a system."""
 
     for system, old, new in args.system.deploy(
-            args.deployment, exclusive=args.exclusive, fitted=args.fitted
+        args.deployment, exclusive=args.exclusive, fitted=args.fitted
     ):
         LOGGER.info(
-            'Change deployment of system "%s" from "%s" to "%s"',
-            system, old, new
+            'Change deployment of system "%s" from "%s" to "%s"', system, old, new
         )
 
 
@@ -83,7 +83,7 @@ def _fit(system: System) -> None:
 
     system.fitted = True
     system.save()
-    LOGGER.info('System marked as fitted.')
+    LOGGER.info("System marked as fitted.")
 
 
 def deploy(args: Namespace) -> None:
@@ -91,7 +91,7 @@ def deploy(args: Namespace) -> None:
 
     if args.remove:
         if args.deployment:
-            LOGGER.warning('Deployment ignored when removing it.')
+            LOGGER.warning("Deployment ignored when removing it.")
 
         _undeploy(args.system)
         return
@@ -104,7 +104,7 @@ def deploy(args: Namespace) -> None:
         _fit(args.system)
         return
 
-    LOGGER.info('System is currently deployed at: %s', args.system.deployment)
+    LOGGER.info("System is currently deployed at: %s", args.system.deployment)
 
 
 def toggle_updating(systems: Iterable[System]) -> None:
@@ -114,7 +114,7 @@ def toggle_updating(systems: Iterable[System]) -> None:
         system.updating = not system.updating
         system.save()
         LOGGER.info(
-            'System #%i is %s.',
+            "System #%i is %s.",
             system.id,
-            'updating' if system.updating else 'not updating'
+            "updating" if system.updating else "not updating",
         )

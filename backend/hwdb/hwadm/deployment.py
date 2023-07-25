@@ -8,14 +8,15 @@ from mdb import Address
 from hwdb.orm.deployment import Deployment
 
 
-__all__ = ['add', 'batch_add']
+__all__ = ["add", "batch_add"]
 
 
-LOGGER = getLogger('hwadm')
+LOGGER = getLogger("hwadm")
 
 
-def from_address(args: Namespace, street: str, house_number: str,
-                 zip_code: str, city: str) -> None:
+def from_address(
+    args: Namespace, street: str, house_number: str, zip_code: str, city: str
+) -> None:
     """Adds a deployment from an address."""
 
     address = Address.add(street, house_number, zip_code, city)
@@ -33,12 +34,16 @@ def from_address(args: Namespace, street: str, house_number: str,
         deployment = Deployment.get(select)
     except Deployment.DoesNotExist:
         deployment = Deployment(
-            customer=args.customer, type=args.type, address=address,
-            annotation=args.annotation, connection=args.connection)
+            customer=args.customer,
+            type=args.type,
+            address=address,
+            annotation=args.annotation,
+            connection=args.connection,
+        )
         deployment.save()
-        LOGGER.info('Added deployment #%i.', deployment.id)
+        LOGGER.info("Added deployment #%i.", deployment.id)
     else:
-        LOGGER.info('Using existing deployment #%i.', deployment.id)
+        LOGGER.info("Using existing deployment #%i.", deployment.id)
 
 
 def batch_add(args: Namespace) -> bool:
@@ -47,11 +52,11 @@ def batch_add(args: Namespace) -> bool:
     result = True
 
     for path in args.file:
-        with path.open('r') as file:
+        with path.open("r") as file:
             for line in file:
                 line = line.strip()
 
-                if not line or line.startswith('#'):
+                if not line or line.startswith("#"):
                     continue
 
                 match = args.regex.fullmatch(line)
@@ -59,7 +64,7 @@ def batch_add(args: Namespace) -> bool:
                 if match is not None:
                     from_address(args, *match.groups())
                 else:
-                    LOGGER.error('Could not parse address from: %s', line)
+                    LOGGER.error("Could not parse address from: %s", line)
                     result = False
 
     return result
@@ -68,6 +73,5 @@ def batch_add(args: Namespace) -> bool:
 def add(args: Namespace) -> bool:
     """Adds a deployment."""
 
-    from_address(args, args.street, args.house_number, args.zip_code,
-                 args.city)
+    from_address(args, args.street, args.house_number, args.zip_code, args.city)
     return True

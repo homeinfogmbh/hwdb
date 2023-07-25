@@ -10,22 +10,20 @@ from hwdb.orm.system import System, get_free_ipv6_address
 
 
 __all__ = [
-    'MODELS',
-    'create_tables',
-    'get_free_ipv6_address',
-    'Deployment',
-    'Display',
-    'GenericHardware',
-    'Group',
-    'OpenVPN',
-    'SmartTV',
-    'System'
+    "MODELS",
+    "create_tables",
+    "get_free_ipv6_address",
+    "Deployment",
+    "Display",
+    "GenericHardware",
+    "Group",
+    "OpenVPN",
+    "SmartTV",
+    "System",
 ]
 
 
-MODELS = (
-    Group, Deployment, SmartTV, OpenVPN, System, Display, GenericHardware
-)
+MODELS = (Group, Deployment, SmartTV, OpenVPN, System, Display, GenericHardware)
 
 
 def create_tables(models=MODELS):

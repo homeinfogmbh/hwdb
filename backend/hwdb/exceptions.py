@@ -4,11 +4,11 @@ from typing import Iterable
 
 
 __all__ = [
-    'TerminalError',
-    'TerminalConfigError',
-    'NoConnection',
-    'AmbiguityError',
-    'SystemOffline'
+    "TerminalError",
+    "TerminalConfigError",
+    "NoConnection",
+    "AmbiguityError",
+    "SystemOffline",
 ]
 
 

@@ -10,11 +10,12 @@ from hwdb.exceptions import TerminalConfigError
 from hwdb.types import IPAddress, IPAddresses, IPNetwork
 
 
-__all__ = ['get_address', 'used_ipv4addresses']
+__all__ = ["get_address", "used_ipv4addresses"]
 
 
-def get_address(network: IPNetwork, used: IPAddresses = (),
-                reserved: IPAddresses = ()) -> IPAddress:
+def get_address(
+    network: IPNetwork, used: IPAddresses = (), reserved: IPAddresses = ()
+) -> IPAddress:
     """Returns a free IPv4Address.
     XXX: Beware of race conditions!
     """
@@ -25,7 +26,7 @@ def get_address(network: IPNetwork, used: IPAddresses = (),
         if address not in blacklist:
             return address
 
-    raise TerminalConfigError('Network exhausted!')
+    raise TerminalConfigError("Network exhausted!")
 
 
 def used_ipv4addresses(model: ModelBase) -> Iterator[IPv4Address]:
