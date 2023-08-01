@@ -83,7 +83,7 @@ def write_config_files(systems: Iterable[System]):
         try:
             write_config_file(system)
         except NoConnection:
-            LOGGER.error("System %i has no VPN configuration.", system.id)
+            LOGGER.warning("System %i has no VPN configuration.", system.id)
 
 
 def remove_config_files():
