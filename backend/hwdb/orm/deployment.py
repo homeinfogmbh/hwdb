@@ -9,6 +9,7 @@ from peewee import CharField
 from peewee import DateTimeField
 from peewee import ForeignKeyField
 from peewee import Select
+from peewee import TextField
 
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField, HTMLTextField
@@ -38,6 +39,7 @@ class Deployment(BaseModel):
     annotation = CharField(255, null=True)
     testing = BooleanField(default=False)
     created = DateTimeField(default=datetime.now, null=True)
+    url = TextField(default=None)
     # Checklist
     construction_site_preparation_feedback = DateTimeField(null=True)
     internet_connection = DateTimeField(null=True)
