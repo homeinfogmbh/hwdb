@@ -4,7 +4,7 @@ from typing import Iterator, Optional, Union
 
 from peewee import Expression, Select
 
-from hwdb.config import get_config
+from hwdb.config import LOGGER, get_config
 from hwdb.orm.deployment import Deployment
 from hwdb.types import DeploymentChange
 
@@ -42,7 +42,8 @@ class DeployingMixin:
             return None
 
         if deployment is not None and deployment.url is not None:
-            self.set_url(deployment.url)
+            if self.set_url(deployment.url).status_code != 200:
+                LOGGER.warning("Could not set URL on system.")
 
         self.deployment, old = deployment, self.deployment
         return DeploymentChange(self, old, deployment)
