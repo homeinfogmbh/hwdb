@@ -3,6 +3,7 @@
 from typing import Iterator, Optional, Union
 
 from peewee import Expression, Select
+from requests.exceptions import ChunkedEncodingError, ConnectionError, Timeout
 
 from hwdb.config import LOGGER, get_config
 from hwdb.orm.deployment import Deployment
@@ -42,8 +43,13 @@ class DeployingMixin:
             return None
 
         if deployment is not None and deployment.url is not None:
-            if self.apply_url(deployment.url).status_code != 200:
+            try:
+                response = self.apply_url(deployment.url)
+            except (ConnectionError, ChunkedEncodingError, Timeout):
                 LOGGER.warning("Could not set URL on system.")
+            else:
+                if response.status_code != 200:
+                    LOGGER.warning("Could not set URL on system.")
 
         self.deployment, old = deployment, self.deployment
         return DeploymentChange(self, old, deployment)
