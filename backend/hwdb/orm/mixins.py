@@ -42,7 +42,7 @@ class DeployingMixin:
             return None
 
         if deployment is not None and deployment.url is not None:
-            if self.set_url(deployment.url).status_code != 200:
+            if self.apply_url(deployment.url).status_code != 200:
                 LOGGER.warning("Could not set URL on system.")
 
         self.deployment, old = deployment, self.deployment
