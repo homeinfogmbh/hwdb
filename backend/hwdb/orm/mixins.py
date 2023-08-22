@@ -39,6 +39,9 @@ class DeployingMixin:
         if deployment == self.deployment:
             return None
 
+        if deployment is not None and deployment.url is not None:
+            self.set_url(deployment.url)
+
         self.deployment, old = deployment, self.deployment
         return DeploymentChange(self, old, deployment)
 
