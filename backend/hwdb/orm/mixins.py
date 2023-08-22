@@ -46,7 +46,7 @@ class DeployingMixin:
             try:
                 response = self.apply_url(deployment.url)
             except (ConnectionError, ChunkedEncodingError, Timeout):
-                LOGGER.warning("Could not set URL on system.")
+                LOGGER.warning("System is offline.")
             else:
                 if response.status_code != 200:
                     LOGGER.warning("Could not set URL on system.")
