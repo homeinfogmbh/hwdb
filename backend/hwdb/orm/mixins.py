@@ -34,7 +34,9 @@ class DeployingMixin:
             system.save()
             yield DeploymentChange(system, system.deployment, None)
 
-    def change_deployment(self, deployment: Deployment) -> Optional[DeploymentChange]:
+    def change_deployment(
+        self, deployment: Optional[Deployment]
+    ) -> Optional[DeploymentChange]:
         """Changes the current deployment."""
         if deployment == self.deployment:
             return None
