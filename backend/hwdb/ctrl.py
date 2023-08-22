@@ -4,7 +4,7 @@ from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_call
 from typing import Optional
 
-from requests import Timeout, Response, put
+from requests import Timeout, Response, post, put
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 from hwdb.config import get_ping
@@ -16,7 +16,8 @@ from hwdb.types import IPSocket
 __all__ = ["RemoteControllerMixin"]
 
 
-PORT = 8000
+PORT_DIGSIGCLT = 8000
+PORT_DIGSIGCTL = 5000
 
 
 class BasicControllerMixin:
@@ -25,7 +26,7 @@ class BasicControllerMixin:
     @property
     def socket(self) -> IPSocket:
         """Returns the IP socket."""
-        return IPSocket(self.ip_address, PORT)
+        return IPSocket(self.ip_address, PORT_DIGSIGCLT)
 
     @property
     def url(self) -> str:
@@ -97,3 +98,10 @@ class RemoteControllerMixin(BasicControllerMixin):
     def screenshot(self, *, timeout: Optional[int] = 15) -> Response:
         """Makes a screenshot."""
         return self.exec("screenshot", _timeout=timeout)
+
+    def apply_url(self, url: str) -> Response:
+        """Set digital signage URL on new DDB OS systems."""
+        return post(
+            f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/configure",
+            json={"url": url},
+        )
