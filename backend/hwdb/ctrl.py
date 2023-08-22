@@ -99,9 +99,10 @@ class RemoteControllerMixin(BasicControllerMixin):
         """Makes a screenshot."""
         return self.exec("screenshot", _timeout=timeout)
 
-    def apply_url(self, url: str) -> Response:
+    def apply_url(self, url: str, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
         return post(
             f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/configure",
             json={"url": url},
+            timeout=timeout,
         )
