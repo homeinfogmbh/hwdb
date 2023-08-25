@@ -100,6 +100,7 @@ class System(
     model = CharField(255, null=True)  # Hardware model.
     last_sync = DateTimeField(null=True)
     updating = BooleanField(default=False)
+    ddb_os = BooleanField(default=False)
 
     @classmethod
     def used_ipv6_addresses(cls) -> Iterator[IPv6Address]:
