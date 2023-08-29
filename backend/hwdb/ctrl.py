@@ -110,7 +110,7 @@ class RemoteControllerMixin(BasicControllerMixin):
             timeout=timeout,
         )
 
-    def restart_web_browser(self, url: str, *, timeout: Optional[int] = 10) -> Response:
+    def restart_web_browser(self, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
         return post(
             f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/rpc",
