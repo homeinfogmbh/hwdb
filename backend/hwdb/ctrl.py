@@ -3,8 +3,9 @@
 from contextlib import suppress
 from subprocess import DEVNULL, CalledProcessError, check_call
 from typing import Optional
+from urllib.parse import urljoin
 
-from requests import Timeout, Response, post, put
+from requests import Timeout, Response, get, post, put
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 from hwdb.config import get_ping
@@ -26,6 +27,9 @@ class BasicControllerMixin:
     @property
     def socket(self) -> IPSocket:
         """Returns the IP socket."""
+        if self.ddb_os:
+            return IPSocket(self.ip_address, PORT_DIGSIGCTL)
+
         return IPSocket(self.ip_address, PORT_DIGSIGCLT)
 
     @property
@@ -52,10 +56,37 @@ class BasicControllerMixin:
             timeout=timeout,
         )
 
-    def put(self, json: dict, *, timeout: Optional[int] = 10) -> Response:
+    def endpoint_url(self, endpoint: Optional[str]) -> str:
+        """Return the endpoint URL."""
+        if endpoint is None:
+            return self.url
+
+        return urljoin(self.url, endpoint)
+
+    def get(
+        self, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
+    ) -> Response:
         """Executes a PUT request."""
         try:
-            return put(self.url, json=json, timeout=timeout)
+            return get(self.endpoint_url(endpoint), timeout=timeout)
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
+
+    def post(
+        self, json: dict, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
+    ) -> Response:
+        """Executes a PUT request."""
+        try:
+            return post(self.endpoint_url(endpoint), json=json, timeout=timeout)
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
+
+    def put(
+        self, json: dict, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
+    ) -> Response:
+        """Executes a PUT request."""
+        try:
+            return put(self.endpoint_url(endpoint), json=json, timeout=timeout)
         except (ConnectionError, ChunkedEncodingError, Timeout) as error:
             raise SystemOffline() from error
 
@@ -63,6 +94,11 @@ class BasicControllerMixin:
         self, command: str, *args: str, _timeout: Optional[int] = 10, **kwargs
     ) -> Response:
         """Runs the respective command."""
+        if self.ddb_os:
+            return self.post(
+                {"command": args or None}, endpoint="/rpc", timeout=_timeout
+            )
+
         json = {"args": args} if args else {}
         json.update(kwargs)
         json["command"] = command
@@ -99,21 +135,10 @@ class RemoteControllerMixin(BasicControllerMixin):
         """Makes a screenshot."""
         return self.exec("screenshot", _timeout=timeout)
 
-    # New DDB-OS API.
-    # TODO: Check self.ddb_os to determine whether this is a DDB OS first.
-
     def apply_url(self, url: str, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
-        return post(
-            f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/configure",
-            json={"url": url},
-            timeout=timeout,
-        )
+        return self.post({"url": url}, endpoint="/configure", timeout=timeout)
 
     def restart_web_browser(self, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
-        return post(
-            f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/rpc",
-            json={"restartWebBrowser": None},
-            timeout=timeout,
-        )
+        return self.post({"restartWebBrowser": None}, endpoint="/rpc", timeout=timeout)
