@@ -99,10 +99,21 @@ class RemoteControllerMixin(BasicControllerMixin):
         """Makes a screenshot."""
         return self.exec("screenshot", _timeout=timeout)
 
+    # New DDB-OS API.
+    # TODO: Check self.ddb_os to determine whether this is a DDB OS first.
+
     def apply_url(self, url: str, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
         return post(
             f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/configure",
             json={"url": url},
+            timeout=timeout,
+        )
+
+    def restart_web_browser(self, url: str, *, timeout: Optional[int] = 10) -> Response:
+        """Set digital signage URL on new DDB OS systems."""
+        return post(
+            f"http://{IPSocket(self.ip_address, PORT_DIGSIGCTL)}/rpc",
+            json={"restartWebBrowser": None},
             timeout=timeout,
         )
