@@ -104,6 +104,13 @@ class BasicControllerMixin:
         json["command"] = command
         return self.put(json, timeout=_timeout)
 
+    def sysinfo(self, *, timeout: Optional[int] = 10) -> Response:
+        """Query system information."""
+        if self.ddb_os:
+            return self.get(endpoint="/sysinfo", timeout=timeout)
+
+        return self.get()
+
 
 class RemoteControllerMixin(BasicControllerMixin):
     """Enhanced controller functions."""
