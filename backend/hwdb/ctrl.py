@@ -144,6 +144,9 @@ class RemoteControllerMixin(BasicControllerMixin):
     def screenshot(self, *, timeout: Optional[int] = 15) -> Response:
         """Makes a screenshot."""
         try:
+            if self.ddb_os:
+                return self._get(endpoint="/screenshot", timeout=timeout)
+
             return self.exec("screenshot", _timeout=timeout)
         except (ConnectionError, ChunkedEncodingError, Timeout) as error:
             raise SystemOffline() from error
