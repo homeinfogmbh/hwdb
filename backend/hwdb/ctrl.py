@@ -63,7 +63,7 @@ class BasicControllerMixin:
 
         return urljoin(self.url, endpoint)
 
-    def get(
+    def _get(
         self, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
     ) -> Response:
         """Executes a PUT request."""
@@ -72,7 +72,7 @@ class BasicControllerMixin:
         except (ConnectionError, ChunkedEncodingError, Timeout) as error:
             raise SystemOffline() from error
 
-    def post(
+    def _post(
         self, json: dict, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
     ) -> Response:
         """Executes a PUT request."""
@@ -81,7 +81,7 @@ class BasicControllerMixin:
         except (ConnectionError, ChunkedEncodingError, Timeout) as error:
             raise SystemOffline() from error
 
-    def put(
+    def _put(
         self, json: dict, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
     ) -> Response:
         """Executes a PUT request."""
@@ -95,21 +95,21 @@ class BasicControllerMixin:
     ) -> Response:
         """Runs the respective command."""
         if self.ddb_os:
-            return self.post(
+            return self._post(
                 {"command": args or None}, endpoint="/rpc", timeout=_timeout
             )
 
         json = {"args": args} if args else {}
         json.update(kwargs)
         json["command"] = command
-        return self.put(json, timeout=_timeout)
+        return self._put(json, timeout=_timeout)
 
     def sysinfo(self, *, timeout: Optional[int] = 10) -> Response:
         """Query system information."""
         if self.ddb_os:
-            return self.get(endpoint="/sysinfo", timeout=timeout)
+            return self._get(endpoint="/sysinfo", timeout=timeout)
 
-        return self.get()
+        return self._get()
 
 
 class RemoteControllerMixin(BasicControllerMixin):
@@ -144,8 +144,8 @@ class RemoteControllerMixin(BasicControllerMixin):
 
     def apply_url(self, url: str, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
-        return self.post({"url": url}, endpoint="/configure", timeout=timeout)
+        return self._post({"url": url}, endpoint="/configure", timeout=timeout)
 
     def restart_web_browser(self, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
-        return self.post({"restartWebBrowser": None}, endpoint="/rpc", timeout=timeout)
+        return self._post({"restartWebBrowser": None}, endpoint="/rpc", timeout=timeout)
