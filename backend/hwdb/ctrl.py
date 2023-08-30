@@ -67,28 +67,19 @@ class BasicControllerMixin:
         self, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
     ) -> Response:
         """Executes a PUT request."""
-        try:
-            return get(self.endpoint_url(endpoint), timeout=timeout)
-        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
-            raise SystemOffline() from error
+        return get(self.endpoint_url(endpoint), timeout=timeout)
 
     def _post(
         self, json: dict, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
     ) -> Response:
         """Executes a PUT request."""
-        try:
-            return post(self.endpoint_url(endpoint), json=json, timeout=timeout)
-        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
-            raise SystemOffline() from error
+        return post(self.endpoint_url(endpoint), json=json, timeout=timeout)
 
     def _put(
         self, json: dict, *, endpoint: Optional[str] = None, timeout: Optional[int] = 10
     ) -> Response:
         """Executes a PUT request."""
-        try:
-            return put(self.endpoint_url(endpoint), json=json, timeout=timeout)
-        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
-            raise SystemOffline() from error
+        return put(self.endpoint_url(endpoint), json=json, timeout=timeout)
 
     def exec(
         self, command: str, *args: str, _timeout: Optional[int] = 10, **kwargs
@@ -117,16 +108,25 @@ class RemoteControllerMixin(BasicControllerMixin):
 
     def beep(self, *args: str) -> Response:
         """Beeps the system."""
-        return self.exec("beep", args=args)
+        try:
+            return self.exec("beep", args=args)
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
 
     def unlock_pacman(self) -> Response:
         """Safely removes the pacman lockfile."""
-        return self.exec("unlock-pacman")
+        try:
+            return self.exec("unlock-pacman")
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
 
-    def reboot(self) -> Response:
+    def reboot(self) -> Optional[Response]:
         """Reboots the system."""
         with suppress(Timeout):
-            return self.exec("reboot")
+            try:
+                return self.exec("reboot")
+            except (ConnectionError, ChunkedEncodingError) as error:
+                raise SystemOffline() from error
 
     def application(self, mode: Optional[ApplicationMode] = None) -> Response:
         """Manages the application.
@@ -136,16 +136,30 @@ class RemoteControllerMixin(BasicControllerMixin):
         if mode is not None:
             mode = mode.name
 
-        return self.exec("application", mode=mode)
+        try:
+            return self.exec("application", mode=mode)
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
 
     def screenshot(self, *, timeout: Optional[int] = 15) -> Response:
         """Makes a screenshot."""
-        return self.exec("screenshot", _timeout=timeout)
+        try:
+            return self.exec("screenshot", _timeout=timeout)
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
 
     def apply_url(self, url: str, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
-        return self._post({"url": url}, endpoint="/configure", timeout=timeout)
+        try:
+            return self._post({"url": url}, endpoint="/configure", timeout=timeout)
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
 
     def restart_web_browser(self, *, timeout: Optional[int] = 10) -> Response:
         """Set digital signage URL on new DDB OS systems."""
-        return self._post({"restartWebBrowser": None}, endpoint="/rpc", timeout=timeout)
+        try:
+            return self._post(
+                {"restartWebBrowser": None}, endpoint="/rpc", timeout=timeout
+            )
+        except (ConnectionError, ChunkedEncodingError, Timeout) as error:
+            raise SystemOffline() from error
