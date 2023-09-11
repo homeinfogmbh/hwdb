@@ -86,12 +86,7 @@ class BasicControllerMixin:
     ) -> Response:
         """Runs the respective command."""
         if self.ddb_os:
-            if command == "reboot":
-                return self._post({"reboot": 0}, endpoint="/rpc", timeout=_timeout)
-            else:
-                return self._post(
-                    {"command": args or None}, endpoint="/rpc", timeout=_timeout
-                )
+            return self._post({command: 0}, endpoint="/rpc", timeout=_timeout)
 
         json = {"args": args} if args else {}
         json.update(kwargs)
