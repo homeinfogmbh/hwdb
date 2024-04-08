@@ -86,7 +86,7 @@ class BasicControllerMixin:
     ) -> Response:
         """Runs the respective command."""
         if self.ddb_os:
-            return self._post({command: 0}, endpoint="/rpc", timeout=_timeout)
+            return self._post({command: None}, endpoint="/rpc", timeout=_timeout)
 
         json = {"args": args} if args else {}
         json.update(kwargs)
@@ -133,6 +133,20 @@ class RemoteControllerMixin(BasicControllerMixin):
         """
         if mode is not None:
             mode = mode.name
+
+        if self.ddb_os:
+            if mode == "productive":
+                return self._post(
+                    {"operationMode": "chromium"}, endpoint="/rpc", timeout=15
+                )
+            if mode == "installation instructions":
+                return self._post(
+                    {"operationMode": "installationInstructions"},
+                    endpoint="/rpc",
+                    timeout=15,
+                )
+            if mode is None:
+                return self._post({"operationMode": None}, endpoint="/rpc", timeout=15)
 
         try:
             return self.exec("application", mode=mode)
