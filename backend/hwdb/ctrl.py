@@ -135,11 +135,11 @@ class RemoteControllerMixin(BasicControllerMixin):
             mode = mode.name
 
         if self.ddb_os:
-            if mode == "productive":
+            if mode == "PRODUCTIVE":
                 return self._post(
                     {"operationMode": "chromium"}, endpoint="/rpc", timeout=15
                 )
-            if mode == "installation instructions":
+            if mode == "INSTALLATION_INSTRUCTIONS":
                 return self._post(
                     {"operationMode": "installationInstructions"},
                     endpoint="/rpc",
