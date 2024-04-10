@@ -145,8 +145,7 @@ class RemoteControllerMixin(BasicControllerMixin):
                     endpoint="/rpc",
                     timeout=15,
                 )
-            if mode is None:
-                return self._post({"operationMode": None}, endpoint="/rpc", timeout=15)
+            return self._post({"operationMode": None}, endpoint="/rpc", timeout=15)
 
         try:
             return self.exec("application", mode=mode)
