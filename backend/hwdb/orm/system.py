@@ -9,6 +9,7 @@ from peewee import JOIN
 from peewee import BooleanField
 from peewee import CharField
 from peewee import DateTimeField
+from peewee import DateField
 from peewee import FixedCharField
 from peewee import ForeignKeyField
 from peewee import IntegerField
@@ -101,6 +102,7 @@ class System(
     last_sync = DateTimeField(null=True)
     updating = BooleanField(default=False)
     ddb_os = BooleanField(default=False)
+    warranty = DateField(default=datetime.now)
 
     @classmethod
     def used_ipv6_addresses(cls) -> Iterator[IPv6Address]:
