@@ -103,6 +103,7 @@ class System(
     updating = BooleanField(default=False)
     ddb_os = BooleanField(default=False)
     warranty = DateField(default=datetime.now)
+    testing = BooleanField(default=False)
 
     @classmethod
     def used_ipv6_addresses(cls) -> Iterator[IPv6Address]:
