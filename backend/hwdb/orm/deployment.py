@@ -38,6 +38,7 @@ class Deployment(BaseModel):
     )
     annotation = CharField(255, null=True)
     testing = BooleanField(default=False)
+    processing = BooleanField(default=False)
     created = DateTimeField(default=datetime.now, null=True)
     url = TextField(default=None)
     # Checklist
