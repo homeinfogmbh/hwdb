@@ -8,7 +8,7 @@ from requests.exceptions import ChunkedEncodingError, ConnectionError, Timeout
 from hwdb.config import LOGGER, get_config
 from hwdb.orm.deployment import Deployment
 from hwdb.types import DeploymentChange
-
+from hwdb.exceptions import SystemOffline
 
 __all__ = ["DeployingMixin", "DNSMixin", "MonitoringMixin"]
 
@@ -45,7 +45,7 @@ class DeployingMixin:
         if deployment is not None and deployment.url is not None:
             try:
                 response = self.apply_url(deployment.url)
-            except (ConnectionError, ChunkedEncodingError, Timeout):
+            except (ConnectionError, ChunkedEncodingError, Timeout, SystemOffline):
                 LOGGER.warning("System is offline.")
             else:
                 if response.status_code != 200:
