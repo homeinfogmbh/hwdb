@@ -14,6 +14,7 @@ __all__ = [
     "create_tables",
     "get_free_ipv6_address",
     "Deployment",
+    "DeploymentTemp",
     "Display",
     "GenericHardware",
     "Group",
