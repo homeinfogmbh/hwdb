@@ -1,6 +1,6 @@
 """Hardware ORM models."""
 
-from hwdb.orm.deployment import Deployment
+from hwdb.orm.deployment import Deployment, DeploymentTemp
 from hwdb.orm.display import Display
 from hwdb.orm.generic import GenericHardware
 from hwdb.orm.group import Group
