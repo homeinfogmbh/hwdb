@@ -16,6 +16,7 @@ from hwdb.exceptions import AmbiguityError
 from hwdb.exceptions import SystemOffline
 from hwdb.filter import get_deployments, get_systems
 from hwdb.orm import Deployment
+from hwdb.orm import DeploymentTemp
 from hwdb.orm import Display
 from hwdb.orm import GenericHardware
 from hwdb.orm import Group
@@ -42,6 +43,7 @@ __all__ = [
     "ApplicationMode",
     "Connection",
     "Deployment",
+    "DeploymentTemp",
     "DeploymentType",
     "Display",
     "GenericHardware",
