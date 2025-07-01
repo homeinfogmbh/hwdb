@@ -18,7 +18,7 @@ from hwdb.enumerations import Connection, DeploymentType
 from hwdb.orm.common import BaseModel
 
 
-__all__ = ["Deployment"]
+__all__ = ["Deployment", "DeploymentTemp"]
 
 
 HTML_HEADERS = ("ID", "Customer", "Type", "Address")
@@ -152,3 +152,7 @@ class Deployment(BaseModel):
             json["systems"] = [system.id for system in self.systems]
 
         return json
+
+
+class DeploymentTemp(Deployment):
+    """Temporary deployment table for newly added deployments that need confirmation"""
