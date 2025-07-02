@@ -11,7 +11,7 @@ from peewee import ForeignKeyField
 from peewee import Select
 from peewee import TextField
 
-import urllib.parses
+import urllib.parse
 
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField, HTMLTextField
