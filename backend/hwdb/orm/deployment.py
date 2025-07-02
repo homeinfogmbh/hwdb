@@ -11,6 +11,14 @@ from peewee import ForeignKeyField
 from peewee import Select
 from peewee import TextField
 
+import secrets
+from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+
 import urllib.parse
 
 from mdb import Address, Company, Customer
@@ -19,13 +27,42 @@ from peeweeplus import EnumField, HTMLTextField
 
 from hwdb.enumerations import Connection, DeploymentType
 from hwdb.orm.common import BaseModel
-from deployments.functions import password_encrypt
 from configlib import load_config
 
 __all__ = ["Deployment", "DeploymentTemp"]
 
+backend = default_backend()
+iterations = 100_000
+
 
 HTML_HEADERS = ("ID", "Customer", "Type", "Address")
+
+
+def _derive_key(password: bytes, salt: bytes, iterations: int = iterations) -> bytes:
+    """Derive a secret key from a given password and salt"""
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=iterations,
+        backend=backend,
+    )
+    return b64e(kdf.derive(password))
+
+
+def password_encrypt(
+    message: bytes, password: str, iterations: int = iterations
+) -> bytes:
+    salt = secrets.token_bytes(16)
+    key = _derive_key(password.encode(), salt, iterations)
+    return b64e(
+        b"%b%b%b"
+        % (
+            salt,
+            iterations.to_bytes(4, "big"),
+            b64d(Fernet(key).encrypt(message)),
+        )
+    )
 
 
 class Deployment(BaseModel):
