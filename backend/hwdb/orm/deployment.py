@@ -11,12 +11,16 @@ from peewee import ForeignKeyField
 from peewee import Select
 from peewee import TextField
 
+import urllib.parses
+
 from mdb import Address, Company, Customer
 from peeweeplus import EnumField, HTMLTextField
 
+
 from hwdb.enumerations import Connection, DeploymentType
 from hwdb.orm.common import BaseModel
-
+from deployments.functions import password_encrypt
+from configlib import load_config
 
 __all__ = ["Deployment", "DeploymentTemp"]
 
@@ -156,3 +160,24 @@ class Deployment(BaseModel):
 
 class DeploymentTemp(Deployment):
     """Temporary deployment table for newly added deployments that need confirmation"""
+
+    def to_json(
+        self,
+        *,
+        address: bool = False,
+        customer: bool = False,
+        systems: bool = False,
+        **kwargs,
+    ) -> dict:
+        """Returns a JSON-ish dict."""
+        json = super().to_json(
+            address=address, customer=customer, systems=systems, **kwargs
+        )
+        password = load_config("sysmon.conf").get("mailing", "encryptionpassword")
+        message = str(self.id)
+        encrypted_id = password_encrypt(message.encode(), password)
+        json["confirm"] = (
+            "https://backend.homeinfo.de/deployments/confirm/"
+            + urllib.parse.quote_plus(encrypted_id)
+        )
+        return json
