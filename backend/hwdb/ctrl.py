@@ -126,6 +126,11 @@ class RemoteControllerMixin(BasicControllerMixin):
             except (ConnectionError, ChunkedEncodingError) as error:
                 raise SystemOffline() from error
 
+    def chromium_url(self) -> Response:
+        """returns a Systems url from chromium perferences"""
+        if self.ddb_os:
+            return self._post({"url": None}, endpoint="/configuration", timeout=15)
+
     def application(self, mode: Optional[ApplicationMode] = None) -> Response:
         """Manages the application.
         state=None: Queries the application state.
