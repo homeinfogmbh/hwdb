@@ -36,10 +36,7 @@ class Connection(Enum):
 
     DSL = "DSL"
     LTE = "LTE"
-    LANDSL = "LANDSL"
-    LTEUMTS = "UMTS"
-    WLANDSL = "WLANDSL"
-    WLANLTE = "WLANLTE"
+    WLAN = "WLAN"
 
 
 class DeploymentType(Enum):
