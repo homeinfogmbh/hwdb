@@ -1,6 +1,6 @@
 """Hardware ORM models."""
 
-from hwdb.orm.deployment import Deployment
+from hwdb.orm.deployment import Deployment, DeploymentTemp
 from hwdb.orm.display import Display
 from hwdb.orm.generic import GenericHardware
 from hwdb.orm.group import Group
@@ -14,6 +14,7 @@ __all__ = [
     "create_tables",
     "get_free_ipv6_address",
     "Deployment",
+    "DeploymentTemp",
     "Display",
     "GenericHardware",
     "Group",
